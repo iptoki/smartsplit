@@ -1,0 +1,544 @@
+àswagger: '2.0'
+host: api.smartsplit.org
+basePath: /v1
+schemes:
+  - https
+info:
+  title: Smartsplit API
+  description: Provides a RESTful API for interacting with Smartsplit 
+  version: v1
+  x-origin:
+    - format: yaml
+      url: 'https://drive.google.com/file/d/1448iySV2d0gUfmmrNt-gIMrsqoazGEPG/view' # Todo to be updated
+  x-providerName: smartsplit.org
+  x-logo:
+    url: http://smartsplit.org/wp-content/uploads/2019/05/Logo-v02-005-noir.png
+consumes:
+  - application/json
+produces:
+  - application/json
+securityDefinitions:
+  basicAuth:
+    description: HTTP Basic Authentication.
+    type: basic
+  jwt:
+    description: A JSON Web Token (JWT) used for access control and authorization.
+    in: header
+    name: Authorization
+    type: apiKey
+security:
+  - jwt: []
+paths:
+  /auth:
+    get:
+      description: Request a JWT access token using your Smartsplit username and password.
+      responses:
+        '200':
+          description: OK. The JWT `accessToken` to use for accessing secured resources.
+          schema:
+            $ref: '#/definitions/AuthResult'
+      security:
+        - basicAuth: []
+      tags:
+        - auth
+  /profiles:
+    get:
+      description: Request a list of all right holder profiles.
+      responses: 
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/profile'
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+  '/profiles/{id}':
+    get:
+      description: Request a right holder's profile with the given ID.
+      parameters:
+        - description: The rights holder's unique profile ID.
+          in: path
+          name: id
+          required: true
+          type: integer
+      responses: 
+        '200':
+          description: OK'
+          schema: 
+            $ref: '#/definitions/profile'
+  '/profiles/{id}/name':
+    get:
+      description: Request a right holder's full name with the given ID.
+      parameters:
+        - description: The rights holder's unique profile ID.
+          in: path
+          name: id
+          required: true
+          type: integer
+      responses: 
+        '200':
+          description: OK'
+          schema: 
+            properties:
+              name: 
+                description: The right holder's full name.
+                type: string
+                example: 'John Smith'
+  '/profiles/{id}/email':
+    get:
+      description: Request a right holder's email address with given ID.
+      parameters:
+        - description: The right holder's unique profile ID.
+          in: path
+          name: id
+          required: true
+          type: integer
+      responses: 
+        '200':
+          description: OK'
+          schema: 
+            properties:
+              email: 
+                description: The right holder's email address.
+                type: string
+                example: 'john.smith@example.com'
+  '/profiles/{id}/role':
+    get:
+      description: Request a right holder's role or list of roles with the given ID (includes copyright, performance, and/or recording).
+      parameters:
+        - description: The right holder's unique profile ID.
+          in: path
+          name: id
+          required: true
+          type: integer
+      responses: 
+        '200':
+          description: OK'
+          schema: 
+            properties:
+              role: 
+                description: The right holder's role
+                type: string
+                example: 'writer'
+  '/profiles/{id}/ipi':
+    get:
+      description: Request a right holder's interested party information number with the given ID.
+      parameters:
+        - description: The right holder's unique profile ID.
+          in: path
+          name: id
+          required: true
+          type: integer
+      responses: 
+        '200':
+          description: OK'
+          schema: 
+            properties:
+              ipi: 
+                description: The right holder's interested party information number.
+                type: string
+                example: '00004576'
+  '/profiles/{id}/media':
+    get:
+      description: Request a list of media associated with the given right holder profile ID. 
+      parameters:
+        - description: The right holder's unique profile ID.
+          in: path
+          name: id
+          required: true
+          type: integer
+      responses: 
+        '200':
+          description: OK'
+          schema: 
+            $ref: '#/definitions/media'
+  '/profiles/{id}/wallet':
+    get:
+      description: Request the wallet address of a right holder's profile with the given ID.
+      parameters:
+        - description: The right holder's unique profile ID.
+          in: path
+          name: id
+          required: true
+          type: integer
+      responses: 
+        '200':
+          description: OK'
+          schema: 
+            properties:
+              wallet: 
+                description: The user's wallet address
+                type: string
+                example: '0xdd87ae15f4be97e2739c9069ddef674f907d27a8'
+  /media:
+    get:
+      description: Request a list of artworks.
+      responses: 
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/media'
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+  '/media/{id}':
+    get:
+      description:  Request an artwork with the given ID.
+      parameters:
+        - description: The artwork agreement's unique ID.
+          in: path
+          name: id
+          required: true
+          type: integer
+      responses: 
+        '200':
+          description: OK'
+          schema: 
+            $ref: '#/definitions/media'
+  '/media/{id}/title':
+    get:
+      description: Request the title of the given media identified by ID.
+      parameters:
+        - description: The artwork agreement's unique ID.
+          in: path
+          name: id
+          required: true
+          type: integer
+      responses: 
+        '200':
+          description: OK'
+          schema: 
+            properties:
+              title: 
+                description: The title of the given artwork.
+                type: string
+                example: 'Love You Baby'
+  '/media/{id}/description':
+    get:
+      description: Request the description of the media with the provided ID.
+      parameters:
+        - description: The artwork agreement's unique ID.
+          in: path
+          name: id
+          required: true
+          type: integer
+      responses: 
+        '200':
+          description: OK'
+          schema: 
+            properties:
+              description: 
+                description: The description of the artwork.
+                type: string
+                example: 'The wonderful classic hit song, Love You Baby'
+  '/media/{id}/rights-holders':
+    get:
+      description: Request the list of right holders who collaborated on the given media.
+      parameters:
+        - description: The artwork agreement's unique ID.
+          in: path
+          name: id
+          required: true
+          type: integer
+      responses: 
+        '200':
+          description: OK'
+          schema: 
+            properties:
+              rights-holders:
+                description: A list of the right holder names for the given media.
+                items:
+                  type: string
+                type: array
+                example: 'John Smith, Bob Andrews'
+  '/media/{id}/jurisdiction':
+    get:
+      description: Request the jurisdiction of the given media.
+      parameters:
+        - description: The artwork agreement's unique ID.
+          in: path
+          name: id
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: OK'
+          schema:
+            properties:
+              jurisdiction:
+                description: The jusrisdiction of the artwork agreement of the given media.
+                type: string
+                example: 'SOCAN'
+  '/media/{id}/rights-type':
+    get:
+      description: Request the type of rights of the given media (copyright, performance, recording).
+      parameters:
+        - description: The artwork agreement's unique ID.
+          in: path
+          name: id
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: OK'
+          schema:
+            properties:
+              rights-type:
+                description: The type of rights associated with the artwork.
+                type: string
+                example: 'copyright, performance'
+  '/media/{id}/genre':
+    get:
+      description: Request the genre of the media with the given ID.
+      parameters:
+        - description: The artwork agreement's unique ID.
+          in: path
+          name: id
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: OK'
+          schema:
+            properties:
+              genre:
+                description: The genre of the given media.
+                type: string
+                example: 'Rock'
+  '/media/{id}/creation-date':
+    get:
+      description: Request the creation date of the media with the given ID.
+      parameters:
+        - description: The artwork agreement's unique ID.
+          in: path
+          name: id
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: OK'
+          schema:
+            properties:
+              creation-date:
+                description: The creation date of the smartsplit contract for the given media.
+                type: string
+                format: iso8601-date-time
+                example: '2019-01-01T15:53:00'
+  '/media/{id}/publisher':
+    get:
+      description: Request the publisher name of the media with the given ID.
+      parameters:
+        - description: The artwork agreement's unique ID.
+          in: path
+          name: id
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: OK'
+          schema:
+            properties:
+              publisher:
+                description: The publisher name of the media with the given ID.
+                type: string
+                example: 'sync publishing'
+  '/media/{id}/split':
+    get:
+      description: Request the rights holders' percentage split on the media with the given ID.
+      parameters:
+        - description: The artwork agreement's unique ID.
+          in: path
+          name: id
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: OK'
+          schema:
+            properties:
+              split: 
+                description: The percentage split for the given media.
+                items: 
+                  properties:
+                    name: 
+                      description: The names of the right holders for the given media.
+                      type: string
+                      example: 'John Smith'
+                    percentage: 
+                      description: The percentage split of each right holder.
+                      type: number
+                      example: 100
+                  type: object
+                type: array
+  /payments:
+    get:
+      description: Request a list of all payments' details.
+      responses: 
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/payments'
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+  '/payments/{id}':
+    get:
+      description: Request the payment details of a payment with the given ID.
+      parameters:
+        - description: The payment's unique ID.
+          in: path
+          name: id
+          required: true
+          type: integer
+      responses: 
+        '200':
+          description: OK'
+          schema: 
+            $ref: '#/definitions/payments'
+  '/payments/{id}/transaction-id':
+    get:
+      description: Request the management societies' transaction ID of a payment with the given ID.
+      parameters:
+        - description: The payment's unique ID.
+          in: path
+          name: id
+          required: true
+          type: integer
+      responses: 
+        '200':
+          description: OK'
+          schema: 
+            properties:
+              transaction-id: 
+                description: The management societies' transaction ID.
+                type: string
+                example: '124235678'
+  '/payments/{id}/transaction-hash':
+    get:
+      description: Request the blockchain transaction hash of a payment with the given ID
+      parameters:
+        - description: The payment's unique ID.
+          in: path
+          name: id
+          required: true
+          type: integer
+      responses: 
+        '200':
+          description: OK'
+          schema: 
+            properties:
+              transaction-hash: 
+                description: The transaction hash on the blockchain.
+                type: string
+                example: '0x58a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c'
+definitions:
+  AuthResult:
+    properties:
+      accessToken:
+        description: The JWT access token for the current session.
+        type: string
+        example: "fyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJjb21wYW55IjoiRnV0dXJlRWQiLCJzdWIiOjEsImlzcyI6Imh0dHA6XC9cL2Z1dHVyZWVkLmRldlwvYXBpXC92MVwvc3R1ZGVudFwvbG9naW5cL3VzZXJuYW1lIiwiaWF0IjoiMTQyNzQyNjc3MSIsImV4cCI6IjE0Mjc0MzAzNzEiLCJuYmYiOiIxNDI3NDI2NzcxIiwianRpIjoiNmFlZDQ3MGFiOGMxYTk0MmE0MTViYTAwOTBlMTFlZTUifQ.MmM2YTUwMjEzYTE0OGNhNjk5Y2Y2MjEwZDdkN2Y1OTQ2NWVhZTdmYmI4OTA5YmM1Y2QwYTMzZjUwNTgwY2Y0MQ"
+    type: object
+  profile:
+    properties:
+      id:
+        description: The unique right holder ID for this user profile.
+        type: integer
+        example: 1
+      name:
+        description: The name displayed on the user's profile.
+        type: string
+        example: 'John Smith'
+      email:
+        description: The email address for this user profile.
+        type: string
+        example: 'john.smith@example.com'
+      media:
+        $ref: '#/definitions/media'
+      ipi:
+        description: The right holder's interested party information number.
+        type: string
+        example: '00004576'
+      role:
+        description: The role of the right holder for this user profile.
+        type: string
+        example: 'writer'
+      wallet:
+        description: The blockchain wallet address for this user profile.
+        type: string
+        example: '0xdd87ae15f4be97e2739c9069ddef674f907d27a8'
+    type: object
+  media:
+    properties:
+      id:
+        description: The unique ID for this media.
+        type: integer
+        example: 4
+      title:
+        description: The title of this piece of media.
+        type: string
+        example: 'Love You Baby'
+      description:
+        description: The short descriptioon of this piece of media.
+        type: string
+        example: 'The wonderful classic hit song, Love You Baby'
+      rights-holders:
+        description: A list of the right holder's names for this piece of media.
+        items:
+          type: string
+        type: array
+        example: 'John Smith, Bob Andrews'
+      jurisdiction:
+        description: The Jurisdiction for the given media.
+        type: string
+        example: 'SOCAN'
+      rights-type:
+        description: The type of rights for the given media.
+        type: string
+        example: 'copyright'
+      genre:
+        description: The genre of the given media.
+        type: string
+        example: 'Rock'
+      creation-date:
+        description: The creation date of the rights agreement for the given media.
+        format: iso8601-date-time
+        type: string
+        example: '2019-01-01T15:53:00'
+      publisher:
+        description: The publisher for the given media (Left blank if no publisher).
+        type: string
+        example: 'sync publishing'
+      split: 
+        description: The percentage split for the given media.
+        items: 
+          properties:
+            name: 
+              description: The names of the right holders for the given media.
+              type: string
+              example: 'John Smith'
+            percentage: 
+              description: The percentage split of each right holder.
+              type: number
+              example: 100
+          type: object
+        type: array
+    type: object
+  payments:
+    properties:
+      id:
+        description: The unique ID for this payment.
+        type: integer
+        example: 2
+      transaction-id:
+        description: The transaction string of the management company for this payment.
+        type: string
+        example: '12345678'
+      transaction-hash:
+        description: The blockchain transaction hash for this payment.
+        type: string
+        example: '0x58a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c'
+    type: object
