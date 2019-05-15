@@ -48,47 +48,47 @@ read_media, write_media (general)
 
 authorization
 
-| Endpoint      | Description    |
-| :------------- | :----------: |
-| /auth | Request a JWT access token |
+| Operation | Endpoint      | Description    |
+| :------------- | :------------- | :----------: |
+| Get | /auth | Request a JWT access token |
 
 profile or users or creators or artists
 
-| Endpoint      | Description    |
-| :------------- | :----------: |
-| /profiles | Request a list of creator profiles |
-| /profiles/{id} | Request a creator profile with the given uuid |
-| /profiles/{id}/name | Request a creators full name with given uuid |
-| /profiles/{id}/email | Request a creators email address with the given uuid |
-| /profiles/{id}/role | Request a creators role or list of roles with the given id (includes copyright, performance, and/or recording) |
-| /profiles/{id}/ipi | Request a creators interested party information number given id |
-| /profiles/{id}/media | Request a list of media associated with the given creator profile |
-| /profiles/{id}/wallet | Request the wallet address of a creator profile with the given uuid |
+| Operation | Endpoint      | Description    |
+| :------------- | :------------- | :----------: |
+| Get | /profiles | Request a list of all right holder profiles |
+| Get, Post, Delete | /profiles/{id} | Request a right holder's profile with the given ID |
+| Get, Put | /profiles/{id}/name | Request a right holder's full name with the given ID|
+| Get, Put | /profiles/{id}/email | Request a right holder's email address with given ID|
+| Get, Put | /profiles/{id}/role | Request a right holder's role or list of roles with the given ID (includes copyright, performance, and/or recording) |
+| Get, Put| /profiles/{id}/ipi | Request a right holder's interested party information number with the given ID |
+| Get, Post | /profiles/{id}/media | equest a list of media associated with the given right holder profile ID |
+| Get, Put, Post | /profiles/{id}/wallet | Request the wallet address of a right holder's profile with the given ID |
 
 artwork or metadata or media or agreement
 
-| Endpoint      | Description    |
-| :------------- | :----------: |
-| /media | Request a list of artworks |
-| /media/{id} | Request an artwork with the given uuid |
-| /media/{id}/title | Request a title of the given media identified by id |
-| /media/{id}/description | Request a written description of the media with the given id |
-| /media/{id}/creators | Request the list of creators who collaborated on the given media |
-| /media/{id}/jurisdiction | Request the jurisdiction on the given media |
-| /media/{id}/rights-type | Request the type of rights on the given media (copyright,performance,recording) |
-| /media/{id}/genre | Request the genre of the media with the given id |
-| /media/{id}/creation-date | Request the creation date of the media with the given id |
-| /media/{id}/publisher | Request the publisher name of the media with the given id |
-| /media/{id}/split | Request the creator’s percentage split on a given piece of media |
+| Operation | Endpoint      | Description    |
+| :------------- | :------------- | :----------: |
+| Get | /media | Request a list of artworks |
+| Get, Post, Delete | /media/{id} | Request an artwork with the given ID |
+| Get, Put | /media/{id}/title | Request the title of the given media identified by ID |
+| Get, Put | /media/{id}/description |  Request the description of the media with the provided ID |
+| Get, Put | /media/{id}/right-holders | Request the list of right holders who collaborated on the given media |
+| Get, Put | /media/{id}/jurisdiction | Request the jurisdiction of the given media |
+| Get, Put | /media/{id}/rights-type | Request the type of rights of the given media (copyright, performance, recording) |
+| Get, Put | /media/{id}/genre | Request the genre of the media with the given ID |
+| Get, Put | /media/{id}/creation-date | Request the creation date of the media with the given ID |
+| Get, Put | /media/{id}/publisher | Request the publisher name of the media with the given ID |
+| Get | /media/{id}/split | Request the rights holders' percentage split on the media with the given ID |
 
 payments
 
-| Endpoint      | Description    |
-| :------------- | :----------: |
-| /payments | Request a list of payments |
-| /payments/{id} | Request a payment with the given id |
-| /payments/{id}/transaction-id | Request the management societies' transaction ID of a payment with the given ID |
-| /payments/{id}/transaction-hash | Request the blockchain transaction hash of a payment with the given ID |
+| Operation | Endpoint      | Description    |
+| :------------- | :------------- | :----------: |
+| Get | /payments | Request a list of all payments' details |
+| Get, Post, Delete | /payments/{id} | Request the payment details of a payment with the given ID |
+| Get, Put, Post | /payments/{id}/transaction-id | Request the management societies' transaction ID of a payment with the given ID |
+| Get, Put, Post | /payments/{id}/transaction-hash | Request the blockchain transaction hash of a payment with the given ID |
 
 
 # Operations (requests)

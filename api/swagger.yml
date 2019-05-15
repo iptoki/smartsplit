@@ -1,4 +1,4 @@
-àswagger: '2.0'
+swagger: '2.0'
 host: api.smartsplit.org
 basePath: /v1
 schemes:
@@ -15,7 +15,7 @@ info:
     url: http://smartsplit.org/wp-content/uploads/2019/05/Logo-v02-005-noir.png
 consumes:
   - application/json
-produces:
+produces: # TODO Replace with openAPI 3.0 content negotiation standard content: application/json
   - application/json
 securityDefinitions:
   basicAuth:
@@ -233,7 +233,7 @@ paths:
                 description: The description of the artwork.
                 type: string
                 example: 'The wonderful classic hit song, Love You Baby'
-  '/media/{id}/rights-holders':
+  '/media/{id}/right-holders':
     get:
       description: Request the list of right holders who collaborated on the given media.
       parameters:
@@ -247,7 +247,7 @@ paths:
           description: OK'
           schema: 
             properties:
-              rights-holders:
+              right-holders:
                 description: A list of the right holder names for the given media.
                 items:
                   type: string
@@ -485,7 +485,7 @@ definitions:
         description: The short descriptioon of this piece of media.
         type: string
         example: 'The wonderful classic hit song, Love You Baby'
-      rights-holders:
+      right-holders:
         description: A list of the right holder's names for this piece of media.
         items:
           type: string
