@@ -40,10 +40,9 @@ tags:
 paths:
   /auth:
     post:
-      operationId: postAuth
-      description: Get a session JWT token to be included in the rest of the requests 
+      description: Get a JWT token for the rest of the requests
       parameters:
-        - description: JSON string containing your authentication details.
+        - description: JSON string containing your authentication details
           in: body
           name: auth
           required: true
@@ -60,8 +59,7 @@ paths:
         - Authentication Details
   /refresh-token:
     get:
-      operationId: getRefreshToken
-      description: Refreshes your current, valid JWT token and returns a new token.
+      description: Refreshes your current, valid JWT token
       responses:
         '200':
           description: OK. JWT returned to use in your subsequent requests
@@ -76,7 +74,6 @@ paths:
   /profiles:
     get:
       description: Get a list of all right holder profiles
-      operationId: getAllProfiles
       responses: 
         '200':
           description: OK
@@ -120,7 +117,6 @@ paths:
         - Profiles
   '/profiles/{id}':
     get:
-      operationId: getProfile
       description: Get a right holder's profile with the given ID
       parameters:
         - description: The rights holder's unique profile ID
@@ -144,7 +140,6 @@ paths:
       tags: 
         - Profiles
     delete:
-      operationId: deleteProfile
       description: Delete a right holder's profile with the given ID
       parameters:
         - description: The rights holder's unique profile ID
@@ -169,7 +164,6 @@ paths:
         - Profiles
   '/profiles/{id}/name':
     get:
-      operationId: getProfileName
       description: Get a right holder's full name with the given ID
       parameters:
         - description: The rights holder's unique profile ID
@@ -197,7 +191,6 @@ paths:
       tags: 
         - Profiles
     put:
-      operationId: putProfileName
       description: Update right holder's full name with the given ID
       parameters:
         - description: The rights holder's unique profile ID
@@ -232,7 +225,6 @@ paths:
         - Profiles
   '/profiles/{id}/email':
     get:  
-      operationId: getProfileEmail
       description: Get a right holder's email address with given ID
       parameters:
         - description: The right holder's unique profile ID
@@ -262,7 +254,6 @@ paths:
       tags: 
         - Profiles
     put:  
-      operationId: putProfileEmail
       description: Update right holder's email address with given ID
       parameters:
         - description: The right holder's unique profile ID
@@ -299,7 +290,6 @@ paths:
         - Profiles
   '/profiles/{id}/role':
     get:
-      operationId: getProfileRole
       description: Get a right holder's role with the given ID       (Or list of roles including copyright, performance, and/or recording)
       parameters:
         - description: The right holder's unique profile ID
@@ -327,7 +317,6 @@ paths:
       tags: 
         - Profiles
     put:
-      operationId: putProfileRole
       description: Update right holder's role with the given ID       (Or list of roles including copyright, performance, and/or recording)
       parameters:
         - description: The right holder's unique profile ID
@@ -362,7 +351,6 @@ paths:
         - Profiles
   '/profiles/{id}/ipi':
     get:
-      operationId: getProfileIPI
       description: Get right holder's interested party information "#"
       parameters:
         - description: The right holder's unique profile ID
@@ -390,7 +378,6 @@ paths:
       tags: 
         - Profiles
     put:
-      operationId: putProfileIPI
       description: Update right holder's IPI number
       parameters:
         - description: The right holder's unique profile ID
@@ -425,7 +412,6 @@ paths:
         - Profiles
   '/profiles/{id}/media':
     get:
-      operationId: getProfileMedia
       description: Get list of media for the given right holder 
       parameters:
         - description: The right holder's unique profile ID
@@ -449,7 +435,6 @@ paths:
       tags: 
         - Profiles
     put:
-      operationId: putProfileMedia
       description: Update list of media for the given right holder 
       parameters:
         - description: The right holder's unique profile ID
@@ -480,7 +465,6 @@ paths:
         - Profiles
   '/profiles/{id}/wallet':
     get:
-      operationId: getProfileWallet
       description: Get the wallet address of a right holder
       parameters:
         - description: The right holder's unique profile ID
@@ -508,7 +492,6 @@ paths:
       tags: 
         - Profiles
     put:
-      operationId: putProfileWallet
       description: Update the wallet address of a right holder
       parameters:
         - description: The right holder's unique profile ID
@@ -543,7 +526,6 @@ paths:
         - Profiles
   /media:
     get:
-      operationId: getAllMedia
       description: Get a list of all media
       responses: 
         '200':
@@ -561,7 +543,6 @@ paths:
       tags: 
         - Media
     post:
-      operationId: postMedia
       description: This method creates a new media item
       parameters: 
         - description: request
@@ -589,7 +570,6 @@ paths:
         - Media
   '/media/{mediaId}':
     get:
-      operationId: getMedia
       description:  Get media with the given ID
       parameters:
         - description: The artwork agreement's unique ID
@@ -613,7 +593,6 @@ paths:
       tags: 
         - Media
     delete:
-      operationId: deleteMedia
       description: Delete a right holder's profile with the given ID
       parameters:
         - description: The rights holder's unique profile ID
@@ -638,7 +617,6 @@ paths:
         - Media
   '/media/{mediaId}/title':
     get:
-      operationId: getMediaTitle
       description: Get the title of the given media identified by ID
       parameters:
         - description: The artwork agreement's unique ID
@@ -666,7 +644,6 @@ paths:
       tags: 
         - Media
     put:
-      operationId: putMediaTitle
       description: Update the title of the given media identified by ID
       parameters:
         - description: The artwork agreement's unique ID
@@ -701,7 +678,6 @@ paths:
         - Media
   '/media/{mediaId}/description':
     get:
-      operationId: getMediaDescription
       description: Get the description of a piece of media
       parameters:
         - description: The artwork agreement's unique ID
@@ -729,7 +705,6 @@ paths:
       tags: 
         - Media
     put:
-      operationId: putMediaDescription
       description: Update the description of a piece of media
       parameters:
         - description: The artwork agreement's unique ID
@@ -764,7 +739,6 @@ paths:
         - Media
   '/media/{mediaId}/right-holders':
     get:
-      operationId: getMediaRightHolders
       description: Get the right holders who collaborated on media
       parameters:
         - description: The artwork agreement's unique ID
@@ -794,7 +768,6 @@ paths:
       tags: 
         - Media
     put:
-      operationId: putMediaRightHolders
       description: Update right holders who collaborated on media
       parameters:
         - description: The artwork agreement's unique ID
@@ -831,7 +804,6 @@ paths:
         - Media
   '/media/{mediaId}/jurisdiction':
     get:
-      operationId: getMediaJurisdiction
       description: Get the jurisdiction of the given media
       parameters:
         - description: The artwork agreement's unique ID
@@ -859,7 +831,6 @@ paths:
       tags: 
         - Media
     put:
-      operationId: putMediaJurisdiction
       description: Update the jurisdiction of the given media
       parameters:
         - description: The artwork agreement's unique ID
@@ -894,7 +865,6 @@ paths:
         - Media
   '/media/{mediaId}/rights-type':
     get:
-      operationId: getMediaRightsType
       description: Get the type of rights of the given media         (Including copyright, performance, recording)
       parameters:
         - description: The artwork agreement's unique ID
@@ -922,7 +892,6 @@ paths:
       tags: 
         - Media
     put:
-      operationId: putMediaRightsType
       description: Update the type of rights of the given media      (Including copyright, performance, recording)
       parameters:
         - description: The artwork agreement's unique ID
@@ -957,7 +926,6 @@ paths:
         - Media
   '/media/{mediaId}/genre':
     get:
-      operationId: getMediaGenre
       description: Get the genre of the media with the given ID
       parameters:
         - description: The artwork agreement's unique ID
@@ -985,7 +953,6 @@ paths:
       tags: 
         - Media
     put:
-      operationId: putMediaGenre
       description: Update the genre of the media with the given ID
       parameters:
         - description: The artwork agreement's unique ID
@@ -1020,7 +987,6 @@ paths:
         - Media
   '/media/{mediaId}/creation-date':
     get:
-      operationId: getMediaCreationDate
       description: Get creation date of the media with the given ID
       parameters:
         - description: The artwork agreement's unique ID
@@ -1050,7 +1016,6 @@ paths:
         - Media
   '/media/{mediaId}/publisher':
     get:
-      operationId: getMediaPublisher
       description: Get publisher name of the media with the given ID
       parameters:
         - description: The artwork agreement's unique ID
@@ -1078,7 +1043,6 @@ paths:
       tags: 
         - Media
     put:
-      operationId: putMediaPublisher
       description: Update publisher of the media with the given ID
       parameters:
         - description: The artwork agreement's unique ID
@@ -1113,7 +1077,6 @@ paths:
         - Media
   '/media/{mediaId}/split':
     get:  
-      operationId: getMediaSplit
       description: Get rights holders' percentage split given media
       parameters:
         - description: The artwork agreement's unique ID
@@ -1145,7 +1108,6 @@ paths:
       tags: 
         - Media
     put:
-      operationId: putMediaSplit
       description: Update rights holders' percentage split on media
       parameters:
         - description: The artwork agreement's unique ID
@@ -1184,7 +1146,6 @@ paths:
         - Media
   /payments:
     get:
-      operationId: getAllPayments
       description: Get a list of all payments' details
       responses: 
         '200':
@@ -1203,7 +1164,6 @@ paths:
         - Payments
   '/payments/{id}':
     get:
-      operationId: getPayment
       description: Get the details of a payment with the given ID
       parameters:
         - description: The payment's unique ID
@@ -1227,7 +1187,6 @@ paths:
       tags: 
         - Payments
     delete:
-      operationId: deletePayment
       description: Delete a right holder's profile with the given ID
       parameters:
         - description: The rights holder's unique profile ID
@@ -1252,7 +1211,6 @@ paths:
         - Payments
   '/payments/{id}/transaction-id':
     get:
-      operationId: getPaymentTransactionID
       description: Get management societies' payment transaction ID
       parameters:
         - description: The payment's unique ID
@@ -1280,7 +1238,6 @@ paths:
       tags: 
         - Payments
     put:
-      operationId: putPaymentTransactionID
       description: Update management societies' payment transaction ID
       parameters:
         - description: The payment's unique ID
@@ -1317,7 +1274,6 @@ paths:
         - Payments
   '/payments/{id}/transaction-hash':
     get:
-      operationId: getPaymentTransactionHash
       description: Get blockchain transaction hash of a payment
       parameters:
         - description: The payment's unique ID
@@ -1345,7 +1301,6 @@ paths:
       tags: 
         - Payments
     put:
-      operationId: putPaymentTransactionHash
       description: Update blockchain transaction hash of a payment
       parameters:
         - description: The payment's unique ID
