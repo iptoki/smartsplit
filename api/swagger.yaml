@@ -75,8 +75,8 @@ paths:
         - Authentication Details
   /profiles:
     get:
-      operationId: getAllProfiles
       description: Get a list of all right holder profiles
+      operationId: getAllProfiles
       responses: 
         '200':
           description: OK
@@ -93,7 +93,6 @@ paths:
       tags: 
         - Profiles
     post:
-      operationId: postProfile
       description: This method creates a new profile
       parameters: 
         - description: request
