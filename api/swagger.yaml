@@ -40,6 +40,7 @@ tags:
 paths:
   /auth:
     post:
+      operationId: postAuth
       description: Get a JWT token for the rest of the requests
       parameters:
         - description: JSON string containing your authentication details
@@ -59,6 +60,7 @@ paths:
         - Authentication Details
   /refresh-token:
     get:
+      operationId: getRefreshToken
       description: Refreshes your current, valid JWT token
       responses:
         '200':
@@ -73,6 +75,7 @@ paths:
         - Authentication Details
   /profiles:
     get:
+      operationId: getAllProfiles
       description: Get a list of all right holder profiles
       responses: 
         '200':
@@ -90,6 +93,7 @@ paths:
       tags: 
         - Profiles
     post:
+      operationId: postProfile
       description: This method creates a new profile
       parameters: 
         - description: request
@@ -117,6 +121,7 @@ paths:
         - Profiles
   '/profiles/{id}':
     get:
+      operationId: getProfile
       description: Get a right holder's profile with the given ID
       parameters:
         - description: The rights holder's unique profile ID
@@ -139,7 +144,40 @@ paths:
           description: An unknown error occured
       tags: 
         - Profiles
+    put:
+      operationId: updateProfile
+      description: This method updates a profile
+      parameters:
+        - description: The rights holder's unique profile ID
+          in: path
+          name: id
+          required: true
+          type: integer
+        - description: request
+          in: body
+          name: body
+          required: true
+          schema: 
+            $ref: '#/definitions/profile'
+      responses:
+        '200':
+          description: OK. The profile was created.
+          schema:
+            $ref: '#/definitions/profile'
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      tags:
+        - Profiles
     delete:
+      operationId: deleteProfile
       description: Delete a right holder's profile with the given ID
       parameters:
         - description: The rights holder's unique profile ID
@@ -162,9 +200,10 @@ paths:
         - jwt: []
       tags: 
         - Profiles
-  '/profiles/{id}/name':
+  '/profiles/{id}/first-name':
     get:
-      description: Get a right holder's full name with the given ID
+      operationId: getProfileFirstName
+      description: Get a right holder's first name with the given ID
       parameters:
         - description: The rights holder's unique profile ID
           in: path
@@ -177,9 +216,9 @@ paths:
           schema: 
             properties:
               name: 
-                description: The right holder's full name
+                description: The right holder's f name
                 type: string
-                example: 'John Smith'
+                example: 'John'
         '400':
           description: Bad request
         '403':
@@ -190,29 +229,93 @@ paths:
           description: An unknown error occured
       tags: 
         - Profiles
-    put:
-      description: Update right holder's full name with the given ID
+    patch:
+      operationId: patchProfileFirstName
+      description: Update right holder's first name with the given ID
       parameters:
         - description: The rights holder's unique profile ID
           in: path
           name: id
           required: true
           type: integer
-        - description: The rights holder's full name
+        - description: The rights holder's first name
           in: body
-          name: name
+          name: first-name
           required: true
           schema: 
-            $ref: '#/definitions/profile/properties/name'
+            $ref: '#/definitions/profile/properties/first-name'
       responses: 
         '200':
           description: OK
           schema: 
             properties:
               name: 
-                description: The right holder's full name
+                description: The right holder's first name
                 type: string
-                example: 'Bob Andrews'
+                example: 'John'
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      tags: 
+        - Profiles
+  '/profiles/{id}/last-name':
+    get:
+      operationId: getProfileLastName
+      description: Get a right holder's last name with the given ID
+      parameters:
+        - description: The rights holder's unique profile ID
+          in: path
+          name: id
+          required: true
+          type: integer
+      responses: 
+        '200':
+          description: OK
+          schema: 
+            properties:
+              name: 
+                description: The right holder's last name
+                type: string
+                example: 'Smith'
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      tags: 
+        - Profiles
+    patch:
+      operationId: patchProfileLastName
+      description: Update right holder's last name with the given ID
+      parameters:
+        - description: The rights holder's unique profile ID
+          in: path
+          name: id
+          required: true
+          type: integer
+        - description: The rights holder's last name
+          in: body
+          name: last-name
+          required: true
+          schema: 
+            $ref: '#/definitions/profile/properties/last-name'
+      responses: 
+        '200':
+          description: OK
+          schema: 
+            properties:
+              name: 
+                description: The right holder's last name
+                type: string
+                example: 'Smith'
         '400':
           description: Bad request
         '403':
@@ -225,6 +328,7 @@ paths:
         - Profiles
   '/profiles/{id}/email':
     get:  
+      operationId: getProfileEmail
       description: Get a right holder's email address with given ID
       parameters:
         - description: The right holder's unique profile ID
@@ -253,7 +357,8 @@ paths:
         - jwt: []
       tags: 
         - Profiles
-    put:  
+    patch:  
+      operationId: patchProfileEmail
       description: Update right holder's email address with given ID
       parameters:
         - description: The right holder's unique profile ID
@@ -290,6 +395,7 @@ paths:
         - Profiles
   '/profiles/{id}/role':
     get:
+      operationId: getProfileRole
       description: Get a right holder's role with the given ID       (Or list of roles including copyright, performance, and/or recording)
       parameters:
         - description: The right holder's unique profile ID
@@ -316,7 +422,8 @@ paths:
           description: An unknown error occured
       tags: 
         - Profiles
-    put:
+    patch:
+      operationId: patchProfileRole
       description: Update right holder's role with the given ID       (Or list of roles including copyright, performance, and/or recording)
       parameters:
         - description: The right holder's unique profile ID
@@ -351,6 +458,7 @@ paths:
         - Profiles
   '/profiles/{id}/ipi':
     get:
+      operationId: getProfileIPI
       description: Get right holder's interested party information "#"
       parameters:
         - description: The right holder's unique profile ID
@@ -377,7 +485,8 @@ paths:
           description: An unknown error occured
       tags: 
         - Profiles
-    put:
+    patch:
+      operationId: patchProfileIPI
       description: Update right holder's IPI number
       parameters:
         - description: The right holder's unique profile ID
@@ -412,6 +521,7 @@ paths:
         - Profiles
   '/profiles/{id}/media':
     get:
+      operationId: getProfileMedia
       description: Get list of media for the given right holder 
       parameters:
         - description: The right holder's unique profile ID
@@ -423,7 +533,7 @@ paths:
         '200':
           description: OK
           schema: 
-            $ref: '#/definitions/medias'
+            $ref: '#/definitions/mediaIds'
         '400':
           description: Bad request
         '403':
@@ -434,7 +544,8 @@ paths:
           description: An unknown error occured
       tags: 
         - Profiles
-    put:
+    patch:
+      operationId: patchProfileMedia
       description: Update list of media for the given right holder 
       parameters:
         - description: The right holder's unique profile ID
@@ -447,12 +558,12 @@ paths:
           name: mediaId
           required: true
           schema: 
-            $ref: '#/definitions/media/properties/mediaId'
+            $ref: '#/definitions/mediaIds'
       responses: 
         '200':
           description: OK
           schema: 
-            $ref: '#/definitions/medias'
+            $ref: '#/definitions/profile'
         '400':
           description: Bad request
         '403':
@@ -465,6 +576,7 @@ paths:
         - Profiles
   '/profiles/{id}/wallet':
     get:
+      operationId: getProfileWallet
       description: Get the wallet address of a right holder
       parameters:
         - description: The right holder's unique profile ID
@@ -491,7 +603,8 @@ paths:
           description: An unknown error occured
       tags: 
         - Profiles
-    put:
+    patch:
+      operationId: patchProfileWallet
       description: Update the wallet address of a right holder
       parameters:
         - description: The right holder's unique profile ID
@@ -526,6 +639,7 @@ paths:
         - Profiles
   /media:
     get:
+      operationId: getAllMedia
       description: Get a list of all media
       responses: 
         '200':
@@ -543,6 +657,7 @@ paths:
       tags: 
         - Media
     post:
+      operationId: postMedia
       description: This method creates a new media item
       parameters: 
         - description: request
@@ -570,6 +685,7 @@ paths:
         - Media
   '/media/{mediaId}':
     get:
+      operationId: getMedia
       description:  Get media with the given ID
       parameters:
         - description: The artwork agreement's unique ID
@@ -592,7 +708,38 @@ paths:
           description: An unknown error occured
       tags: 
         - Media
+    put:
+      operationId: updateMedia
+      description:  Update media with the given ID
+      parameters:
+        - description: The artwork agreement's unique ID
+          in: path
+          name: mediaId
+          required: true
+          type: integer
+        - description: request
+          in: body
+          name: body
+          required: true
+          schema: 
+            $ref: '#/definitions/media'
+      responses: 
+        '200':
+          description: OK
+          schema: 
+            $ref: '#/definitions/media'
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      tags: 
+        - Media
     delete:
+      operationId: deleteMedia
       description: Delete a right holder's profile with the given ID
       parameters:
         - description: The rights holder's unique profile ID
@@ -617,6 +764,7 @@ paths:
         - Media
   '/media/{mediaId}/title':
     get:
+      operationId: getMediaTitle
       description: Get the title of the given media identified by ID
       parameters:
         - description: The artwork agreement's unique ID
@@ -643,7 +791,8 @@ paths:
           description: An unknown error occured
       tags: 
         - Media
-    put:
+    patch:
+      operationId: patchMediaTitle
       description: Update the title of the given media identified by ID
       parameters:
         - description: The artwork agreement's unique ID
@@ -678,6 +827,7 @@ paths:
         - Media
   '/media/{mediaId}/description':
     get:
+      operationId: getMediaDescription
       description: Get the description of a piece of media
       parameters:
         - description: The artwork agreement's unique ID
@@ -704,7 +854,8 @@ paths:
           description: An unknown error occured
       tags: 
         - Media
-    put:
+    patch:
+      operationId: patchMediaDescription
       description: Update the description of a piece of media
       parameters:
         - description: The artwork agreement's unique ID
@@ -739,6 +890,7 @@ paths:
         - Media
   '/media/{mediaId}/right-holders':
     get:
+      operationId: getMediaRightHolders
       description: Get the right holders who collaborated on media
       parameters:
         - description: The artwork agreement's unique ID
@@ -767,43 +919,45 @@ paths:
           description: An unknown error occured
       tags: 
         - Media
-    put:
-      description: Update right holders who collaborated on media
-      parameters:
-        - description: The artwork agreement's unique ID
-          in: path
-          name: mediaId
-          required: true
-          type: integer
-        - description: The list of right holders
-          in: body
-          name: right-holders
-          required: true
-          schema: 
-            $ref: '#/definitions/media/properties/right-holders'
-      responses: 
-        '200':
-          description: OK
-          schema: 
-            properties:
-              right-holders:
-                additionalProperties:
-                  description: The type of right holder, for example, writer, producer
-                  type: string
-                description: The full name of the right holder
-                type: object
-        '400':
-          description: Bad request
-        '403':
-          description: Permission denied
-        '404':
-          description: Endpoint not found
-        '500':
-          description: An unknown error occured
-      tags: 
-        - Media
+    # patch:
+    #   operationId: patchMediaRightHolders
+    #   description: Update right holders who collaborated on media
+    #   parameters:
+    #     - description: The artwork agreement's unique ID
+    #       in: path
+    #       name: mediaId
+    #       required: true
+    #       type: integer
+    #     - description: The list of right holders
+    #       in: body
+    #       name: right-holders
+    #       required: true
+    #       schema: 
+    #         $ref: '#/definitions/media/properties/right-holders'
+    #   responses: 
+    #     '200':
+    #       description: OK
+    #       schema: 
+    #         properties:
+    #           right-holders:
+    #             additionalProperties:
+    #               description: The type of right holder, for example, writer, producer
+    #               type: string
+    #             description: The full name of the right holder
+    #             type: object
+    #     '400':
+    #       description: Bad request
+    #     '403':
+    #       description: Permission denied
+    #     '404':
+    #       description: Endpoint not found
+    #     '500':
+    #       description: An unknown error occured
+    #   tags: 
+    #     - Media
   '/media/{mediaId}/jurisdiction':
     get:
+      operationId: getMediaJurisdiction
       description: Get the jurisdiction of the given media
       parameters:
         - description: The artwork agreement's unique ID
@@ -830,7 +984,8 @@ paths:
           description: An unknown error occured
       tags: 
         - Media
-    put:
+    patch:
+      operationId: patchMediaJurisdiction
       description: Update the jurisdiction of the given media
       parameters:
         - description: The artwork agreement's unique ID
@@ -865,6 +1020,7 @@ paths:
         - Media
   '/media/{mediaId}/rights-type':
     get:
+      operationId: getMediaRightsType
       description: Get the type of rights of the given media         (Including copyright, performance, recording)
       parameters:
         - description: The artwork agreement's unique ID
@@ -891,41 +1047,43 @@ paths:
           description: An unknown error occured
       tags: 
         - Media
-    put:
-      description: Update the type of rights of the given media      (Including copyright, performance, recording)
-      parameters:
-        - description: The artwork agreement's unique ID
-          in: path
-          name: mediaId
-          required: true
-          type: integer
-        - description: The type of rights of the given media
-          in: body
-          name: rights-type
-          required: true
-          schema: 
-            $ref: '#/definitions/media/properties/rights-type'
-      responses:
-        '200':
-          description: OK
-          schema:
-            properties:
-              rights-type:
-                description: The type of rights associated with the artwork
-                type: object
-                example: {copyright: true, performance: false, recording: false}
-        '400':
-          description: Bad request
-        '403':
-          description: Permission denied
-        '404':
-          description: Endpoint not found
-        '500':
-          description: An unknown error occured
-      tags: 
-        - Media
+    # patch:
+    #   operationId: patchMediaRightsType
+    #   description: Update the type of rights of the given media      (Including copyright, performance, recording)
+    #   parameters:
+    #     - description: The artwork agreement's unique ID
+    #       in: path
+    #       name: mediaId
+    #       required: true
+    #       type: integer
+    #     - description: The type of rights of the given media
+    #       in: body
+    #       name: rights-type
+    #       required: true
+    #       schema: 
+    #         $ref: '#/definitions/media/properties/rights-type'
+    #   responses:
+    #     '200':
+    #       description: OK
+    #       schema:
+    #         properties:
+    #           rights-type:
+    #             description: The type of rights associated with the artwork
+    #             type: object
+    #             example: {copyright: true, performance: false, recording: false}
+    #     '400':
+    #       description: Bad request
+    #     '403':
+    #       description: Permission denied
+    #     '404':
+    #       description: Endpoint not found
+    #     '500':
+    #       description: An unknown error occured
+    #   tags: 
+    #     - Media
   '/media/{mediaId}/genre':
     get:
+      operationId: getMediaGenre
       description: Get the genre of the media with the given ID
       parameters:
         - description: The artwork agreement's unique ID
@@ -952,7 +1110,8 @@ paths:
           description: An unknown error occured
       tags: 
         - Media
-    put:
+    patch:
+      operationId: patchMediaGenre
       description: Update the genre of the media with the given ID
       parameters:
         - description: The artwork agreement's unique ID
@@ -987,6 +1146,7 @@ paths:
         - Media
   '/media/{mediaId}/creation-date':
     get:
+      operationId: getMediaCreationDate
       description: Get creation date of the media with the given ID
       parameters:
         - description: The artwork agreement's unique ID
@@ -1016,6 +1176,7 @@ paths:
         - Media
   '/media/{mediaId}/publisher':
     get:
+      operationId: getMediaPublisher
       description: Get publisher name of the media with the given ID
       parameters:
         - description: The artwork agreement's unique ID
@@ -1042,7 +1203,8 @@ paths:
           description: An unknown error occured
       tags: 
         - Media
-    put:
+    patch:
+      operationId: patchMediaPublisher
       description: Update publisher of the media with the given ID
       parameters:
         - description: The artwork agreement's unique ID
@@ -1077,6 +1239,7 @@ paths:
         - Media
   '/media/{mediaId}/split':
     get:  
+      operationId: getMediaSplit
       description: Get rights holders' percentage split given media
       parameters:
         - description: The artwork agreement's unique ID
@@ -1107,45 +1270,47 @@ paths:
         - jwt: []
       tags: 
         - Media
-    put:
-      description: Update rights holders' percentage split on media
-      parameters:
-        - description: The artwork agreement's unique ID
-          in: path
-          name: mediaId
-          required: true
-          type: integer
-        - description: The percentage split for the right holders of the media
-          in: body
-          name: split
-          required: true
-          schema: 
-            $ref: '#/definitions/media/properties/split'
-      responses:
-        '200':
-          description: OK
-          schema:
-            properties:
-              split: 
-                additionalProperties: 
-                  description: The names of the right holders for the given media
-                  type: number
-                description: The percentage split of each right holder
-                type: object
-        '400':
-          description: Bad request
-        '403':
-          description: Permission denied
-        '404':
-          description: Endpoint not found
-        '500':
-          description: An unknown error occured
-      security:
-        - jwt: []
-      tags: 
-        - Media
+    # patch:
+    #   operationId: patchMediaSplit
+    #   description: Update rights holders' percentage split on media
+    #   parameters:
+    #     - description: The artwork agreement's unique ID
+    #       in: path
+    #       name: mediaId
+    #       required: true
+    #       type: integer
+    #     - description: The percentage split for the right holders of the media
+    #       in: body
+    #       name: split
+    #       required: true
+    #       schema: 
+    #         $ref: '#/definitions/media/properties/split'
+    #   responses:
+    #     '200':
+    #       description: OK
+    #       schema:
+    #         properties:
+    #           split: 
+    #             additionalProperties: 
+    #               description: The names of the right holders for the given media
+    #               type: number
+    #             description: The percentage split of each right holder
+    #             type: object
+    #     '400':
+    #       description: Bad request
+    #     '403':
+    #       description: Permission denied
+    #     '404':
+    #       description: Endpoint not found
+    #     '500':
+    #       description: An unknown error occured
+    #   security:
+    #     - jwt: []
+    #   tags: 
+    #     - Media
   /payments:
     get:
+      operationId: getAllPayments
       description: Get a list of all payments' details
       responses: 
         '200':
@@ -1162,8 +1327,34 @@ paths:
           description: An unknown error occured      
       tags: 
         - Payments
+    post:
+      operationId: postPayment
+      description: Add a new payment
+      parameters:
+        - description: The payment details
+          in: body
+          name: body
+          required: true
+          schema: 
+            $ref: '#/definitions/payment'
+      responses: 
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/payment'
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured      
+      tags: 
+        - Payments
   '/payments/{id}':
     get:
+      operationId: getPayment
       description: Get the details of a payment with the given ID
       parameters:
         - description: The payment's unique ID
@@ -1186,7 +1377,38 @@ paths:
           description: An unknown error occured
       tags: 
         - Payments
+    put:
+      operationId: updatePayment
+      description: Update the details of a payment with the given ID
+      parameters:
+        - description: The payment's unique ID
+          in: path
+          name: id
+          required: true
+          type: integer
+        - description: The payment details
+          in: body
+          name: body
+          required: true
+          schema: 
+            $ref: '#/definitions/payment'
+      responses: 
+        '200':
+          description: OK
+          schema: 
+            $ref: '#/definitions/payment'
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      tags: 
+        - Payments
     delete:
+      operationId: deletePayment
       description: Delete a right holder's profile with the given ID
       parameters:
         - description: The rights holder's unique profile ID
@@ -1196,7 +1418,7 @@ paths:
           type: integer
       responses:
         '200':
-          description: OK
+          description: OK. Payment deleted
         '400':
           description: Bad request
         '403':
@@ -1211,6 +1433,7 @@ paths:
         - Payments
   '/payments/{id}/transaction-id':
     get:
+      operationId: getPaymentTransactionID
       description: Get management societies' payment transaction ID
       parameters:
         - description: The payment's unique ID
@@ -1237,7 +1460,8 @@ paths:
           description: An unknown error occured
       tags: 
         - Payments
-    put:
+    patch:
+      operationId: patchPaymentTransactionID
       description: Update management societies' payment transaction ID
       parameters:
         - description: The payment's unique ID
@@ -1274,6 +1498,7 @@ paths:
         - Payments
   '/payments/{id}/transaction-hash':
     get:
+      operationId: getPaymentTransactionHash
       description: Get blockchain transaction hash of a payment
       parameters:
         - description: The payment's unique ID
@@ -1300,7 +1525,8 @@ paths:
           description: An unknown error occured
       tags: 
         - Payments
-    put:
+    patch:
+      operationId: patchPaymentTransactionHash
       description: Update blockchain transaction hash of a payment
       parameters:
         - description: The payment's unique ID
@@ -1358,20 +1584,20 @@ definitions:
       $ref: '#/definitions/profile'
   profile:
     properties:
-      id:
-        description: The unique right holder ID for this user profile
-        type: integer
-        example: 1
-      name:
+      first-name:
         description: The name displayed on the user's profile
         type: string
-        example: 'John Smith'
+        example: 'John'
+      last-name:
+        description: The name displayed on the user's profile
+        type: string
+        example: 'Smith'
       email:
         description: The email address for this user profile
         type: string
         example: 'john.smith@example.com'
       media:
-        $ref: '#/definitions/media'
+        $ref: '#/definitions/mediaIds'
       ipi:
         description: The right holder's interested party information number
         type: string
@@ -1390,12 +1616,14 @@ definitions:
     type: array
     items: 
       $ref: '#/definitions/media'
+  mediaIds:
+    description: An array of mediaIds referencing media
+    type: array
+    items:
+      type: integer
+      example: [2, 3, 4]
   media:
     properties:
-      mediaId:
-        description: The unique ID for this media
-        type: integer
-        example: 4
       title:
         description: The title of this piece of media
         type: string
@@ -1446,10 +1674,10 @@ definitions:
       $ref: '#/definitions/payment'
   payment:
     properties:
-      id:
-        description: The unique ID for this payment
+      mediaId:
+        description: media id related to this payment
         type: integer
-        example: 2
+        example: 1
       transaction-id:
         description: The transaction string of the management company for this payment
         type: string

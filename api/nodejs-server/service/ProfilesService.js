@@ -45,27 +45,10 @@ exports.getProfile = function(id) {
   "ipi" : "00004576",
   "role" : "writer",
   "wallet" : "0xdd87ae15f4be97e2739c9069ddef674f907d27a8",
-  "name" : "John Smith",
-  "id" : 1,
-  "media" : {
-    "split" : {
-      "key" : 0.80082819046101150206595775671303272247314453125
-    },
-    "jurisdiction" : "SOCAN",
-    "genre" : "Rock",
-    "description" : "The wonderful classic hit song, Love You Baby",
-    "creation-date" : "2019-01-01T15:53:00",
-    "publisher" : "sync publishing",
-    "rights-type" : {
-      "key" : "rights-type"
-    },
-    "mediaId" : 4,
-    "title" : "Love You Baby",
-    "right-holders" : {
-      "key" : "right-holders"
-    }
-  },
-  "email" : "john.smith@example.com"
+  "media" : "",
+  "first-name" : "John",
+  "email" : "john.smith@example.com",
+  "last-name" : "Smith"
 };
     if (Object.keys(examples).length > 0) {
       resolve(examples[Object.keys(examples)[0]]);
@@ -83,6 +66,25 @@ exports.getProfile = function(id) {
  * returns Object
  **/
 exports.getProfileEmail = function(id) {
+  return new Promise(function(resolve, reject) {
+    var examples = {};
+    examples['application/json'] = "";
+    if (Object.keys(examples).length > 0) {
+      resolve(examples[Object.keys(examples)[0]]);
+    } else {
+      resolve();
+    }
+  });
+}
+
+
+/**
+ * Get a right holder's first name with the given ID
+ *
+ * id Integer The rights holder's unique profile ID
+ * returns Object
+ **/
+exports.getProfileFirstName = function(id) {
   return new Promise(function(resolve, reject) {
     var examples = {};
     examples['application/json'] = "";
@@ -115,12 +117,12 @@ exports.getProfileIPI = function(id) {
 
 
 /**
- * Get list of media for the given right holder
+ * Get a right holder's last name with the given ID
  *
- * id Integer The right holder's unique profile ID
- * returns medias
+ * id Integer The rights holder's unique profile ID
+ * returns Object
  **/
-exports.getProfileMedia = function(id) {
+exports.getProfileLastName = function(id) {
   return new Promise(function(resolve, reject) {
     var examples = {};
     examples['application/json'] = "";
@@ -134,12 +136,12 @@ exports.getProfileMedia = function(id) {
 
 
 /**
- * Get a right holder's full name with the given ID
+ * Get list of media for the given right holder
  *
- * id Integer The rights holder's unique profile ID
- * returns Object
+ * id Integer The right holder's unique profile ID
+ * returns mediaIds
  **/
-exports.getProfileName = function(id) {
+exports.getProfileMedia = function(id) {
   return new Promise(function(resolve, reject) {
     var examples = {};
     examples['application/json'] = "";
@@ -191,40 +193,16 @@ exports.getProfileWallet = function(id) {
 
 
 /**
- * This method creates a new profile
+ * Update right holder's email address with given ID
  *
- * body Profile request
- * returns profile
+ * id Integer The right holder's unique profile ID
+ * email Email The rights holder's email address
+ * returns Object
  **/
-exports.postProfile = function(body) {
+exports.patchProfileEmail = function(id,email) {
   return new Promise(function(resolve, reject) {
     var examples = {};
-    examples['application/json'] = {
-  "ipi" : "00004576",
-  "role" : "writer",
-  "wallet" : "0xdd87ae15f4be97e2739c9069ddef674f907d27a8",
-  "name" : "John Smith",
-  "id" : 1,
-  "media" : {
-    "split" : {
-      "key" : 0.80082819046101150206595775671303272247314453125
-    },
-    "jurisdiction" : "SOCAN",
-    "genre" : "Rock",
-    "description" : "The wonderful classic hit song, Love You Baby",
-    "creation-date" : "2019-01-01T15:53:00",
-    "publisher" : "sync publishing",
-    "rights-type" : {
-      "key" : "rights-type"
-    },
-    "mediaId" : 4,
-    "title" : "Love You Baby",
-    "right-holders" : {
-      "key" : "right-holders"
-    }
-  },
-  "email" : "john.smith@example.com"
-};
+    examples['application/json'] = "";
     if (Object.keys(examples).length > 0) {
       resolve(examples[Object.keys(examples)[0]]);
     } else {
@@ -235,13 +213,13 @@ exports.postProfile = function(body) {
 
 
 /**
- * Update right holder's email address with given ID
+ * Update right holder's first name with the given ID
  *
- * id Integer The right holder's unique profile ID
- * email Email The rights holder's email address
+ * id Integer The rights holder's unique profile ID
+ * firstName First-name The rights holder's first name
  * returns Object
  **/
-exports.putProfileEmail = function(id,email) {
+exports.patchProfileFirstName = function(id,firstName) {
   return new Promise(function(resolve, reject) {
     var examples = {};
     examples['application/json'] = "";
@@ -261,7 +239,27 @@ exports.putProfileEmail = function(id,email) {
  * ipi Ipi The right holder's IPI number
  * returns Object
  **/
-exports.putProfileIPI = function(id,ipi) {
+exports.patchProfileIPI = function(id,ipi) {
+  return new Promise(function(resolve, reject) {
+    var examples = {};
+    examples['application/json'] = "";
+    if (Object.keys(examples).length > 0) {
+      resolve(examples[Object.keys(examples)[0]]);
+    } else {
+      resolve();
+    }
+  });
+}
+
+
+/**
+ * Update right holder's last name with the given ID
+ *
+ * id Integer The rights holder's unique profile ID
+ * lastName Last-name The rights holder's last name
+ * returns Object
+ **/
+exports.patchProfileLastName = function(id,lastName) {
   return new Promise(function(resolve, reject) {
     var examples = {};
     examples['application/json'] = "";
@@ -278,33 +276,21 @@ exports.putProfileIPI = function(id,ipi) {
  * Update list of media for the given right holder
  *
  * id Integer The right holder's unique profile ID
- * mediaId MediaId The unique ID of the given media
- * returns medias
+ * mediaId MediaIds The unique ID of the given media
+ * returns profile
  **/
-exports.putProfileMedia = function(id,mediaId) {
+exports.patchProfileMedia = function(id,mediaId) {
   return new Promise(function(resolve, reject) {
     var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
-    }
-  });
-}
-
-
-/**
- * Update right holder's full name with the given ID
- *
- * id Integer The rights holder's unique profile ID
- * name Name The rights holder's full name
- * returns Object
- **/
-exports.putProfileName = function(id,name) {
-  return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
+    examples['application/json'] = {
+  "ipi" : "00004576",
+  "role" : "writer",
+  "wallet" : "0xdd87ae15f4be97e2739c9069ddef674f907d27a8",
+  "media" : "",
+  "first-name" : "John",
+  "email" : "john.smith@example.com",
+  "last-name" : "Smith"
+};
     if (Object.keys(examples).length > 0) {
       resolve(examples[Object.keys(examples)[0]]);
     } else {
@@ -321,7 +307,7 @@ exports.putProfileName = function(id,name) {
  * role Role The right holder's role
  * returns Object
  **/
-exports.putProfileRole = function(id,role) {
+exports.patchProfileRole = function(id,role) {
   return new Promise(function(resolve, reject) {
     var examples = {};
     examples['application/json'] = "";
@@ -341,10 +327,65 @@ exports.putProfileRole = function(id,role) {
  * wallet Wallet The right holder's wallet address
  * returns Object
  **/
-exports.putProfileWallet = function(id,wallet) {
+exports.patchProfileWallet = function(id,wallet) {
   return new Promise(function(resolve, reject) {
     var examples = {};
     examples['application/json'] = "";
+    if (Object.keys(examples).length > 0) {
+      resolve(examples[Object.keys(examples)[0]]);
+    } else {
+      resolve();
+    }
+  });
+}
+
+
+/**
+ * This method creates a new profile
+ *
+ * body Profile request
+ * returns profile
+ **/
+exports.postProfile = function(body) {
+  return new Promise(function(resolve, reject) {
+    var examples = {};
+    examples['application/json'] = {
+  "ipi" : "00004576",
+  "role" : "writer",
+  "wallet" : "0xdd87ae15f4be97e2739c9069ddef674f907d27a8",
+  "media" : "",
+  "first-name" : "John",
+  "email" : "john.smith@example.com",
+  "last-name" : "Smith"
+};
+    if (Object.keys(examples).length > 0) {
+      resolve(examples[Object.keys(examples)[0]]);
+    } else {
+      resolve();
+    }
+  });
+}
+
+
+/**
+ * This method updates a profile
+ *
+ * id Integer The rights holder's unique profile ID
+ * body Profile request
+ * returns profile
+ **/
+exports.updateProfile = function(id,body) {
+  return new Promise(function(resolve, reject) {
+    var examples = {};
+    examples['application/json'] = {
+  "ipi" : "00004576",
+  "role" : "writer",
+  "wallet" : "0xdd87ae15f4be97e2739c9069ddef674f907d27a8",
+  "media" : "",
+  "first-name" : "John",
+  "email" : "john.smith@example.com",
+  "last-name" : "Smith"
+};
     if (Object.keys(examples).length > 0) {
       resolve(examples[Object.keys(examples)[0]]);
     } else {

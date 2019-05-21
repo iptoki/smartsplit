@@ -1,13 +1,19 @@
 'use strict';
 
-var fs = require('fs'),
-    path = require('path'),
-    http = require('http');
+const fs = require('fs');
+const path = require('path');
+const http = require('http');
+const express = require('express');
+const lodb = require('lodb');
+const db = lodb('db.json');
+// var song = db('songs').find({ title: 'low!' }).value()
+// db('songs').remove({ title: 'low!' })
+// db.save()
 
-var app = require('connect')();
-var swaggerTools = require('swagger-tools');
-var jsyaml = require('js-yaml');
-var serverPort = 8080;
+let app = require('connect')();
+let swaggerTools = require('swagger-tools');
+let jsyaml = require('js-yaml');
+let serverPort = 8080;
 
 // swaggerRouter configuration
 var options = {

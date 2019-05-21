@@ -1,0 +1,217 @@
+{
+  "profiles": [
+    {
+       "ipi": "00004576",
+       "role": "writer",
+       "wallet": "0xdd87ae15f4be97e2739c9069ddef674f907d27a8",
+       "media": [1,2,3,4],
+       "first-name": "John",
+       "email": "john.smith@example.com",
+       "last-name": "Smith"
+    },
+    {
+      "ipi": "00004577",
+      "role": "composer",
+      "wallet": "0xff87ae15f4be97e2739c9069ddef674f907d27a8",
+      "media": [1,4,5,6],
+      "first-name": "Bob",
+      "email": "bandrews@example.com",
+      "last-name": "Andrews"
+    },
+    {
+    "ipi": "18006870",
+    "role": "songwriter",
+    "wallet": "0xab97ae15f4be97e2739c9069ddef674f907d27a8",
+    "media": [7],
+    "first-name": "Joe",
+    "email": "joe.jones@example.com",
+    "last-name": "Jones"
+    },
+    {
+    "ipi": "29305500",
+    "role": "songwriter",
+    "wallet": "0x4008479586813f34414c00BBcD377d632D6f6D8D",
+    "media": [8],
+    "first-name": "Drew",
+    "email": "dmiller@example.com",
+    "last-name": "Miller"
+    },
+    {
+    "ipi": "12307700",
+    "role": "singer",
+    "wallet": "0x4008479586813f34414c00bbcd377d632d6f6d6c",
+    "media": [1,8],
+    "first-name": "Andy",
+    "email": "andy.wilson7@gmail.com",
+    "last-name": "Wilson"
+    }
+  ],
+  "media": [
+    {
+     "split": {
+         "John Smith": 41.6,
+         "Bob Andrews": 16.6,
+         "Andy Wilson": 41.6
+     },
+     "jurisdiction": "SOCAN",
+     "genre": "Rock",
+     "description": "The wonderful classic hit song, Love You Baby",
+     "creation-date": "2019-01-01T15:53:00",
+     "publisher": "sync publishing",
+     "rights-type": {
+         "copyright": true,
+         "performance": true,
+         "recording": true
+     },
+     "title": "Love You Baby",
+     "right-holders": {
+         "John Smith": "writer",
+         "Bob Andrews": "composer",
+         "Andy Wilson": "singer"
+     }
+    },
+    {
+      "split": {
+          "John Smith": 100.0
+      },
+      "jurisdiction": "SOPROQ",
+      "genre": "Pop",
+      "description": "The wonderful classic hit song, Rock You Baby",
+      "creation-date": "2019-01-02T15:53:00",
+      "publisher": "pop publishing",
+      "rights-type": {
+          "copyright": true,
+          "performance": false,
+          "recording": true
+      },
+      "title": "Rock You Baby",
+      "right-holders": {
+          "John Smith": "writer"
+      }
+      },
+      {
+      "split": {
+          "John Smith": 100.0
+      },
+      "jurisdiction": "SOPROQ",
+      "genre": "Pop",
+      "description": "The acoustic version of the classic Rock You Baby",
+      "creation-date": "2019-01-02T15:54:00",
+      "publisher": "pop publishing",
+      "rights-type": {
+          "copyright": true,
+          "performance": false,
+          "recording": true
+      },
+      "title": "Rock You Baby (Acoustic Version)",
+      "right-holders": {
+          "John Smith": "writer"
+      }
+      },
+      {
+      "split": {
+          "John Smith": 50.0,
+          "Bob Andrews": 50.0
+      },
+      "jurisdiction": "SOCAN",
+      "genre": "Rock",
+      "description": "Cultural cult classic, The Sun",
+      "creation-date": "2019-01-01T15:53:00",
+      "publisher": "sync publishing",
+      "rights-type": {
+          "copyright": true,
+          "performance": true,
+          "recording": true
+      },
+      "title": "The Sun",
+      "right-holders": {
+          "John Smith": "writer",
+          "Bob Andrews": "composer"
+      }
+      },
+      {
+      "split": {
+          "Bob Andrews": 100.0
+      },
+      "jurisdiction": "ARTISTI",
+      "genre": "Hip Hop",
+      "description": "The Ultimate Old-School Hip Hop Song, Go",
+      "creation-date": "2019-01-02T15:54:00",
+      "publisher": "SWAYER publishing",
+      "rights-type": {
+          "copyright": true,
+          "performance": true,
+          "recording": true
+      },
+      "title": "Go",
+      "right-holders": {
+          "Bob Andrews": "composer"
+      }
+      },
+      {
+      "split": {
+          "Bob Andrews": 100.0
+      },
+      "jurisdiction": "ARTISTI",
+      "genre": "Hip Hop",
+      "description": "The Ultimate Old-School Hip Hop Song, Sway",
+      "creation-date": "2019-01-07T16:00:00",
+      "publisher": "SWAYER publishing",
+      "rights-type": {
+          "copyright": true,
+          "performance": true,
+          "recording": true
+      },
+      "title": "Sway",
+      "right-holders": {
+          "Bob Andrews": "composer"
+      }
+      },
+      {
+      "split": {
+          "Joe Jones": 100.0
+      },
+      "jurisdiction": "SOCAN",
+      "genre": "Classical",
+      "description": "Recording of Classical piece Symphony 9000",
+      "creation-date": "2019-01-20T15:30:00",
+      "publisher": "North Publishing",
+      "rights-type": {
+          "copyright": true,
+          "performance": false,
+          "recording": true
+      },
+      "title": "Symphony 9000",
+      "right-holders": {
+          "Joe Jones": "songwriter"
+      }
+      },
+      {
+      "split": {
+          "Drew Miller": 50.0,
+          "Andy Wilson": 50.0
+      },
+      "jurisdiction": "SOCAN",
+      "genre": "Rock",
+      "description": "Lovely summer song",
+      "creation-date": "2019-02-20T12:53:00",
+      "publisher": "sync publishing",
+      "rights-type": {
+          "copyright": true,
+          "performance": true,
+          "recording": true
+      },
+      "title": "Lift",
+      "right-holders": {
+          "Drew Miller": "writer",
+          "Andy Wilson": "composer"
+      }
+      }
+  ],
+  "payments": [
+      {
+        "transaction-id": "12345678",
+        "transaction-hash": "0x58a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c"
+      }
+   ]
+}

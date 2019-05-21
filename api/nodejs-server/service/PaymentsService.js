@@ -43,7 +43,7 @@ exports.getPayment = function(id) {
     var examples = {};
     examples['application/json'] = {
   "transaction-id" : "12345678",
-  "id" : 2,
+  "mediaId" : 1,
   "transaction-hash" : "0x58a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c"
 };
     if (Object.keys(examples).length > 0) {
@@ -100,7 +100,7 @@ exports.getPaymentTransactionID = function(id) {
  * transactionHash Transaction-hash The blockchain hash of the transaction
  * returns Object
  **/
-exports.putPaymentTransactionHash = function(id,transactionHash) {
+exports.patchPaymentTransactionHash = function(id,transactionHash) {
   return new Promise(function(resolve, reject) {
     var examples = {};
     examples['application/json'] = "";
@@ -120,10 +120,57 @@ exports.putPaymentTransactionHash = function(id,transactionHash) {
  * transactionId Transaction-id The payment transaction ID
  * returns Object
  **/
-exports.putPaymentTransactionID = function(id,transactionId) {
+exports.patchPaymentTransactionID = function(id,transactionId) {
   return new Promise(function(resolve, reject) {
     var examples = {};
     examples['application/json'] = "";
+    if (Object.keys(examples).length > 0) {
+      resolve(examples[Object.keys(examples)[0]]);
+    } else {
+      resolve();
+    }
+  });
+}
+
+
+/**
+ * Add a new payment
+ *
+ * body Payment The payment details
+ * returns payment
+ **/
+exports.postPayment = function(body) {
+  return new Promise(function(resolve, reject) {
+    var examples = {};
+    examples['application/json'] = {
+  "transaction-id" : "12345678",
+  "mediaId" : 1,
+  "transaction-hash" : "0x58a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c"
+};
+    if (Object.keys(examples).length > 0) {
+      resolve(examples[Object.keys(examples)[0]]);
+    } else {
+      resolve();
+    }
+  });
+}
+
+
+/**
+ * Update the details of a payment with the given ID
+ *
+ * id Integer The payment's unique ID
+ * body Payment The payment details
+ * returns payment
+ **/
+exports.updatePayment = function(id,body) {
+  return new Promise(function(resolve, reject) {
+    var examples = {};
+    examples['application/json'] = {
+  "transaction-id" : "12345678",
+  "mediaId" : 1,
+  "transaction-hash" : "0x58a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c"
+};
     if (Object.keys(examples).length > 0) {
       resolve(examples[Object.keys(examples)[0]]);
     } else {

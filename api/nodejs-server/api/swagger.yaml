@@ -10,7 +10,7 @@ info:
   x-providerName: "smartsplit.org"
   x-logo:
     url: "http://smartsplit.org/wp-content/uploads/2019/05/Logo-v02-005-noir.png"
-host: "api.smartsplit.org"
+host: "localhost:8080"
 basePath: "/v1"
 tags:
 - name: "Authentication Details"
@@ -34,12 +34,12 @@ paths:
     post:
       tags:
       - "Authentication Details"
-      description: "Get a session JWT token to be included in the rest of the requests"
-      operationId: "postAuth"
+      description: "Get a JWT token for the rest of the requests"
+      operationId: "authPOST"
       parameters:
       - in: "body"
         name: "auth"
-        description: "JSON string containing your authentication details."
+        description: "JSON string containing your authentication details"
         required: true
         schema:
           $ref: "#/definitions/auth"
@@ -55,8 +55,8 @@ paths:
     get:
       tags:
       - "Authentication Details"
-      description: "Refreshes your current, valid JWT token and returns a new token."
-      operationId: "getRefreshToken"
+      description: "Refreshes your current, valid JWT token"
+      operationId: "refresh_tokenGET"
       parameters: []
       responses:
         200:
@@ -73,7 +73,7 @@ paths:
       tags:
       - "Profiles"
       description: "Get a list of all right holder profiles"
-      operationId: "getAllProfiles"
+      operationId: "profilesGET"
       parameters: []
       responses:
         200:
@@ -93,7 +93,7 @@ paths:
       tags:
       - "Profiles"
       description: "This method creates a new profile"
-      operationId: "postProfile"
+      operationId: "profilesPOST"
       parameters:
       - in: "body"
         name: "body"
@@ -122,7 +122,7 @@ paths:
       tags:
       - "Profiles"
       description: "Get a right holder's profile with the given ID"
-      operationId: "getProfile"
+      operationId: "profilesIdGET"
       parameters:
       - name: "id"
         in: "path"
@@ -143,11 +143,44 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Profiles"
+    put:
+      tags:
+      - "Profiles"
+      description: "This method updates a profile"
+      operationId: "profilesIdPUT"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The rights holder's unique profile ID"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "body"
+        description: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/profile"
+      responses:
+        200:
+          description: "OK. The profile was created."
+          schema:
+            $ref: "#/definitions/profile"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Profiles"
     delete:
       tags:
       - "Profiles"
       description: "Delete a right holder's profile with the given ID"
-      operationId: "deleteProfile"
+      operationId: "profilesIdDELETE"
       parameters:
       - name: "id"
         in: "path"
@@ -168,12 +201,12 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "Profiles"
-  /profiles/{id}/name:
+  /profiles/{id}/first-name:
     get:
       tags:
       - "Profiles"
-      description: "Get a right holder's full name with the given ID"
-      operationId: "getProfileName"
+      description: "Get a right holder's first name with the given ID"
+      operationId: "profilesIdFirst_nameGET"
       parameters:
       - name: "id"
         in: "path"
@@ -187,8 +220,8 @@ paths:
             properties:
               name:
                 type: "string"
-                example: "John Smith"
-                description: "The right holder's full name"
+                example: "John"
+                description: "The right holder's f name"
         400:
           description: "Bad request"
         403:
@@ -198,11 +231,11 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Profiles"
-    put:
+    patch:
       tags:
       - "Profiles"
-      description: "Update right holder's full name with the given ID"
-      operationId: "putProfileName"
+      description: "Update right holder's first name with the given ID"
+      operationId: "profilesIdFirst_namePATCH"
       parameters:
       - name: "id"
         in: "path"
@@ -210,11 +243,11 @@ paths:
         required: true
         type: "integer"
       - in: "body"
-        name: "name"
-        description: "The rights holder's full name"
+        name: "first-name"
+        description: "The rights holder's first name"
         required: true
         schema:
-          $ref: "#/definitions/profile/properties/name"
+          $ref: "#/definitions/profile/properties/first-name"
       responses:
         200:
           description: "OK"
@@ -222,8 +255,73 @@ paths:
             properties:
               name:
                 type: "string"
-                example: "Bob Andrews"
-                description: "The right holder's full name"
+                example: "John"
+                description: "The right holder's first name"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Profiles"
+  /profiles/{id}/last-name:
+    get:
+      tags:
+      - "Profiles"
+      description: "Get a right holder's last name with the given ID"
+      operationId: "profilesIdLast_nameGET"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The rights holder's unique profile ID"
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            properties:
+              name:
+                type: "string"
+                example: "Smith"
+                description: "The right holder's last name"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Profiles"
+    patch:
+      tags:
+      - "Profiles"
+      description: "Update right holder's last name with the given ID"
+      operationId: "profilesIdLast_namePATCH"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The rights holder's unique profile ID"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "last-name"
+        description: "The rights holder's last name"
+        required: true
+        schema:
+          $ref: "#/definitions/profile/properties/last-name"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            properties:
+              name:
+                type: "string"
+                example: "Smith"
+                description: "The right holder's last name"
         400:
           description: "Bad request"
         403:
@@ -238,7 +336,7 @@ paths:
       tags:
       - "Profiles"
       description: "Get a right holder's email address with given ID"
-      operationId: "getProfileEmail"
+      operationId: "profilesIdEmailGET"
       parameters:
       - name: "id"
         in: "path"
@@ -265,11 +363,11 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "Profiles"
-    put:
+    patch:
       tags:
       - "Profiles"
       description: "Update right holder's email address with given ID"
-      operationId: "putProfileEmail"
+      operationId: "profilesIdEmailPATCH"
       parameters:
       - name: "id"
         in: "path"
@@ -308,7 +406,7 @@ paths:
       - "Profiles"
       description: "Get a right holder's role with the given ID       (Or list of\
         \ roles including copyright, performance, and/or recording)"
-      operationId: "getProfileRole"
+      operationId: "profilesIdRoleGET"
       parameters:
       - name: "id"
         in: "path"
@@ -333,12 +431,12 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Profiles"
-    put:
+    patch:
       tags:
       - "Profiles"
       description: "Update right holder's role with the given ID       (Or list of\
         \ roles including copyright, performance, and/or recording)"
-      operationId: "putProfileRole"
+      operationId: "profilesIdRolePATCH"
       parameters:
       - name: "id"
         in: "path"
@@ -374,7 +472,7 @@ paths:
       tags:
       - "Profiles"
       description: "Get right holder's interested party information \"#\""
-      operationId: "getProfileIPI"
+      operationId: "profilesIdIpiGET"
       parameters:
       - name: "id"
         in: "path"
@@ -399,11 +497,11 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Profiles"
-    put:
+    patch:
       tags:
       - "Profiles"
       description: "Update right holder's IPI number"
-      operationId: "putProfileIPI"
+      operationId: "profilesIdIpiPATCH"
       parameters:
       - name: "id"
         in: "path"
@@ -439,7 +537,7 @@ paths:
       tags:
       - "Profiles"
       description: "Get list of media for the given right holder"
-      operationId: "getProfileMedia"
+      operationId: "profilesIdMediaGET"
       parameters:
       - name: "id"
         in: "path"
@@ -450,7 +548,7 @@ paths:
         200:
           description: "OK"
           schema:
-            $ref: "#/definitions/medias"
+            $ref: "#/definitions/mediaIds"
         400:
           description: "Bad request"
         403:
@@ -460,11 +558,11 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Profiles"
-    put:
+    patch:
       tags:
       - "Profiles"
       description: "Update list of media for the given right holder"
-      operationId: "putProfileMedia"
+      operationId: "profilesIdMediaPATCH"
       parameters:
       - name: "id"
         in: "path"
@@ -476,12 +574,12 @@ paths:
         description: "The unique ID of the given media"
         required: true
         schema:
-          $ref: "#/definitions/media/properties/mediaId"
+          $ref: "#/definitions/mediaIds"
       responses:
         200:
           description: "OK"
           schema:
-            $ref: "#/definitions/medias"
+            $ref: "#/definitions/profile"
         400:
           description: "Bad request"
         403:
@@ -496,7 +594,7 @@ paths:
       tags:
       - "Profiles"
       description: "Get the wallet address of a right holder"
-      operationId: "getProfileWallet"
+      operationId: "profilesIdWalletGET"
       parameters:
       - name: "id"
         in: "path"
@@ -521,11 +619,11 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Profiles"
-    put:
+    patch:
       tags:
       - "Profiles"
       description: "Update the wallet address of a right holder"
-      operationId: "putProfileWallet"
+      operationId: "profilesIdWalletPATCH"
       parameters:
       - name: "id"
         in: "path"
@@ -561,7 +659,7 @@ paths:
       tags:
       - "Media"
       description: "Get a list of all media"
-      operationId: "getAllMedia"
+      operationId: "mediaGET"
       parameters: []
       responses:
         200:
@@ -581,7 +679,7 @@ paths:
       tags:
       - "Media"
       description: "This method creates a new media item"
-      operationId: "postMedia"
+      operationId: "mediaPOST"
       parameters:
       - in: "body"
         name: "body"
@@ -610,7 +708,7 @@ paths:
       tags:
       - "Media"
       description: "Get media with the given ID"
-      operationId: "getMedia"
+      operationId: "mediaMediaIdGET"
       parameters:
       - name: "mediaId"
         in: "path"
@@ -631,11 +729,42 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
+    put:
+      tags:
+      - "Media"
+      description: "Update media with the given ID"
+      operationId: "mediaMediaIdPUT"
+      parameters:
+      - name: "mediaId"
+        in: "path"
+        description: "The artwork agreement's unique ID"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "body"
+        description: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/media"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/media"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Media"
     delete:
       tags:
       - "Media"
       description: "Delete a right holder's profile with the given ID"
-      operationId: "deleteMedia"
+      operationId: "mediaMediaIdDELETE"
       parameters:
       - name: "mediaId"
         in: "path"
@@ -661,7 +790,7 @@ paths:
       tags:
       - "Media"
       description: "Get the title of the given media identified by ID"
-      operationId: "getMediaTitle"
+      operationId: "mediaMediaIdTitleGET"
       parameters:
       - name: "mediaId"
         in: "path"
@@ -686,11 +815,11 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
-    put:
+    patch:
       tags:
       - "Media"
       description: "Update the title of the given media identified by ID"
-      operationId: "putMediaTitle"
+      operationId: "mediaMediaIdTitlePATCH"
       parameters:
       - name: "mediaId"
         in: "path"
@@ -726,7 +855,7 @@ paths:
       tags:
       - "Media"
       description: "Get the description of a piece of media"
-      operationId: "getMediaDescription"
+      operationId: "mediaMediaIdDescriptionGET"
       parameters:
       - name: "mediaId"
         in: "path"
@@ -751,11 +880,11 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
-    put:
+    patch:
       tags:
       - "Media"
       description: "Update the description of a piece of media"
-      operationId: "putMediaDescription"
+      operationId: "mediaMediaIdDescriptionPATCH"
       parameters:
       - name: "mediaId"
         in: "path"
@@ -791,50 +920,13 @@ paths:
       tags:
       - "Media"
       description: "Get the right holders who collaborated on media"
-      operationId: "getMediaRightHolders"
+      operationId: "mediaMediaIdRight_holdersGET"
       parameters:
       - name: "mediaId"
         in: "path"
         description: "The artwork agreement's unique ID"
         required: true
         type: "integer"
-      responses:
-        200:
-          description: "OK"
-          schema:
-            properties:
-              right-holders:
-                type: "object"
-                description: "The full name of the right holder"
-                additionalProperties:
-                  type: "string"
-                  description: "The type of right holder, for example, writer, producer"
-        400:
-          description: "Bad request"
-        403:
-          description: "Permission denied"
-        404:
-          description: "Endpoint not found"
-        500:
-          description: "An unknown error occured"
-      x-swagger-router-controller: "Media"
-    put:
-      tags:
-      - "Media"
-      description: "Update right holders who collaborated on media"
-      operationId: "putMediaRightHolders"
-      parameters:
-      - name: "mediaId"
-        in: "path"
-        description: "The artwork agreement's unique ID"
-        required: true
-        type: "integer"
-      - in: "body"
-        name: "right-holders"
-        description: "The list of right holders"
-        required: true
-        schema:
-          $ref: "#/definitions/media/properties/right-holders"
       responses:
         200:
           description: "OK"
@@ -860,7 +952,7 @@ paths:
       tags:
       - "Media"
       description: "Get the jurisdiction of the given media"
-      operationId: "getMediaJurisdiction"
+      operationId: "mediaMediaIdJurisdictionGET"
       parameters:
       - name: "mediaId"
         in: "path"
@@ -886,11 +978,11 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
-    put:
+    patch:
       tags:
       - "Media"
       description: "Update the jurisdiction of the given media"
-      operationId: "putMediaJurisdiction"
+      operationId: "mediaMediaIdJurisdictionPATCH"
       parameters:
       - name: "mediaId"
         in: "path"
@@ -928,7 +1020,7 @@ paths:
       - "Media"
       description: "Get the type of rights of the given media         (Including copyright,\
         \ performance, recording)"
-      operationId: "getMediaRightsType"
+      operationId: "mediaMediaIdRights_typeGET"
       parameters:
       - name: "mediaId"
         in: "path"
@@ -957,52 +1049,12 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
-    put:
-      tags:
-      - "Media"
-      description: "Update the type of rights of the given media      (Including copyright,\
-        \ performance, recording)"
-      operationId: "putMediaRightsType"
-      parameters:
-      - name: "mediaId"
-        in: "path"
-        description: "The artwork agreement's unique ID"
-        required: true
-        type: "integer"
-      - in: "body"
-        name: "rights-type"
-        description: "The type of rights of the given media"
-        required: true
-        schema:
-          $ref: "#/definitions/media/properties/rights-type"
-      responses:
-        200:
-          description: "OK"
-          schema:
-            properties:
-              rights-type:
-                type: "object"
-                example:
-                  copyright: true
-                  performance: false
-                  recording: false
-                description: "The type of rights associated with the artwork"
-                properties: {}
-        400:
-          description: "Bad request"
-        403:
-          description: "Permission denied"
-        404:
-          description: "Endpoint not found"
-        500:
-          description: "An unknown error occured"
-      x-swagger-router-controller: "Media"
   /media/{mediaId}/genre:
     get:
       tags:
       - "Media"
       description: "Get the genre of the media with the given ID"
-      operationId: "getMediaGenre"
+      operationId: "mediaMediaIdGenreGET"
       parameters:
       - name: "mediaId"
         in: "path"
@@ -1027,11 +1079,11 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
-    put:
+    patch:
       tags:
       - "Media"
       description: "Update the genre of the media with the given ID"
-      operationId: "putMediaGenre"
+      operationId: "mediaMediaIdGenrePATCH"
       parameters:
       - name: "mediaId"
         in: "path"
@@ -1067,7 +1119,7 @@ paths:
       tags:
       - "Media"
       description: "Get creation date of the media with the given ID"
-      operationId: "getMediaCreationDate"
+      operationId: "mediaMediaIdCreation_dateGET"
       parameters:
       - name: "mediaId"
         in: "path"
@@ -1099,7 +1151,7 @@ paths:
       tags:
       - "Media"
       description: "Get publisher name of the media with the given ID"
-      operationId: "getMediaPublisher"
+      operationId: "mediaMediaIdPublisherGET"
       parameters:
       - name: "mediaId"
         in: "path"
@@ -1124,11 +1176,11 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
-    put:
+    patch:
       tags:
       - "Media"
       description: "Update publisher of the media with the given ID"
-      operationId: "putMediaPublisher"
+      operationId: "mediaMediaIdPublisherPATCH"
       parameters:
       - name: "mediaId"
         in: "path"
@@ -1164,52 +1216,13 @@ paths:
       tags:
       - "Media"
       description: "Get rights holders' percentage split given media"
-      operationId: "getMediaSplit"
+      operationId: "mediaMediaIdSplitGET"
       parameters:
       - name: "mediaId"
         in: "path"
         description: "The artwork agreement's unique ID"
         required: true
         type: "integer"
-      responses:
-        200:
-          description: "OK"
-          schema:
-            properties:
-              split:
-                type: "object"
-                description: "The percentage split of each right holder"
-                additionalProperties:
-                  type: "number"
-                  description: "The names of the right holders for the given media"
-        400:
-          description: "Bad request"
-        403:
-          description: "Permission denied"
-        404:
-          description: "Endpoint not found"
-        500:
-          description: "An unknown error occured"
-      security:
-      - jwt: []
-      x-swagger-router-controller: "Media"
-    put:
-      tags:
-      - "Media"
-      description: "Update rights holders' percentage split on media"
-      operationId: "putMediaSplit"
-      parameters:
-      - name: "mediaId"
-        in: "path"
-        description: "The artwork agreement's unique ID"
-        required: true
-        type: "integer"
-      - in: "body"
-        name: "split"
-        description: "The percentage split for the right holders of the media"
-        required: true
-        schema:
-          $ref: "#/definitions/media/properties/split"
       responses:
         200:
           description: "OK"
@@ -1237,7 +1250,7 @@ paths:
       tags:
       - "Payments"
       description: "Get a list of all payments' details"
-      operationId: "getAllPayments"
+      operationId: "paymentsGET"
       parameters: []
       responses:
         200:
@@ -1253,12 +1266,38 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Payments"
+    post:
+      tags:
+      - "Payments"
+      description: "Add a new payment"
+      operationId: "paymentsPOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "The payment details"
+        required: true
+        schema:
+          $ref: "#/definitions/payment"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/payment"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Payments"
   /payments/{id}:
     get:
       tags:
       - "Payments"
       description: "Get the details of a payment with the given ID"
-      operationId: "getPayment"
+      operationId: "paymentsIdGET"
       parameters:
       - name: "id"
         in: "path"
@@ -1279,11 +1318,42 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Payments"
+    put:
+      tags:
+      - "Payments"
+      description: "Update the details of a payment with the given ID"
+      operationId: "paymentsIdPUT"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The payment's unique ID"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "body"
+        description: "The payment details"
+        required: true
+        schema:
+          $ref: "#/definitions/payment"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/payment"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Payments"
     delete:
       tags:
       - "Payments"
       description: "Delete a right holder's profile with the given ID"
-      operationId: "deletePayment"
+      operationId: "paymentsIdDELETE"
       parameters:
       - name: "id"
         in: "path"
@@ -1292,7 +1362,7 @@ paths:
         type: "integer"
       responses:
         200:
-          description: "OK"
+          description: "OK. Payment deleted"
         400:
           description: "Bad request"
         403:
@@ -1309,7 +1379,7 @@ paths:
       tags:
       - "Payments"
       description: "Get management societies' payment transaction ID"
-      operationId: "getPaymentTransactionID"
+      operationId: "paymentsIdTransaction_idGET"
       parameters:
       - name: "id"
         in: "path"
@@ -1334,11 +1404,11 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Payments"
-    put:
+    patch:
       tags:
       - "Payments"
       description: "Update management societies' payment transaction ID"
-      operationId: "putPaymentTransactionID"
+      operationId: "paymentsIdTransaction_idPATCH"
       parameters:
       - name: "id"
         in: "path"
@@ -1376,7 +1446,7 @@ paths:
       tags:
       - "Payments"
       description: "Get blockchain transaction hash of a payment"
-      operationId: "getPaymentTransactionHash"
+      operationId: "paymentsIdTransaction_hashGET"
       parameters:
       - name: "id"
         in: "path"
@@ -1401,11 +1471,11 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Payments"
-    put:
+    patch:
       tags:
       - "Payments"
       description: "Update blockchain transaction hash of a payment"
-      operationId: "putPaymentTransactionHash"
+      operationId: "paymentsIdTransaction_hashPATCH"
       parameters:
       - name: "id"
         in: "path"
@@ -1473,20 +1543,20 @@ definitions:
   profile:
     type: "object"
     properties:
-      id:
-        type: "integer"
-        example: 1
-        description: "The unique right holder ID for this user profile"
-      name:
+      first-name:
         type: "string"
-        example: "John Smith"
+        example: "John"
+        description: "The name displayed on the user's profile"
+      last-name:
+        type: "string"
+        example: "Smith"
         description: "The name displayed on the user's profile"
       email:
         type: "string"
         example: "john.smith@example.com"
         description: "The email address for this user profile"
       media:
-        $ref: "#/definitions/media"
+        $ref: "#/definitions/mediaIds"
       ipi:
         type: "string"
         example: "00004576"
@@ -1503,34 +1573,23 @@ definitions:
       ipi: "00004576"
       role: "writer"
       wallet: "0xdd87ae15f4be97e2739c9069ddef674f907d27a8"
-      name: "John Smith"
-      id: 1
-      media:
-        split:
-          key: 0.80082819046101150206595775671303272247314453125
-        jurisdiction: "SOCAN"
-        genre: "Rock"
-        description: "The wonderful classic hit song, Love You Baby"
-        creation-date: "2019-01-01T15:53:00"
-        publisher: "sync publishing"
-        rights-type:
-          key: "rights-type"
-        mediaId: 4
-        title: "Love You Baby"
-        right-holders:
-          key: "right-holders"
+      media: ""
+      first-name: "John"
       email: "john.smith@example.com"
+      last-name: "Smith"
   medias:
     type: "array"
     description: "An array of pieces of media"
     items:
       $ref: "#/definitions/media"
+  mediaIds:
+    type: "array"
+    description: "An array of mediaIds referencing media"
+    items:
+      type: "integer"
+      example: ""
   media:
     properties:
-      mediaId:
-        type: "integer"
-        example: 4
-        description: "The unique ID for this media"
       title:
         type: "string"
         example: "Love You Baby"
@@ -1584,7 +1643,6 @@ definitions:
       publisher: "sync publishing"
       rights-type:
         key: "rights-type"
-      mediaId: 4
       title: "Love You Baby"
       right-holders:
         key: "right-holders"
@@ -1596,10 +1654,6 @@ definitions:
   payment:
     type: "object"
     properties:
-      id:
-        type: "integer"
-        example: 2
-        description: "The unique ID for this payment"
       transaction-id:
         type: "string"
         example: "12345678"
@@ -1610,5 +1664,4 @@ definitions:
         description: "The blockchain transaction hash for this payment"
     example:
       transaction-id: "12345678"
-      id: 2
       transaction-hash: "0x58a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c"

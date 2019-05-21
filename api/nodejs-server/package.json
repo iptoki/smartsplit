@@ -4,8 +4,8 @@
   "description": "Provides a RESTful API for interacting with Smartsplit",
   "main": "index.js",
   "scripts": {
-	"prestart": "npm install",
-	"start": "node index.js"
+    "prestart": "npm install",
+    "start": "node index.js"
   },
   "keywords": [
     "swagger"
@@ -13,8 +13,11 @@
   "license": "Unlicense",
   "private": true,
   "dependencies": {
-    "connect": "^3.2.0",
-    "js-yaml": "^3.3.0",
-    "swagger-tools": "0.10.1"
+    "connect": "^3.6.6",
+    "express": "^4.17.0",
+    "js-yaml": "^3.13.1",
+    "lodb": "^0.5.2",
+    "lowdb": "^1.0.0",
+    "swagger-tools": "^0.10.4"
   }
 }

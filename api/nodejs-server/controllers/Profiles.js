@@ -3,9 +3,19 @@
 var utils = require('../utils/writer.js');
 var Profiles = require('../service/ProfilesService');
 
-module.exports.deleteProfile = function deleteProfile (req, res, next) {
+module.exports.profilesGET = function profilesGET (req, res, next) {
+  Profiles.profilesGET()
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.profilesIdDELETE = function profilesIdDELETE (req, res, next) {
   var id = req.swagger.params['id'].value;
-  Profiles.deleteProfile(id)
+  Profiles.profilesIdDELETE(id)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -14,19 +24,9 @@ module.exports.deleteProfile = function deleteProfile (req, res, next) {
     });
 };
 
-module.exports.getAllProfiles = function getAllProfiles (req, res, next) {
-  Profiles.getAllProfiles()
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.getProfile = function getProfile (req, res, next) {
+module.exports.profilesIdEmailGET = function profilesIdEmailGET (req, res, next) {
   var id = req.swagger.params['id'].value;
-  Profiles.getProfile(id)
+  Profiles.profilesIdEmailGET(id)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -35,87 +35,10 @@ module.exports.getProfile = function getProfile (req, res, next) {
     });
 };
 
-module.exports.getProfileEmail = function getProfileEmail (req, res, next) {
-  var id = req.swagger.params['id'].value;
-  Profiles.getProfileEmail(id)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.getProfileIPI = function getProfileIPI (req, res, next) {
-  var id = req.swagger.params['id'].value;
-  Profiles.getProfileIPI(id)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.getProfileMedia = function getProfileMedia (req, res, next) {
-  var id = req.swagger.params['id'].value;
-  Profiles.getProfileMedia(id)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.getProfileName = function getProfileName (req, res, next) {
-  var id = req.swagger.params['id'].value;
-  Profiles.getProfileName(id)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.getProfileRole = function getProfileRole (req, res, next) {
-  var id = req.swagger.params['id'].value;
-  Profiles.getProfileRole(id)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.getProfileWallet = function getProfileWallet (req, res, next) {
-  var id = req.swagger.params['id'].value;
-  Profiles.getProfileWallet(id)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.postProfile = function postProfile (req, res, next) {
-  var body = req.swagger.params['body'].value;
-  Profiles.postProfile(body)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.putProfileEmail = function putProfileEmail (req, res, next) {
+module.exports.profilesIdEmailPATCH = function profilesIdEmailPATCH (req, res, next) {
   var id = req.swagger.params['id'].value;
   var email = req.swagger.params['email'].value;
-  Profiles.putProfileEmail(id,email)
+  Profiles.profilesIdEmailPATCH(id,email)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -124,10 +47,55 @@ module.exports.putProfileEmail = function putProfileEmail (req, res, next) {
     });
 };
 
-module.exports.putProfileIPI = function putProfileIPI (req, res, next) {
+module.exports.profilesIdFirst_nameGET = function profilesIdFirst_nameGET (req, res, next) {
+  var id = req.swagger.params['id'].value;
+  Profiles.profilesIdFirst_nameGET(id)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.profilesIdFirst_namePATCH = function profilesIdFirst_namePATCH (req, res, next) {
+  var id = req.swagger.params['id'].value;
+  var firstName = req.swagger.params['first-name'].value;
+  Profiles.profilesIdFirst_namePATCH(id,firstName)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.profilesIdGET = function profilesIdGET (req, res, next) {
+  var id = req.swagger.params['id'].value;
+  Profiles.profilesIdGET(id)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.profilesIdIpiGET = function profilesIdIpiGET (req, res, next) {
+  var id = req.swagger.params['id'].value;
+  Profiles.profilesIdIpiGET(id)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.profilesIdIpiPATCH = function profilesIdIpiPATCH (req, res, next) {
   var id = req.swagger.params['id'].value;
   var ipi = req.swagger.params['ipi'].value;
-  Profiles.putProfileIPI(id,ipi)
+  Profiles.profilesIdIpiPATCH(id,ipi)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -136,10 +104,44 @@ module.exports.putProfileIPI = function putProfileIPI (req, res, next) {
     });
 };
 
-module.exports.putProfileMedia = function putProfileMedia (req, res, next) {
+module.exports.profilesIdLast_nameGET = function profilesIdLast_nameGET (req, res, next) {
+  var id = req.swagger.params['id'].value;
+  Profiles.profilesIdLast_nameGET(id)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.profilesIdLast_namePATCH = function profilesIdLast_namePATCH (req, res, next) {
+  var id = req.swagger.params['id'].value;
+  var lastName = req.swagger.params['last-name'].value;
+  Profiles.profilesIdLast_namePATCH(id,lastName)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.profilesIdMediaGET = function profilesIdMediaGET (req, res, next) {
+  var id = req.swagger.params['id'].value;
+  Profiles.profilesIdMediaGET(id)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.profilesIdMediaPATCH = function profilesIdMediaPATCH (req, res, next) {
   var id = req.swagger.params['id'].value;
   var mediaId = req.swagger.params['mediaId'].value;
-  Profiles.putProfileMedia(id,mediaId)
+  Profiles.profilesIdMediaPATCH(id,mediaId)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -148,10 +150,10 @@ module.exports.putProfileMedia = function putProfileMedia (req, res, next) {
     });
 };
 
-module.exports.putProfileName = function putProfileName (req, res, next) {
+module.exports.profilesIdPUT = function profilesIdPUT (req, res, next) {
   var id = req.swagger.params['id'].value;
-  var name = req.swagger.params['name'].value;
-  Profiles.putProfileName(id,name)
+  var body = req.swagger.params['body'].value;
+  Profiles.profilesIdPUT(id,body)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -160,10 +162,21 @@ module.exports.putProfileName = function putProfileName (req, res, next) {
     });
 };
 
-module.exports.putProfileRole = function putProfileRole (req, res, next) {
+module.exports.profilesIdRoleGET = function profilesIdRoleGET (req, res, next) {
+  var id = req.swagger.params['id'].value;
+  Profiles.profilesIdRoleGET(id)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.profilesIdRolePATCH = function profilesIdRolePATCH (req, res, next) {
   var id = req.swagger.params['id'].value;
   var role = req.swagger.params['role'].value;
-  Profiles.putProfileRole(id,role)
+  Profiles.profilesIdRolePATCH(id,role)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -172,10 +185,32 @@ module.exports.putProfileRole = function putProfileRole (req, res, next) {
     });
 };
 
-module.exports.putProfileWallet = function putProfileWallet (req, res, next) {
+module.exports.profilesIdWalletGET = function profilesIdWalletGET (req, res, next) {
+  var id = req.swagger.params['id'].value;
+  Profiles.profilesIdWalletGET(id)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.profilesIdWalletPATCH = function profilesIdWalletPATCH (req, res, next) {
   var id = req.swagger.params['id'].value;
   var wallet = req.swagger.params['wallet'].value;
-  Profiles.putProfileWallet(id,wallet)
+  Profiles.profilesIdWalletPATCH(id,wallet)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.profilesPOST = function profilesPOST (req, res, next) {
+  var body = req.swagger.params['body'].value;
+  Profiles.profilesPOST(body)
     .then(function (response) {
       utils.writeJson(res, response);
     })

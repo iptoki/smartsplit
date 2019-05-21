@@ -2,7 +2,7 @@
 
 
 /**
- * Refreshes your current, valid JWT token and returns a new token.
+ * Refreshes your current, valid JWT token
  *
  * returns authResult
  **/
@@ -22,9 +22,9 @@ exports.getRefreshToken = function() {
 
 
 /**
- * Get a session JWT token to be included in the rest of the requests
+ * Get a JWT token for the rest of the requests
  *
- * auth Auth JSON string containing your authentication details.
+ * auth Auth JSON string containing your authentication details
  * returns authResult
  **/
 exports.postAuth = function(auth) {

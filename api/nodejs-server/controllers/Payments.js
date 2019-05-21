@@ -3,9 +3,19 @@
 var utils = require('../utils/writer.js');
 var Payments = require('../service/PaymentsService');
 
-module.exports.deletePayment = function deletePayment (req, res, next) {
+module.exports.paymentsGET = function paymentsGET (req, res, next) {
+  Payments.paymentsGET()
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.paymentsIdDELETE = function paymentsIdDELETE (req, res, next) {
   var id = req.swagger.params['id'].value;
-  Payments.deletePayment(id)
+  Payments.paymentsIdDELETE(id)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -14,19 +24,9 @@ module.exports.deletePayment = function deletePayment (req, res, next) {
     });
 };
 
-module.exports.getAllPayments = function getAllPayments (req, res, next) {
-  Payments.getAllPayments()
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.getPayment = function getPayment (req, res, next) {
+module.exports.paymentsIdGET = function paymentsIdGET (req, res, next) {
   var id = req.swagger.params['id'].value;
-  Payments.getPayment(id)
+  Payments.paymentsIdGET(id)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -35,9 +35,10 @@ module.exports.getPayment = function getPayment (req, res, next) {
     });
 };
 
-module.exports.getPaymentTransactionHash = function getPaymentTransactionHash (req, res, next) {
+module.exports.paymentsIdPUT = function paymentsIdPUT (req, res, next) {
   var id = req.swagger.params['id'].value;
-  Payments.getPaymentTransactionHash(id)
+  var body = req.swagger.params['body'].value;
+  Payments.paymentsIdPUT(id,body)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -46,9 +47,9 @@ module.exports.getPaymentTransactionHash = function getPaymentTransactionHash (r
     });
 };
 
-module.exports.getPaymentTransactionID = function getPaymentTransactionID (req, res, next) {
+module.exports.paymentsIdTransaction_hashGET = function paymentsIdTransaction_hashGET (req, res, next) {
   var id = req.swagger.params['id'].value;
-  Payments.getPaymentTransactionID(id)
+  Payments.paymentsIdTransaction_hashGET(id)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -57,10 +58,10 @@ module.exports.getPaymentTransactionID = function getPaymentTransactionID (req, 
     });
 };
 
-module.exports.putPaymentTransactionHash = function putPaymentTransactionHash (req, res, next) {
+module.exports.paymentsIdTransaction_hashPATCH = function paymentsIdTransaction_hashPATCH (req, res, next) {
   var id = req.swagger.params['id'].value;
   var transactionHash = req.swagger.params['transaction-hash'].value;
-  Payments.putPaymentTransactionHash(id,transactionHash)
+  Payments.paymentsIdTransaction_hashPATCH(id,transactionHash)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -69,10 +70,32 @@ module.exports.putPaymentTransactionHash = function putPaymentTransactionHash (r
     });
 };
 
-module.exports.putPaymentTransactionID = function putPaymentTransactionID (req, res, next) {
+module.exports.paymentsIdTransaction_idGET = function paymentsIdTransaction_idGET (req, res, next) {
+  var id = req.swagger.params['id'].value;
+  Payments.paymentsIdTransaction_idGET(id)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.paymentsIdTransaction_idPATCH = function paymentsIdTransaction_idPATCH (req, res, next) {
   var id = req.swagger.params['id'].value;
   var transactionId = req.swagger.params['transaction-id'].value;
-  Payments.putPaymentTransactionID(id,transactionId)
+  Payments.paymentsIdTransaction_idPATCH(id,transactionId)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.paymentsPOST = function paymentsPOST (req, res, next) {
+  var body = req.swagger.params['body'].value;
+  Payments.paymentsPOST(body)
     .then(function (response) {
       utils.writeJson(res, response);
     })

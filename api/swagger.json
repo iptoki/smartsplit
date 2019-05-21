@@ -65,10 +65,10 @@
     "/auth": {
       "post": {
         "operationId": "postAuth",
-        "description": "Get a session JWT token to be included in the rest of the requests",
+        "description": "Get a JWT token for the rest of the requests",
         "parameters": [
           {
-            "description": "JSON string containing your authentication details.",
+            "description": "JSON string containing your authentication details",
             "in": "body",
             "name": "auth",
             "required": true,
@@ -96,7 +96,7 @@
     "/refresh-token": {
       "get": {
         "operationId": "getRefreshToken",
-        "description": "Refreshes your current, valid JWT token and returns a new token.",
+        "description": "Refreshes your current, valid JWT token",
         "responses": {
           "200": {
             "description": "OK. JWT returned to use in your subsequent requests",
@@ -227,6 +227,56 @@
           "Profiles"
         ]
       },
+      "put": {
+        "operationId": "updateProfile",
+        "description": "This method updates a profile",
+        "parameters": [
+          {
+            "description": "The rights holder's unique profile ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "request",
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/profile"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. The profile was created.",
+            "schema": {
+              "$ref": "#/definitions/profile"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Endpoint not found"
+          },
+          "500": {
+            "description": "An unknown error occured"
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "tags": [
+          "Profiles"
+        ]
+      },
       "delete": {
         "operationId": "deleteProfile",
         "description": "Delete a right holder's profile with the given ID",
@@ -266,10 +316,10 @@
         ]
       }
     },
-    "/profiles/{id}/name": {
+    "/profiles/{id}/first-name": {
       "get": {
-        "operationId": "getProfileName",
-        "description": "Get a right holder's full name with the given ID",
+        "operationId": "getProfileFirstName",
+        "description": "Get a right holder's first name with the given ID",
         "parameters": [
           {
             "description": "The rights holder's unique profile ID",
@@ -285,9 +335,9 @@
             "schema": {
               "properties": {
                 "name": {
-                  "description": "The right holder's full name",
+                  "description": "The right holder's f name",
                   "type": "string",
-                  "example": "John Smith"
+                  "example": "John"
                 }
               }
             }
@@ -309,9 +359,9 @@
           "Profiles"
         ]
       },
-      "put": {
-        "operationId": "putProfileName",
-        "description": "Update right holder's full name with the given ID",
+      "patch": {
+        "operationId": "patchProfileFirstName",
+        "description": "Update right holder's first name with the given ID",
         "parameters": [
           {
             "description": "The rights holder's unique profile ID",
@@ -321,12 +371,12 @@
             "type": "integer"
           },
           {
-            "description": "The rights holder's full name",
+            "description": "The rights holder's first name",
             "in": "body",
-            "name": "name",
+            "name": "first-name",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/profile/properties/name"
+              "$ref": "#/definitions/profile/properties/first-name"
             }
           }
         ],
@@ -336,9 +386,104 @@
             "schema": {
               "properties": {
                 "name": {
-                  "description": "The right holder's full name",
+                  "description": "The right holder's first name",
                   "type": "string",
-                  "example": "Bob Andrews"
+                  "example": "John"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Endpoint not found"
+          },
+          "500": {
+            "description": "An unknown error occured"
+          }
+        },
+        "tags": [
+          "Profiles"
+        ]
+      }
+    },
+    "/profiles/{id}/last-name": {
+      "get": {
+        "operationId": "getProfileLastName",
+        "description": "Get a right holder's last name with the given ID",
+        "parameters": [
+          {
+            "description": "The rights holder's unique profile ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "properties": {
+                "name": {
+                  "description": "The right holder's last name",
+                  "type": "string",
+                  "example": "Smith"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Endpoint not found"
+          },
+          "500": {
+            "description": "An unknown error occured"
+          }
+        },
+        "tags": [
+          "Profiles"
+        ]
+      },
+      "patch": {
+        "operationId": "patchProfileLastName",
+        "description": "Update right holder's last name with the given ID",
+        "parameters": [
+          {
+            "description": "The rights holder's unique profile ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "The rights holder's last name",
+            "in": "body",
+            "name": "last-name",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/profile/properties/last-name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "properties": {
+                "name": {
+                  "description": "The right holder's last name",
+                  "type": "string",
+                  "example": "Smith"
                 }
               }
             }
@@ -409,8 +554,8 @@
           "Profiles"
         ]
       },
-      "put": {
-        "operationId": "putProfileEmail",
+      "patch": {
+        "operationId": "patchProfileEmail",
         "description": "Update right holder's email address with given ID",
         "parameters": [
           {
@@ -509,8 +654,8 @@
           "Profiles"
         ]
       },
-      "put": {
-        "operationId": "putProfileRole",
+      "patch": {
+        "operationId": "patchProfileRole",
         "description": "Update right holder's role with the given ID       (Or list of roles including copyright, performance, and/or recording)",
         "parameters": [
           {
@@ -604,8 +749,8 @@
           "Profiles"
         ]
       },
-      "put": {
-        "operationId": "putProfileIPI",
+      "patch": {
+        "operationId": "patchProfileIPI",
         "description": "Update right holder's IPI number",
         "parameters": [
           {
@@ -673,7 +818,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/medias"
+              "$ref": "#/definitions/mediaIds"
             }
           },
           "400": {
@@ -693,8 +838,8 @@
           "Profiles"
         ]
       },
-      "put": {
-        "operationId": "putProfileMedia",
+      "patch": {
+        "operationId": "patchProfileMedia",
         "description": "Update list of media for the given right holder",
         "parameters": [
           {
@@ -710,7 +855,7 @@
             "name": "mediaId",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/media/properties/mediaId"
+              "$ref": "#/definitions/mediaIds"
             }
           }
         ],
@@ -718,7 +863,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/medias"
+              "$ref": "#/definitions/profile"
             }
           },
           "400": {
@@ -782,8 +927,8 @@
           "Profiles"
         ]
       },
-      "put": {
-        "operationId": "putProfileWallet",
+      "patch": {
+        "operationId": "patchProfileWallet",
         "description": "Update the wallet address of a right holder",
         "parameters": [
           {
@@ -943,6 +1088,51 @@
           "Media"
         ]
       },
+      "put": {
+        "operationId": "updateMedia",
+        "description": "Update media with the given ID",
+        "parameters": [
+          {
+            "description": "The artwork agreement's unique ID",
+            "in": "path",
+            "name": "mediaId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "request",
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/media"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/media"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Endpoint not found"
+          },
+          "500": {
+            "description": "An unknown error occured"
+          }
+        },
+        "tags": [
+          "Media"
+        ]
+      },
       "delete": {
         "operationId": "deleteMedia",
         "description": "Delete a right holder's profile with the given ID",
@@ -1025,8 +1215,8 @@
           "Media"
         ]
       },
-      "put": {
-        "operationId": "putMediaTitle",
+      "patch": {
+        "operationId": "patchMediaTitle",
         "description": "Update the title of the given media identified by ID",
         "parameters": [
           {
@@ -1120,8 +1310,8 @@
           "Media"
         ]
       },
-      "put": {
-        "operationId": "putMediaDescription",
+      "patch": {
+        "operationId": "patchMediaDescription",
         "description": "Update the description of a piece of media",
         "parameters": [
           {
@@ -1217,60 +1407,6 @@
         "tags": [
           "Media"
         ]
-      },
-      "put": {
-        "operationId": "putMediaRightHolders",
-        "description": "Update right holders who collaborated on media",
-        "parameters": [
-          {
-            "description": "The artwork agreement's unique ID",
-            "in": "path",
-            "name": "mediaId",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "description": "The list of right holders",
-            "in": "body",
-            "name": "right-holders",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/media/properties/right-holders"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "properties": {
-                "right-holders": {
-                  "additionalProperties": {
-                    "description": "The type of right holder, for example, writer, producer",
-                    "type": "string"
-                  },
-                  "description": "The full name of the right holder",
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
-          "404": {
-            "description": "Endpoint not found"
-          },
-          "500": {
-            "description": "An unknown error occured"
-          }
-        },
-        "tags": [
-          "Media"
-        ]
       }
     },
     "/media/{mediaId}/jurisdiction": {
@@ -1316,8 +1452,8 @@
           "Media"
         ]
       },
-      "put": {
-        "operationId": "putMediaJurisdiction",
+      "patch": {
+        "operationId": "patchMediaJurisdiction",
         "description": "Update the jurisdiction of the given media",
         "parameters": [
           {
@@ -1414,61 +1550,6 @@
         "tags": [
           "Media"
         ]
-      },
-      "put": {
-        "operationId": "putMediaRightsType",
-        "description": "Update the type of rights of the given media      (Including copyright, performance, recording)",
-        "parameters": [
-          {
-            "description": "The artwork agreement's unique ID",
-            "in": "path",
-            "name": "mediaId",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "description": "The type of rights of the given media",
-            "in": "body",
-            "name": "rights-type",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/media/properties/rights-type"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "properties": {
-                "rights-type": {
-                  "description": "The type of rights associated with the artwork",
-                  "type": "object",
-                  "example": {
-                    "copyright": true,
-                    "performance": false,
-                    "recording": false
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
-          "404": {
-            "description": "Endpoint not found"
-          },
-          "500": {
-            "description": "An unknown error occured"
-          }
-        },
-        "tags": [
-          "Media"
-        ]
       }
     },
     "/media/{mediaId}/genre": {
@@ -1514,8 +1595,8 @@
           "Media"
         ]
       },
-      "put": {
-        "operationId": "putMediaGenre",
+      "patch": {
+        "operationId": "patchMediaGenre",
         "description": "Update the genre of the media with the given ID",
         "parameters": [
           {
@@ -1654,8 +1735,8 @@
           "Media"
         ]
       },
-      "put": {
-        "operationId": "putMediaPublisher",
+      "patch": {
+        "operationId": "patchMediaPublisher",
         "description": "Update publisher of the media with the given ID",
         "parameters": [
           {
@@ -1756,42 +1837,17 @@
         "tags": [
           "Media"
         ]
-      },
-      "put": {
-        "operationId": "putMediaSplit",
-        "description": "Update rights holders' percentage split on media",
-        "parameters": [
-          {
-            "description": "The artwork agreement's unique ID",
-            "in": "path",
-            "name": "mediaId",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "description": "The percentage split for the right holders of the media",
-            "in": "body",
-            "name": "split",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/media/properties/split"
-            }
-          }
-        ],
+      }
+    },
+    "/payments": {
+      "get": {
+        "operationId": "getAllPayments",
+        "description": "Get a list of all payments' details",
         "responses": {
           "200": {
             "description": "OK",
             "schema": {
-              "properties": {
-                "split": {
-                  "additionalProperties": {
-                    "description": "The names of the right holders for the given media",
-                    "type": "number"
-                  },
-                  "description": "The percentage split of each right holder",
-                  "type": "object"
-                }
-              }
+              "$ref": "#/definitions/payments"
             }
           },
           "400": {
@@ -1807,25 +1863,29 @@
             "description": "An unknown error occured"
           }
         },
-        "security": [
+        "tags": [
+          "Payments"
+        ]
+      },
+      "post": {
+        "operationId": "postPayment",
+        "description": "Add a new payment",
+        "parameters": [
           {
-            "jwt": []
+            "description": "The payment details",
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/payment"
+            }
           }
         ],
-        "tags": [
-          "Media"
-        ]
-      }
-    },
-    "/payments": {
-      "get": {
-        "operationId": "getAllPayments",
-        "description": "Get a list of all payments' details",
         "responses": {
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/payments"
+              "$ref": "#/definitions/payment"
             }
           },
           "400": {
@@ -1883,6 +1943,51 @@
           "Payments"
         ]
       },
+      "put": {
+        "operationId": "updatePayment",
+        "description": "Update the details of a payment with the given ID",
+        "parameters": [
+          {
+            "description": "The payment's unique ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "The payment details",
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/payment"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/payment"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Endpoint not found"
+          },
+          "500": {
+            "description": "An unknown error occured"
+          }
+        },
+        "tags": [
+          "Payments"
+        ]
+      },
       "delete": {
         "operationId": "deletePayment",
         "description": "Delete a right holder's profile with the given ID",
@@ -1897,7 +2002,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK. Payment deleted"
           },
           "400": {
             "description": "Bad request"
@@ -1965,8 +2070,8 @@
           "Payments"
         ]
       },
-      "put": {
-        "operationId": "putPaymentTransactionID",
+      "patch": {
+        "operationId": "patchPaymentTransactionID",
         "description": "Update management societies' payment transaction ID",
         "parameters": [
           {
@@ -2065,8 +2170,8 @@
           "Payments"
         ]
       },
-      "put": {
-        "operationId": "putPaymentTransactionHash",
+      "patch": {
+        "operationId": "patchPaymentTransactionHash",
         "description": "Update blockchain transaction hash of a payment",
         "parameters": [
           {
@@ -2156,15 +2261,15 @@
     },
     "profile": {
       "properties": {
-        "id": {
-          "description": "The unique right holder ID for this user profile",
-          "type": "integer",
-          "example": 1
-        },
-        "name": {
+        "first-name": {
           "description": "The name displayed on the user's profile",
           "type": "string",
-          "example": "John Smith"
+          "example": "John"
+        },
+        "last-name": {
+          "description": "The name displayed on the user's profile",
+          "type": "string",
+          "example": "Smith"
         },
         "email": {
           "description": "The email address for this user profile",
@@ -2172,7 +2277,7 @@
           "example": "john.smith@example.com"
         },
         "media": {
-          "$ref": "#/definitions/media"
+          "$ref": "#/definitions/mediaIds"
         },
         "ipi": {
           "description": "The right holder's interested party information number",
@@ -2199,13 +2304,20 @@
         "$ref": "#/definitions/media"
       }
     },
+    "mediaIds": {
+      "description": "An array of mediaIds referencing media",
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "example": [
+          2,
+          3,
+          4
+        ]
+      }
+    },
     "media": {
       "properties": {
-        "mediaId": {
-          "description": "The unique ID for this media",
-          "type": "integer",
-          "example": 4
-        },
         "title": {
           "description": "The title of this piece of media",
           "type": "string",
@@ -2272,10 +2384,10 @@
     },
     "payment": {
       "properties": {
-        "id": {
-          "description": "The unique ID for this payment",
+        "mediaId": {
+          "description": "media id related to this payment",
           "type": "integer",
-          "example": 2
+          "example": 1
         },
         "transaction-id": {
           "description": "The transaction string of the management company for this payment",
