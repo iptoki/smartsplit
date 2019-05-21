@@ -1,5 +1,6 @@
 'use strict';
-
+const lodb = require('lodb');
+const db = lodb('db.json');
 
 /**
  * Delete a right holder's profile with the given ID
@@ -9,7 +10,14 @@
  **/
 exports.deleteMedia = function(mediaId) {
   return new Promise(function(resolve, reject) {
-    resolve();
+    let media = db('media').find({ mediaId: mediaId }).value()
+    db('media').remove({ mediaId: mediaId })
+    db.save()
+    if (Object.keys(media).length > 0) {
+      resolve('Media record removed');
+    } else {
+      resolve();
+    }
   });
 }
 
@@ -21,10 +29,9 @@ exports.deleteMedia = function(mediaId) {
  **/
 exports.getAllMedia = function() {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let media = db('media').value()
+    if (Object.keys(media).length > 0) {
+      resolve(media);
     } else {
       resolve();
     }
@@ -58,8 +65,9 @@ exports.getMedia = function(mediaId) {
     "key" : "right-holders"
   }
 };
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let media = db('media').find({ mediaId: mediaId }).value()
+    if (Object.keys(media).length > 0) {
+      resolve(media);
     } else {
       resolve();
     }
@@ -75,10 +83,9 @@ exports.getMedia = function(mediaId) {
  **/
 exports.getMediaCreationDate = function(mediaId) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let media = db('media').find({ mediaId: mediaId }).value()
+    if (Object.keys(media).length > 0) {
+      resolve(media['creation-date']);
     } else {
       resolve();
     }
@@ -94,10 +101,9 @@ exports.getMediaCreationDate = function(mediaId) {
  **/
 exports.getMediaDescription = function(mediaId) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let media = db('media').find({ mediaId: mediaId }).value()
+    if (Object.keys(media).length > 0) {
+      resolve(media.description);
     } else {
       resolve();
     }
@@ -113,10 +119,9 @@ exports.getMediaDescription = function(mediaId) {
  **/
 exports.getMediaGenre = function(mediaId) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let media = db('media').find({ mediaId: mediaId }).value()
+    if (Object.keys(media).length > 0) {
+      resolve(media.genre);
     } else {
       resolve();
     }
@@ -132,10 +137,9 @@ exports.getMediaGenre = function(mediaId) {
  **/
 exports.getMediaJurisdiction = function(mediaId) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let media = db('media').find({ mediaId: mediaId }).value()
+    if (Object.keys(media).length > 0) {
+      resolve(media.jurisdiction);
     } else {
       resolve();
     }
@@ -151,10 +155,9 @@ exports.getMediaJurisdiction = function(mediaId) {
  **/
 exports.getMediaPublisher = function(mediaId) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let media = db('media').find({ mediaId: mediaId }).value()
+    if (Object.keys(media).length > 0) {
+      resolve(media.publisher);
     } else {
       resolve();
     }
@@ -170,10 +173,9 @@ exports.getMediaPublisher = function(mediaId) {
  **/
 exports.getMediaRightHolders = function(mediaId) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let media = db('media').find({ mediaId: mediaId }).value()
+    if (Object.keys(media).length > 0) {
+      resolve(media['right-holders']);
     } else {
       resolve();
     }
@@ -189,10 +191,9 @@ exports.getMediaRightHolders = function(mediaId) {
  **/
 exports.getMediaRightsType = function(mediaId) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let media = db('media').find({ mediaId: mediaId }).value()
+    if (Object.keys(media).length > 0) {
+      resolve(media['rights-type']);
     } else {
       resolve();
     }
@@ -208,10 +209,9 @@ exports.getMediaRightsType = function(mediaId) {
  **/
 exports.getMediaSplit = function(mediaId) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let media = db('media').find({ mediaId: mediaId }).value()
+    if (Object.keys(media).length > 0) {
+      resolve(media.split);
     } else {
       resolve();
     }
@@ -227,10 +227,9 @@ exports.getMediaSplit = function(mediaId) {
  **/
 exports.getMediaTitle = function(mediaId) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let media = db('media').find({ mediaId: mediaId }).value()
+    if (Object.keys(media).length > 0) {
+      resolve(media.title);
     } else {
       resolve();
     }
@@ -247,10 +246,12 @@ exports.getMediaTitle = function(mediaId) {
  **/
 exports.patchMediaDescription = function(mediaId,description) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let descriptionOld = (db('media').find({ mediaId: mediaId }).value()).description;
+    db('media').find({ mediaId: mediaId }).assign({ description: description.description });
+    db.save();
+    let media = db('media').find({ mediaId: mediaId }).value();
+    if (media.description != descriptionOld) {
+      resolve(media.description);
     } else {
       resolve();
     }
@@ -267,10 +268,12 @@ exports.patchMediaDescription = function(mediaId,description) {
  **/
 exports.patchMediaGenre = function(mediaId,genre) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let genreOld = (db('media').find({ mediaId: mediaId }).value()).genre;
+    db('media').find({ mediaId: mediaId }).assign({ genre: genre.genre });
+    db.save();
+    let media = db('media').find({ mediaId: mediaId }).value();
+    if (media.genre != genreOld) {
+      resolve(media.genre);
     } else {
       resolve();
     }
@@ -287,10 +290,12 @@ exports.patchMediaGenre = function(mediaId,genre) {
  **/
 exports.patchMediaJurisdiction = function(mediaId,jurisdiction) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let jurisdictionOld = (db('media').find({ mediaId: mediaId }).value()).jurisdiction;
+    db('media').find({ mediaId: mediaId }).assign({ jurisdiction: jurisdiction.jurisdiction });
+    db.save();
+    let media = db('media').find({ mediaId: mediaId }).value();
+    if (media.jurisdiction != jurisdictionOld) {
+      resolve(media.jurisdiction);
     } else {
       resolve();
     }
@@ -307,10 +312,12 @@ exports.patchMediaJurisdiction = function(mediaId,jurisdiction) {
  **/
 exports.patchMediaPublisher = function(mediaId,publisher) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let publisherOld = (db('media').find({ mediaId: mediaId }).value()).publisher;
+    db('media').find({ mediaId: mediaId }).assign({ publisher: publisher.publisher });
+    db.save();
+    let media = db('media').find({ mediaId: mediaId }).value();
+    if (media.publisher != publisherOld) {
+      resolve(media.publisher);
     } else {
       resolve();
     }
@@ -327,10 +334,12 @@ exports.patchMediaPublisher = function(mediaId,publisher) {
  **/
 exports.patchMediaTitle = function(mediaId,title) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let titleOld = (db('media').find({ mediaId: mediaId }).value()).title;
+    db('media').find({ mediaId: mediaId }).assign({ title: title.title });
+    db.save();
+    let media = db('media').find({ mediaId: mediaId }).value();
+    if (media.title != titleOld) {
+      resolve(media.title);
     } else {
       resolve();
     }

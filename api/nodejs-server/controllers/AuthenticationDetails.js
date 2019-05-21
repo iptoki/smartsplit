@@ -3,9 +3,8 @@
 var utils = require('../utils/writer.js');
 var AuthenticationDetails = require('../service/AuthenticationDetailsService');
 
-module.exports.authPOST = function authPOST (req, res, next) {
-  var auth = req.swagger.params['auth'].value;
-  AuthenticationDetails.authPOST(auth)
+module.exports.getRefreshToken = function getRefreshToken (req, res, next) {
+  AuthenticationDetails.getRefreshToken()
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -14,8 +13,9 @@ module.exports.authPOST = function authPOST (req, res, next) {
     });
 };
 
-module.exports.refresh_tokenGET = function refresh_tokenGET (req, res, next) {
-  AuthenticationDetails.refresh_tokenGET()
+module.exports.postAuth = function postAuth (req, res, next) {
+  var auth = req.swagger.params['auth'].value;
+  AuthenticationDetails.postAuth(auth)
     .then(function (response) {
       utils.writeJson(res, response);
     })

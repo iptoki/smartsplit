@@ -1,78 +1,102 @@
 {
   "profiles": [
     {
-       "ipi": "00004576",
-       "role": "writer",
-       "wallet": "0xdd87ae15f4be97e2739c9069ddef674f907d27a8",
-       "media": [1,2,3,4],
-       "first-name": "John",
-       "email": "john.smith@example.com",
-       "last-name": "Smith"
+      "id": 1,
+      "ipi": "00004576",
+      "role": "writer",
+      "wallet": "0xdd87ae15f4be97e2739c9069ddef674f907d27a8",
+      "media": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "first-name": "John",
+      "email": "john.smith@example.com",
+      "last-name": "Smith"
     },
     {
+      "id": 2,
       "ipi": "00004577",
       "role": "composer",
       "wallet": "0xff87ae15f4be97e2739c9069ddef674f907d27a8",
-      "media": [1,4,5,6],
+      "media": [
+        1,
+        4,
+        5,
+        6
+      ],
       "first-name": "Bob",
       "email": "bandrews@example.com",
       "last-name": "Andrews"
     },
     {
-    "ipi": "18006870",
-    "role": "songwriter",
-    "wallet": "0xab97ae15f4be97e2739c9069ddef674f907d27a8",
-    "media": [7],
-    "first-name": "Joe",
-    "email": "joe.jones@example.com",
-    "last-name": "Jones"
+      "id": 3,
+      "ipi": "18006870",
+      "role": "songwriter",
+      "wallet": "0xab97ae15f4be97e2739c9069ddef674f907d27a8",
+      "media": [
+        7
+      ],
+      "first-name": "Joe",
+      "email": "joe.jones@example.com",
+      "last-name": "Jones"
     },
     {
-    "ipi": "29305500",
-    "role": "songwriter",
-    "wallet": "0x4008479586813f34414c00BBcD377d632D6f6D8D",
-    "media": [8],
-    "first-name": "Drew",
-    "email": "dmiller@example.com",
-    "last-name": "Miller"
+      "id": 4,
+      "ipi": "29305500",
+      "role": "songwriter",
+      "wallet": "0x4008479586813f34414c00BBcD377d632D6f6D8D",
+      "media": [
+        8
+      ],
+      "first-name": "Drew",
+      "email": "dmiller@example.com",
+      "last-name": "Miller"
     },
     {
-    "ipi": "12307700",
-    "role": "singer",
-    "wallet": "0x4008479586813f34414c00bbcd377d632d6f6d6c",
-    "media": [1,8],
-    "first-name": "Andy",
-    "email": "andy.wilson7@gmail.com",
-    "last-name": "Wilson"
+      "id": 5,
+      "ipi": "12345679",
+      "role": "singer",
+      "wallet": "0x5008479586813f34414c00BBcD377d632D6f6D8B",
+      "media": [
+        1,
+        8
+      ],
+      "first-name": "Andy",
+      "email": "info999@gmail.com",
+      "last-name": "Wilson"
     }
   ],
   "media": [
     {
-     "split": {
-         "John Smith": 41.6,
-         "Bob Andrews": 16.6,
-         "Andy Wilson": 41.6
-     },
-     "jurisdiction": "SOCAN",
-     "genre": "Rock",
-     "description": "The wonderful classic hit song, Love You Baby",
-     "creation-date": "2019-01-01T15:53:00",
-     "publisher": "sync publishing",
-     "rights-type": {
-         "copyright": true,
-         "performance": true,
-         "recording": true
-     },
-     "title": "Love You Baby",
-     "right-holders": {
-         "John Smith": "writer",
-         "Bob Andrews": "composer",
-         "Andy Wilson": "singer"
-     }
+      "mediaId": 1,
+      "split": {
+        "John Smith": 41.6,
+        "Bob Andrews": 16.6,
+        "Andy Wilson": 41.6
+      },
+      "jurisdiction": "SOCAN",
+      "description": "The wonderful classic hit song, Love You Baby",
+      "creation-date": "2019-01-01T15:53:00",
+      "publisher": "sync publishing",
+      "rights-type": {
+        "copyright": true,
+        "performance": true,
+        "recording": true
+      },
+      "title": "Love You Baby",
+      "right-holders": {
+        "John Smith": "writer",
+        "Bob Andrews": "composer",
+        "Andy Wilson": "singer"
+      },
+      "genre": "Pop"
     },
     {
+      "mediaId": 2,
       "split": {
-          "John Smith": 100.0
+        "John Smith": 100
       },
       "jurisdiction": "SOPROQ",
       "genre": "Pop",
@@ -80,18 +104,19 @@
       "creation-date": "2019-01-02T15:53:00",
       "publisher": "pop publishing",
       "rights-type": {
-          "copyright": true,
-          "performance": false,
-          "recording": true
+        "copyright": true,
+        "performance": false,
+        "recording": true
       },
       "title": "Rock You Baby",
       "right-holders": {
-          "John Smith": "writer"
+        "John Smith": "writer"
       }
-      },
-      {
+    },
+    {
+      "mediaId": 3,
       "split": {
-          "John Smith": 100.0
+        "John Smith": 100
       },
       "jurisdiction": "SOPROQ",
       "genre": "Pop",
@@ -99,19 +124,20 @@
       "creation-date": "2019-01-02T15:54:00",
       "publisher": "pop publishing",
       "rights-type": {
-          "copyright": true,
-          "performance": false,
-          "recording": true
+        "copyright": true,
+        "performance": false,
+        "recording": true
       },
       "title": "Rock You Baby (Acoustic Version)",
       "right-holders": {
-          "John Smith": "writer"
+        "John Smith": "writer"
       }
-      },
-      {
+    },
+    {
+      "mediaId": 4,
       "split": {
-          "John Smith": 50.0,
-          "Bob Andrews": 50.0
+        "John Smith": 50,
+        "Bob Andrews": 50
       },
       "jurisdiction": "SOCAN",
       "genre": "Rock",
@@ -119,19 +145,20 @@
       "creation-date": "2019-01-01T15:53:00",
       "publisher": "sync publishing",
       "rights-type": {
-          "copyright": true,
-          "performance": true,
-          "recording": true
+        "copyright": true,
+        "performance": true,
+        "recording": true
       },
       "title": "The Sun",
       "right-holders": {
-          "John Smith": "writer",
-          "Bob Andrews": "composer"
+        "John Smith": "writer",
+        "Bob Andrews": "composer"
       }
-      },
-      {
+    },
+    {
+      "mediaId": 5,
       "split": {
-          "Bob Andrews": 100.0
+        "Bob Andrews": 100
       },
       "jurisdiction": "ARTISTI",
       "genre": "Hip Hop",
@@ -139,18 +166,19 @@
       "creation-date": "2019-01-02T15:54:00",
       "publisher": "SWAYER publishing",
       "rights-type": {
-          "copyright": true,
-          "performance": true,
-          "recording": true
+        "copyright": true,
+        "performance": true,
+        "recording": true
       },
       "title": "Go",
       "right-holders": {
-          "Bob Andrews": "composer"
+        "Bob Andrews": "composer"
       }
-      },
-      {
+    },
+    {
+      "mediaId": 6,
       "split": {
-          "Bob Andrews": 100.0
+        "Bob Andrews": 100
       },
       "jurisdiction": "ARTISTI",
       "genre": "Hip Hop",
@@ -158,18 +186,19 @@
       "creation-date": "2019-01-07T16:00:00",
       "publisher": "SWAYER publishing",
       "rights-type": {
-          "copyright": true,
-          "performance": true,
-          "recording": true
+        "copyright": true,
+        "performance": true,
+        "recording": true
       },
       "title": "Sway",
       "right-holders": {
-          "Bob Andrews": "composer"
+        "Bob Andrews": "composer"
       }
-      },
-      {
+    },
+    {
+      "mediaId": 7,
       "split": {
-          "Joe Jones": 100.0
+        "Joe Jones": 100
       },
       "jurisdiction": "SOCAN",
       "genre": "Classical",
@@ -177,19 +206,20 @@
       "creation-date": "2019-01-20T15:30:00",
       "publisher": "North Publishing",
       "rights-type": {
-          "copyright": true,
-          "performance": false,
-          "recording": true
+        "copyright": true,
+        "performance": false,
+        "recording": true
       },
       "title": "Symphony 9000",
       "right-holders": {
-          "Joe Jones": "songwriter"
+        "Joe Jones": "songwriter"
       }
-      },
-      {
+    },
+    {
+      "mediaId": 8,
       "split": {
-          "Drew Miller": 50.0,
-          "Andy Wilson": 50.0
+        "Drew Miller": 50,
+        "Andy Wilson": 50
       },
       "jurisdiction": "SOCAN",
       "genre": "Rock",
@@ -197,21 +227,22 @@
       "creation-date": "2019-02-20T12:53:00",
       "publisher": "sync publishing",
       "rights-type": {
-          "copyright": true,
-          "performance": true,
-          "recording": true
+        "copyright": true,
+        "performance": true,
+        "recording": true
       },
       "title": "Lift",
       "right-holders": {
-          "Drew Miller": "writer",
-          "Andy Wilson": "composer"
+        "Drew Miller": "writer",
+        "Andy Wilson": "composer"
       }
-      }
+    }
   ],
   "payments": [
-      {
-        "transaction-id": "12345678",
-        "transaction-hash": "0x58a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c"
-      }
-   ]
+    {
+      "id": 1,
+      "transaction-id": "87654321",
+      "transaction-hash": "0x18a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0d"
+    }
+  ]
 }

@@ -4,27 +4,34 @@ const fs = require('fs');
 const path = require('path');
 const http = require('http');
 const express = require('express');
+const router = express.Router();
 const lodb = require('lodb');
 const db = lodb('db.json');
-// var song = db('songs').find({ title: 'low!' }).value()
-// db('songs').remove({ title: 'low!' })
-// db.save()
+const bodyParser = require('body-parser');
+const morgan = require('morgan');
 
-let app = require('connect')();
-let swaggerTools = require('swagger-tools');
-let jsyaml = require('js-yaml');
-let serverPort = 8080;
+const app = express();
+
+const swaggerTools = require('swagger-tools');
+const jsyaml = require('js-yaml');
+const serverPort = 8080;
 
 // swaggerRouter configuration
-var options = {
+let options = {
   swaggerUi: path.join(__dirname, '/swagger.json'),
   controllers: path.join(__dirname, './controllers'),
   useStubs: process.env.NODE_ENV === 'development' // Conditionally turn on stubs (mock mode)
 };
 
 // The Swagger document (require it, build it programmatically, fetch it from a URL, ...)
-var spec = fs.readFileSync(path.join(__dirname,'api/swagger.yaml'), 'utf8');
-var swaggerDoc = jsyaml.safeLoad(spec);
+let spec = fs.readFileSync(path.join(__dirname,'api/swagger.yaml'), 'utf8');
+let swaggerDoc = jsyaml.safeLoad(spec);
+
+// bodyparser config
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(morgan('combined'));
+
 
 // Initialize the Swagger middleware
 swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {

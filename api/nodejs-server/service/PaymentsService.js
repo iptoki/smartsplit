@@ -1,4 +1,6 @@
 'use strict';
+const lodb = require('lodb');
+const db = lodb('db.json');
 
 
 /**
@@ -9,7 +11,14 @@
  **/
 exports.deletePayment = function(id) {
   return new Promise(function(resolve, reject) {
-    resolve();
+    let payment = db('payments').find({ id: id }).value()
+    db('payments').remove({ id: id })
+    db.save()
+    if (Object.keys(payment).length > 0) {
+      resolve('Payment record removed');
+    } else {
+      resolve();
+    }
   });
 }
 
@@ -21,10 +30,9 @@ exports.deletePayment = function(id) {
  **/
 exports.getAllPayments = function() {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let payments = db('payments').value()
+    if (Object.keys(payments).length > 0) {
+      resolve(payments);
     } else {
       resolve();
     }
@@ -46,8 +54,9 @@ exports.getPayment = function(id) {
   "mediaId" : 1,
   "transaction-hash" : "0x58a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c"
 };
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let payment = db('payments').find({id: id}).value()
+    if (Object.keys(payment).length > 0) {
+      resolve(payment);
     } else {
       resolve();
     }
@@ -63,10 +72,9 @@ exports.getPayment = function(id) {
  **/
 exports.getPaymentTransactionHash = function(id) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let payment = db('payments').find({id: id}).value()
+    if (Object.keys(payment).length > 0) {
+      resolve(payment['transaction-hash']);
     } else {
       resolve();
     }
@@ -82,10 +90,9 @@ exports.getPaymentTransactionHash = function(id) {
  **/
 exports.getPaymentTransactionID = function(id) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let payment = db('payments').find({id: id}).value()
+    if (Object.keys(payment).length > 0) {
+      resolve(payment['transaction-id']);
     } else {
       resolve();
     }
@@ -102,10 +109,12 @@ exports.getPaymentTransactionID = function(id) {
  **/
 exports.patchPaymentTransactionHash = function(id,transactionHash) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let transactionHashOld = (db('payments').find({ id: id }).value())['transaction-hash'];
+    db('payments').find({ id: id }).assign({ 'transaction-hash': transactionHash['transaction-hash'] });
+    db.save();
+    let payment = db('payments').find({ id: id }).value();
+    if (payment['transaction-hash']  != transactionHashOld) {
+      resolve(payment['transaction-hash']);
     } else {
       resolve();
     }
@@ -122,10 +131,12 @@ exports.patchPaymentTransactionHash = function(id,transactionHash) {
  **/
 exports.patchPaymentTransactionID = function(id,transactionId) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let transactionIdOld = (db('payments').find({ id: id }).value())['transaction-id'];
+    db('payments').find({ id: id }).assign({ 'transaction-id': transactionId['transaction-id'] });
+    db.save();
+    let payment = db('payments').find({ id: id }).value();
+    if (payment['transaction-id']  != transactionIdOld) {
+      resolve(payment['transaction-id']);
     } else {
       resolve();
     }

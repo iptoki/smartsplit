@@ -3,19 +3,9 @@
 var utils = require('../utils/writer.js');
 var Media = require('../service/MediaService');
 
-module.exports.mediaGET = function mediaGET (req, res, next) {
-  Media.mediaGET()
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.mediaMediaIdCreation_dateGET = function mediaMediaIdCreation_dateGET (req, res, next) {
+module.exports.deleteMedia = function deleteMedia (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
-  Media.mediaMediaIdCreation_dateGET(mediaId)
+  Media.deleteMedia(mediaId)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -24,9 +14,19 @@ module.exports.mediaMediaIdCreation_dateGET = function mediaMediaIdCreation_date
     });
 };
 
-module.exports.mediaMediaIdDELETE = function mediaMediaIdDELETE (req, res, next) {
+module.exports.getAllMedia = function getAllMedia (req, res, next) {
+  Media.getAllMedia()
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.getMedia = function getMedia (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
-  Media.mediaMediaIdDELETE(mediaId)
+  Media.getMedia(mediaId)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -35,9 +35,9 @@ module.exports.mediaMediaIdDELETE = function mediaMediaIdDELETE (req, res, next)
     });
 };
 
-module.exports.mediaMediaIdDescriptionGET = function mediaMediaIdDescriptionGET (req, res, next) {
+module.exports.getMediaCreationDate = function getMediaCreationDate (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
-  Media.mediaMediaIdDescriptionGET(mediaId)
+  Media.getMediaCreationDate(mediaId)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -46,10 +46,98 @@ module.exports.mediaMediaIdDescriptionGET = function mediaMediaIdDescriptionGET 
     });
 };
 
-module.exports.mediaMediaIdDescriptionPATCH = function mediaMediaIdDescriptionPATCH (req, res, next) {
+module.exports.getMediaDescription = function getMediaDescription (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  Media.getMediaDescription(mediaId)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.getMediaGenre = function getMediaGenre (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  Media.getMediaGenre(mediaId)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.getMediaJurisdiction = function getMediaJurisdiction (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  Media.getMediaJurisdiction(mediaId)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.getMediaPublisher = function getMediaPublisher (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  Media.getMediaPublisher(mediaId)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.getMediaRightHolders = function getMediaRightHolders (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  Media.getMediaRightHolders(mediaId)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.getMediaRightsType = function getMediaRightsType (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  Media.getMediaRightsType(mediaId)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.getMediaSplit = function getMediaSplit (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  Media.getMediaSplit(mediaId)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.getMediaTitle = function getMediaTitle (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  Media.getMediaTitle(mediaId)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.patchMediaDescription = function patchMediaDescription (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
   var description = req.swagger.params['description'].value;
-  Media.mediaMediaIdDescriptionPATCH(mediaId,description)
+  Media.patchMediaDescription(mediaId,description)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -58,32 +146,10 @@ module.exports.mediaMediaIdDescriptionPATCH = function mediaMediaIdDescriptionPA
     });
 };
 
-module.exports.mediaMediaIdGET = function mediaMediaIdGET (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  Media.mediaMediaIdGET(mediaId)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.mediaMediaIdGenreGET = function mediaMediaIdGenreGET (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  Media.mediaMediaIdGenreGET(mediaId)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.mediaMediaIdGenrePATCH = function mediaMediaIdGenrePATCH (req, res, next) {
+module.exports.patchMediaGenre = function patchMediaGenre (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
   var genre = req.swagger.params['genre'].value;
-  Media.mediaMediaIdGenrePATCH(mediaId,genre)
+  Media.patchMediaGenre(mediaId,genre)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -92,21 +158,10 @@ module.exports.mediaMediaIdGenrePATCH = function mediaMediaIdGenrePATCH (req, re
     });
 };
 
-module.exports.mediaMediaIdJurisdictionGET = function mediaMediaIdJurisdictionGET (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  Media.mediaMediaIdJurisdictionGET(mediaId)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.mediaMediaIdJurisdictionPATCH = function mediaMediaIdJurisdictionPATCH (req, res, next) {
+module.exports.patchMediaJurisdiction = function patchMediaJurisdiction (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
   var jurisdiction = req.swagger.params['jurisdiction'].value;
-  Media.mediaMediaIdJurisdictionPATCH(mediaId,jurisdiction)
+  Media.patchMediaJurisdiction(mediaId,jurisdiction)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -115,33 +170,10 @@ module.exports.mediaMediaIdJurisdictionPATCH = function mediaMediaIdJurisdiction
     });
 };
 
-module.exports.mediaMediaIdPUT = function mediaMediaIdPUT (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  var body = req.swagger.params['body'].value;
-  Media.mediaMediaIdPUT(mediaId,body)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.mediaMediaIdPublisherGET = function mediaMediaIdPublisherGET (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  Media.mediaMediaIdPublisherGET(mediaId)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.mediaMediaIdPublisherPATCH = function mediaMediaIdPublisherPATCH (req, res, next) {
+module.exports.patchMediaPublisher = function patchMediaPublisher (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
   var publisher = req.swagger.params['publisher'].value;
-  Media.mediaMediaIdPublisherPATCH(mediaId,publisher)
+  Media.patchMediaPublisher(mediaId,publisher)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -150,54 +182,10 @@ module.exports.mediaMediaIdPublisherPATCH = function mediaMediaIdPublisherPATCH 
     });
 };
 
-module.exports.mediaMediaIdRight_holdersGET = function mediaMediaIdRight_holdersGET (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  Media.mediaMediaIdRight_holdersGET(mediaId)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.mediaMediaIdRights_typeGET = function mediaMediaIdRights_typeGET (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  Media.mediaMediaIdRights_typeGET(mediaId)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.mediaMediaIdSplitGET = function mediaMediaIdSplitGET (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  Media.mediaMediaIdSplitGET(mediaId)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.mediaMediaIdTitleGET = function mediaMediaIdTitleGET (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  Media.mediaMediaIdTitleGET(mediaId)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.mediaMediaIdTitlePATCH = function mediaMediaIdTitlePATCH (req, res, next) {
+module.exports.patchMediaTitle = function patchMediaTitle (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
   var title = req.swagger.params['title'].value;
-  Media.mediaMediaIdTitlePATCH(mediaId,title)
+  Media.patchMediaTitle(mediaId,title)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -206,9 +194,21 @@ module.exports.mediaMediaIdTitlePATCH = function mediaMediaIdTitlePATCH (req, re
     });
 };
 
-module.exports.mediaPOST = function mediaPOST (req, res, next) {
+module.exports.postMedia = function postMedia (req, res, next) {
   var body = req.swagger.params['body'].value;
-  Media.mediaPOST(body)
+  Media.postMedia(body)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.updateMedia = function updateMedia (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  var body = req.swagger.params['body'].value;
+  Media.updateMedia(mediaId,body)
     .then(function (response) {
       utils.writeJson(res, response);
     })

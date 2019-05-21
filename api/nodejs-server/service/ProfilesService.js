@@ -1,4 +1,6 @@
 'use strict';
+const lodb = require('lodb');
+const db = lodb('db.json');
 
 
 /**
@@ -9,7 +11,14 @@
  **/
 exports.deleteProfile = function(id) {
   return new Promise(function(resolve, reject) {
-    resolve();
+    let profile = db('profiles').find({ id: id }).value()
+    db('profiles').remove({ id: id })
+    db.save()
+    if (Object.keys(profile).length > 0) {
+      resolve('Profile removed');
+    } else {
+      resolve();
+    }
   });
 }
 
@@ -21,10 +30,9 @@ exports.deleteProfile = function(id) {
  **/
 exports.getAllProfiles = function() {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let profiles = db('profiles').value()
+    if (Object.keys(profiles).length > 0) {
+      resolve(profiles);
     } else {
       resolve();
     }
@@ -50,8 +58,9 @@ exports.getProfile = function(id) {
   "email" : "john.smith@example.com",
   "last-name" : "Smith"
 };
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let profile = db('profiles').find({ id: id }).value()
+    if (Object.keys(profile).length > 0) {
+      resolve(profile);
     } else {
       resolve();
     }
@@ -67,10 +76,9 @@ exports.getProfile = function(id) {
  **/
 exports.getProfileEmail = function(id) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let profile = db('profiles').find({ id: id }).value()
+    if (Object.keys(profile).length > 0) {
+      resolve(profile.email);
     } else {
       resolve();
     }
@@ -86,10 +94,9 @@ exports.getProfileEmail = function(id) {
  **/
 exports.getProfileFirstName = function(id) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let profile = db('profiles').find({ id: id }).value()
+    if (Object.keys(profile).length > 0) {
+      resolve(profile['first-name']);
     } else {
       resolve();
     }
@@ -105,10 +112,9 @@ exports.getProfileFirstName = function(id) {
  **/
 exports.getProfileIPI = function(id) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let profile = db('profiles').find({ id: id }).value()
+    if (Object.keys(profile).length > 0) {
+      resolve(profile.ipi);
     } else {
       resolve();
     }
@@ -124,10 +130,9 @@ exports.getProfileIPI = function(id) {
  **/
 exports.getProfileLastName = function(id) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let profile = db('profiles').find({ id: id }).value()
+    if (Object.keys(profile).length > 0) {
+      resolve(profile['last-name']);
     } else {
       resolve();
     }
@@ -143,10 +148,9 @@ exports.getProfileLastName = function(id) {
  **/
 exports.getProfileMedia = function(id) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let profile = db('profiles').find({ id: id }).value()
+    if (Object.keys(profile).length > 0) {
+      resolve(profile.media);
     } else {
       resolve();
     }
@@ -162,10 +166,9 @@ exports.getProfileMedia = function(id) {
  **/
 exports.getProfileRole = function(id) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let profile = db('profiles').find({ id: id }).value()
+    if (Object.keys(profile).length > 0) {
+      resolve(profile.role);
     } else {
       resolve();
     }
@@ -181,10 +184,9 @@ exports.getProfileRole = function(id) {
  **/
 exports.getProfileWallet = function(id) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let profile = db('profiles').find({ id: id }).value()
+    if (Object.keys(profile).length > 0) {
+      resolve(profile.wallet);
     } else {
       resolve();
     }
@@ -201,10 +203,12 @@ exports.getProfileWallet = function(id) {
  **/
 exports.patchProfileEmail = function(id,email) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let emailOld = (db('profiles').find({ id: id }).value()).email;
+    db('profiles').find({ id: id }).assign({ email: email.email });
+    db.save();
+    let profile = db('profiles').find({ id: id }).value();
+    if (profile.email != emailOld) {
+      resolve(profile.email);
     } else {
       resolve();
     }
@@ -221,10 +225,12 @@ exports.patchProfileEmail = function(id,email) {
  **/
 exports.patchProfileFirstName = function(id,firstName) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let firstNameOld = (db('profiles').find({ id: id }).value())['first-name'];
+    db('profiles').find({ id: id }).assign({ 'first-name': firstName['first-name'] });
+    db.save();
+    let profile = db('profiles').find({ id: id }).value();
+    if (( profile['first-name'] ) != firstNameOld) {
+      resolve(profile['first-name']);
     } else {
       resolve();
     }
@@ -241,10 +247,12 @@ exports.patchProfileFirstName = function(id,firstName) {
  **/
 exports.patchProfileIPI = function(id,ipi) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let ipiOld = (db('profiles').find({ id: id }).value()).ipi;
+    db('profiles').find({ id: id }).assign({ ipi: ipi.ipi });
+    db.save();
+    let profile = db('profiles').find({ id: id }).value();
+    if (profile.ipi  != ipiOld) {
+      resolve(profile.ipi);
     } else {
       resolve();
     }
@@ -261,10 +269,12 @@ exports.patchProfileIPI = function(id,ipi) {
  **/
 exports.patchProfileLastName = function(id,lastName) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let lastNameOld = (db('profiles').find({ id: id }).value())['last-name'];
+    db('profiles').find({ id: id }).assign({ 'last-name': lastName['last-name'] });
+    db.save();
+    let profile = db('profiles').find({ id: id }).value();
+    if (profile['last-name']  != lastNameOld) {
+      resolve(profile['last-name']);
     } else {
       resolve();
     }
@@ -281,18 +291,13 @@ exports.patchProfileLastName = function(id,lastName) {
  **/
 exports.patchProfileMedia = function(id,mediaId) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {
-  "ipi" : "00004576",
-  "role" : "writer",
-  "wallet" : "0xdd87ae15f4be97e2739c9069ddef674f907d27a8",
-  "media" : "",
-  "first-name" : "John",
-  "email" : "john.smith@example.com",
-  "last-name" : "Smith"
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let mediaOld = (db('profiles').find({ id: id }).value()).media;
+    db('profiles').find({ id: id }).assign({ media: mediaId });
+    console.log('================', mediaId)
+    db.save();
+    let profile = db('profiles').find({ id: id }).value();
+    if (profile.media != mediaOld) {
+      resolve(profile.media);
     } else {
       resolve();
     }
@@ -309,10 +314,12 @@ exports.patchProfileMedia = function(id,mediaId) {
  **/
 exports.patchProfileRole = function(id,role) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let roleOld = (db('profiles').find({ id: id }).value()).role;
+    db('profiles').find({ id: id }).assign({ role: role.role });
+    db.save();
+    let profile = db('profiles').find({ id: id }).value();
+    if (profile.role  != roleOld) {
+      resolve(profile.role);
     } else {
       resolve();
     }
@@ -329,10 +336,12 @@ exports.patchProfileRole = function(id,role) {
  **/
 exports.patchProfileWallet = function(id,wallet) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let walletOld = (db('profiles').find({ id: id }).value()).wallet;
+    db('profiles').find({ id: id }).assign({ wallet: wallet.wallet });
+    db.save();
+    let profile = db('profiles').find({ id: id }).value();
+    if (profile.wallet  != walletOld) {
+      resolve(profile.wallet);
     } else {
       resolve();
     }
