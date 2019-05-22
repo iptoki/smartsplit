@@ -30,7 +30,8 @@ let swaggerDoc = jsyaml.safeLoad(spec);
 // bodyparser config
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(morgan('combined'));
+app.use(morgan('short'));
+app.use(express.static('./public'));
 
 
 // Initialize the Swagger middleware

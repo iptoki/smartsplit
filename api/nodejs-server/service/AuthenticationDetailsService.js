@@ -1,5 +1,12 @@
 'use strict';
 
+const lodb = require('lodb');
+const db = lodb('db.json');
+const bodyParser = require('body-parser');
+const express = require('express');
+const app = express();
+const jwt = require('json-web-token');
+app.use(bodyParser.urlencoded({ extended: false }));
 
 /**
  * Refreshes your current, valid JWT token
@@ -8,12 +15,10 @@
  **/
 exports.getRefreshToken = function() {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {
-  "accessToken" : "fyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJjb21wYW55IjoiRnV0dXJlRWQiLCJzdWIiOjEsImlzcyI6Imh0dHA6XC9cL2Z1dHVyZWVkLmRldlwvYXBpXC92MVwvc3R1ZGVudFwvbG9naW5cL3VzZXJuYW1lIiwiaWF0IjoiMTQyNzQyNjc3MSIsImV4cCI6IjE0Mjc0MzAzNzEiLCJuYmYiOiIxNDI3NDI2NzcxIiwianRpIjoiNmFlZDQ3MGFiOGMxYTk0MmE0MTViYTAwOTBlMTFlZTUifQ.MmM2YTUwMjEzYTE0OGNhNjk5Y2Y2MjEwZDdkN2Y1OTQ2NWVhZTdmYmI4OTA5YmM1Y2QwYTMzZjUwNTgwY2Y0MQ"
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    let accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJteV9pc3N1cmVyIiwiYXVkIjoiV29ybGQiLCJpYXQiOjE0MDAwNjI0MDAyMjQsImV4cCI6MTYwOTU1NDUxODAwMCwidHlwIjoiL3YxL2F1dGgiLCJyZXF1ZXN0Ijp7ImFwaUtleSI6IjEyMzQ1Njc4OTEyMzQ1Njc4OSIsInVzZXJuYW1lIjoiYXBwbGUiLCJwYXNzd29yZCI6ImFwcGxlIn19.1pANIo2rkisv_bwCSw9Q_z52S3Q3RTQsl8kkoTf1Yvo";
+    let authentication = db('authentication').find({token: accessToken}).value()
+    if (Object.keys(authentication).length > 0) {
+      resolve("Authentication token refreshed: " + authentication.token);
     } else {
       resolve();
     }
@@ -29,15 +34,27 @@ exports.getRefreshToken = function() {
  **/
 exports.postAuth = function(auth) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {
-  "accessToken" : "fyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJjb21wYW55IjoiRnV0dXJlRWQiLCJzdWIiOjEsImlzcyI6Imh0dHA6XC9cL2Z1dHVyZWVkLmRldlwvYXBpXC92MVwvc3R1ZGVudFwvbG9naW5cL3VzZXJuYW1lIiwiaWF0IjoiMTQyNzQyNjc3MSIsImV4cCI6IjE0Mjc0MzAzNzEiLCJuYmYiOiIxNDI3NDI2NzcxIiwianRpIjoiNmFlZDQ3MGFiOGMxYTk0MmE0MTViYTAwOTBlMTFlZTUifQ.MmM2YTUwMjEzYTE0OGNhNjk5Y2Y2MjEwZDdkN2Y1OTQ2NWVhZTdmYmI4OTA5YmM1Y2QwYTMzZjUwNTgwY2Y0MQ"
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
-    }
+    let payload = {
+      "iss": "my_issurer",
+      "aud": "World",
+      "iat": 1400062400224,
+      "exp": 1609554518000,
+      "typ": "/v1/auth",
+      "request": auth
+    };
+    let secret = 'TOPSECRET';
+
+    jwt.encode(secret, payload, function (err, token) {
+      if (err) {
+        console.error(err.name, err.message);
+      } else {
+        if (token) {
+          resolve(token);
+        } else {
+          resolve();
+        }
+      }
+    });
   });
 }
 

@@ -2330,7 +2330,7 @@
   "definitions": {
     "auth": {
       "properties": {
-        "apikey": {
+        "apiKey": {
           "type": "string"
         },
         "username": {

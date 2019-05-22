@@ -16,8 +16,10 @@
     "connect": "^3.7.0",
     "express": "^4.17.0",
     "js-yaml": "^3.3.0",
+    "json-web-token": "^3.0.0",
     "lodb": "^0.5.2",
     "morgan": "^1.9.1",
+    "node-webtokens": "^1.0.0",
     "swagger-tools": "^0.10.4"
   }
 }
