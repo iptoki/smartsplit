@@ -1441,6 +1441,36 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "Payments"
+  /payments/{id}/amount:
+    get:
+      tags:
+      - "Payments"
+      description: "Get the amount for the given payment"
+      operationId: "getPaymentAmount"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The payment's unique ID"
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            properties:
+              amount:
+                type: "number"
+                example: 20
+                description: "The amount of the payment in $ CAD"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Payments"
   /payments/{id}/transaction-hash:
     get:
       tags:
@@ -1543,6 +1573,10 @@ definitions:
   profile:
     type: "object"
     properties:
+      id:
+        type: integer
+        example: 1
+        description: "The unique ID of the given profile"
       first-name:
         type: "string"
         example: "John"
@@ -1587,9 +1621,13 @@ definitions:
     description: "An array of mediaIds referencing media"
     items:
       type: "integer"
-      example: ""
+      example: 1
   media:
     properties:
+      mediaId:
+        type: "integer"
+        example: 1
+        description: "The id of this piece of media"
       title:
         type: "string"
         example: "Love You Baby"
@@ -1598,6 +1636,10 @@ definitions:
         type: "string"
         example: "The wonderful classic hit song, Love You Baby"
         description: "The short descriptioon of this piece of media"
+      cover:
+        type: "boolean"
+        example: false
+        description: "Whether or not this piece of media is a cover"
       right-holders:
         type: "object"
         description: "The full name of the right holder"
@@ -1640,6 +1682,7 @@ definitions:
       genre: "Rock"
       description: "The wonderful classic hit song, Love You Baby"
       creation-date: "2019-01-01T15:53:00"
+      cover: false
       publisher: "sync publishing"
       rights-type:
         key: "rights-type"
@@ -1654,10 +1697,14 @@ definitions:
   payment:
     type: "object"
     properties:
-      mediaId:
+      id:
         type: "integer"
         example: 1
-        description: "media id related to this payment"
+        description: "Media ID related to this payment"
+      amount: 
+        type: "number"
+        example: 20
+        description: "The amount of the payment in $ CAD"
       transaction-id:
         type: "string"
         example: "12345678"
@@ -1668,5 +1715,6 @@ definitions:
         description: "The blockchain transaction hash for this payment"
     example:
       transaction-id: "12345678"
-      mediaId: 1
+      id: 1
+      amount: 20
       transaction-hash: "0x58a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c"

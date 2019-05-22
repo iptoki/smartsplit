@@ -2,18 +2,18 @@
   "profiles": [
     {
       "id": 1,
-      "ipi": "00004576",
+      "ipi": "11114576",
       "role": "writer",
-      "wallet": "0xdd87ae15f4be97e2739c9069ddef674f907d27a8",
+      "wallet": "0xaa87ae15f4be97e2739c9069ddef674f907d27a8",
       "media": [
         1,
         2,
         3,
         4
       ],
-      "first-name": "John",
-      "email": "john.smith@example.com",
-      "last-name": "Smith"
+      "first-name": "Johnny",
+      "email": "johnny.smithy@example.com",
+      "last-name": "Smithy"
     },
     {
       "id": 2,
@@ -66,6 +66,18 @@
       "first-name": "Andy",
       "email": "info999@gmail.com",
       "last-name": "Wilson"
+    },
+    {
+      "id": 6,
+      "ipi": "77777777",
+      "role": "writer",
+      "wallet": "0xad87ae15f4be97e2739c9069ddef674f907d27a8",
+      "media": [
+        7
+      ],
+      "first-name": "Seven",
+      "email": "seven@example.com",
+      "last-name": "Smith"
     }
   ],
   "media": [
@@ -78,6 +90,7 @@
       },
       "jurisdiction": "SOCAN",
       "description": "The wonderful classic hit song, Love You Baby",
+      "cover": false,
       "creation-date": "2019-01-01T15:53:00",
       "publisher": "sync publishing",
       "rights-type": {
@@ -101,6 +114,7 @@
       "jurisdiction": "SOPROQ",
       "genre": "Pop",
       "description": "The wonderful classic hit song, Rock You Baby",
+      "cover": false,
       "creation-date": "2019-01-02T15:53:00",
       "publisher": "pop publishing",
       "rights-type": {
@@ -121,6 +135,7 @@
       "jurisdiction": "SOPROQ",
       "genre": "Pop",
       "description": "The acoustic version of the classic Rock You Baby",
+      "cover": false,
       "creation-date": "2019-01-02T15:54:00",
       "publisher": "pop publishing",
       "rights-type": {
@@ -142,6 +157,7 @@
       "jurisdiction": "SOCAN",
       "genre": "Rock",
       "description": "Cultural cult classic, The Sun",
+      "cover": false,
       "creation-date": "2019-01-01T15:53:00",
       "publisher": "sync publishing",
       "rights-type": {
@@ -163,6 +179,7 @@
       "jurisdiction": "ARTISTI",
       "genre": "Hip Hop",
       "description": "The Ultimate Old-School Hip Hop Song, Go",
+      "cover": false,
       "creation-date": "2019-01-02T15:54:00",
       "publisher": "SWAYER publishing",
       "rights-type": {
@@ -183,6 +200,7 @@
       "jurisdiction": "ARTISTI",
       "genre": "Hip Hop",
       "description": "The Ultimate Old-School Hip Hop Song, Sway",
+      "cover": true,
       "creation-date": "2019-01-07T16:00:00",
       "publisher": "SWAYER publishing",
       "rights-type": {
@@ -203,6 +221,7 @@
       "jurisdiction": "SOCAN",
       "genre": "Classical",
       "description": "Recording of Classical piece Symphony 9000",
+      "cover": false,
       "creation-date": "2019-01-20T15:30:00",
       "publisher": "North Publishing",
       "rights-type": {
@@ -218,12 +237,13 @@
     {
       "mediaId": 8,
       "split": {
-        "Drew Miller": 50,
-        "Andy Wilson": 50
+        "Drew Miller": 75,
+        "Andy Wilson": 25
       },
       "jurisdiction": "SOCAN",
       "genre": "Rock",
       "description": "Lovely summer song",
+      "cover": false,
       "creation-date": "2019-02-20T12:53:00",
       "publisher": "sync publishing",
       "rights-type": {
@@ -241,8 +261,15 @@
   "payments": [
     {
       "id": 1,
+      "amount": 20,
       "transaction-id": "87654321",
       "transaction-hash": "0x18a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0d"
+    },
+    {
+      "id": 2,
+      "amount": 100,
+      "transaction-id": "12345678",
+      "transaction-hash": "0x98a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c"
     }
   ]
 }

@@ -63,6 +63,23 @@ exports.getPayment = function(id) {
   });
 }
 
+/**
+ * Get the amount for the given payment
+ *
+ * id Integer The payment's unique ID
+ * returns Object
+ **/
+exports.getPaymentAmount = function(id) {
+  return new Promise(function(resolve, reject) {
+    let payment = db('payments').find({id: id}).value()
+    if (Object.keys(payment).length > 0) {
+      resolve("Payment amount: $" + payment.amount);
+    } else {
+      resolve();
+    }
+  });
+}
+
 
 /**
  * Get blockchain transaction hash of a payment
@@ -114,7 +131,7 @@ exports.patchPaymentTransactionHash = function(id,transactionHash) {
     db.save();
     let payment = db('payments').find({ id: id }).value();
     if (payment['transaction-hash']  != transactionHashOld) {
-      resolve(payment['transaction-hash']);
+      resolve("Transaction Hash updated: " + payment['transaction-hash']);
     } else {
       resolve();
     }
@@ -136,7 +153,7 @@ exports.patchPaymentTransactionID = function(id,transactionId) {
     db.save();
     let payment = db('payments').find({ id: id }).value();
     if (payment['transaction-id']  != transactionIdOld) {
-      resolve(payment['transaction-id']);
+      resolve("Transaction ID updated: " + payment['transaction-id']);
     } else {
       resolve();
     }
@@ -152,14 +169,10 @@ exports.patchPaymentTransactionID = function(id,transactionId) {
  **/
 exports.postPayment = function(body) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {
-  "transaction-id" : "12345678",
-  "mediaId" : 1,
-  "transaction-hash" : "0x58a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c"
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    db('payments').push( body )
+    db.save()
+    if (body) {
+      resolve(body);
     } else {
       resolve();
     }
@@ -176,14 +189,15 @@ exports.postPayment = function(body) {
  **/
 exports.updatePayment = function(id,body) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {
-  "transaction-id" : "12345678",
-  "mediaId" : 1,
-  "transaction-hash" : "0x58a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c"
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    db('payments').find({ id: id }).assign({ 
+      id: id,
+      amount: body.amount,
+      'transaction-id': body['transaction-id'],
+      'transaction-hash': body['transaction-hash']
+    })
+    let payment =  db('payments').find({ id: id }).value();
+    if (body) {
+      resolve(payment);
     } else {
       resolve();
     }

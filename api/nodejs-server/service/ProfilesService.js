@@ -208,7 +208,7 @@ exports.patchProfileEmail = function(id,email) {
     db.save();
     let profile = db('profiles').find({ id: id }).value();
     if (profile.email != emailOld) {
-      resolve(profile.email);
+      resolve("Email updated: " + profile.email);
     } else {
       resolve();
     }
@@ -230,7 +230,7 @@ exports.patchProfileFirstName = function(id,firstName) {
     db.save();
     let profile = db('profiles').find({ id: id }).value();
     if (( profile['first-name'] ) != firstNameOld) {
-      resolve(profile['first-name']);
+      resolve("First name updated: " + profile['first-name']);
     } else {
       resolve();
     }
@@ -252,7 +252,7 @@ exports.patchProfileIPI = function(id,ipi) {
     db.save();
     let profile = db('profiles').find({ id: id }).value();
     if (profile.ipi  != ipiOld) {
-      resolve(profile.ipi);
+      resolve("Interested party information number updated: " + profile.ipi);
     } else {
       resolve();
     }
@@ -274,7 +274,7 @@ exports.patchProfileLastName = function(id,lastName) {
     db.save();
     let profile = db('profiles').find({ id: id }).value();
     if (profile['last-name']  != lastNameOld) {
-      resolve(profile['last-name']);
+      resolve("Last name updated: " + profile['last-name']);
     } else {
       resolve();
     }
@@ -292,12 +292,14 @@ exports.patchProfileLastName = function(id,lastName) {
 exports.patchProfileMedia = function(id,mediaId) {
   return new Promise(function(resolve, reject) {
     let mediaOld = (db('profiles').find({ id: id }).value()).media;
-    db('profiles').find({ id: id }).assign({ media: mediaId });
-    console.log('================', mediaId)
+    let mediaString = mediaOld + "," + mediaId;
+    // convert to an array of sorted numbers
+    let mediaValue = mediaString.split(',').map(Number).sort();
+    db('profiles').find({ id: id }).assign({ media: [...new Set(mediaValue)] });
     db.save();
     let profile = db('profiles').find({ id: id }).value();
     if (profile.media != mediaOld) {
-      resolve(profile.media);
+      resolve("Media added: " + profile.media);
     } else {
       resolve();
     }
@@ -319,7 +321,7 @@ exports.patchProfileRole = function(id,role) {
     db.save();
     let profile = db('profiles').find({ id: id }).value();
     if (profile.role  != roleOld) {
-      resolve(profile.role);
+      resolve("Role updated: " + profile.role);
     } else {
       resolve();
     }
@@ -341,7 +343,7 @@ exports.patchProfileWallet = function(id,wallet) {
     db.save();
     let profile = db('profiles').find({ id: id }).value();
     if (profile.wallet  != walletOld) {
-      resolve(profile.wallet);
+      resolve("Wallet updated: " + profile.wallet);
     } else {
       resolve();
     }
@@ -357,18 +359,10 @@ exports.patchProfileWallet = function(id,wallet) {
  **/
 exports.postProfile = function(body) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {
-  "ipi" : "00004576",
-  "role" : "writer",
-  "wallet" : "0xdd87ae15f4be97e2739c9069ddef674f907d27a8",
-  "media" : "",
-  "first-name" : "John",
-  "email" : "john.smith@example.com",
-  "last-name" : "Smith"
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    db('profiles').push( body )
+    db.save()
+    if (body) {
+      resolve(body);
     } else {
       resolve();
     }
@@ -385,18 +379,19 @@ exports.postProfile = function(body) {
  **/
 exports.updateProfile = function(id,body) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {
-  "ipi" : "00004576",
-  "role" : "writer",
-  "wallet" : "0xdd87ae15f4be97e2739c9069ddef674f907d27a8",
-  "media" : "",
-  "first-name" : "John",
-  "email" : "john.smith@example.com",
-  "last-name" : "Smith"
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    db('profiles').find({ id: id }).assign({ 
+      id: id,
+      ipi: body.ipi,
+      'first-name': body['first-name'],
+      'last-name': body['last-name'],
+      role: body.role,
+      wallet: body.wallet,
+      email: body.email,
+      media: body.media
+    })
+    let profile =  db('profiles').find({ id: id }).value();
+    if (body) {
+      resolve(profile);
     } else {
       resolve();
     }

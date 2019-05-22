@@ -35,6 +35,17 @@ module.exports.getPayment = function getPayment (req, res, next) {
     });
 };
 
+module.exports.getPaymentAmount = function getPaymentAmount (req, res, next) {
+  var id = req.swagger.params['id'].value;
+  Payments.getPaymentAmount(id)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
 module.exports.getPaymentTransactionHash = function getPaymentTransactionHash (req, res, next) {
   var id = req.swagger.params['id'].value;
   Payments.getPaymentTransactionHash(id)

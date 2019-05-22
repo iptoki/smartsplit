@@ -251,7 +251,7 @@ exports.patchMediaDescription = function(mediaId,description) {
     db.save();
     let media = db('media').find({ mediaId: mediaId }).value();
     if (media.description != descriptionOld) {
-      resolve(media.description);
+      resolve("Media description updated: " + media.description);
     } else {
       resolve();
     }
@@ -273,7 +273,7 @@ exports.patchMediaGenre = function(mediaId,genre) {
     db.save();
     let media = db('media').find({ mediaId: mediaId }).value();
     if (media.genre != genreOld) {
-      resolve(media.genre);
+      resolve("Media genre updated: " + media.genre);
     } else {
       resolve();
     }
@@ -295,7 +295,7 @@ exports.patchMediaJurisdiction = function(mediaId,jurisdiction) {
     db.save();
     let media = db('media').find({ mediaId: mediaId }).value();
     if (media.jurisdiction != jurisdictionOld) {
-      resolve(media.jurisdiction);
+      resolve("Media jurisdiction updated: " + media.jurisdiction);
     } else {
       resolve();
     }
@@ -317,7 +317,7 @@ exports.patchMediaPublisher = function(mediaId,publisher) {
     db.save();
     let media = db('media').find({ mediaId: mediaId }).value();
     if (media.publisher != publisherOld) {
-      resolve(media.publisher);
+      resolve("Media publisher updated: " + media.publisher);
     } else {
       resolve();
     }
@@ -339,7 +339,7 @@ exports.patchMediaTitle = function(mediaId,title) {
     db.save();
     let media = db('media').find({ mediaId: mediaId }).value();
     if (media.title != titleOld) {
-      resolve(media.title);
+      resolve("Media title updated: " + media.title);
     } else {
       resolve();
     }
@@ -355,26 +355,10 @@ exports.patchMediaTitle = function(mediaId,title) {
  **/
 exports.postMedia = function(body) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {
-  "split" : {
-    "key" : 0.80082819046101150206595775671303272247314453125
-  },
-  "jurisdiction" : "SOCAN",
-  "genre" : "Rock",
-  "description" : "The wonderful classic hit song, Love You Baby",
-  "creation-date" : "2019-01-01T15:53:00",
-  "publisher" : "sync publishing",
-  "rights-type" : {
-    "key" : "rights-type"
-  },
-  "title" : "Love You Baby",
-  "right-holders" : {
-    "key" : "right-holders"
-  }
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    db('media').push( body[0] )
+    db.save()
+    if (body) {
+      resolve(body);
     } else {
       resolve();
     }
@@ -391,26 +375,23 @@ exports.postMedia = function(body) {
  **/
 exports.updateMedia = function(mediaId,body) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {
-  "split" : {
-    "key" : 0.80082819046101150206595775671303272247314453125
-  },
-  "jurisdiction" : "SOCAN",
-  "genre" : "Rock",
-  "description" : "The wonderful classic hit song, Love You Baby",
-  "creation-date" : "2019-01-01T15:53:00",
-  "publisher" : "sync publishing",
-  "rights-type" : {
-    "key" : "rights-type"
-  },
-  "title" : "Love You Baby",
-  "right-holders" : {
-    "key" : "right-holders"
-  }
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    db('media').find({ mediaId: mediaId }).assign({ 
+      mediaId: mediaId,
+      title: body[0].title,
+      split: body[0].split,
+      jurisdiction: body[0].jurisdiction,
+      genre: body[0].genre,
+      description: body[0].description,
+      'creation-date': body[0]['creation-date'],
+      cover:body[0].cover,
+      publisher: body[0].publisher,
+      'rights-type': body[0]['rights-type'],
+      'right-holders': body[0]['right-holders']
+    });
+    db.save();
+    let media = db('media').find({ mediaId: mediaId }).value();
+    if (body[0]) {
+      resolve(media);
     } else {
       resolve();
     }

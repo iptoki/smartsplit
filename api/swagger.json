@@ -1,14 +1,9 @@
 {
   "swagger": "2.0",
-  "host": "api.smartsplit.org",
-  "basePath": "/v1",
-  "schemes": [
-    "https"
-  ],
   "info": {
-    "title": "Smartsplit API",
     "description": "Provides a RESTful API for interacting with Smartsplit",
     "version": "v1",
+    "title": "Smartsplit API",
     "x-origin": [
       {
         "format": "yaml",
@@ -20,57 +15,53 @@
       "url": "http://smartsplit.org/wp-content/uploads/2019/05/Logo-v02-005-noir.png"
     }
   },
+  "host": "api.smartsplit.org",
+  "basePath": "/v1",
+  "tags": [
+    {
+      "name": "Authentication Details",
+      "description": "Obtaining and refreshing your JWT token"
+    },
+    {
+      "name": "Profiles",
+      "description": "Viewing and creating right holder profiles"
+    },
+    {
+      "name": "Media",
+      "description": "Viewing and creating media"
+    },
+    {
+      "name": "Payments",
+      "description": "Viewing and updating payment details"
+    }
+  ],
+  "schemes": [
+    "https"
+  ],
   "consumes": [
     "application/json"
   ],
   "produces": [
     "application/json"
   ],
-  "securityDefinitions": {
-    "basicAuth": {
-      "description": "HTTP Basic Authentication",
-      "type": "basic"
-    },
-    "jwt": {
-      "description": "A JSON Web Token (JWT) used for access control and authorization",
-      "in": "header",
-      "name": "Authorization",
-      "type": "apiKey"
-    }
-  },
   "security": [
     {
       "jwt": []
     }
   ],
-  "tags": [
-    {
-      "description": "Obtaining and refreshing your JWT token",
-      "name": "Authentication Details"
-    },
-    {
-      "description": "Viewing and creating right holder profiles",
-      "name": "Profiles"
-    },
-    {
-      "description": "Viewing and creating media",
-      "name": "Media"
-    },
-    {
-      "description": "Viewing and updating payment details",
-      "name": "Payments"
-    }
-  ],
   "paths": {
     "/auth": {
       "post": {
-        "operationId": "postAuth",
+        "tags": [
+          "Authentication Details"
+        ],
         "description": "Get a JWT token for the rest of the requests",
+        "operationId": "postAuth",
         "parameters": [
           {
-            "description": "JSON string containing your authentication details",
             "in": "body",
             "name": "auth",
+            "description": "JSON string containing your authentication details",
             "required": true,
             "schema": {
               "$ref": "#/definitions/auth"
@@ -88,15 +79,17 @@
             "description": "Invalid credentials and/or API token"
           }
         },
-        "tags": [
-          "Authentication Details"
-        ]
+        "x-swagger-router-controller": "AuthenticationDetails"
       }
     },
     "/refresh-token": {
       "get": {
-        "operationId": "getRefreshToken",
+        "tags": [
+          "Authentication Details"
+        ],
         "description": "Refreshes your current, valid JWT token",
+        "operationId": "getRefreshToken",
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK. JWT returned to use in your subsequent requests",
@@ -113,15 +106,17 @@
             "jwt": []
           }
         ],
-        "tags": [
-          "Authentication Details"
-        ]
+        "x-swagger-router-controller": "AuthenticationDetails"
       }
     },
     "/profiles": {
       "get": {
-        "operationId": "getAllProfiles",
+        "tags": [
+          "Profiles"
+        ],
         "description": "Get a list of all right holder profiles",
+        "operationId": "getAllProfiles",
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -142,18 +137,19 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Profiles"
-        ]
+        "x-swagger-router-controller": "Profiles"
       },
       "post": {
-        "operationId": "postProfile",
+        "tags": [
+          "Profiles"
+        ],
         "description": "This method creates a new profile",
+        "operationId": "postProfile",
         "parameters": [
           {
-            "description": "request",
             "in": "body",
             "name": "body",
+            "description": "request",
             "required": true,
             "schema": {
               "$ref": "#/definitions/profile"
@@ -185,20 +181,21 @@
             "jwt": []
           }
         ],
-        "tags": [
-          "Profiles"
-        ]
+        "x-swagger-router-controller": "Profiles"
       }
     },
     "/profiles/{id}": {
       "get": {
-        "operationId": "getProfile",
+        "tags": [
+          "Profiles"
+        ],
         "description": "Get a right holder's profile with the given ID",
+        "operationId": "getProfile",
         "parameters": [
           {
-            "description": "The rights holder's unique profile ID",
-            "in": "path",
             "name": "id",
+            "in": "path",
+            "description": "The rights holder's unique profile ID",
             "required": true,
             "type": "integer"
           }
@@ -223,25 +220,26 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Profiles"
-        ]
+        "x-swagger-router-controller": "Profiles"
       },
       "put": {
-        "operationId": "updateProfile",
+        "tags": [
+          "Profiles"
+        ],
         "description": "This method updates a profile",
+        "operationId": "updateProfile",
         "parameters": [
           {
-            "description": "The rights holder's unique profile ID",
-            "in": "path",
             "name": "id",
+            "in": "path",
+            "description": "The rights holder's unique profile ID",
             "required": true,
             "type": "integer"
           },
           {
-            "description": "request",
             "in": "body",
             "name": "body",
+            "description": "request",
             "required": true,
             "schema": {
               "$ref": "#/definitions/profile"
@@ -273,18 +271,19 @@
             "jwt": []
           }
         ],
-        "tags": [
-          "Profiles"
-        ]
+        "x-swagger-router-controller": "Profiles"
       },
       "delete": {
-        "operationId": "deleteProfile",
+        "tags": [
+          "Profiles"
+        ],
         "description": "Delete a right holder's profile with the given ID",
+        "operationId": "deleteProfile",
         "parameters": [
           {
-            "description": "The rights holder's unique profile ID",
-            "in": "path",
             "name": "id",
+            "in": "path",
+            "description": "The rights holder's unique profile ID",
             "required": true,
             "type": "integer"
           }
@@ -311,20 +310,21 @@
             "jwt": []
           }
         ],
-        "tags": [
-          "Profiles"
-        ]
+        "x-swagger-router-controller": "Profiles"
       }
     },
     "/profiles/{id}/first-name": {
       "get": {
-        "operationId": "getProfileFirstName",
+        "tags": [
+          "Profiles"
+        ],
         "description": "Get a right holder's first name with the given ID",
+        "operationId": "getProfileFirstName",
         "parameters": [
           {
-            "description": "The rights holder's unique profile ID",
-            "in": "path",
             "name": "id",
+            "in": "path",
+            "description": "The rights holder's unique profile ID",
             "required": true,
             "type": "integer"
           }
@@ -335,9 +335,9 @@
             "schema": {
               "properties": {
                 "name": {
-                  "description": "The right holder's f name",
                   "type": "string",
-                  "example": "John"
+                  "example": "John",
+                  "description": "The right holder's f name"
                 }
               }
             }
@@ -355,25 +355,26 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Profiles"
-        ]
+        "x-swagger-router-controller": "Profiles"
       },
       "patch": {
-        "operationId": "patchProfileFirstName",
+        "tags": [
+          "Profiles"
+        ],
         "description": "Update right holder's first name with the given ID",
+        "operationId": "patchProfileFirstName",
         "parameters": [
           {
-            "description": "The rights holder's unique profile ID",
-            "in": "path",
             "name": "id",
+            "in": "path",
+            "description": "The rights holder's unique profile ID",
             "required": true,
             "type": "integer"
           },
           {
-            "description": "The rights holder's first name",
             "in": "body",
             "name": "first-name",
+            "description": "The rights holder's first name",
             "required": true,
             "schema": {
               "$ref": "#/definitions/profile/properties/first-name"
@@ -386,9 +387,9 @@
             "schema": {
               "properties": {
                 "name": {
-                  "description": "The right holder's first name",
                   "type": "string",
-                  "example": "John"
+                  "example": "John",
+                  "description": "The right holder's first name"
                 }
               }
             }
@@ -406,20 +407,21 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Profiles"
-        ]
+        "x-swagger-router-controller": "Profiles"
       }
     },
     "/profiles/{id}/last-name": {
       "get": {
-        "operationId": "getProfileLastName",
+        "tags": [
+          "Profiles"
+        ],
         "description": "Get a right holder's last name with the given ID",
+        "operationId": "getProfileLastName",
         "parameters": [
           {
-            "description": "The rights holder's unique profile ID",
-            "in": "path",
             "name": "id",
+            "in": "path",
+            "description": "The rights holder's unique profile ID",
             "required": true,
             "type": "integer"
           }
@@ -430,9 +432,9 @@
             "schema": {
               "properties": {
                 "name": {
-                  "description": "The right holder's last name",
                   "type": "string",
-                  "example": "Smith"
+                  "example": "Smith",
+                  "description": "The right holder's last name"
                 }
               }
             }
@@ -450,25 +452,26 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Profiles"
-        ]
+        "x-swagger-router-controller": "Profiles"
       },
       "patch": {
-        "operationId": "patchProfileLastName",
+        "tags": [
+          "Profiles"
+        ],
         "description": "Update right holder's last name with the given ID",
+        "operationId": "patchProfileLastName",
         "parameters": [
           {
-            "description": "The rights holder's unique profile ID",
-            "in": "path",
             "name": "id",
+            "in": "path",
+            "description": "The rights holder's unique profile ID",
             "required": true,
             "type": "integer"
           },
           {
-            "description": "The rights holder's last name",
             "in": "body",
             "name": "last-name",
+            "description": "The rights holder's last name",
             "required": true,
             "schema": {
               "$ref": "#/definitions/profile/properties/last-name"
@@ -481,9 +484,9 @@
             "schema": {
               "properties": {
                 "name": {
-                  "description": "The right holder's last name",
                   "type": "string",
-                  "example": "Smith"
+                  "example": "Smith",
+                  "description": "The right holder's last name"
                 }
               }
             }
@@ -501,20 +504,21 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Profiles"
-        ]
+        "x-swagger-router-controller": "Profiles"
       }
     },
     "/profiles/{id}/email": {
       "get": {
-        "operationId": "getProfileEmail",
+        "tags": [
+          "Profiles"
+        ],
         "description": "Get a right holder's email address with given ID",
+        "operationId": "getProfileEmail",
         "parameters": [
           {
-            "description": "The right holder's unique profile ID",
-            "in": "path",
             "name": "id",
+            "in": "path",
+            "description": "The right holder's unique profile ID",
             "required": true,
             "type": "integer"
           }
@@ -525,9 +529,9 @@
             "schema": {
               "properties": {
                 "email": {
-                  "description": "The right holder's email address",
                   "type": "string",
-                  "example": "john.smith@example.com"
+                  "example": "john.smith@example.com",
+                  "description": "The right holder's email address"
                 }
               }
             }
@@ -550,25 +554,26 @@
             "jwt": []
           }
         ],
-        "tags": [
-          "Profiles"
-        ]
+        "x-swagger-router-controller": "Profiles"
       },
       "patch": {
-        "operationId": "patchProfileEmail",
+        "tags": [
+          "Profiles"
+        ],
         "description": "Update right holder's email address with given ID",
+        "operationId": "patchProfileEmail",
         "parameters": [
           {
-            "description": "The right holder's unique profile ID",
-            "in": "path",
             "name": "id",
+            "in": "path",
+            "description": "The right holder's unique profile ID",
             "required": true,
             "type": "integer"
           },
           {
-            "description": "The rights holder's email address",
             "in": "body",
             "name": "email",
+            "description": "The rights holder's email address",
             "required": true,
             "schema": {
               "$ref": "#/definitions/profile/properties/email"
@@ -581,9 +586,9 @@
             "schema": {
               "properties": {
                 "email": {
-                  "description": "The right holder's email address",
                   "type": "string",
-                  "example": "bob.andrews@example.com"
+                  "example": "bob.andrews@example.com",
+                  "description": "The right holder's email address"
                 }
               }
             }
@@ -606,20 +611,21 @@
             "jwt": []
           }
         ],
-        "tags": [
-          "Profiles"
-        ]
+        "x-swagger-router-controller": "Profiles"
       }
     },
     "/profiles/{id}/role": {
       "get": {
-        "operationId": "getProfileRole",
+        "tags": [
+          "Profiles"
+        ],
         "description": "Get a right holder's role with the given ID       (Or list of roles including copyright, performance, and/or recording)",
+        "operationId": "getProfileRole",
         "parameters": [
           {
-            "description": "The right holder's unique profile ID",
-            "in": "path",
             "name": "id",
+            "in": "path",
+            "description": "The right holder's unique profile ID",
             "required": true,
             "type": "integer"
           }
@@ -630,9 +636,9 @@
             "schema": {
               "properties": {
                 "role": {
-                  "description": "The right holder's role",
                   "type": "string",
-                  "example": "writer"
+                  "example": "writer",
+                  "description": "The right holder's role"
                 }
               }
             }
@@ -650,25 +656,26 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Profiles"
-        ]
+        "x-swagger-router-controller": "Profiles"
       },
       "patch": {
-        "operationId": "patchProfileRole",
+        "tags": [
+          "Profiles"
+        ],
         "description": "Update right holder's role with the given ID       (Or list of roles including copyright, performance, and/or recording)",
+        "operationId": "patchProfileRole",
         "parameters": [
           {
-            "description": "The right holder's unique profile ID",
-            "in": "path",
             "name": "id",
+            "in": "path",
+            "description": "The right holder's unique profile ID",
             "required": true,
             "type": "integer"
           },
           {
-            "description": "The right holder's role",
             "in": "body",
             "name": "role",
+            "description": "The right holder's role",
             "required": true,
             "schema": {
               "$ref": "#/definitions/profile/properties/role"
@@ -681,9 +688,9 @@
             "schema": {
               "properties": {
                 "role": {
-                  "description": "The right holder's role",
                   "type": "string",
-                  "example": "writer"
+                  "example": "writer",
+                  "description": "The right holder's role"
                 }
               }
             }
@@ -701,20 +708,21 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Profiles"
-        ]
+        "x-swagger-router-controller": "Profiles"
       }
     },
     "/profiles/{id}/ipi": {
       "get": {
-        "operationId": "getProfileIPI",
+        "tags": [
+          "Profiles"
+        ],
         "description": "Get right holder's interested party information \"#\"",
+        "operationId": "getProfileIPI",
         "parameters": [
           {
-            "description": "The right holder's unique profile ID",
-            "in": "path",
             "name": "id",
+            "in": "path",
+            "description": "The right holder's unique profile ID",
             "required": true,
             "type": "integer"
           }
@@ -725,9 +733,9 @@
             "schema": {
               "properties": {
                 "ipi": {
-                  "description": "The right holder's interested party information number",
                   "type": "string",
-                  "example": "00004576"
+                  "example": "00004576",
+                  "description": "The right holder's interested party information number"
                 }
               }
             }
@@ -745,25 +753,26 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Profiles"
-        ]
+        "x-swagger-router-controller": "Profiles"
       },
       "patch": {
-        "operationId": "patchProfileIPI",
+        "tags": [
+          "Profiles"
+        ],
         "description": "Update right holder's IPI number",
+        "operationId": "patchProfileIPI",
         "parameters": [
           {
-            "description": "The right holder's unique profile ID",
-            "in": "path",
             "name": "id",
+            "in": "path",
+            "description": "The right holder's unique profile ID",
             "required": true,
             "type": "integer"
           },
           {
-            "description": "The right holder's IPI number",
             "in": "body",
             "name": "ipi",
+            "description": "The right holder's IPI number",
             "required": true,
             "schema": {
               "$ref": "#/definitions/profile/properties/ipi"
@@ -776,9 +785,9 @@
             "schema": {
               "properties": {
                 "ipi": {
-                  "description": "The right holder's interested party information number",
                   "type": "string",
-                  "example": "00004576"
+                  "example": "00004576",
+                  "description": "The right holder's interested party information number"
                 }
               }
             }
@@ -796,20 +805,21 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Profiles"
-        ]
+        "x-swagger-router-controller": "Profiles"
       }
     },
     "/profiles/{id}/media": {
       "get": {
-        "operationId": "getProfileMedia",
+        "tags": [
+          "Profiles"
+        ],
         "description": "Get list of media for the given right holder",
+        "operationId": "getProfileMedia",
         "parameters": [
           {
-            "description": "The right holder's unique profile ID",
-            "in": "path",
             "name": "id",
+            "in": "path",
+            "description": "The right holder's unique profile ID",
             "required": true,
             "type": "integer"
           }
@@ -834,25 +844,26 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Profiles"
-        ]
+        "x-swagger-router-controller": "Profiles"
       },
       "patch": {
-        "operationId": "patchProfileMedia",
+        "tags": [
+          "Profiles"
+        ],
         "description": "Update list of media for the given right holder",
+        "operationId": "patchProfileMedia",
         "parameters": [
           {
-            "description": "The right holder's unique profile ID",
-            "in": "path",
             "name": "id",
+            "in": "path",
+            "description": "The right holder's unique profile ID",
             "required": true,
             "type": "integer"
           },
           {
-            "description": "The unique ID of the given media",
             "in": "body",
             "name": "mediaId",
+            "description": "The unique ID of the given media",
             "required": true,
             "schema": {
               "$ref": "#/definitions/mediaIds"
@@ -879,20 +890,21 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Profiles"
-        ]
+        "x-swagger-router-controller": "Profiles"
       }
     },
     "/profiles/{id}/wallet": {
       "get": {
-        "operationId": "getProfileWallet",
+        "tags": [
+          "Profiles"
+        ],
         "description": "Get the wallet address of a right holder",
+        "operationId": "getProfileWallet",
         "parameters": [
           {
-            "description": "The right holder's unique profile ID",
-            "in": "path",
             "name": "id",
+            "in": "path",
+            "description": "The right holder's unique profile ID",
             "required": true,
             "type": "integer"
           }
@@ -903,9 +915,9 @@
             "schema": {
               "properties": {
                 "wallet": {
-                  "description": "The user's wallet address",
                   "type": "string",
-                  "example": "0xdd87ae15f4be97e2739c9069ddef674f907d27a8"
+                  "example": "0xdd87ae15f4be97e2739c9069ddef674f907d27a8",
+                  "description": "The user's wallet address"
                 }
               }
             }
@@ -923,25 +935,26 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Profiles"
-        ]
+        "x-swagger-router-controller": "Profiles"
       },
       "patch": {
-        "operationId": "patchProfileWallet",
+        "tags": [
+          "Profiles"
+        ],
         "description": "Update the wallet address of a right holder",
+        "operationId": "patchProfileWallet",
         "parameters": [
           {
-            "description": "The right holder's unique profile ID",
-            "in": "path",
             "name": "id",
+            "in": "path",
+            "description": "The right holder's unique profile ID",
             "required": true,
             "type": "integer"
           },
           {
-            "description": "The right holder's wallet address",
             "in": "body",
             "name": "wallet",
+            "description": "The right holder's wallet address",
             "required": true,
             "schema": {
               "$ref": "#/definitions/profile/properties/wallet"
@@ -954,9 +967,9 @@
             "schema": {
               "properties": {
                 "wallet": {
-                  "description": "The user's wallet address",
                   "type": "string",
-                  "example": "0xdd87ae15f4be97e2739c9069ddef674f907d27a9"
+                  "example": "0xdd87ae15f4be97e2739c9069ddef674f907d27a9",
+                  "description": "The user's wallet address"
                 }
               }
             }
@@ -974,15 +987,17 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Profiles"
-        ]
+        "x-swagger-router-controller": "Profiles"
       }
     },
     "/media": {
       "get": {
-        "operationId": "getAllMedia",
+        "tags": [
+          "Media"
+        ],
         "description": "Get a list of all media",
+        "operationId": "getAllMedia",
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -1003,18 +1018,19 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Media"
-        ]
+        "x-swagger-router-controller": "Media"
       },
       "post": {
-        "operationId": "postMedia",
+        "tags": [
+          "Media"
+        ],
         "description": "This method creates a new media item",
+        "operationId": "postMedia",
         "parameters": [
           {
-            "description": "request",
             "in": "body",
             "name": "body",
+            "description": "request",
             "required": true,
             "schema": {
               "$ref": "#/definitions/media"
@@ -1046,20 +1062,21 @@
             "jwt": []
           }
         ],
-        "tags": [
-          "Media"
-        ]
+        "x-swagger-router-controller": "Media"
       }
     },
     "/media/{mediaId}": {
       "get": {
-        "operationId": "getMedia",
+        "tags": [
+          "Media"
+        ],
         "description": "Get media with the given ID",
+        "operationId": "getMedia",
         "parameters": [
           {
-            "description": "The artwork agreement's unique ID",
-            "in": "path",
             "name": "mediaId",
+            "in": "path",
+            "description": "The artwork agreement's unique ID",
             "required": true,
             "type": "integer"
           }
@@ -1084,25 +1101,26 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Media"
-        ]
+        "x-swagger-router-controller": "Media"
       },
       "put": {
-        "operationId": "updateMedia",
+        "tags": [
+          "Media"
+        ],
         "description": "Update media with the given ID",
+        "operationId": "updateMedia",
         "parameters": [
           {
-            "description": "The artwork agreement's unique ID",
-            "in": "path",
             "name": "mediaId",
+            "in": "path",
+            "description": "The artwork agreement's unique ID",
             "required": true,
             "type": "integer"
           },
           {
-            "description": "request",
             "in": "body",
             "name": "body",
+            "description": "request",
             "required": true,
             "schema": {
               "$ref": "#/definitions/media"
@@ -1129,18 +1147,19 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Media"
-        ]
+        "x-swagger-router-controller": "Media"
       },
       "delete": {
-        "operationId": "deleteMedia",
+        "tags": [
+          "Media"
+        ],
         "description": "Delete a right holder's profile with the given ID",
+        "operationId": "deleteMedia",
         "parameters": [
           {
-            "description": "The rights holder's unique profile ID",
-            "in": "path",
             "name": "mediaId",
+            "in": "path",
+            "description": "The rights holder's unique profile ID",
             "required": true,
             "type": "integer"
           }
@@ -1167,20 +1186,21 @@
             "jwt": []
           }
         ],
-        "tags": [
-          "Media"
-        ]
+        "x-swagger-router-controller": "Media"
       }
     },
     "/media/{mediaId}/title": {
       "get": {
-        "operationId": "getMediaTitle",
+        "tags": [
+          "Media"
+        ],
         "description": "Get the title of the given media identified by ID",
+        "operationId": "getMediaTitle",
         "parameters": [
           {
-            "description": "The artwork agreement's unique ID",
-            "in": "path",
             "name": "mediaId",
+            "in": "path",
+            "description": "The artwork agreement's unique ID",
             "required": true,
             "type": "integer"
           }
@@ -1191,9 +1211,9 @@
             "schema": {
               "properties": {
                 "title": {
-                  "description": "The title of the given artwork",
                   "type": "string",
-                  "example": "Love You Baby"
+                  "example": "Love You Baby",
+                  "description": "The title of the given artwork"
                 }
               }
             }
@@ -1211,25 +1231,26 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Media"
-        ]
+        "x-swagger-router-controller": "Media"
       },
       "patch": {
-        "operationId": "patchMediaTitle",
+        "tags": [
+          "Media"
+        ],
         "description": "Update the title of the given media identified by ID",
+        "operationId": "patchMediaTitle",
         "parameters": [
           {
-            "description": "The artwork agreement's unique ID",
-            "in": "path",
             "name": "mediaId",
+            "in": "path",
+            "description": "The artwork agreement's unique ID",
             "required": true,
             "type": "integer"
           },
           {
-            "description": "The title of the artwork",
             "in": "body",
             "name": "title",
+            "description": "The title of the artwork",
             "required": true,
             "schema": {
               "$ref": "#/definitions/media/properties/title"
@@ -1242,9 +1263,9 @@
             "schema": {
               "properties": {
                 "title": {
-                  "description": "The title of the given artwork",
                   "type": "string",
-                  "example": "Love You Honey"
+                  "example": "Love You Honey",
+                  "description": "The title of the given artwork"
                 }
               }
             }
@@ -1262,20 +1283,21 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Media"
-        ]
+        "x-swagger-router-controller": "Media"
       }
     },
     "/media/{mediaId}/description": {
       "get": {
-        "operationId": "getMediaDescription",
+        "tags": [
+          "Media"
+        ],
         "description": "Get the description of a piece of media",
+        "operationId": "getMediaDescription",
         "parameters": [
           {
-            "description": "The artwork agreement's unique ID",
-            "in": "path",
             "name": "mediaId",
+            "in": "path",
+            "description": "The artwork agreement's unique ID",
             "required": true,
             "type": "integer"
           }
@@ -1286,9 +1308,9 @@
             "schema": {
               "properties": {
                 "description": {
-                  "description": "The description of the artwork",
                   "type": "string",
-                  "example": "The wonderful classic hit song, Love You Baby"
+                  "example": "The wonderful classic hit song, Love You Baby",
+                  "description": "The description of the artwork"
                 }
               }
             }
@@ -1306,25 +1328,26 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Media"
-        ]
+        "x-swagger-router-controller": "Media"
       },
       "patch": {
-        "operationId": "patchMediaDescription",
+        "tags": [
+          "Media"
+        ],
         "description": "Update the description of a piece of media",
+        "operationId": "patchMediaDescription",
         "parameters": [
           {
-            "description": "The artwork agreement's unique ID",
-            "in": "path",
             "name": "mediaId",
+            "in": "path",
+            "description": "The artwork agreement's unique ID",
             "required": true,
             "type": "integer"
           },
           {
-            "description": "The description of the artwork",
             "in": "body",
             "name": "description",
+            "description": "The description of the artwork",
             "required": true,
             "schema": {
               "$ref": "#/definitions/media/properties/description"
@@ -1337,9 +1360,9 @@
             "schema": {
               "properties": {
                 "description": {
-                  "description": "The description of the artwork",
                   "type": "string",
-                  "example": "The wonderful classic hit song, Love You Honey"
+                  "example": "The wonderful classic hit song, Love You Honey",
+                  "description": "The description of the artwork"
                 }
               }
             }
@@ -1357,20 +1380,21 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Media"
-        ]
+        "x-swagger-router-controller": "Media"
       }
     },
     "/media/{mediaId}/right-holders": {
       "get": {
-        "operationId": "getMediaRightHolders",
+        "tags": [
+          "Media"
+        ],
         "description": "Get the right holders who collaborated on media",
+        "operationId": "getMediaRightHolders",
         "parameters": [
           {
-            "description": "The artwork agreement's unique ID",
-            "in": "path",
             "name": "mediaId",
+            "in": "path",
+            "description": "The artwork agreement's unique ID",
             "required": true,
             "type": "integer"
           }
@@ -1381,154 +1405,11 @@
             "schema": {
               "properties": {
                 "right-holders": {
-                  "additionalProperties": {
-                    "description": "The type of right holder, for example, writer, producer",
-                    "type": "string"
-                  },
-                  "description": "The full name of the right holder",
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
-          "404": {
-            "description": "Endpoint not found"
-          },
-          "500": {
-            "description": "An unknown error occured"
-          }
-        },
-        "tags": [
-          "Media"
-        ]
-      }
-    },
-    "/media/{mediaId}/jurisdiction": {
-      "get": {
-        "operationId": "getMediaJurisdiction",
-        "description": "Get the jurisdiction of the given media",
-        "parameters": [
-          {
-            "description": "The artwork agreement's unique ID",
-            "in": "path",
-            "name": "mediaId",
-            "required": true,
-            "type": "integer"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "properties": {
-                "jurisdiction": {
-                  "description": "The jusrisdiction of the artwork agreement of the given media",
-                  "type": "string",
-                  "example": "SOCAN"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
-          "404": {
-            "description": "Endpoint not found"
-          },
-          "500": {
-            "description": "An unknown error occured"
-          }
-        },
-        "tags": [
-          "Media"
-        ]
-      },
-      "patch": {
-        "operationId": "patchMediaJurisdiction",
-        "description": "Update the jurisdiction of the given media",
-        "parameters": [
-          {
-            "description": "The artwork agreement's unique ID",
-            "in": "path",
-            "name": "mediaId",
-            "required": true,
-            "type": "integer"
-          },
-          {
-            "description": "The jurisdiction of the given media",
-            "in": "body",
-            "name": "jurisdiction",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/media/properties/jurisdiction"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "properties": {
-                "jurisdiction": {
-                  "description": "The jusrisdiction of the artwork agreement of the given media",
-                  "type": "string",
-                  "example": "SOPROQ"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
-          "404": {
-            "description": "Endpoint not found"
-          },
-          "500": {
-            "description": "An unknown error occured"
-          }
-        },
-        "tags": [
-          "Media"
-        ]
-      }
-    },
-    "/media/{mediaId}/rights-type": {
-      "get": {
-        "operationId": "getMediaRightsType",
-        "description": "Get the type of rights of the given media         (Including copyright, performance, recording)",
-        "parameters": [
-          {
-            "description": "The artwork agreement's unique ID",
-            "in": "path",
-            "name": "mediaId",
-            "required": true,
-            "type": "integer"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "properties": {
-                "rights-type": {
-                  "description": "The type of rights associated with the artwork",
                   "type": "object",
-                  "example": {
-                    "copyright": true,
-                    "performance": true,
-                    "recording": false
+                  "description": "The full name of the right holder",
+                  "additionalProperties": {
+                    "type": "string",
+                    "description": "The type of right holder, for example, writer, producer"
                   }
                 }
               }
@@ -1547,20 +1428,21 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Media"
-        ]
+        "x-swagger-router-controller": "Media"
       }
     },
-    "/media/{mediaId}/genre": {
+    "/media/{mediaId}/jurisdiction": {
       "get": {
-        "operationId": "getMediaGenre",
-        "description": "Get the genre of the media with the given ID",
+        "tags": [
+          "Media"
+        ],
+        "description": "Get the jurisdiction of the given media",
+        "operationId": "getMediaJurisdiction",
         "parameters": [
           {
-            "description": "The artwork agreement's unique ID",
-            "in": "path",
             "name": "mediaId",
+            "in": "path",
+            "description": "The artwork agreement's unique ID",
             "required": true,
             "type": "integer"
           }
@@ -1570,10 +1452,10 @@
             "description": "OK",
             "schema": {
               "properties": {
-                "genre": {
-                  "description": "The genre of the given media.",
+                "jurisdiction": {
                   "type": "string",
-                  "example": "Rock"
+                  "example": "SOCAN",
+                  "description": "The jusrisdiction of the artwork agreement of the given media"
                 }
               }
             }
@@ -1591,25 +1473,173 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Media"
-        ]
+        "x-swagger-router-controller": "Media"
       },
       "patch": {
-        "operationId": "patchMediaGenre",
-        "description": "Update the genre of the media with the given ID",
+        "tags": [
+          "Media"
+        ],
+        "description": "Update the jurisdiction of the given media",
+        "operationId": "patchMediaJurisdiction",
         "parameters": [
           {
-            "description": "The artwork agreement's unique ID",
-            "in": "path",
             "name": "mediaId",
+            "in": "path",
+            "description": "The artwork agreement's unique ID",
             "required": true,
             "type": "integer"
           },
           {
-            "description": "The genre of the artwork",
+            "in": "body",
+            "name": "jurisdiction",
+            "description": "The jurisdiction of the given media",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/media/properties/jurisdiction"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "properties": {
+                "jurisdiction": {
+                  "type": "string",
+                  "example": "SOPROQ",
+                  "description": "The jusrisdiction of the artwork agreement of the given media"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Endpoint not found"
+          },
+          "500": {
+            "description": "An unknown error occured"
+          }
+        },
+        "x-swagger-router-controller": "Media"
+      }
+    },
+    "/media/{mediaId}/rights-type": {
+      "get": {
+        "tags": [
+          "Media"
+        ],
+        "description": "Get the type of rights of the given media         (Including copyright, performance, recording)",
+        "operationId": "getMediaRightsType",
+        "parameters": [
+          {
+            "name": "mediaId",
+            "in": "path",
+            "description": "The artwork agreement's unique ID",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "properties": {
+                "rights-type": {
+                  "type": "object",
+                  "example": {
+                    "copyright": true,
+                    "performance": true,
+                    "recording": false
+                  },
+                  "description": "The type of rights associated with the artwork",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Endpoint not found"
+          },
+          "500": {
+            "description": "An unknown error occured"
+          }
+        },
+        "x-swagger-router-controller": "Media"
+      }
+    },
+    "/media/{mediaId}/genre": {
+      "get": {
+        "tags": [
+          "Media"
+        ],
+        "description": "Get the genre of the media with the given ID",
+        "operationId": "getMediaGenre",
+        "parameters": [
+          {
+            "name": "mediaId",
+            "in": "path",
+            "description": "The artwork agreement's unique ID",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "properties": {
+                "genre": {
+                  "type": "string",
+                  "example": "Rock",
+                  "description": "The genre of the given media."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Endpoint not found"
+          },
+          "500": {
+            "description": "An unknown error occured"
+          }
+        },
+        "x-swagger-router-controller": "Media"
+      },
+      "patch": {
+        "tags": [
+          "Media"
+        ],
+        "description": "Update the genre of the media with the given ID",
+        "operationId": "patchMediaGenre",
+        "parameters": [
+          {
+            "name": "mediaId",
+            "in": "path",
+            "description": "The artwork agreement's unique ID",
+            "required": true,
+            "type": "integer"
+          },
+          {
             "in": "body",
             "name": "genre",
+            "description": "The genre of the artwork",
             "required": true,
             "schema": {
               "$ref": "#/definitions/media/properties/genre"
@@ -1622,9 +1652,9 @@
             "schema": {
               "properties": {
                 "genre": {
-                  "description": "The genre of the given media.",
                   "type": "string",
-                  "example": "Pop"
+                  "example": "Pop",
+                  "description": "The genre of the given media."
                 }
               }
             }
@@ -1642,20 +1672,21 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Media"
-        ]
+        "x-swagger-router-controller": "Media"
       }
     },
     "/media/{mediaId}/creation-date": {
       "get": {
-        "operationId": "getMediaCreationDate",
+        "tags": [
+          "Media"
+        ],
         "description": "Get creation date of the media with the given ID",
+        "operationId": "getMediaCreationDate",
         "parameters": [
           {
-            "description": "The artwork agreement's unique ID",
-            "in": "path",
             "name": "mediaId",
+            "in": "path",
+            "description": "The artwork agreement's unique ID",
             "required": true,
             "type": "integer"
           }
@@ -1666,10 +1697,10 @@
             "schema": {
               "properties": {
                 "creation-date": {
-                  "description": "The creation date of the smartsplit contract for the given media",
                   "type": "string",
                   "format": "iso8601-date-time",
-                  "example": "2019-01-01T15:53:00"
+                  "example": "2019-01-01T15:53:00",
+                  "description": "The creation date of the smartsplit contract for the given media"
                 }
               }
             }
@@ -1687,20 +1718,21 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Media"
-        ]
+        "x-swagger-router-controller": "Media"
       }
     },
     "/media/{mediaId}/publisher": {
       "get": {
-        "operationId": "getMediaPublisher",
+        "tags": [
+          "Media"
+        ],
         "description": "Get publisher name of the media with the given ID",
+        "operationId": "getMediaPublisher",
         "parameters": [
           {
-            "description": "The artwork agreement's unique ID",
-            "in": "path",
             "name": "mediaId",
+            "in": "path",
+            "description": "The artwork agreement's unique ID",
             "required": true,
             "type": "integer"
           }
@@ -1711,9 +1743,9 @@
             "schema": {
               "properties": {
                 "publisher": {
-                  "description": "The publisher name of the media with the given ID",
                   "type": "string",
-                  "example": "sync publishing"
+                  "example": "sync publishing",
+                  "description": "The publisher name of the media with the given ID"
                 }
               }
             }
@@ -1731,25 +1763,26 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Media"
-        ]
+        "x-swagger-router-controller": "Media"
       },
       "patch": {
-        "operationId": "patchMediaPublisher",
+        "tags": [
+          "Media"
+        ],
         "description": "Update publisher of the media with the given ID",
+        "operationId": "patchMediaPublisher",
         "parameters": [
           {
-            "description": "The artwork agreement's unique ID",
-            "in": "path",
             "name": "mediaId",
+            "in": "path",
+            "description": "The artwork agreement's unique ID",
             "required": true,
             "type": "integer"
           },
           {
-            "description": "The publisher of the media",
             "in": "body",
             "name": "publisher",
+            "description": "The publisher of the media",
             "required": true,
             "schema": {
               "$ref": "#/definitions/media/properties/publisher"
@@ -1762,9 +1795,9 @@
             "schema": {
               "properties": {
                 "publisher": {
-                  "description": "The publisher name of the media with the given ID",
                   "type": "string",
-                  "example": "tune publishing"
+                  "example": "tune publishing",
+                  "description": "The publisher name of the media with the given ID"
                 }
               }
             }
@@ -1782,20 +1815,21 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Media"
-        ]
+        "x-swagger-router-controller": "Media"
       }
     },
     "/media/{mediaId}/split": {
       "get": {
-        "operationId": "getMediaSplit",
+        "tags": [
+          "Media"
+        ],
         "description": "Get rights holders' percentage split given media",
+        "operationId": "getMediaSplit",
         "parameters": [
           {
-            "description": "The artwork agreement's unique ID",
-            "in": "path",
             "name": "mediaId",
+            "in": "path",
+            "description": "The artwork agreement's unique ID",
             "required": true,
             "type": "integer"
           }
@@ -1806,12 +1840,12 @@
             "schema": {
               "properties": {
                 "split": {
-                  "additionalProperties": {
-                    "description": "The names of the right holders for the given media",
-                    "type": "number"
-                  },
+                  "type": "object",
                   "description": "The percentage split of each right holder",
-                  "type": "object"
+                  "additionalProperties": {
+                    "type": "number",
+                    "description": "The names of the right holders for the given media"
+                  }
                 }
               }
             }
@@ -1834,15 +1868,17 @@
             "jwt": []
           }
         ],
-        "tags": [
-          "Media"
-        ]
+        "x-swagger-router-controller": "Media"
       }
     },
     "/payments": {
       "get": {
-        "operationId": "getAllPayments",
+        "tags": [
+          "Payments"
+        ],
         "description": "Get a list of all payments' details",
+        "operationId": "getAllPayments",
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -1863,18 +1899,19 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Payments"
-        ]
+        "x-swagger-router-controller": "Payments"
       },
       "post": {
-        "operationId": "postPayment",
+        "tags": [
+          "Payments"
+        ],
         "description": "Add a new payment",
+        "operationId": "postPayment",
         "parameters": [
           {
-            "description": "The payment details",
             "in": "body",
             "name": "body",
+            "description": "The payment details",
             "required": true,
             "schema": {
               "$ref": "#/definitions/payment"
@@ -1901,20 +1938,21 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Payments"
-        ]
+        "x-swagger-router-controller": "Payments"
       }
     },
     "/payments/{id}": {
       "get": {
-        "operationId": "getPayment",
+        "tags": [
+          "Payments"
+        ],
         "description": "Get the details of a payment with the given ID",
+        "operationId": "getPayment",
         "parameters": [
           {
-            "description": "The payment's unique ID",
-            "in": "path",
             "name": "id",
+            "in": "path",
+            "description": "The payment's unique ID",
             "required": true,
             "type": "integer"
           }
@@ -1939,25 +1977,26 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Payments"
-        ]
+        "x-swagger-router-controller": "Payments"
       },
       "put": {
-        "operationId": "updatePayment",
+        "tags": [
+          "Payments"
+        ],
         "description": "Update the details of a payment with the given ID",
+        "operationId": "updatePayment",
         "parameters": [
           {
-            "description": "The payment's unique ID",
-            "in": "path",
             "name": "id",
+            "in": "path",
+            "description": "The payment's unique ID",
             "required": true,
             "type": "integer"
           },
           {
-            "description": "The payment details",
             "in": "body",
             "name": "body",
+            "description": "The payment details",
             "required": true,
             "schema": {
               "$ref": "#/definitions/payment"
@@ -1984,18 +2023,19 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Payments"
-        ]
+        "x-swagger-router-controller": "Payments"
       },
       "delete": {
-        "operationId": "deletePayment",
+        "tags": [
+          "Payments"
+        ],
         "description": "Delete a right holder's profile with the given ID",
+        "operationId": "deletePayment",
         "parameters": [
           {
-            "description": "The rights holder's unique profile ID",
-            "in": "path",
             "name": "id",
+            "in": "path",
+            "description": "The rights holder's unique profile ID",
             "required": true,
             "type": "integer"
           }
@@ -2022,20 +2062,21 @@
             "jwt": []
           }
         ],
-        "tags": [
-          "Payments"
-        ]
+        "x-swagger-router-controller": "Payments"
       }
     },
     "/payments/{id}/transaction-id": {
       "get": {
-        "operationId": "getPaymentTransactionID",
+        "tags": [
+          "Payments"
+        ],
         "description": "Get management societies' payment transaction ID",
+        "operationId": "getPaymentTransactionID",
         "parameters": [
           {
-            "description": "The payment's unique ID",
-            "in": "path",
             "name": "id",
+            "in": "path",
+            "description": "The payment's unique ID",
             "required": true,
             "type": "integer"
           }
@@ -2046,9 +2087,9 @@
             "schema": {
               "properties": {
                 "transaction-id": {
-                  "description": "The management societies' transaction ID",
                   "type": "string",
-                  "example": "124235678"
+                  "example": "124235678",
+                  "description": "The management societies' transaction ID"
                 }
               }
             }
@@ -2066,25 +2107,26 @@
             "description": "An unknown error occured"
           }
         },
-        "tags": [
-          "Payments"
-        ]
+        "x-swagger-router-controller": "Payments"
       },
       "patch": {
-        "operationId": "patchPaymentTransactionID",
+        "tags": [
+          "Payments"
+        ],
         "description": "Update management societies' payment transaction ID",
+        "operationId": "patchPaymentTransactionID",
         "parameters": [
           {
-            "description": "The payment's unique ID",
-            "in": "path",
             "name": "id",
+            "in": "path",
+            "description": "The payment's unique ID",
             "required": true,
             "type": "integer"
           },
           {
-            "description": "The payment transaction ID",
             "in": "body",
             "name": "transaction-id",
+            "description": "The payment transaction ID",
             "required": true,
             "schema": {
               "$ref": "#/definitions/payment/properties/transaction-id"
@@ -2097,9 +2139,9 @@
             "schema": {
               "properties": {
                 "transaction-id": {
-                  "description": "The management societies' transaction ID",
                   "type": "string",
-                  "example": "87654321"
+                  "example": "87654321",
+                  "description": "The management societies' transaction ID"
                 }
               }
             }
@@ -2122,20 +2164,21 @@
             "jwt": []
           }
         ],
-        "tags": [
-          "Payments"
-        ]
+        "x-swagger-router-controller": "Payments"
       }
     },
-    "/payments/{id}/transaction-hash": {
+    "/payments/{id}/amount": {
       "get": {
-        "operationId": "getPaymentTransactionHash",
-        "description": "Get blockchain transaction hash of a payment",
+        "tags": [
+          "Payments"
+        ],
+        "description": "Get the amount for the given payment",
+        "operationId": "getPaymentAmount",
         "parameters": [
           {
-            "description": "The payment's unique ID",
-            "in": "path",
             "name": "id",
+            "in": "path",
+            "description": "The payment's unique ID",
             "required": true,
             "type": "integer"
           }
@@ -2145,10 +2188,10 @@
             "description": "OK",
             "schema": {
               "properties": {
-                "transaction-hash": {
-                  "description": "The transaction hash on the blockchain",
-                  "type": "string",
-                  "example": "0x58a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c"
+                "amount": {
+                  "type": "number",
+                  "example": 20,
+                  "description": "The amount of the payment in $ CAD"
                 }
               }
             }
@@ -2166,25 +2209,71 @@
             "description": "An unknown error occured"
           }
         },
+        "x-swagger-router-controller": "Payments"
+      }
+    },
+    "/payments/{id}/transaction-hash": {
+      "get": {
         "tags": [
           "Payments"
-        ]
-      },
-      "patch": {
-        "operationId": "patchPaymentTransactionHash",
-        "description": "Update blockchain transaction hash of a payment",
+        ],
+        "description": "Get blockchain transaction hash of a payment",
+        "operationId": "getPaymentTransactionHash",
         "parameters": [
           {
-            "description": "The payment's unique ID",
-            "in": "path",
             "name": "id",
+            "in": "path",
+            "description": "The payment's unique ID",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "properties": {
+                "transaction-hash": {
+                  "type": "string",
+                  "example": "0x58a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c",
+                  "description": "The transaction hash on the blockchain"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Endpoint not found"
+          },
+          "500": {
+            "description": "An unknown error occured"
+          }
+        },
+        "x-swagger-router-controller": "Payments"
+      },
+      "patch": {
+        "tags": [
+          "Payments"
+        ],
+        "description": "Update blockchain transaction hash of a payment",
+        "operationId": "patchPaymentTransactionHash",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The payment's unique ID",
             "required": true,
             "type": "integer"
           },
           {
-            "description": "The blockchain hash of the transaction",
             "in": "body",
             "name": "transaction-hash",
+            "description": "The blockchain hash of the transaction",
             "required": true,
             "schema": {
               "$ref": "#/definitions/payment/properties/transaction-hash"
@@ -2197,9 +2286,9 @@
             "schema": {
               "properties": {
                 "transaction-hash": {
-                  "description": "The transaction hash on the blockchain",
                   "type": "string",
-                  "example": "0x68a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c"
+                  "example": "0x68a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c",
+                  "description": "The transaction hash on the blockchain"
                 }
               }
             }
@@ -2222,10 +2311,20 @@
             "jwt": []
           }
         ],
-        "tags": [
-          "Payments"
-        ]
+        "x-swagger-router-controller": "Payments"
       }
+    }
+  },
+  "securityDefinitions": {
+    "basicAuth": {
+      "description": "HTTP Basic Authentication",
+      "type": "basic"
+    },
+    "jwt": {
+      "description": "A JSON Web Token (JWT) used for access control and authorization",
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
     }
   },
   "definitions": {
@@ -2243,164 +2342,216 @@
       }
     },
     "authResult": {
+      "type": "object",
       "properties": {
         "accessToken": {
-          "description": "The JWT access token for the current session",
           "type": "string",
-          "example": "fyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJjb21wYW55IjoiRnV0dXJlRWQiLCJzdWIiOjEsImlzcyI6Imh0dHA6XC9cL2Z1dHVyZWVkLmRldlwvYXBpXC92MVwvc3R1ZGVudFwvbG9naW5cL3VzZXJuYW1lIiwiaWF0IjoiMTQyNzQyNjc3MSIsImV4cCI6IjE0Mjc0MzAzNzEiLCJuYmYiOiIxNDI3NDI2NzcxIiwianRpIjoiNmFlZDQ3MGFiOGMxYTk0MmE0MTViYTAwOTBlMTFlZTUifQ.MmM2YTUwMjEzYTE0OGNhNjk5Y2Y2MjEwZDdkN2Y1OTQ2NWVhZTdmYmI4OTA5YmM1Y2QwYTMzZjUwNTgwY2Y0MQ"
+          "example": "fyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJjb21wYW55IjoiRnV0dXJlRWQiLCJzdWIiOjEsImlzcyI6Imh0dHA6XC9cL2Z1dHVyZWVkLmRldlwvYXBpXC92MVwvc3R1ZGVudFwvbG9naW5cL3VzZXJuYW1lIiwiaWF0IjoiMTQyNzQyNjc3MSIsImV4cCI6IjE0Mjc0MzAzNzEiLCJuYmYiOiIxNDI3NDI2NzcxIiwianRpIjoiNmFlZDQ3MGFiOGMxYTk0MmE0MTViYTAwOTBlMTFlZTUifQ.MmM2YTUwMjEzYTE0OGNhNjk5Y2Y2MjEwZDdkN2Y1OTQ2NWVhZTdmYmI4OTA5YmM1Y2QwYTMzZjUwNTgwY2Y0MQ",
+          "description": "The JWT access token for the current session"
         }
       },
-      "type": "object"
+      "example": {
+        "accessToken": "fyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJjb21wYW55IjoiRnV0dXJlRWQiLCJzdWIiOjEsImlzcyI6Imh0dHA6XC9cL2Z1dHVyZWVkLmRldlwvYXBpXC92MVwvc3R1ZGVudFwvbG9naW5cL3VzZXJuYW1lIiwiaWF0IjoiMTQyNzQyNjc3MSIsImV4cCI6IjE0Mjc0MzAzNzEiLCJuYmYiOiIxNDI3NDI2NzcxIiwianRpIjoiNmFlZDQ3MGFiOGMxYTk0MmE0MTViYTAwOTBlMTFlZTUifQ.MmM2YTUwMjEzYTE0OGNhNjk5Y2Y2MjEwZDdkN2Y1OTQ2NWVhZTdmYmI4OTA5YmM1Y2QwYTMzZjUwNTgwY2Y0MQ"
+      }
     },
     "profiles": {
-      "description": "An array of profile information",
       "type": "array",
+      "description": "An array of profile information",
       "items": {
         "$ref": "#/definitions/profile"
       }
     },
     "profile": {
+      "type": "object",
       "properties": {
+        "id": {
+          "type": "integer",
+          "example": 1,
+          "description": "The unique ID of the given profile"
+        },
         "first-name": {
-          "description": "The name displayed on the user's profile",
           "type": "string",
-          "example": "John"
+          "example": "John",
+          "description": "The name displayed on the user's profile"
         },
         "last-name": {
-          "description": "The name displayed on the user's profile",
           "type": "string",
-          "example": "Smith"
+          "example": "Smith",
+          "description": "The name displayed on the user's profile"
         },
         "email": {
-          "description": "The email address for this user profile",
           "type": "string",
-          "example": "john.smith@example.com"
+          "example": "john.smith@example.com",
+          "description": "The email address for this user profile"
         },
         "media": {
           "$ref": "#/definitions/mediaIds"
         },
         "ipi": {
-          "description": "The right holder's interested party information number",
           "type": "string",
-          "example": "00004576"
+          "example": "00004576",
+          "description": "The right holder's interested party information number"
         },
         "role": {
-          "description": "The role of the right holder for this user profile",
           "type": "string",
-          "example": "writer"
+          "example": "writer",
+          "description": "The role of the right holder for this user profile"
         },
         "wallet": {
-          "description": "The blockchain wallet address for this user profile",
           "type": "string",
-          "example": "0xdd87ae15f4be97e2739c9069ddef674f907d27a8"
+          "example": "0xdd87ae15f4be97e2739c9069ddef674f907d27a8",
+          "description": "The blockchain wallet address for this user profile"
         }
       },
-      "type": "object"
+      "example": {
+        "ipi": "00004576",
+        "role": "writer",
+        "wallet": "0xdd87ae15f4be97e2739c9069ddef674f907d27a8",
+        "media": "",
+        "first-name": "John",
+        "email": "john.smith@example.com",
+        "last-name": "Smith"
+      }
     },
     "medias": {
-      "description": "An array of pieces of media",
       "type": "array",
+      "description": "An array of pieces of media",
       "items": {
         "$ref": "#/definitions/media"
       }
     },
     "mediaIds": {
-      "description": "An array of mediaIds referencing media",
       "type": "array",
+      "description": "An array of mediaIds referencing media",
       "items": {
         "type": "integer",
-        "example": [
-          2,
-          3,
-          4
-        ]
+        "example": 1
       }
     },
     "media": {
       "properties": {
+        "mediaId": {
+          "type": "integer",
+          "example": 1,
+          "description": "The id of this piece of media"
+        },
         "title": {
-          "description": "The title of this piece of media",
           "type": "string",
-          "example": "Love You Baby"
+          "example": "Love You Baby",
+          "description": "The title of this piece of media"
         },
         "description": {
-          "description": "The short descriptioon of this piece of media",
           "type": "string",
-          "example": "The wonderful classic hit song, Love You Baby"
+          "example": "The wonderful classic hit song, Love You Baby",
+          "description": "The short descriptioon of this piece of media"
+        },
+        "cover": {
+          "type": "boolean",
+          "example": false,
+          "description": "Whether or not this piece of media is a cover"
         },
         "right-holders": {
-          "additionalProperties": {
-            "description": "The type of right holder, for example, writer, producer",
-            "type": "string"
-          },
+          "type": "object",
           "description": "The full name of the right holder",
-          "type": "object"
+          "additionalProperties": {
+            "type": "string",
+            "description": "The type of right holder, for example, writer, producer"
+          }
         },
         "jurisdiction": {
-          "description": "The Jurisdiction for the given media",
           "type": "string",
-          "example": "SOCAN"
+          "example": "SOCAN",
+          "description": "The Jurisdiction for the given media"
         },
         "rights-type": {
-          "additionalProperties": {
-            "description": "The type of right, for example, copyright, performance, recording",
-            "type": "string"
-          },
+          "type": "object",
           "description": "The boolean, 'True' or 'False'",
-          "type": "object"
+          "additionalProperties": {
+            "type": "string",
+            "description": "The type of right, for example, copyright, performance, recording"
+          }
         },
         "genre": {
-          "description": "The genre of the given media",
           "type": "string",
-          "example": "Rock"
+          "example": "Rock",
+          "description": "The genre of the given media"
         },
         "creation-date": {
-          "description": "The creation date of the rights agreement for the given media",
-          "format": "iso8601-date-time",
           "type": "string",
-          "example": "2019-01-01T15:53:00"
+          "format": "iso8601-date-time",
+          "example": "2019-01-01T15:53:00",
+          "description": "The creation date of the rights agreement for the given media"
         },
         "publisher": {
-          "description": "The publisher for the given media (Left blank if no publisher)",
           "type": "string",
-          "example": "sync publishing"
+          "example": "sync publishing",
+          "description": "The publisher for the given media (Left blank if no publisher)"
         },
         "split": {
-          "additionalProperties": {
-            "description": "The names of the right holders for the given media",
-            "type": "number"
-          },
+          "type": "object",
           "description": "The percentage split of each right holder",
-          "type": "object"
+          "additionalProperties": {
+            "type": "number",
+            "description": "The names of the right holders for the given media"
+          }
+        }
+      },
+      "example": {
+        "split": {
+          "key": 0.8008281904610115
+        },
+        "jurisdiction": "SOCAN",
+        "genre": "Rock",
+        "description": "The wonderful classic hit song, Love You Baby",
+        "creation-date": "2019-01-01T15:53:00",
+        "cover": false,
+        "publisher": "sync publishing",
+        "rights-type": {
+          "key": "rights-type"
+        },
+        "title": "Love You Baby",
+        "right-holders": {
+          "key": "right-holders"
         }
       }
     },
     "payments": {
-      "description": "An array of information about payments",
       "type": "array",
+      "description": "An array of information about payments",
       "items": {
         "$ref": "#/definitions/payment"
       }
     },
     "payment": {
+      "type": "object",
       "properties": {
-        "mediaId": {
-          "description": "media id related to this payment",
+        "id": {
           "type": "integer",
-          "example": 1
+          "example": 1,
+          "description": "Media ID related to this payment"
+        },
+        "amount": {
+          "type": "number",
+          "example": 20,
+          "description": "The amount of the payment in $ CAD"
         },
         "transaction-id": {
-          "description": "The transaction string of the management company for this payment",
           "type": "string",
-          "example": "12345678"
+          "example": "12345678",
+          "description": "The transaction string of the management company for this payment"
         },
         "transaction-hash": {
-          "description": "The blockchain transaction hash for this payment",
           "type": "string",
-          "example": "0x58a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c"
+          "example": "0x58a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c",
+          "description": "The blockchain transaction hash for this payment"
         }
       },
-      "type": "object"
+      "example": {
+        "transaction-id": "12345678",
+        "id": 1,
+        "amount": 20,
+        "transaction-hash": "0x58a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c"
+      }
     }
   }
 }
