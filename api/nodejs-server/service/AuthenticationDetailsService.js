@@ -53,6 +53,16 @@ exports.postAuth = function(auth) {
         } else {
           resolve();
         }
+
+        // // decode 
+        // jwt.decode(secret, token, function (err_, decodedPayload, decodedHeader) {
+        //   if (err) {
+        //     console.error(err.name, err.message);
+        //   } else {
+        //     console.log(decodedPayload, decodedHeader);
+        //   }
+        // });
+
       }
     });
   });

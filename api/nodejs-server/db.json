@@ -78,6 +78,35 @@
       "first-name": "Seven",
       "email": "seven@example.com",
       "last-name": "Smith"
+    },
+    {
+      "id": 9,
+      "ipi": "99999999",
+      "role": "writer",
+      "wallet": "0xaa87ae15f4be97e2739c9069ddef674f907d27a8",
+      "media": [
+        1,
+        2,
+        3,
+        8
+      ],
+      "first-name": "Jill",
+      "email": "jsparrow@example.com",
+      "last-name": "Sparrow"
+    },
+    {
+      "id": 8,
+      "ipi": "12348888",
+      "role": "writer",
+      "media": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "first-name": "Jim",
+      "email": "jsparrow@example.com",
+      "last-name": "Sparrow"
     }
   ],
   "media": [
@@ -237,24 +266,24 @@
     {
       "mediaId": 8,
       "split": {
-        "Drew Miller": 75,
-        "Andy Wilson": 25
+        "Drew Miller": 50,
+        "Andy Wilson": 50
       },
       "jurisdiction": "SOCAN",
       "genre": "Rock",
-      "description": "Lovely summer song",
+      "description": "The wonderful classic hit song, Love You Baby 2",
       "cover": false,
-      "creation-date": "2019-02-20T12:53:00",
+      "creation-date": "2019-01-01T15:53:00",
       "publisher": "sync publishing",
       "rights-type": {
         "copyright": true,
         "performance": true,
         "recording": true
       },
-      "title": "Lift",
+      "title": "Love You Baby 2",
       "right-holders": {
         "Drew Miller": "writer",
-        "Andy Wilson": "composer"
+        "Andy Wilson": "performer"
       }
     }
   ],

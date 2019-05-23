@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "prestart": "npm install",
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "mocha --timeout 10000"
   },
   "keywords": [
     "swagger"
@@ -13,11 +14,14 @@
   "license": "Unlicense",
   "private": true,
   "dependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
     "connect": "^3.7.0",
     "express": "^4.17.0",
     "js-yaml": "^3.3.0",
     "json-web-token": "^3.0.0",
     "lodb": "^0.5.2",
+    "mocha": "^6.1.4",
     "morgan": "^1.9.1",
     "node-webtokens": "^1.0.0",
     "swagger-tools": "^0.10.4"
