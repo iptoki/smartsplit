@@ -14,6 +14,7 @@
   "license": "Unlicense",
   "private": true,
   "dependencies": {
+    "aws-sdk": "^2.463.0",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "connect": "^3.7.0",
@@ -24,6 +25,7 @@
     "mocha": "^6.1.4",
     "morgan": "^1.9.1",
     "node-webtokens": "^1.0.0",
-    "swagger-tools": "^0.10.4"
+    "swagger-tools": "^0.10.4",
+    "uuid": "^3.3.2"
   }
 }

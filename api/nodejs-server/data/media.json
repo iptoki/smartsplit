@@ -1,0 +1,458 @@
+{
+    "media": [
+      {
+        "PutRequest": {
+            "Item": {
+                "mediaId": {
+                    "N": "1"
+                },
+                "split": {
+                    "M": {
+                        "John Smith": {"N": "41.6"}, 
+                        "Bob Andrews": {"N": "16.6"}, 
+                        "Andy Wilson": {"N": "41.6"}
+                    }
+                },
+                "jurisdiction": {
+                    "S": "SOCAN"
+                },
+                "description": {
+                    "S": "The wonderful classic hit song, Love You Baby"
+                },
+                "album": {
+                    "S": "You"
+                },
+                "cover": {
+                    "BOOL": false
+                },
+                "creation-date": {
+                    "S": "019-01-01T15:53:00"
+                },
+                "modification-date": {
+                    "S": "019-01-01T15:53:00"
+                },
+                "publish-date": {
+                    "S": "019-01-01T15:53:00"
+                },
+                "publisher": {
+                    "S": "sync publishing"
+                },
+                "rights-type": {
+                    "M": {
+                        "copyright": {"BOOL": true}, 
+                        "performance": {"BOOL": true}, 
+                        "recording": {"BOOL": true}
+                    }
+                },
+                "title": {
+                    "S": "Love You Baby"
+                },
+                "right-holders": {
+                    "M": {
+                        "John Smith": {"S": "writer"}, 
+                        "Bob Andrews": {"S": "composer"}, 
+                        "Andy Wilson": {"S": "singer"}
+                    }
+                },
+                "genre": {
+                    "S": "Pop"
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "mediaId": {
+                    "N": "2"
+                },
+                "split": {
+                    "M": {
+                        "John Smith": {"N": "100"}
+                    }
+                },
+                "jurisdiction": {
+                    "S": "SOPROQ"
+                },
+                "description": {
+                    "S": "The wonderful classic hit song, Rock You Baby"
+                },
+                "album": {
+                    "S": "Dance Mix 17"
+                },
+                "cover": {
+                    "BOOL": false
+                },
+                "creation-date": {
+                    "S": "2019-01-02T15:53:00"
+                },
+                "modification-date": {
+                    "S": "2019-01-02T15:53:00"
+                },
+                "publish-date": {
+                    "S": "2019-01-02T15:53:00"
+                },
+                "publisher": {
+                    "S": "pop publishing"
+                },
+                "rights-type": {
+                    "M": {
+                        "copyright": {"BOOL": true}, 
+                        "performance": {"BOOL": false}, 
+                        "recording": {"BOOL": true}
+                    }
+                },
+                "title": {
+                    "S": "Rock You Baby"
+                },
+                "right-holders": {
+                    "M": {
+                        "John Smith": {"S": "writer"}                    }
+                },
+                "genre": {
+                    "S": "Pop"
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "mediaId": {
+                    "N": "3"
+                },
+                "split": {
+                    "M": {
+                        "John Smith": {"N": "100"}
+                    }
+                },
+                "jurisdiction": {
+                    "S": "SOPROQ"
+                },
+                "description": {
+                    "S": "The acoustic version of the classic Rock You Baby"
+                },
+                "album": {
+                    "S": "You Acoustic"
+                },
+                "cover": {
+                    "BOOL": false
+                },
+                "creation-date": {
+                    "S": "2019-01-02T15:54:00"
+                },
+                "modification-date": {
+                    "S": "2019-01-02T15:54:00"
+                },
+                "publish-date": {
+                    "S": "2019-01-02T15:54:00"
+                },
+                "publisher": {
+                    "S": "pop publishing"
+                },
+                "rights-type": {
+                    "M": {
+                        "copyright": {"BOOL": true}, 
+                        "performance": {"BOOL": false}, 
+                        "recording": {"BOOL": true}
+                    }
+                },
+                "title": {
+                    "S": "Rock You Baby (Acoustic Version)"
+                },
+                "right-holders": {
+                    "M": {
+                        "John Smith": {"S": "writer"}                    }
+                },
+                "genre": {
+                    "S": "Pop"
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "mediaId": {
+                    "N": "4"
+                },
+                "split": {
+                    "M": {
+                        "John Smith": {"N": "50"},
+                        "Bob Andrews": {"N": "50"}
+                    }
+                },
+                "jurisdiction": {
+                    "S": "SOCAN"
+                },
+                "description": {
+                    "S": "Cultural cult classic, The Sun"
+                },
+                "album": {
+                    "S": "Sunny"
+                },
+                "cover": {
+                    "BOOL": false
+                },
+                "creation-date": {
+                    "S": "2019-01-01T15:53:00"
+                },
+                "modification-date": {
+                    "S": "2019-01-01T15:53:00"
+                },
+                "publish-date": {
+                    "S": "2019-01-01T15:53:00"
+                },
+                "publisher": {
+                    "S": "sync publishing"
+                },
+                "rights-type": {
+                    "M": {
+                        "copyright": {"BOOL": true}, 
+                        "performance": {"BOOL": true}, 
+                        "recording": {"BOOL": true}
+                    }
+                },
+                "title": {
+                    "S": "The Sun"
+                },
+                "right-holders": {
+                    "M": {
+                        "John Smith": {"S": "writer"},
+                        "Bob Andrews": {"S": "composer"}
+                    }
+                },
+                "genre": {
+                    "S": "Rock"
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "mediaId": {
+                    "N": "5"
+                },
+                "split": {
+                    "M": {
+                        "Bob Andrews": {"N": "100"}
+                    }
+                },
+                "jurisdiction": {
+                    "S": "ARTISTI"
+                },
+                "description": {
+                    "S": "The Ultimate Old-School Hip Hop Song, Go"
+                },
+                "album": {
+                    "S": "Go Old School"
+                },
+                "cover": {
+                    "BOOL": false
+                },
+                "creation-date": {
+                    "S": "2019-01-02T15:54:00"
+                },
+                "modification-date": {
+                    "S": "2019-01-02T15:54:00"
+                },
+                "publish-date": {
+                    "S": "2019-01-02T15:54:00"
+                },
+                "publisher": {
+                    "S": "SWAYER publishing"
+                },
+                "rights-type": {
+                    "M": {
+                        "copyright": {"BOOL": true}, 
+                        "performance": {"BOOL": true}, 
+                        "recording": {"BOOL": true}
+                    }
+                },
+                "title": {
+                    "S": "Go"
+                },
+                "right-holders": {
+                    "M": {
+                        "Bob Andrews": {"S": "composer"}
+                    }
+                },
+                "genre": {
+                    "S": "Hip Hop"
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "mediaId": {
+                    "N": "6"
+                },
+                "split": {
+                    "M": {
+                        "Bob Andrews": {"N": "100"}
+                    }
+                },
+                "jurisdiction": {
+                    "S": "ARTISTI"
+                },
+                "description": {
+                    "S": "The Ultimate Old-School Hip Hop Song, Sway"
+                },
+                "album": {
+                    "S": "Old School Four"
+                },
+                "cover": {
+                    "BOOL": true
+                },
+                "creation-date": {
+                    "S": "2019-01-07T16:00:00"
+                },
+                "modification-date": {
+                    "S": "2019-01-07T16:00:00"
+                },
+                "publish-date": {
+                    "S": "2019-01-07T16:00:00"
+                },
+                "publisher": {
+                    "S": "SWAYER publishing"
+                },
+                "rights-type": {
+                    "M": {
+                        "copyright": {"BOOL": true}, 
+                        "performance": {"BOOL": true}, 
+                        "recording": {"BOOL": true}
+                    }
+                },
+                "title": {
+                    "S": "Sway"
+                },
+                "right-holders": {
+                    "M": {
+                        "Bob Andrews": {"S": "composer"}
+                    }
+                },
+                "genre": {
+                    "S": "Hip Hop"
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "mediaId": {
+                    "N": "7"
+                },
+                "split": {
+                    "M": {
+                        "Joe Jones": {"N": "100"}
+                    }
+                },
+                "jurisdiction": {
+                    "S": "SOCAN"
+                },
+                "description": {
+                    "S": "Recording of Classical piece Symphony 9000"
+                },
+                "album": {
+                    "S": "Symphony 9000"
+                },
+                "cover": {
+                    "BOOL": false
+                },
+                "creation-date": {
+                    "S": "2019-01-20T15:30:00"
+                },
+                "modification-date": {
+                    "S": "2019-01-20T15:30:00"
+                },
+                "publish-date": {
+                    "S": "2019-01-20T15:30:00"
+                },
+                "publisher": {
+                    "S": "North publishing"
+                },
+                "rights-type": {
+                    "M": {
+                        "copyright": {"BOOL": true}, 
+                        "performance": {"BOOL": false}, 
+                        "recording": {"BOOL": true}
+                    }
+                },
+                "title": {
+                    "S": "Symphony 9000"
+                },
+                "right-holders": {
+                    "M": {
+                        "Bob Andrews": {"S": "songwriter"}
+                    }
+                },
+                "genre": {
+                    "S": "Classical"
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "mediaId": {
+                    "N": "8"
+                },
+                "split": {
+                    "M": {
+                        "Drew Miller": {"N": "50"},
+                        "Andy Wilson": {"N": "50"}
+                    }
+                },
+                "jurisdiction": {
+                    "S": "SOCAN"
+                },
+                "description": {
+                    "S": "The wonderful classic hit song, Love You Baby 2"
+                },
+                "album": {
+                    "S": "Love You Baby"
+                },
+                "cover": {
+                    "BOOL": false
+                },
+                "creation-date": {
+                    "S": "2019-01-01T15:53:00"
+                },
+                "modification-date": {
+                    "S": "2019-01-01T15:53:00"
+                },
+                "publish-date": {
+                    "S": "2019-01-01T15:53:00"
+                },
+                "publisher": {
+                    "S": "sync publishing"
+                },
+                "rights-type": {
+                    "M": {
+                        "copyright": {"BOOL": true}, 
+                        "performance": {"BOOL": true}, 
+                        "recording": {"BOOL": true}
+                    }
+                },
+                "title": {
+                    "S": "Love You Baby 2"
+                },
+                "right-holders": {
+                    "M": {
+                        "Drew Miller": {"S": "writer"},
+                        "Andy Wilson": {"S": "performer"}
+                    }
+                },
+                "genre": {
+                    "S": "Rock"
+                }
+            }
+        }
+      }
+    ]
+}

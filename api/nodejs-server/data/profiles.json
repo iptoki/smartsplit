@@ -1,0 +1,158 @@
+{
+    "profiles": [
+      {
+        "PutRequest": {
+            "Item": {
+                "id": {
+                    "N": "1"
+                },
+                "ipi": {
+                    "N": "11114576"
+                },
+                "role": {
+                    "S": "writer"
+                },
+                "wallet": {
+                    "S": "0xaa87ae15f4be97e2739c9069ddef674f907d27a8"
+                },
+                "media": {
+                    "L": [
+                        {
+                            "N": "1"
+                        },
+                        {
+                            "N": "2"
+                        },     
+                        {
+                            "N": "3"
+                        },
+                        {
+                            "N": "4"
+                        }                
+                    ]
+                },
+                "first-name": {
+                    "S": "Johnny"
+                },
+                "email": {
+                    "S": "johnny.smithy@example.com"
+                },
+                "last-name": {
+                    "S": "Smithy"
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "id": {
+                    "N": "2"
+                },
+                "ipi": {
+                    "N": "00004577"
+                },
+                "role": {
+                    "S": "composer"
+                },
+                "wallet": {
+                    "S": "0xff87ae15f4be97e2739c9069ddef674f907d27a8"
+                },
+                "media": {
+                    "L": [
+                        {
+                            "N": "1"
+                        },
+                        {
+                            "N": "4"
+                        },     
+                        {
+                            "N": "5"
+                        },
+                        {
+                            "N": "6"
+                        }                
+                    ]
+                },
+                "first-name": {
+                    "S": "Bob"
+                },
+                "email": {
+                    "S": "bandrews@example.com"
+                },
+                "last-name": {
+                    "S": "Andrews"
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "id": {
+                    "N": "3"
+                },
+                "ipi": {
+                    "N": "18006870"
+                },
+                "role": {
+                    "S": "songwriter"
+                },
+                "wallet": {
+                    "S": "0xab97ae15f4be97e2739c9069ddef674f907d27a8"
+                },
+                "media": {
+                    "L": [
+                        {
+                            "N": "7"
+                        }                
+                    ]
+                },
+                "first-name": {
+                    "S": "Joe"
+                },
+                "email": {
+                    "S": "joe.jones@example.com"
+                },
+                "last-name": {
+                    "S": "Jones"
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "id": {
+                    "N": "4"
+                },
+                "ipi": {
+                    "N": "29305500"
+                },
+                "role": {
+                    "S": "songwriter"
+                },
+                "wallet": {
+                    "S": "0x4008479586813f34414c00BBcD377d632D6f6D8D"
+                },
+                "media": {
+                    "L": [
+                        {
+                            "N": "8"
+                        }                
+                    ]
+                },
+                "first-name": {
+                    "S": "Drew"
+                },
+                "email": {
+                    "S": "dmiller@example.com"
+                },
+                "last-name": {
+                    "S": "Miller"
+                }
+            }
+        }
+      }
+    ]
+}

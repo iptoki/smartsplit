@@ -95,6 +95,30 @@ module.exports.patchMediaTitle = function patchMediaTitle (req, res, next) {
     });
 };
 
+module.exports.patchMediaAlbum = function patchMediaAlbum (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  var album = req.swagger.params['album'].value;
+  Media.patchMediaAlbum(mediaId,album)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.patchModificationDate = function patchModificationDate (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  var modificationDate = req.swagger.params['modification-date'].value;
+  Media.patchModificationDate(mediaId,modificationDate)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
 module.exports.postMedia = function postMedia (req, res, next) {
   var body = req.swagger.params['body'].value;
   Media.postMedia(body)

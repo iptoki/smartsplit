@@ -1,7 +1,7 @@
 'use strict';
 
 const lodb = require('lodb');
-const db = lodb('db.json');
+const db = lodb('./data/db.json');
 const bodyParser = require('body-parser');
 const express = require('express');
 const app = express();

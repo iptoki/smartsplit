@@ -1,6 +1,6 @@
 'use strict';
 const lodb = require('lodb');
-const db = lodb('db.json');
+const db = lodb('./data/db.json');
 
 /**
  * Delete a right holder's profile with the given ID
@@ -141,6 +141,26 @@ exports.patchMediaJurisdiction = function(mediaId,jurisdiction) {
   });
 }
 
+/**
+ * Update the modification date of the given media
+ *
+ * mediaId Integer The artwork agreement's unique ID
+ * modificationDate modification date The date the given media was modified
+ * returns Object
+ **/
+exports.patchModificationDate = function(mediaId,modificationDate) {
+  return new Promise(function(resolve, reject) {
+    let modificationDateOld = (db('media').find({ mediaId: mediaId }).value())['modification-date'];
+    db('media').find({ mediaId: mediaId }).assign({ modificationDate: modificationDate['modification-date'] });
+    db.save();
+    let media = db('media').find({ mediaId: mediaId }).value();
+    if (media['modification-date'] != modificationDateOld) {
+      resolve("Modification date updated: " + media['modification-date']);
+    } else {
+      resolve();
+    }
+  });
+}
 
 /**
  * Update publisher of the media with the given ID
@@ -179,6 +199,28 @@ exports.patchMediaTitle = function(mediaId,title) {
     let media = db('media').find({ mediaId: mediaId }).value();
     if (media.title != titleOld) {
       resolve("Media title updated: " + media.title);
+    } else {
+      resolve();
+    }
+  });
+}
+
+
+/**
+ * Update the album of a piece of media
+ *
+ * mediaId Integer The artwork agreement's unique ID
+ * album The album name of the artwork
+ * returns Object
+ **/
+exports.patchMediaAlbum = function(mediaId,album) {
+  return new Promise(function(resolve, reject) {
+    let albumOld = (db('media').find({ mediaId: mediaId }).value()).album;
+    db('media').find({ mediaId: mediaId }).assign({ album: album.album });
+    db.save();
+    let media = db('media').find({ mediaId: mediaId }).value();
+    if (media.album != albumOld) {
+      resolve("Media description updated: " + media.album);
     } else {
       resolve();
     }

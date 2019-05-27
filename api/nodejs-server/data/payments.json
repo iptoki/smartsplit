@@ -1,0 +1,67 @@
+{
+    "payments": [
+      {
+        "PutRequest": {
+            "Item": {
+                "id": {
+                    "N": "1"
+                },
+                "amount": {
+                    "N": "20"
+                },
+                "payee": {
+                    "N": "2"
+                },
+                "transaction-id": {
+                    "S": "87654321"
+                },
+                "transaction-hash": {
+                    "S": "0x18a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0d"
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "id": {
+                    "N": "2"
+                },
+                "amount": {
+                    "N": "100"
+                },
+                "payee": {
+                    "N": "4"
+                },
+                "transaction-id": {
+                    "S": "12345678"
+                },
+                "transaction-hash": {
+                    "S": "0x98a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c"
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "id": {
+                    "N": "3"
+                },
+                "amount": {
+                    "N": "1000"
+                },
+                "payee": {
+                    "N": "5"
+                },
+                "transaction-id": {
+                    "S": "88888888"
+                },
+                "transaction-hash": {
+                    "S": "0x88a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c"
+                }
+            }
+        }
+      }
+    ]
+}

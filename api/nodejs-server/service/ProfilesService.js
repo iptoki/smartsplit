@@ -1,6 +1,71 @@
 'use strict';
 const lodb = require('lodb');
-const db = lodb('db.json');
+const db = lodb('./data/db.json');
+const uuid = require('uuid');
+const AWS = require('aws-sdk');
+const REGION = 'us-east-2';
+
+AWS.config.update({
+  region: REGION,
+  // endpoint: 'http://localhost:8001',
+  // accessKeyId default can be used while using the downloadable version of DynamoDB. 
+  // For security reasons, do not store AWS Credentials in your files. Use Amazon Cognito instead.
+  accessKeyId: process.env.AWS_ACCESS_KEY,
+  // secretAccessKey default can be used while using the downloadable version of DynamoDB. 
+  // For security reasons, do not store AWS Credentials in your files. Use Amazon Cognito instead.
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+});
+
+var ddb = new AWS.DynamoDB({apiVersion: '2012-08-10'});
+
+// // CreateTable
+// var params = {
+//   AttributeDefinitions: [
+//     {
+//       AttributeName: 'id',
+//       AttributeType: 'N'
+//     },
+//     {
+//       AttributeName: 'first-name',
+//       AttributeType: 'S'
+//     }
+//   ],
+//   KeySchema: [
+//     {
+//       AttributeName: 'CUSTOMER_ID',
+//       KeyType: 'HASH'
+//     },
+//     {
+//       AttributeName: 'CUSTOMER_NAME',
+//       KeyType: 'RANGE'
+//     }
+//   ],
+//   ProvisionedThroughput: {
+//     ReadCapacityUnits: 1,
+//     WriteCapacityUnits: 1
+//   },
+//   TableName: 'profiles',
+//   StreamSpecification: {
+//     StreamEnabled: false
+//   }
+// };
+
+var params = {
+  TableName: 'profiles',
+  Key: {
+    'id': {N: '2'}
+  },
+  ProjectionExpression: 'ATTRIBUTE_NAME'
+};
+
+// Call DynamoDB to read the item from the table
+ddb.getItem(params, function(err, data) {
+  if (err) {
+    console.log("Error", err);
+  } else {
+    console.log("Success", data.Item);
+  }
+});
 
 
 /**
@@ -8,7 +73,8 @@ const db = lodb('db.json');
  *
  * id Integer The rights holder's unique profile ID
  * no response value expected for this operation
- **/
+ **/ 
+// AWS deleteItem
 exports.deleteProfile = function(id) {
   return new Promise(function(resolve, reject) {
     let profile = db('profiles').find({ id: id }).value()
@@ -28,6 +94,7 @@ exports.deleteProfile = function(id) {
  *
  * returns profiles
  **/
+// AWS batchGetItem
 exports.getAllProfiles = function() {
   return new Promise(function(resolve, reject) {
     let profiles = db('profiles').value()
@@ -46,6 +113,7 @@ exports.getAllProfiles = function() {
  * id Integer The rights holder's unique profile ID
  * returns profile
  **/
+// AWS getItem
 exports.getProfile = function(id) {
   return new Promise(function(resolve, reject) {
     var examples = {};
@@ -75,6 +143,7 @@ exports.getProfile = function(id) {
  * email Email The rights holder's email address
  * returns Object
  **/
+// AWS updateItem
 exports.patchProfileEmail = function(id,email) {
   return new Promise(function(resolve, reject) {
     let emailOld = (db('profiles').find({ id: id }).value()).email;
@@ -97,6 +166,7 @@ exports.patchProfileEmail = function(id,email) {
  * firstName First-name The rights holder's first name
  * returns Object
  **/
+// AWS updateItem
 exports.patchProfileFirstName = function(id,firstName) {
   return new Promise(function(resolve, reject) {
     let firstNameOld = (db('profiles').find({ id: id }).value())['first-name'];
@@ -119,6 +189,7 @@ exports.patchProfileFirstName = function(id,firstName) {
  * ipi Ipi The right holder's IPI number
  * returns Object
  **/
+// AWS updateItem
 exports.patchProfileIPI = function(id,ipi) {
   return new Promise(function(resolve, reject) {
     let ipiOld = (db('profiles').find({ id: id }).value()).ipi;
@@ -141,6 +212,7 @@ exports.patchProfileIPI = function(id,ipi) {
  * lastName Last-name The rights holder's last name
  * returns Object
  **/
+// AWS updateItem
 exports.patchProfileLastName = function(id,lastName) {
   return new Promise(function(resolve, reject) {
     let lastNameOld = (db('profiles').find({ id: id }).value())['last-name'];
@@ -163,6 +235,7 @@ exports.patchProfileLastName = function(id,lastName) {
  * mediaId MediaIds The unique ID of the given media
  * returns profile
  **/
+// AWS updateItem
 exports.patchProfileMedia = function(id,mediaId) {
   return new Promise(function(resolve, reject) {
     let mediaOld = (db('profiles').find({ id: id }).value()).media;
@@ -188,6 +261,7 @@ exports.patchProfileMedia = function(id,mediaId) {
  * role Role The right holder's role
  * returns Object
  **/
+// AWS updateItem
 exports.patchProfileRole = function(id,role) {
   return new Promise(function(resolve, reject) {
     let roleOld = (db('profiles').find({ id: id }).value()).role;
@@ -210,6 +284,7 @@ exports.patchProfileRole = function(id,role) {
  * wallet Wallet The right holder's wallet address
  * returns Object
  **/
+// AWS updateItem
 exports.patchProfileWallet = function(id,wallet) {
   return new Promise(function(resolve, reject) {
     let walletOld = (db('profiles').find({ id: id }).value()).wallet;
@@ -231,6 +306,7 @@ exports.patchProfileWallet = function(id,wallet) {
  * body Profile request
  * returns profile
  **/
+// AWS putItem
 exports.postProfile = function(body) {
   return new Promise(function(resolve, reject) {
     db('profiles').push( body )
@@ -251,6 +327,7 @@ exports.postProfile = function(body) {
  * body Profile request
  * returns profile
  **/
+// AWS updateItem
 exports.updateProfile = function(id,body) {
   return new Promise(function(resolve, reject) {
     db('profiles').find({ id: id }).assign({ 

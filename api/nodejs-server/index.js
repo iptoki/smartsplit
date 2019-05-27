@@ -6,7 +6,7 @@ const http = require('http');
 const express = require('express');
 const router = express.Router();
 const lodb = require('lodb');
-const db = lodb('db.json');
+const db = lodb('./data/db.json');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 

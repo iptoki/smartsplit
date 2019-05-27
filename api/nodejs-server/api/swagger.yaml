@@ -724,6 +724,42 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
+  /media/{mediaId}/modification-date:
+    patch:
+      tags:
+      - "Media"
+      description: "Update the jurisdiction of the given media"
+      operationId: "patchModificationDate"
+      parameters:
+      - name: "mediaId"
+        in: "path"
+        description: "The artwork agreement's unique ID"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "modification-date"
+        description: "The date the rights agreement for the given media was modified"
+        required: true
+        schema:
+          $ref: "#/definitions/media/properties/modification-date"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            properties:
+              modification-date:
+                type: "string"
+                format: "iso8601-date-time"
+                example: "2019-01-01T15:53:00"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Media"
   # /media/{mediaId}/rights-type:
   #   get:
   #     tags:
@@ -785,6 +821,42 @@ paths:
               genre:
                 type: "string"
                 example: "Pop"
+                description: "The genre of the given media."
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Media"
+  /media/{mediaId}/album:
+    patch:
+      tags:
+      - "Media"
+      description: "Update the album name of the media with the given ID"
+      operationId: "patchMediaAlbum"
+      parameters:
+      - name: "mediaId"
+        in: "path"
+        description: "The artwork agreement's unique ID"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "album"
+        description: "The album of the artwork"
+        required: true
+        schema:
+          $ref: "#/definitions/media/properties/album"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            properties:
+              genre:
+                type: "string"
+                example: "Love you Baby"
                 description: "The genre of the given media."
         400:
           description: "Bad request"
@@ -1064,36 +1136,6 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "Payments"
-  # /payments/{id}/amount:
-  #   get:
-  #     tags:
-  #     - "Payments"
-  #     description: "Get the amount for the given payment"
-  #     operationId: "getPaymentAmount"
-  #     parameters:
-  #     - name: "id"
-  #       in: "path"
-  #       description: "The payment's unique ID"
-  #       required: true
-  #       type: "integer"
-  #     responses:
-  #       200:
-  #         description: "OK"
-  #         schema:
-  #           properties:
-  #             amount:
-  #               type: "number"
-  #               example: 20
-  #               description: "The amount of the payment in $ CAD"
-  #       400:
-  #         description: "Bad request"
-  #       403:
-  #         description: "Permission denied"
-  #       404:
-  #         description: "Endpoint not found"
-  #       500:
-  #         description: "An unknown error occured"
-  #     x-swagger-router-controller: "Payments"
   /payments/{id}/transaction-hash:
     patch:
       tags:
@@ -1226,6 +1268,10 @@ definitions:
         type: "string"
         example: "Love You Baby"
         description: "The title of this piece of media"
+      album:
+        type: "string"
+        example: "Love You Baby Album"
+        description: "The title of the album for this piece of media"
       description:
         type: "string"
         example: "The wonderful classic hit song, Love You Baby"
@@ -1259,6 +1305,16 @@ definitions:
         format: "iso8601-date-time"
         example: "2019-01-01T15:53:00"
         description: "The creation date of the rights agreement for the given media"
+      modification-date:
+        type: "string"
+        format: "iso8601-date-time"
+        example: "2019-01-01T15:53:00"
+        description: "The date the rights agreement for the given media was modified"
+      publish-date:
+        type: "string"
+        format: "iso8601-date-time"
+        example: "2019-01-01T15:53:00"
+        description: "The date of first broadcast/publication for the given media"
       publisher:
         type: "string"
         example: "sync publishing"
@@ -1299,6 +1355,10 @@ definitions:
         type: "number"
         example: 20
         description: "The amount of the payment in $ CAD"
+      payee: 
+        type: "number"
+        example: 2
+        description: "The ID of the profile of the creator who was paid"
       transaction-id:
         type: "string"
         example: "12345678"
