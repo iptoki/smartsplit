@@ -63,59 +63,6 @@ exports.getPayment = function(id) {
   });
 }
 
-/**
- * Get the amount for the given payment
- *
- * id Integer The payment's unique ID
- * returns Object
- **/
-exports.getPaymentAmount = function(id) {
-  return new Promise(function(resolve, reject) {
-    let payment = db('payments').find({id: id}).value()
-    if (Object.keys(payment).length > 0) {
-      resolve("Payment amount: $" + payment.amount);
-    } else {
-      resolve();
-    }
-  });
-}
-
-
-/**
- * Get blockchain transaction hash of a payment
- *
- * id Integer The payment's unique ID
- * returns Object
- **/
-exports.getPaymentTransactionHash = function(id) {
-  return new Promise(function(resolve, reject) {
-    let payment = db('payments').find({id: id}).value()
-    if (Object.keys(payment).length > 0) {
-      resolve(payment['transaction-hash']);
-    } else {
-      resolve();
-    }
-  });
-}
-
-
-/**
- * Get management societies' payment transaction ID
- *
- * id Integer The payment's unique ID
- * returns Object
- **/
-exports.getPaymentTransactionID = function(id) {
-  return new Promise(function(resolve, reject) {
-    let payment = db('payments').find({id: id}).value()
-    if (Object.keys(payment).length > 0) {
-      resolve(payment['transaction-id']);
-    } else {
-      resolve();
-    }
-  });
-}
-
 
 /**
  * Update blockchain transaction hash of a payment

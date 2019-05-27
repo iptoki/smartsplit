@@ -202,35 +202,6 @@ paths:
       - jwt: []
       x-swagger-router-controller: "Profiles"
   /profiles/{id}/first-name:
-    get:
-      tags:
-      - "Profiles"
-      description: "Get a right holder's first name with the given ID"
-      operationId: "getProfileFirstName"
-      parameters:
-      - name: "id"
-        in: "path"
-        description: "The rights holder's unique profile ID"
-        required: true
-        type: "integer"
-      responses:
-        200:
-          description: "OK"
-          schema:
-            properties:
-              name:
-                type: "string"
-                example: "John"
-                description: "The right holder's f name"
-        400:
-          description: "Bad request"
-        403:
-          description: "Permission denied"
-        404:
-          description: "Endpoint not found"
-        500:
-          description: "An unknown error occured"
-      x-swagger-router-controller: "Profiles"
     patch:
       tags:
       - "Profiles"
@@ -267,35 +238,6 @@ paths:
           description: "An unknown error occured"
       x-swagger-router-controller: "Profiles"
   /profiles/{id}/last-name:
-    get:
-      tags:
-      - "Profiles"
-      description: "Get a right holder's last name with the given ID"
-      operationId: "getProfileLastName"
-      parameters:
-      - name: "id"
-        in: "path"
-        description: "The rights holder's unique profile ID"
-        required: true
-        type: "integer"
-      responses:
-        200:
-          description: "OK"
-          schema:
-            properties:
-              name:
-                type: "string"
-                example: "Smith"
-                description: "The right holder's last name"
-        400:
-          description: "Bad request"
-        403:
-          description: "Permission denied"
-        404:
-          description: "Endpoint not found"
-        500:
-          description: "An unknown error occured"
-      x-swagger-router-controller: "Profiles"
     patch:
       tags:
       - "Profiles"
@@ -332,37 +274,6 @@ paths:
           description: "An unknown error occured"
       x-swagger-router-controller: "Profiles"
   /profiles/{id}/email:
-    get:
-      tags:
-      - "Profiles"
-      description: "Get a right holder's email address with given ID"
-      operationId: "getProfileEmail"
-      parameters:
-      - name: "id"
-        in: "path"
-        description: "The right holder's unique profile ID"
-        required: true
-        type: "integer"
-      responses:
-        200:
-          description: "OK"
-          schema:
-            properties:
-              email:
-                type: "string"
-                example: "john.smith@example.com"
-                description: "The right holder's email address"
-        400:
-          description: "Bad request"
-        403:
-          description: "Permission denied"
-        404:
-          description: "Endpoint not found"
-        500:
-          description: "An unknown error occured"
-      security:
-      - jwt: []
-      x-swagger-router-controller: "Profiles"
     patch:
       tags:
       - "Profiles"
@@ -401,36 +312,6 @@ paths:
       - jwt: []
       x-swagger-router-controller: "Profiles"
   /profiles/{id}/role:
-    get:
-      tags:
-      - "Profiles"
-      description: "Get a right holder's role with the given ID       (Or list of\
-        \ roles including copyright, performance, and/or recording)"
-      operationId: "getProfileRole"
-      parameters:
-      - name: "id"
-        in: "path"
-        description: "The right holder's unique profile ID"
-        required: true
-        type: "integer"
-      responses:
-        200:
-          description: "OK"
-          schema:
-            properties:
-              role:
-                type: "string"
-                example: "writer"
-                description: "The right holder's role"
-        400:
-          description: "Bad request"
-        403:
-          description: "Permission denied"
-        404:
-          description: "Endpoint not found"
-        500:
-          description: "An unknown error occured"
-      x-swagger-router-controller: "Profiles"
     patch:
       tags:
       - "Profiles"
@@ -468,35 +349,6 @@ paths:
           description: "An unknown error occured"
       x-swagger-router-controller: "Profiles"
   /profiles/{id}/ipi:
-    get:
-      tags:
-      - "Profiles"
-      description: "Get right holder's interested party information \"#\""
-      operationId: "getProfileIPI"
-      parameters:
-      - name: "id"
-        in: "path"
-        description: "The right holder's unique profile ID"
-        required: true
-        type: "integer"
-      responses:
-        200:
-          description: "OK"
-          schema:
-            properties:
-              ipi:
-                type: "string"
-                example: "00004576"
-                description: "The right holder's interested party information number"
-        400:
-          description: "Bad request"
-        403:
-          description: "Permission denied"
-        404:
-          description: "Endpoint not found"
-        500:
-          description: "An unknown error occured"
-      x-swagger-router-controller: "Profiles"
     patch:
       tags:
       - "Profiles"
@@ -533,31 +385,6 @@ paths:
           description: "An unknown error occured"
       x-swagger-router-controller: "Profiles"
   /profiles/{id}/media:
-    get:
-      tags:
-      - "Profiles"
-      description: "Get list of media for the given right holder"
-      operationId: "getProfileMedia"
-      parameters:
-      - name: "id"
-        in: "path"
-        description: "The right holder's unique profile ID"
-        required: true
-        type: "integer"
-      responses:
-        200:
-          description: "OK"
-          schema:
-            $ref: "#/definitions/mediaIds"
-        400:
-          description: "Bad request"
-        403:
-          description: "Permission denied"
-        404:
-          description: "Endpoint not found"
-        500:
-          description: "An unknown error occured"
-      x-swagger-router-controller: "Profiles"
     patch:
       tags:
       - "Profiles"
@@ -590,35 +417,6 @@ paths:
           description: "An unknown error occured"
       x-swagger-router-controller: "Profiles"
   /profiles/{id}/wallet:
-    get:
-      tags:
-      - "Profiles"
-      description: "Get the wallet address of a right holder"
-      operationId: "getProfileWallet"
-      parameters:
-      - name: "id"
-        in: "path"
-        description: "The right holder's unique profile ID"
-        required: true
-        type: "integer"
-      responses:
-        200:
-          description: "OK"
-          schema:
-            properties:
-              wallet:
-                type: "string"
-                example: "0xdd87ae15f4be97e2739c9069ddef674f907d27a8"
-                description: "The user's wallet address"
-        400:
-          description: "Bad request"
-        403:
-          description: "Permission denied"
-        404:
-          description: "Endpoint not found"
-        500:
-          description: "An unknown error occured"
-      x-swagger-router-controller: "Profiles"
     patch:
       tags:
       - "Profiles"
@@ -786,35 +584,6 @@ paths:
       - jwt: []
       x-swagger-router-controller: "Media"
   /media/{mediaId}/title:
-    get:
-      tags:
-      - "Media"
-      description: "Get the title of the given media identified by ID"
-      operationId: "getMediaTitle"
-      parameters:
-      - name: "mediaId"
-        in: "path"
-        description: "The artwork agreement's unique ID"
-        required: true
-        type: "integer"
-      responses:
-        200:
-          description: "OK"
-          schema:
-            properties:
-              title:
-                type: "string"
-                example: "Love You Baby"
-                description: "The title of the given artwork"
-        400:
-          description: "Bad request"
-        403:
-          description: "Permission denied"
-        404:
-          description: "Endpoint not found"
-        500:
-          description: "An unknown error occured"
-      x-swagger-router-controller: "Media"
     patch:
       tags:
       - "Media"
@@ -851,35 +620,6 @@ paths:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
   /media/{mediaId}/description:
-    get:
-      tags:
-      - "Media"
-      description: "Get the description of a piece of media"
-      operationId: "getMediaDescription"
-      parameters:
-      - name: "mediaId"
-        in: "path"
-        description: "The artwork agreement's unique ID"
-        required: true
-        type: "integer"
-      responses:
-        200:
-          description: "OK"
-          schema:
-            properties:
-              description:
-                type: "string"
-                example: "The wonderful classic hit song, Love You Baby"
-                description: "The description of the artwork"
-        400:
-          description: "Bad request"
-        403:
-          description: "Permission denied"
-        404:
-          description: "Endpoint not found"
-        500:
-          description: "An unknown error occured"
-      x-swagger-router-controller: "Media"
     patch:
       tags:
       - "Media"
@@ -915,69 +655,39 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
-  /media/{mediaId}/right-holders:
-    get:
-      tags:
-      - "Media"
-      description: "Get the right holders who collaborated on media"
-      operationId: "getMediaRightHolders"
-      parameters:
-      - name: "mediaId"
-        in: "path"
-        description: "The artwork agreement's unique ID"
-        required: true
-        type: "integer"
-      responses:
-        200:
-          description: "OK"
-          schema:
-            properties:
-              right-holders:
-                type: "object"
-                description: "The full name of the right holder"
-                additionalProperties:
-                  type: "string"
-                  description: "The type of right holder, for example, writer, producer"
-        400:
-          description: "Bad request"
-        403:
-          description: "Permission denied"
-        404:
-          description: "Endpoint not found"
-        500:
-          description: "An unknown error occured"
-      x-swagger-router-controller: "Media"
+  # /media/{mediaId}/right-holders:
+  #   get:
+  #     tags:
+  #     - "Media"
+  #     description: "Get the right holders who collaborated on media"
+  #     operationId: "getMediaRightHolders"
+  #     parameters:
+  #     - name: "mediaId"
+  #       in: "path"
+  #       description: "The artwork agreement's unique ID"
+  #       required: true
+  #       type: "integer"
+  #     responses:
+  #       200:
+  #         description: "OK"
+  #         schema:
+  #           properties:
+  #             right-holders:
+  #               type: "object"
+  #               description: "The full name of the right holder"
+  #               additionalProperties:
+  #                 type: "string"
+  #                 description: "The type of right holder, for example, writer, producer"
+  #       400:
+  #         description: "Bad request"
+  #       403:
+  #         description: "Permission denied"
+  #       404:
+  #         description: "Endpoint not found"
+  #       500:
+  #         description: "An unknown error occured"
+  #     x-swagger-router-controller: "Media"
   /media/{mediaId}/jurisdiction:
-    get:
-      tags:
-      - "Media"
-      description: "Get the jurisdiction of the given media"
-      operationId: "getMediaJurisdiction"
-      parameters:
-      - name: "mediaId"
-        in: "path"
-        description: "The artwork agreement's unique ID"
-        required: true
-        type: "integer"
-      responses:
-        200:
-          description: "OK"
-          schema:
-            properties:
-              jurisdiction:
-                type: "string"
-                example: "SOCAN"
-                description: "The jusrisdiction of the artwork agreement of the given\
-                  \ media"
-        400:
-          description: "Bad request"
-        403:
-          description: "Permission denied"
-        404:
-          description: "Endpoint not found"
-        500:
-          description: "An unknown error occured"
-      x-swagger-router-controller: "Media"
     patch:
       tags:
       - "Media"
@@ -1014,71 +724,42 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
-  /media/{mediaId}/rights-type:
-    get:
-      tags:
-      - "Media"
-      description: "Get the type of rights of the given media         (Including copyright,\
-        \ performance, recording)"
-      operationId: "getMediaRightsType"
-      parameters:
-      - name: "mediaId"
-        in: "path"
-        description: "The artwork agreement's unique ID"
-        required: true
-        type: "integer"
-      responses:
-        200:
-          description: "OK"
-          schema:
-            properties:
-              rights-type:
-                type: "object"
-                example:
-                  copyright: true
-                  performance: true
-                  recording: false
-                description: "The type of rights associated with the artwork"
-                properties: {}
-        400:
-          description: "Bad request"
-        403:
-          description: "Permission denied"
-        404:
-          description: "Endpoint not found"
-        500:
-          description: "An unknown error occured"
-      x-swagger-router-controller: "Media"
+  # /media/{mediaId}/rights-type:
+  #   get:
+  #     tags:
+  #     - "Media"
+  #     description: "Get the type of rights of the given media         (Including copyright,\
+  #       \ performance, recording)"
+  #     operationId: "getMediaRightsType"
+  #     parameters:
+  #     - name: "mediaId"
+  #       in: "path"
+  #       description: "The artwork agreement's unique ID"
+  #       required: true
+  #       type: "integer"
+  #     responses:
+  #       200:
+  #         description: "OK"
+  #         schema:
+  #           properties:
+  #             rights-type:
+  #               type: "object"
+  #               example:
+  #                 copyright: true
+  #                 performance: true
+  #                 recording: false
+  #               description: "The type of rights associated with the artwork"
+  #               properties: {}
+  #       400:
+  #         description: "Bad request"
+  #       403:
+  #         description: "Permission denied"
+  #       404:
+  #         description: "Endpoint not found"
+  #       500:
+  #         description: "An unknown error occured"
+  #     x-swagger-router-controller: "Media"
   /media/{mediaId}/genre:
-    get:
-      tags:
-      - "Media"
-      description: "Get the genre of the media with the given ID"
-      operationId: "getMediaGenre"
-      parameters:
-      - name: "mediaId"
-        in: "path"
-        description: "The artwork agreement's unique ID"
-        required: true
-        type: "integer"
-      responses:
-        200:
-          description: "OK"
-          schema:
-            properties:
-              genre:
-                type: "string"
-                example: "Rock"
-                description: "The genre of the given media."
-        400:
-          description: "Bad request"
-        403:
-          description: "Permission denied"
-        404:
-          description: "Endpoint not found"
-        500:
-          description: "An unknown error occured"
-      x-swagger-router-controller: "Media"
     patch:
       tags:
       - "Media"
@@ -1114,68 +795,39 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
-  /media/{mediaId}/creation-date:
-    get:
-      tags:
-      - "Media"
-      description: "Get creation date of the media with the given ID"
-      operationId: "getMediaCreationDate"
-      parameters:
-      - name: "mediaId"
-        in: "path"
-        description: "The artwork agreement's unique ID"
-        required: true
-        type: "integer"
-      responses:
-        200:
-          description: "OK"
-          schema:
-            properties:
-              creation-date:
-                type: "string"
-                format: "iso8601-date-time"
-                example: "2019-01-01T15:53:00"
-                description: "The creation date of the smartsplit contract for the\
-                  \ given media"
-        400:
-          description: "Bad request"
-        403:
-          description: "Permission denied"
-        404:
-          description: "Endpoint not found"
-        500:
-          description: "An unknown error occured"
-      x-swagger-router-controller: "Media"
+  # /media/{mediaId}/creation-date:
+  #   get:
+  #     tags:
+  #     - "Media"
+  #     description: "Get creation date of the media with the given ID"
+  #     operationId: "getMediaCreationDate"
+  #     parameters:
+  #     - name: "mediaId"
+  #       in: "path"
+  #       description: "The artwork agreement's unique ID"
+  #       required: true
+  #       type: "integer"
+  #     responses:
+  #       200:
+  #         description: "OK"
+  #         schema:
+  #           properties:
+  #             creation-date:
+  #               type: "string"
+  #               format: "iso8601-date-time"
+  #               example: "2019-01-01T15:53:00"
+  #               description: "The creation date of the smartsplit contract for the\
+  #                 \ given media"
+  #       400:
+  #         description: "Bad request"
+  #       403:
+  #         description: "Permission denied"
+  #       404:
+  #         description: "Endpoint not found"
+  #       500:
+  #         description: "An unknown error occured"
+  #     x-swagger-router-controller: "Media"
   /media/{mediaId}/publisher:
-    get:
-      tags:
-      - "Media"
-      description: "Get publisher name of the media with the given ID"
-      operationId: "getMediaPublisher"
-      parameters:
-      - name: "mediaId"
-        in: "path"
-        description: "The artwork agreement's unique ID"
-        required: true
-        type: "integer"
-      responses:
-        200:
-          description: "OK"
-          schema:
-            properties:
-              publisher:
-                type: "string"
-                example: "sync publishing"
-                description: "The publisher name of the media with the given ID"
-        400:
-          description: "Bad request"
-        403:
-          description: "Permission denied"
-        404:
-          description: "Endpoint not found"
-        500:
-          description: "An unknown error occured"
-      x-swagger-router-controller: "Media"
     patch:
       tags:
       - "Media"
@@ -1211,40 +863,40 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
-  /media/{mediaId}/split:
-    get:
-      tags:
-      - "Media"
-      description: "Get rights holders' percentage split given media"
-      operationId: "getMediaSplit"
-      parameters:
-      - name: "mediaId"
-        in: "path"
-        description: "The artwork agreement's unique ID"
-        required: true
-        type: "integer"
-      responses:
-        200:
-          description: "OK"
-          schema:
-            properties:
-              split:
-                type: "object"
-                description: "The percentage split of each right holder"
-                additionalProperties:
-                  type: "number"
-                  description: "The names of the right holders for the given media"
-        400:
-          description: "Bad request"
-        403:
-          description: "Permission denied"
-        404:
-          description: "Endpoint not found"
-        500:
-          description: "An unknown error occured"
-      security:
-      - jwt: []
-      x-swagger-router-controller: "Media"
+  # /media/{mediaId}/split:
+  #   get:
+  #     tags:
+  #     - "Media"
+  #     description: "Get rights holders' percentage split given media"
+  #     operationId: "getMediaSplit"
+  #     parameters:
+  #     - name: "mediaId"
+  #       in: "path"
+  #       description: "The artwork agreement's unique ID"
+  #       required: true
+  #       type: "integer"
+  #     responses:
+  #       200:
+  #         description: "OK"
+  #         schema:
+  #           properties:
+  #             split:
+  #               type: "object"
+  #               description: "The percentage split of each right holder"
+  #               additionalProperties:
+  #                 type: "number"
+  #                 description: "The names of the right holders for the given media"
+  #       400:
+  #         description: "Bad request"
+  #       403:
+  #         description: "Permission denied"
+  #       404:
+  #         description: "Endpoint not found"
+  #       500:
+  #         description: "An unknown error occured"
+  #     security:
+  #     - jwt: []
+  #     x-swagger-router-controller: "Media"
   /payments:
     get:
       tags:
@@ -1375,35 +1027,6 @@ paths:
       - jwt: []
       x-swagger-router-controller: "Payments"
   /payments/{id}/transaction-id:
-    get:
-      tags:
-      - "Payments"
-      description: "Get management societies' payment transaction ID"
-      operationId: "getPaymentTransactionID"
-      parameters:
-      - name: "id"
-        in: "path"
-        description: "The payment's unique ID"
-        required: true
-        type: "integer"
-      responses:
-        200:
-          description: "OK"
-          schema:
-            properties:
-              transaction-id:
-                type: "string"
-                example: "124235678"
-                description: "The management societies' transaction ID"
-        400:
-          description: "Bad request"
-        403:
-          description: "Permission denied"
-        404:
-          description: "Endpoint not found"
-        500:
-          description: "An unknown error occured"
-      x-swagger-router-controller: "Payments"
     patch:
       tags:
       - "Payments"
@@ -1441,66 +1064,37 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "Payments"
-  /payments/{id}/amount:
-    get:
-      tags:
-      - "Payments"
-      description: "Get the amount for the given payment"
-      operationId: "getPaymentAmount"
-      parameters:
-      - name: "id"
-        in: "path"
-        description: "The payment's unique ID"
-        required: true
-        type: "integer"
-      responses:
-        200:
-          description: "OK"
-          schema:
-            properties:
-              amount:
-                type: "number"
-                example: 20
-                description: "The amount of the payment in $ CAD"
-        400:
-          description: "Bad request"
-        403:
-          description: "Permission denied"
-        404:
-          description: "Endpoint not found"
-        500:
-          description: "An unknown error occured"
-      x-swagger-router-controller: "Payments"
+  # /payments/{id}/amount:
+  #   get:
+  #     tags:
+  #     - "Payments"
+  #     description: "Get the amount for the given payment"
+  #     operationId: "getPaymentAmount"
+  #     parameters:
+  #     - name: "id"
+  #       in: "path"
+  #       description: "The payment's unique ID"
+  #       required: true
+  #       type: "integer"
+  #     responses:
+  #       200:
+  #         description: "OK"
+  #         schema:
+  #           properties:
+  #             amount:
+  #               type: "number"
+  #               example: 20
+  #               description: "The amount of the payment in $ CAD"
+  #       400:
+  #         description: "Bad request"
+  #       403:
+  #         description: "Permission denied"
+  #       404:
+  #         description: "Endpoint not found"
+  #       500:
+  #         description: "An unknown error occured"
+  #     x-swagger-router-controller: "Payments"
   /payments/{id}/transaction-hash:
-    get:
-      tags:
-      - "Payments"
-      description: "Get blockchain transaction hash of a payment"
-      operationId: "getPaymentTransactionHash"
-      parameters:
-      - name: "id"
-        in: "path"
-        description: "The payment's unique ID"
-        required: true
-        type: "integer"
-      responses:
-        200:
-          description: "OK"
-          schema:
-            properties:
-              transaction-hash:
-                type: "string"
-                example: "0x58a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c"
-                description: "The transaction hash on the blockchain"
-        400:
-          description: "Bad request"
-        403:
-          description: "Permission denied"
-        404:
-          description: "Endpoint not found"
-        500:
-          description: "An unknown error occured"
-      x-swagger-router-controller: "Payments"
     patch:
       tags:
       - "Payments"
