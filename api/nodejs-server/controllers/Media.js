@@ -59,6 +59,18 @@ module.exports.patchMediaGenre = function patchMediaGenre (req, res, next) {
     });
 };
 
+module.exports.patchMediaSecondaryGenre = function patchMediaSecondaryGenre (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  var genre = req.swagger.params['secondaryGenre'].value;
+  Media.patchMediaSecondaryGenre(mediaId,secondaryGenre)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
 module.exports.patchMediaJurisdiction = function patchMediaJurisdiction (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
   var jurisdiction = req.swagger.params['jurisdiction'].value;
@@ -109,8 +121,20 @@ module.exports.patchMediaAlbum = function patchMediaAlbum (req, res, next) {
 
 module.exports.patchModificationDate = function patchModificationDate (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
-  var modificationDate = req.swagger.params['modification-date'].value;
+  var modificationDate = req.swagger.params['modificationDate'].value;
   Media.patchModificationDate(mediaId,modificationDate)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.patchPublishDate = function patchPublishDate (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  var modificationDate = req.swagger.params['publishDate'].value;
+  Media.patchModificationDate(mediaId,publishDate)
     .then(function (response) {
       utils.writeJson(res, response);
     })

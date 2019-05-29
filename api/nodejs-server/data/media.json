@@ -6,7 +6,7 @@
                 "mediaId": {
                     "N": "1"
                 },
-                "split": {
+                "rightsSplit": {
                     "M": {
                         "John Smith": {"N": "41.6"}, 
                         "Bob Andrews": {"N": "16.6"}, 
@@ -25,19 +25,19 @@
                 "cover": {
                     "BOOL": false
                 },
-                "creation-date": {
+                "creationDate": {
                     "S": "019-01-01T15:53:00"
                 },
-                "modification-date": {
+                "modificationDate": {
                     "S": "019-01-01T15:53:00"
                 },
-                "publish-date": {
+                "publishDate": {
                     "S": "019-01-01T15:53:00"
                 },
                 "publisher": {
                     "S": "sync publishing"
                 },
-                "rights-type": {
+                "rightsType": {
                     "M": {
                         "copyright": {"BOOL": true}, 
                         "performance": {"BOOL": true}, 
@@ -47,7 +47,7 @@
                 "title": {
                     "S": "Love You Baby"
                 },
-                "right-holders": {
+                "rightHolders": {
                     "M": {
                         "John Smith": {"S": "writer"}, 
                         "Bob Andrews": {"S": "composer"}, 
@@ -56,6 +56,9 @@
                 },
                 "genre": {
                     "S": "Pop"
+                },
+                "secondaryGenre": {
+                    "S": "Rock"
                 }
             }
         }
@@ -66,7 +69,7 @@
                 "mediaId": {
                     "N": "2"
                 },
-                "split": {
+                "rightsSplit": {
                     "M": {
                         "John Smith": {"N": "100"}
                     }
@@ -83,19 +86,19 @@
                 "cover": {
                     "BOOL": false
                 },
-                "creation-date": {
+                "creationDate": {
                     "S": "2019-01-02T15:53:00"
                 },
-                "modification-date": {
+                "modificationDate": {
                     "S": "2019-01-02T15:53:00"
                 },
-                "publish-date": {
+                "publishDate": {
                     "S": "2019-01-02T15:53:00"
                 },
                 "publisher": {
                     "S": "pop publishing"
                 },
-                "rights-type": {
+                "rightsType": {
                     "M": {
                         "copyright": {"BOOL": true}, 
                         "performance": {"BOOL": false}, 
@@ -105,12 +108,15 @@
                 "title": {
                     "S": "Rock You Baby"
                 },
-                "right-holders": {
+                "rightHolders": {
                     "M": {
                         "John Smith": {"S": "writer"}                    }
                 },
                 "genre": {
                     "S": "Pop"
+                },
+                "secondaryGenre": {
+                    "S": "Rock"
                 }
             }
         }
@@ -121,7 +127,7 @@
                 "mediaId": {
                     "N": "3"
                 },
-                "split": {
+                "rightsSplit": {
                     "M": {
                         "John Smith": {"N": "100"}
                     }
@@ -138,19 +144,19 @@
                 "cover": {
                     "BOOL": false
                 },
-                "creation-date": {
+                "creationDate": {
                     "S": "2019-01-02T15:54:00"
                 },
-                "modification-date": {
+                "modificationDate": {
                     "S": "2019-01-02T15:54:00"
                 },
-                "publish-date": {
+                "publishDate": {
                     "S": "2019-01-02T15:54:00"
                 },
                 "publisher": {
                     "S": "pop publishing"
                 },
-                "rights-type": {
+                "rightsType": {
                     "M": {
                         "copyright": {"BOOL": true}, 
                         "performance": {"BOOL": false}, 
@@ -160,12 +166,15 @@
                 "title": {
                     "S": "Rock You Baby (Acoustic Version)"
                 },
-                "right-holders": {
+                "rightHolders": {
                     "M": {
                         "John Smith": {"S": "writer"}                    }
                 },
                 "genre": {
                     "S": "Pop"
+                },
+                "secondaryGenre": {
+                    "S": "Rock"
                 }
             }
         }
@@ -176,7 +185,7 @@
                 "mediaId": {
                     "N": "4"
                 },
-                "split": {
+                "rightsSplit": {
                     "M": {
                         "John Smith": {"N": "50"},
                         "Bob Andrews": {"N": "50"}
@@ -194,19 +203,19 @@
                 "cover": {
                     "BOOL": false
                 },
-                "creation-date": {
+                "creationDate": {
                     "S": "2019-01-01T15:53:00"
                 },
-                "modification-date": {
+                "modificationDate": {
                     "S": "2019-01-01T15:53:00"
                 },
-                "publish-date": {
+                "publishDate": {
                     "S": "2019-01-01T15:53:00"
                 },
                 "publisher": {
                     "S": "sync publishing"
                 },
-                "rights-type": {
+                "rightsType": {
                     "M": {
                         "copyright": {"BOOL": true}, 
                         "performance": {"BOOL": true}, 
@@ -216,7 +225,7 @@
                 "title": {
                     "S": "The Sun"
                 },
-                "right-holders": {
+                "rightHolders": {
                     "M": {
                         "John Smith": {"S": "writer"},
                         "Bob Andrews": {"S": "composer"}
@@ -224,6 +233,9 @@
                 },
                 "genre": {
                     "S": "Rock"
+                },
+                "secondaryGenre": {
+                    "S": "Post-Rock"
                 }
             }
         }
@@ -234,7 +246,7 @@
                 "mediaId": {
                     "N": "5"
                 },
-                "split": {
+                "rightsSplit": {
                     "M": {
                         "Bob Andrews": {"N": "100"}
                     }
@@ -251,19 +263,19 @@
                 "cover": {
                     "BOOL": false
                 },
-                "creation-date": {
+                "creationDate": {
                     "S": "2019-01-02T15:54:00"
                 },
-                "modification-date": {
+                "modificationDate": {
                     "S": "2019-01-02T15:54:00"
                 },
-                "publish-date": {
+                "publishDate": {
                     "S": "2019-01-02T15:54:00"
                 },
                 "publisher": {
                     "S": "SWAYER publishing"
                 },
-                "rights-type": {
+                "rightsType": {
                     "M": {
                         "copyright": {"BOOL": true}, 
                         "performance": {"BOOL": true}, 
@@ -273,13 +285,16 @@
                 "title": {
                     "S": "Go"
                 },
-                "right-holders": {
+                "rightHolders": {
                     "M": {
                         "Bob Andrews": {"S": "composer"}
                     }
                 },
                 "genre": {
                     "S": "Hip Hop"
+                },
+                "secondaryGenre": {
+                    "S": "Rap"
                 }
             }
         }
@@ -290,7 +305,7 @@
                 "mediaId": {
                     "N": "6"
                 },
-                "split": {
+                "rightsSplit": {
                     "M": {
                         "Bob Andrews": {"N": "100"}
                     }
@@ -307,19 +322,19 @@
                 "cover": {
                     "BOOL": true
                 },
-                "creation-date": {
+                "creationDate": {
                     "S": "2019-01-07T16:00:00"
                 },
-                "modification-date": {
+                "modificationDate": {
                     "S": "2019-01-07T16:00:00"
                 },
-                "publish-date": {
+                "publishDate": {
                     "S": "2019-01-07T16:00:00"
                 },
                 "publisher": {
                     "S": "SWAYER publishing"
                 },
-                "rights-type": {
+                "rightsType": {
                     "M": {
                         "copyright": {"BOOL": true}, 
                         "performance": {"BOOL": true}, 
@@ -329,13 +344,16 @@
                 "title": {
                     "S": "Sway"
                 },
-                "right-holders": {
+                "rightHolders": {
                     "M": {
                         "Bob Andrews": {"S": "composer"}
                     }
                 },
                 "genre": {
                     "S": "Hip Hop"
+                },
+                "secondaryGenre": {
+                    "S": "Rap"
                 }
             }
         }
@@ -346,7 +364,7 @@
                 "mediaId": {
                     "N": "7"
                 },
-                "split": {
+                "rightsSplit": {
                     "M": {
                         "Joe Jones": {"N": "100"}
                     }
@@ -363,19 +381,19 @@
                 "cover": {
                     "BOOL": false
                 },
-                "creation-date": {
+                "creationDate": {
                     "S": "2019-01-20T15:30:00"
                 },
-                "modification-date": {
+                "modificationDate": {
                     "S": "2019-01-20T15:30:00"
                 },
-                "publish-date": {
+                "publishDate": {
                     "S": "2019-01-20T15:30:00"
                 },
                 "publisher": {
                     "S": "North publishing"
                 },
-                "rights-type": {
+                "rightsType": {
                     "M": {
                         "copyright": {"BOOL": true}, 
                         "performance": {"BOOL": false}, 
@@ -385,13 +403,16 @@
                 "title": {
                     "S": "Symphony 9000"
                 },
-                "right-holders": {
+                "rightHolders": {
                     "M": {
                         "Bob Andrews": {"S": "songwriter"}
                     }
                 },
                 "genre": {
                     "S": "Classical"
+                },
+                "secondaryGenre": {
+                    "S": "Art"
                 }
             }
         }
@@ -402,7 +423,7 @@
                 "mediaId": {
                     "N": "8"
                 },
-                "split": {
+                "rightsSplit": {
                     "M": {
                         "Drew Miller": {"N": "50"},
                         "Andy Wilson": {"N": "50"}
@@ -420,19 +441,19 @@
                 "cover": {
                     "BOOL": false
                 },
-                "creation-date": {
+                "creationDate": {
                     "S": "2019-01-01T15:53:00"
                 },
-                "modification-date": {
+                "modificationDate": {
                     "S": "2019-01-01T15:53:00"
                 },
-                "publish-date": {
+                "publishDate": {
                     "S": "2019-01-01T15:53:00"
                 },
                 "publisher": {
                     "S": "sync publishing"
                 },
-                "rights-type": {
+                "rightsType": {
                     "M": {
                         "copyright": {"BOOL": true}, 
                         "performance": {"BOOL": true}, 
@@ -442,7 +463,7 @@
                 "title": {
                     "S": "Love You Baby 2"
                 },
-                "right-holders": {
+                "rightHolders": {
                     "M": {
                         "Drew Miller": {"S": "writer"},
                         "Andy Wilson": {"S": "performer"}
@@ -450,6 +471,9 @@
                 },
                 "genre": {
                     "S": "Rock"
+                },
+                "secondaryGenre": {
+                    "S": "Rockabilly"
                 }
             }
         }

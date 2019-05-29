@@ -1,6 +1,19 @@
 'use strict';
-const lodb = require('lodb');
-const db = lodb('./data/db.json');
+const TABLE = 'payments';
+const uuidv1 = require('uuid/v1');
+
+// AWS 
+const AWS = require('aws-sdk');
+const REGION = 'us-east-2';
+
+AWS.config.update({
+  region: REGION,
+  accessKeyId: process.env.AWS_ACCESS_KEY,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+});
+
+const ddb = new AWS.DynamoDB.DocumentClient({region: REGION});
+
 
 
 /**
@@ -11,16 +24,27 @@ const db = lodb('./data/db.json');
  **/
 exports.deletePayment = function(id) {
   return new Promise(function(resolve, reject) {
-    let payment = db('payments').find({ id: id }).value()
-    db('payments').remove({ id: id })
-    db.save()
-    if (Object.keys(payment).length > 0) {
-      resolve('Payment record removed');
-    } else {
-      resolve();
-    }
+    let params = {
+      Key: {
+        'id': id
+      },
+      TableName: TABLE
+    };
+    console.log(params);
+    // Call DynamoDB to delete the item from the table
+    ddb.delete(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data);
+        resolve('Payment record removed');
+      }
+    });
   });
 }
+
+
 
 
 /**
@@ -30,12 +54,19 @@ exports.deletePayment = function(id) {
  **/
 exports.getAllPayments = function() {
   return new Promise(function(resolve, reject) {
-    let payments = db('payments').value()
-    if (Object.keys(payments).length > 0) {
-      resolve(payments);
-    } else {
-      resolve();
+    let params = {
+      "TableName": TABLE,
     }
+    // Call DynamoDB to delete the item from the table
+    ddb.scan(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data);
+        resolve(data);
+      }
+    });
   });
 }
 
@@ -48,18 +79,22 @@ exports.getAllPayments = function() {
  **/
 exports.getPayment = function(id) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {
-  "transaction-id" : "12345678",
-  "mediaId" : 1,
-  "transaction-hash" : "0x58a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c"
-};
-    let payment = db('payments').find({id: id}).value()
-    if (Object.keys(payment).length > 0) {
-      resolve(payment);
-    } else {
-      resolve();
-    }
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'id': id
+      }
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.get(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data);
+        resolve(data);
+      }
+    });
   });
 }
 
@@ -68,20 +103,32 @@ exports.getPayment = function(id) {
  * Update blockchain transaction hash of a payment
  *
  * id Integer The payment's unique ID
- * transactionHash Transaction-hash The blockchain hash of the transaction
+ * transactionHash TransactionHash The blockchain hash of the transaction
  * returns Object
  **/
 exports.patchPaymentTransactionHash = function(id,transactionHash) {
   return new Promise(function(resolve, reject) {
-    let transactionHashOld = (db('payments').find({ id: id }).value())['transaction-hash'];
-    db('payments').find({ id: id }).assign({ 'transaction-hash': transactionHash['transaction-hash'] });
-    db.save();
-    let payment = db('payments').find({ id: id }).value();
-    if (payment['transaction-hash']  != transactionHashOld) {
-      resolve("Transaction Hash updated: " + payment['transaction-hash']);
-    } else {
-      resolve();
-    }
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'id': id
+      },
+      UpdateExpression: 'set transactionHash = :t',
+      ExpressionAttributeValues: {
+        ':t' : transactionHash.transactionHash
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
   });
 }
 
@@ -90,20 +137,32 @@ exports.patchPaymentTransactionHash = function(id,transactionHash) {
  * Update management societies' payment transaction ID
  *
  * id Integer The payment's unique ID
- * transactionId Transaction-id The payment transaction ID
+ * transactionId TransactionId The payment transaction ID
  * returns Object
  **/
 exports.patchPaymentTransactionID = function(id,transactionId) {
   return new Promise(function(resolve, reject) {
-    let transactionIdOld = (db('payments').find({ id: id }).value())['transaction-id'];
-    db('payments').find({ id: id }).assign({ 'transaction-id': transactionId['transaction-id'] });
-    db.save();
-    let payment = db('payments').find({ id: id }).value();
-    if (payment['transaction-id']  != transactionIdOld) {
-      resolve("Transaction ID updated: " + payment['transaction-id']);
-    } else {
-      resolve();
-    }
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'id': id
+      },
+      UpdateExpression: 'set transactionId = :t',
+      ExpressionAttributeValues: {
+        ':t' : transactionId.transactionId
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
   });
 }
 
@@ -116,13 +175,43 @@ exports.patchPaymentTransactionID = function(id,transactionId) {
  **/
 exports.postPayment = function(body) {
   return new Promise(function(resolve, reject) {
-    db('payments').push( body )
-    db.save()
-    if (body) {
-      resolve(body);
-    } else {
-      resolve();
+    // let ID_VALUE = uuidv1(); // ⇨ '45745c60-7b1a-11e8-9c9c-2d42b21b1a3e'
+    
+    let params = {
+      "TableName": TABLE,
     }
+    // Call DynamoDB to delete the item from the table
+    ddb.scan(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Count);
+        // Create unique ID value
+        let ID_VALUE = data.Count + 1;
+
+        let params = {
+          TableName: TABLE,
+          Item: {
+            'id': ID_VALUE,
+            'amount': body.amount,
+            'payee': body.payee,
+            'transactionId': body.transactionId,
+            'transactionHash': body.transactionHash
+          }
+        };
+        ddb.put(params, function(err, data) {
+          if (err) {
+            console.log("Error", err);
+            resolve();
+          } else {
+            console.log("Success", data);
+            resolve(data);
+          }
+        });
+      }
+
+    });
   });
 }
 
@@ -136,18 +225,30 @@ exports.postPayment = function(body) {
  **/
 exports.updatePayment = function(id,body) {
   return new Promise(function(resolve, reject) {
-    db('payments').find({ id: id }).assign({ 
-      id: id,
-      amount: body.amount,
-      'transaction-id': body['transaction-id'],
-      'transaction-hash': body['transaction-hash']
-    })
-    let payment =  db('payments').find({ id: id }).value();
-    if (body) {
-      resolve(payment);
-    } else {
-      resolve();
-    }
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'id': id
+      },
+      UpdateExpression: 'set amount = :a, payee = :p, transactionId = :i, transactionHash = :h',
+      ExpressionAttributeValues: {
+        ':a' : body.amount,
+        ':p' : body.payee,
+        ':i' : body.transactionId,
+        ':h' : body.transactionHash
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
   });
 }
 

@@ -49,7 +49,7 @@ module.exports.patchProfileEmail = function patchProfileEmail (req, res, next) {
 
 module.exports.patchProfileFirstName = function patchProfileFirstName (req, res, next) {
   var id = req.swagger.params['id'].value;
-  var firstName = req.swagger.params['first-name'].value;
+  var firstName = req.swagger.params['firstName'].value;
   Profiles.patchProfileFirstName(id,firstName)
     .then(function (response) {
       utils.writeJson(res, response);
@@ -73,7 +73,7 @@ module.exports.patchProfileIPI = function patchProfileIPI (req, res, next) {
 
 module.exports.patchProfileLastName = function patchProfileLastName (req, res, next) {
   var id = req.swagger.params['id'].value;
-  var lastName = req.swagger.params['last-name'].value;
+  var lastName = req.swagger.params['lastName'].value;
   Profiles.patchProfileLastName(id,lastName)
     .then(function (response) {
       utils.writeJson(res, response);
@@ -95,10 +95,10 @@ module.exports.patchProfileMedia = function patchProfileMedia (req, res, next) {
     });
 };
 
-module.exports.patchProfileRole = function patchProfileRole (req, res, next) {
+module.exports.patchProfileContributorRole = function patchProfileContributorRole (req, res, next) {
   var id = req.swagger.params['id'].value;
-  var role = req.swagger.params['role'].value;
-  Profiles.patchProfileRole(id,role)
+  var role = req.swagger.params['contributorRole'].value;
+  Profiles.patchProfileContributoRole(id,contributorRole)
     .then(function (response) {
       utils.writeJson(res, response);
     })

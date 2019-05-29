@@ -51,7 +51,7 @@ paths:
         401:
           description: "Invalid credentials and/or API token"
       x-swagger-router-controller: "AuthenticationDetails"
-  /refresh-token:
+  /refreshToken:
     get:
       tags:
       - "Authentication Details"
@@ -201,7 +201,7 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "Profiles"
-  /profiles/{id}/first-name:
+  /profiles/{id}/firstName:
     patch:
       tags:
       - "Profiles"
@@ -214,11 +214,11 @@ paths:
         required: true
         type: "integer"
       - in: "body"
-        name: "first-name"
+        name: "firstName"
         description: "The rights holder's first name"
         required: true
         schema:
-          $ref: "#/definitions/profile/properties/first-name"
+          $ref: "#/definitions/profile/properties/firstName"
       responses:
         200:
           description: "OK"
@@ -237,7 +237,7 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Profiles"
-  /profiles/{id}/last-name:
+  /profiles/{id}/lastName:
     patch:
       tags:
       - "Profiles"
@@ -250,11 +250,11 @@ paths:
         required: true
         type: "integer"
       - in: "body"
-        name: "last-name"
+        name: "lastName"
         description: "The rights holder's last name"
         required: true
         schema:
-          $ref: "#/definitions/profile/properties/last-name"
+          $ref: "#/definitions/profile/properties/lastName"
       responses:
         200:
           description: "OK"
@@ -311,13 +311,13 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "Profiles"
-  /profiles/{id}/role:
+  /profiles/{id}/contributorRole:
     patch:
       tags:
       - "Profiles"
       description: "Update right holder's role with the given ID       (Or list of\
         \ roles including copyright, performance, and/or recording)"
-      operationId: "patchProfileRole"
+      operationId: "patchProfileContributorRole"
       parameters:
       - name: "id"
         in: "path"
@@ -325,17 +325,17 @@ paths:
         required: true
         type: "integer"
       - in: "body"
-        name: "role"
+        name: "contributorRole"
         description: "The right holder's role"
         required: true
         schema:
-          $ref: "#/definitions/profile/properties/role"
+          $ref: "#/definitions/profile/properties/contributorRole"
       responses:
         200:
           description: "OK"
           schema:
             properties:
-              role:
+              contributorRole:
                 type: "string"
                 example: "writer"
                 description: "The right holder's role"
@@ -655,7 +655,7 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
-  # /media/{mediaId}/right-holders:
+  # /media/{mediaId}/rightHolders:
   #   get:
   #     tags:
   #     - "Media"
@@ -672,7 +672,7 @@ paths:
   #         description: "OK"
   #         schema:
   #           properties:
-  #             right-holders:
+  #             rightHolders:
   #               type: "object"
   #               description: "The full name of the right holder"
   #               additionalProperties:
@@ -724,11 +724,11 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
-  /media/{mediaId}/modification-date:
+  /media/{mediaId}/modificationDate:
     patch:
       tags:
       - "Media"
-      description: "Update the jurisdiction of the given media"
+      description: "Update the modification date of the given media"
       operationId: "patchModificationDate"
       parameters:
       - name: "mediaId"
@@ -737,17 +737,17 @@ paths:
         required: true
         type: "integer"
       - in: "body"
-        name: "modification-date"
+        name: "modificationDate"
         description: "The date the rights agreement for the given media was modified"
         required: true
         schema:
-          $ref: "#/definitions/media/properties/modification-date"
+          $ref: "#/definitions/media/properties/modificationDate"
       responses:
         200:
           description: "OK"
           schema:
             properties:
-              modification-date:
+              modificationDate:
                 type: "string"
                 format: "iso8601-date-time"
                 example: "2019-01-01T15:53:00"
@@ -760,7 +760,43 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
-  # /media/{mediaId}/rights-type:
+  /media/{mediaId}/publishDate:
+    patch:
+      tags:
+      - "Media"
+      description: "Update the publish date of the given media"
+      operationId: "patchPublishDate"
+      parameters:
+      - name: "mediaId"
+        in: "path"
+        description: "The artwork agreement's unique ID"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "publishDate"
+        description: "The date the given media was published"
+        required: true
+        schema:
+          $ref: "#/definitions/media/properties/publishDate"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            properties:
+              publishDate:
+                type: "string"
+                format: "iso8601-date-time"
+                example: "2019-01-01T15:53:00"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Media"
+  # /media/{mediaId}/rightsType:
   #   get:
   #     tags:
   #     - "Media"
@@ -778,7 +814,7 @@ paths:
   #         description: "OK"
   #         schema:
   #           properties:
-  #             rights-type:
+  #             rightsType:
   #               type: "object"
   #               example:
   #                 copyright: true
@@ -831,6 +867,42 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
+  /media/{mediaId}/secondaryGenre:
+    patch:
+      tags:
+      - "Media"
+      description: "Update the secondary genre of the media with the given ID"
+      operationId: "patchMediaSecondaryGenre"
+      parameters:
+      - name: "mediaId"
+        in: "path"
+        description: "The artwork agreement's unique ID"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "secondaryGenre"
+        description: "The secondary genre of the artwork"
+        required: true
+        schema:
+          $ref: "#/definitions/media/properties/secondaryGenre"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            properties:
+              secondaryGenre:
+                type: "string"
+                example: "Pop"
+                description: "The secondary genre of the given media."
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Media"
   /media/{mediaId}/album:
     patch:
       tags:
@@ -867,7 +939,7 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
-  # /media/{mediaId}/creation-date:
+  # /media/{mediaId}/creationDate:
   #   get:
   #     tags:
   #     - "Media"
@@ -884,7 +956,7 @@ paths:
   #         description: "OK"
   #         schema:
   #           properties:
-  #             creation-date:
+  #             creationDate:
   #               type: "string"
   #               format: "iso8601-date-time"
   #               example: "2019-01-01T15:53:00"
@@ -935,12 +1007,12 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
-  # /media/{mediaId}/split:
+  # /media/{mediaId}/rightsSplit:
   #   get:
   #     tags:
   #     - "Media"
   #     description: "Get rights holders' percentage split given media"
-  #     operationId: "getMediaSplit"
+  #     operationId: "getMediaRightsSplit"
   #     parameters:
   #     - name: "mediaId"
   #       in: "path"
@@ -952,7 +1024,7 @@ paths:
   #         description: "OK"
   #         schema:
   #           properties:
-  #             split:
+  #             rightsSplit:
   #               type: "object"
   #               description: "The percentage split of each right holder"
   #               additionalProperties:
@@ -1027,7 +1099,7 @@ paths:
         in: "path"
         description: "The payment's unique ID"
         required: true
-        type: "integer"
+        type: "number"
       responses:
         200:
           description: "OK"
@@ -1098,7 +1170,7 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "Payments"
-  /payments/{id}/transaction-id:
+  /payments/{id}/transactionId:
     patch:
       tags:
       - "Payments"
@@ -1109,19 +1181,19 @@ paths:
         in: "path"
         description: "The payment's unique ID"
         required: true
-        type: "integer"
+        type: "number"
       - in: "body"
-        name: "transaction-id"
+        name: "transactionId"
         description: "The payment transaction ID"
         required: true
         schema:
-          $ref: "#/definitions/payment/properties/transaction-id"
+          $ref: "#/definitions/payment/properties/transactionId"
       responses:
         200:
           description: "OK"
           schema:
             properties:
-              transaction-id:
+              transactionId:
                 type: "string"
                 example: "87654321"
                 description: "The management societies' transaction ID"
@@ -1136,7 +1208,7 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "Payments"
-  /payments/{id}/transaction-hash:
+  /payments/{id}/transactionHash:
     patch:
       tags:
       - "Payments"
@@ -1147,19 +1219,19 @@ paths:
         in: "path"
         description: "The payment's unique ID"
         required: true
-        type: "integer"
+        type: "number"
       - in: "body"
-        name: "transaction-hash"
+        name: "transactionHash"
         description: "The blockchain hash of the transaction"
         required: true
         schema:
-          $ref: "#/definitions/payment/properties/transaction-hash"
+          $ref: "#/definitions/payment/properties/transactionHash"
       responses:
         200:
           description: "OK"
           schema:
             properties:
-              transaction-hash:
+              transactionHash:
                 type: "string"
                 example: "0x68a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c"
                 description: "The transaction hash on the blockchain"
@@ -1213,11 +1285,11 @@ definitions:
         type: integer
         example: 1
         description: "The unique ID of the given profile"
-      first-name:
+      firstName:
         type: "string"
         example: "John"
         description: "The name displayed on the user's profile"
-      last-name:
+      lastName:
         type: "string"
         example: "Smith"
         description: "The name displayed on the user's profile"
@@ -1231,7 +1303,7 @@ definitions:
         type: "string"
         example: "00004576"
         description: "The right holder's interested party information number"
-      role:
+      contributorRole:
         type: "string"
         example: "writer"
         description: "The role of the right holder for this user profile"
@@ -1241,12 +1313,12 @@ definitions:
         description: "The blockchain wallet address for this user profile"
     example:
       ipi: "00004576"
-      role: "writer"
+      contributorRole: "writer"
       wallet: "0xdd87ae15f4be97e2739c9069ddef674f907d27a8"
       media: ""
-      first-name: "John"
+      firstName: "John"
       email: "john.smith@example.com"
-      last-name: "Smith"
+      lastName: "Smith"
   medias:
     type: "array"
     description: "An array of pieces of media"
@@ -1280,7 +1352,7 @@ definitions:
         type: "boolean"
         example: false
         description: "Whether or not this piece of media is a cover"
-      right-holders:
+      rightHolders:
         type: "object"
         description: "The full name of the right holder"
         additionalProperties:
@@ -1290,7 +1362,7 @@ definitions:
         type: "string"
         example: "SOCAN"
         description: "The Jurisdiction for the given media"
-      rights-type:
+      rightsType:
         type: "object"
         description: "The boolean, 'True' or 'False'"
         additionalProperties:
@@ -1300,17 +1372,21 @@ definitions:
         type: "string"
         example: "Rock"
         description: "The genre of the given media"
-      creation-date:
+      secondaryGenre:
+        type: "string"
+        example: "Hip Hop"
+        description: "The secondary genre of the given media"
+      creationDate:
         type: "string"
         format: "iso8601-date-time"
         example: "2019-01-01T15:53:00"
         description: "The creation date of the rights agreement for the given media"
-      modification-date:
+      modificationDate:
         type: "string"
         format: "iso8601-date-time"
         example: "2019-01-01T15:53:00"
         description: "The date the rights agreement for the given media was modified"
-      publish-date:
+      publishDate:
         type: "string"
         format: "iso8601-date-time"
         example: "2019-01-01T15:53:00"
@@ -1319,26 +1395,26 @@ definitions:
         type: "string"
         example: "sync publishing"
         description: "The publisher for the given media (Left blank if no publisher)"
-      split:
+      rightsSplit:
         type: "object"
         description: "The percentage split of each right holder"
         additionalProperties:
           type: "number"
           description: "The names of the right holders for the given media"
     example:
-      split:
+      rightsSplit:
         key: 0.80082819046101150206595775671303272247314453125
       jurisdiction: "SOCAN"
       genre: "Rock"
       description: "The wonderful classic hit song, Love You Baby"
-      creation-date: "2019-01-01T15:53:00"
+      creationDate: "2019-01-01T15:53:00"
       cover: false
       publisher: "sync publishing"
-      rights-type:
-        key: "rights-type"
+      rightsType:
+        key: "rightsType"
       title: "Love You Baby"
-      right-holders:
-        key: "right-holders"
+      rightHolders:
+        key: "rightHolders"
   payments:
     type: "array"
     description: "An array of information about payments"
@@ -1359,16 +1435,16 @@ definitions:
         type: "number"
         example: 2
         description: "The ID of the profile of the creator who was paid"
-      transaction-id:
+      transactionId:
         type: "string"
         example: "12345678"
         description: "The transaction string of the management company for this payment"
-      transaction-hash:
+      transactionHash:
         type: "string"
         example: "0x58a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c"
         description: "The blockchain transaction hash for this payment"
     example:
-      transaction-id: "12345678"
+      transactionId: "12345678"
       id: 1
       amount: 20
-      transaction-hash: "0x58a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c"
+      transactionHash: "0x58a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c"

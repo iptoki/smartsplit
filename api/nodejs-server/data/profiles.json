@@ -9,7 +9,7 @@
                 "ipi": {
                     "N": "11114576"
                 },
-                "role": {
+                "contributorRole": {
                     "S": "writer"
                 },
                 "wallet": {
@@ -31,13 +31,13 @@
                         }                
                     ]
                 },
-                "first-name": {
+                "firstName": {
                     "S": "Johnny"
                 },
                 "email": {
                     "S": "johnny.smithy@example.com"
                 },
-                "last-name": {
+                "lastName": {
                     "S": "Smithy"
                 }
             }
@@ -52,7 +52,7 @@
                 "ipi": {
                     "N": "00004577"
                 },
-                "role": {
+                "contributorRole": {
                     "S": "composer"
                 },
                 "wallet": {
@@ -74,13 +74,13 @@
                         }                
                     ]
                 },
-                "first-name": {
+                "firstName": {
                     "S": "Bob"
                 },
                 "email": {
                     "S": "bandrews@example.com"
                 },
-                "last-name": {
+                "lastName": {
                     "S": "Andrews"
                 }
             }
@@ -95,7 +95,7 @@
                 "ipi": {
                     "N": "18006870"
                 },
-                "role": {
+                "contributorRole": {
                     "S": "songwriter"
                 },
                 "wallet": {
@@ -108,13 +108,13 @@
                         }                
                     ]
                 },
-                "first-name": {
+                "firstName": {
                     "S": "Joe"
                 },
                 "email": {
                     "S": "joe.jones@example.com"
                 },
-                "last-name": {
+                "lastName": {
                     "S": "Jones"
                 }
             }
@@ -129,7 +129,7 @@
                 "ipi": {
                     "N": "29305500"
                 },
-                "role": {
+                "contributorRole": {
                     "S": "songwriter"
                 },
                 "wallet": {
@@ -142,13 +142,13 @@
                         }                
                     ]
                 },
-                "first-name": {
+                "firstName": {
                     "S": "Drew"
                 },
                 "email": {
                     "S": "dmiller@example.com"
                 },
-                "last-name": {
+                "lastName": {
                     "S": "Miller"
                 }
             }

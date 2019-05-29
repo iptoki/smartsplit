@@ -12,10 +12,10 @@
                 "payee": {
                     "N": "2"
                 },
-                "transaction-id": {
+                "transactionId": {
                     "S": "87654321"
                 },
-                "transaction-hash": {
+                "transactionHash": {
                     "S": "0x18a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0d"
                 }
             }
@@ -33,10 +33,10 @@
                 "payee": {
                     "N": "4"
                 },
-                "transaction-id": {
+                "transactionId": {
                     "S": "12345678"
                 },
-                "transaction-hash": {
+                "transactionHash": {
                     "S": "0x98a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c"
                 }
             }
@@ -54,10 +54,10 @@
                 "payee": {
                     "N": "5"
                 },
-                "transaction-id": {
+                "transactionId": {
                     "S": "88888888"
                 },
-                "transaction-hash": {
+                "transactionHash": {
                     "S": "0x88a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c"
                 }
             }

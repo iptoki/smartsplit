@@ -37,7 +37,7 @@ module.exports.getPayment = function getPayment (req, res, next) {
 
 module.exports.patchPaymentTransactionHash = function patchPaymentTransactionHash (req, res, next) {
   var id = req.swagger.params['id'].value;
-  var transactionHash = req.swagger.params['transaction-hash'].value;
+  var transactionHash = req.swagger.params['transactionHash'].value;
   Payments.patchPaymentTransactionHash(id,transactionHash)
     .then(function (response) {
       utils.writeJson(res, response);
@@ -49,7 +49,7 @@ module.exports.patchPaymentTransactionHash = function patchPaymentTransactionHas
 
 module.exports.patchPaymentTransactionID = function patchPaymentTransactionID (req, res, next) {
   var id = req.swagger.params['id'].value;
-  var transactionId = req.swagger.params['transaction-id'].value;
+  var transactionId = req.swagger.params['transactionId'].value;
   Payments.patchPaymentTransactionID(id,transactionId)
     .then(function (response) {
       utils.writeJson(res, response);

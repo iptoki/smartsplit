@@ -2,70 +2,20 @@
 const lodb = require('lodb');
 const db = lodb('./data/db.json');
 const uuid = require('uuid');
+const TABLE = 'profiles';
+
+// AWS
 const AWS = require('aws-sdk');
 const REGION = 'us-east-2';
 
 AWS.config.update({
   region: REGION,
-  // endpoint: 'http://localhost:8001',
-  // accessKeyId default can be used while using the downloadable version of DynamoDB. 
-  // For security reasons, do not store AWS Credentials in your files. Use Amazon Cognito instead.
   accessKeyId: process.env.AWS_ACCESS_KEY,
-  // secretAccessKey default can be used while using the downloadable version of DynamoDB. 
-  // For security reasons, do not store AWS Credentials in your files. Use Amazon Cognito instead.
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 });
 
-var ddb = new AWS.DynamoDB({apiVersion: '2012-08-10'});
+const ddb = new AWS.DynamoDB.DocumentClient({region: REGION});
 
-// // CreateTable
-// var params = {
-//   AttributeDefinitions: [
-//     {
-//       AttributeName: 'id',
-//       AttributeType: 'N'
-//     },
-//     {
-//       AttributeName: 'first-name',
-//       AttributeType: 'S'
-//     }
-//   ],
-//   KeySchema: [
-//     {
-//       AttributeName: 'CUSTOMER_ID',
-//       KeyType: 'HASH'
-//     },
-//     {
-//       AttributeName: 'CUSTOMER_NAME',
-//       KeyType: 'RANGE'
-//     }
-//   ],
-//   ProvisionedThroughput: {
-//     ReadCapacityUnits: 1,
-//     WriteCapacityUnits: 1
-//   },
-//   TableName: 'profiles',
-//   StreamSpecification: {
-//     StreamEnabled: false
-//   }
-// };
-
-var params = {
-  TableName: 'profiles',
-  Key: {
-    'id': {N: '2'}
-  },
-  ProjectionExpression: 'ATTRIBUTE_NAME'
-};
-
-// Call DynamoDB to read the item from the table
-ddb.getItem(params, function(err, data) {
-  if (err) {
-    console.log("Error", err);
-  } else {
-    console.log("Success", data.Item);
-  }
-});
 
 
 /**
@@ -74,17 +24,24 @@ ddb.getItem(params, function(err, data) {
  * id Integer The rights holder's unique profile ID
  * no response value expected for this operation
  **/ 
-// AWS deleteItem
 exports.deleteProfile = function(id) {
   return new Promise(function(resolve, reject) {
-    let profile = db('profiles').find({ id: id }).value()
-    db('profiles').remove({ id: id })
-    db.save()
-    if (Object.keys(profile).length > 0) {
-      resolve('Profile removed');
-    } else {
-      resolve();
-    }
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'id': id
+      }
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.delete(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data);
+        resolve('Profile removed');
+      }
+    });
   });
 }
 
@@ -94,15 +51,21 @@ exports.deleteProfile = function(id) {
  *
  * returns profiles
  **/
-// AWS batchGetItem
 exports.getAllProfiles = function() {
   return new Promise(function(resolve, reject) {
-    let profiles = db('profiles').value()
-    if (Object.keys(profiles).length > 0) {
-      resolve(profiles);
-    } else {
-      resolve();
+    let params = {
+      "TableName": TABLE,
     }
+    // Call DynamoDB to delete the item from the table
+    ddb.scan(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data);
+        resolve(data.Items);
+      }
+    });
   });
 }
 
@@ -113,25 +76,24 @@ exports.getAllProfiles = function() {
  * id Integer The rights holder's unique profile ID
  * returns profile
  **/
-// AWS getItem
 exports.getProfile = function(id) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {
-  "ipi" : "00004576",
-  "role" : "writer",
-  "wallet" : "0xdd87ae15f4be97e2739c9069ddef674f907d27a8",
-  "media" : "",
-  "first-name" : "John",
-  "email" : "john.smith@example.com",
-  "last-name" : "Smith"
-};
-    let profile = db('profiles').find({ id: id }).value()
-    if (Object.keys(profile).length > 0) {
-      resolve(profile);
-    } else {
-      resolve();
-    }
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'id': id
+      }
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.get(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data);
+        resolve(data);
+      }
+    });
   });
 }
 
@@ -143,18 +105,29 @@ exports.getProfile = function(id) {
  * email Email The rights holder's email address
  * returns Object
  **/
-// AWS updateItem
 exports.patchProfileEmail = function(id,email) {
   return new Promise(function(resolve, reject) {
-    let emailOld = (db('profiles').find({ id: id }).value()).email;
-    db('profiles').find({ id: id }).assign({ email: email.email });
-    db.save();
-    let profile = db('profiles').find({ id: id }).value();
-    if (profile.email != emailOld) {
-      resolve("Email updated: " + profile.email);
-    } else {
-      resolve();
-    }
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'id': id
+      },
+      UpdateExpression: 'set email = :e',
+      ExpressionAttributeValues: {
+        ':e' : email.email
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
   });
 }
 
@@ -166,18 +139,29 @@ exports.patchProfileEmail = function(id,email) {
  * firstName First-name The rights holder's first name
  * returns Object
  **/
-// AWS updateItem
 exports.patchProfileFirstName = function(id,firstName) {
   return new Promise(function(resolve, reject) {
-    let firstNameOld = (db('profiles').find({ id: id }).value())['first-name'];
-    db('profiles').find({ id: id }).assign({ 'first-name': firstName['first-name'] });
-    db.save();
-    let profile = db('profiles').find({ id: id }).value();
-    if (( profile['first-name'] ) != firstNameOld) {
-      resolve("First name updated: " + profile['first-name']);
-    } else {
-      resolve();
-    }
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'id': id
+      },
+      UpdateExpression: 'set firstName  = :f',
+      ExpressionAttributeValues: {
+        ':f' : firstName.firstName
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
   });
 }
 
@@ -189,18 +173,29 @@ exports.patchProfileFirstName = function(id,firstName) {
  * ipi Ipi The right holder's IPI number
  * returns Object
  **/
-// AWS updateItem
 exports.patchProfileIPI = function(id,ipi) {
   return new Promise(function(resolve, reject) {
-    let ipiOld = (db('profiles').find({ id: id }).value()).ipi;
-    db('profiles').find({ id: id }).assign({ ipi: ipi.ipi });
-    db.save();
-    let profile = db('profiles').find({ id: id }).value();
-    if (profile.ipi  != ipiOld) {
-      resolve("Interested party information number updated: " + profile.ipi);
-    } else {
-      resolve();
-    }
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'id': id
+      },
+      UpdateExpression: 'set ipi = :i',
+      ExpressionAttributeValues: {
+        ':i' : ipi.ipi
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
   });
 }
 
@@ -212,18 +207,29 @@ exports.patchProfileIPI = function(id,ipi) {
  * lastName Last-name The rights holder's last name
  * returns Object
  **/
-// AWS updateItem
 exports.patchProfileLastName = function(id,lastName) {
   return new Promise(function(resolve, reject) {
-    let lastNameOld = (db('profiles').find({ id: id }).value())['last-name'];
-    db('profiles').find({ id: id }).assign({ 'last-name': lastName['last-name'] });
-    db.save();
-    let profile = db('profiles').find({ id: id }).value();
-    if (profile['last-name']  != lastNameOld) {
-      resolve("Last name updated: " + profile['last-name']);
-    } else {
-      resolve();
-    }
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'id': id
+      },
+      UpdateExpression: 'set lastName  = :l',
+      ExpressionAttributeValues: {
+        ':l' : lastName.lastName
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
   });
 }
 
@@ -235,21 +241,42 @@ exports.patchProfileLastName = function(id,lastName) {
  * mediaId MediaIds The unique ID of the given media
  * returns profile
  **/
-// AWS updateItem
 exports.patchProfileMedia = function(id,mediaId) {
   return new Promise(function(resolve, reject) {
-    let mediaOld = (db('profiles').find({ id: id }).value()).media;
-    let mediaString = mediaOld + "," + mediaId;
-    // convert to an array of sorted numbers
-    let mediaValue = mediaString.split(',').map(Number).sort();
-    db('profiles').find({ id: id }).assign({ media: [...new Set(mediaValue)] });
-    db.save();
-    let profile = db('profiles').find({ id: id }).value();
-    if (profile.media != mediaOld) {
-      resolve("Media added: " + profile.media);
-    } else {
-      resolve();
-    }
+    // let mediaOld = (db('profiles').find({ id: id }).value()).media;
+    // let mediaString = mediaOld + "," + mediaId;
+    // // convert to an array of sorted numbers
+    // let mediaValue = mediaString.split(',').map(Number).sort();
+    // db('profiles').find({ id: id }).assign({ media: [...new Set(mediaValue)] });
+    // db.save();
+    // let profile = db('profiles').find({ id: id }).value();
+    // if (profile.media != mediaOld) {
+    //   resolve("Media added: " + profile.media);
+    // } else {
+    //   resolve();
+    // }
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'id': id
+      },
+      UpdateExpression: 'set media = :m',
+      ExpressionAttributeNames: {'media' : 'Sum'}, // TODO
+      ExpressionAttributeValues: {
+        ':m' : Number(mediaId.media)
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
   });
 }
 
@@ -258,21 +285,32 @@ exports.patchProfileMedia = function(id,mediaId) {
  * Update right holder's role with the given ID       (Or list of roles including copyright, performance, and/or recording)
  *
  * id Integer The right holder's unique profile ID
- * role Role The right holder's role
+ * contributorRole Contributor Role The right holder's role
  * returns Object
  **/
-// AWS updateItem
-exports.patchProfileRole = function(id,role) {
+exports.patchProfileContributorRole = function(id,contributorRole) {
   return new Promise(function(resolve, reject) {
-    let roleOld = (db('profiles').find({ id: id }).value()).role;
-    db('profiles').find({ id: id }).assign({ role: role.role });
-    db.save();
-    let profile = db('profiles').find({ id: id }).value();
-    if (profile.role  != roleOld) {
-      resolve("Role updated: " + profile.role);
-    } else {
-      resolve();
-    }
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'id': id
+      },
+      UpdateExpression: 'set contributorRole  = :r',
+      ExpressionAttributeValues: {
+        ':r' : contributorRole.contributorRole
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
   });
 }
 
@@ -284,18 +322,29 @@ exports.patchProfileRole = function(id,role) {
  * wallet Wallet The right holder's wallet address
  * returns Object
  **/
-// AWS updateItem
 exports.patchProfileWallet = function(id,wallet) {
   return new Promise(function(resolve, reject) {
-    let walletOld = (db('profiles').find({ id: id }).value()).wallet;
-    db('profiles').find({ id: id }).assign({ wallet: wallet.wallet });
-    db.save();
-    let profile = db('profiles').find({ id: id }).value();
-    if (profile.wallet  != walletOld) {
-      resolve("Wallet updated: " + profile.wallet);
-    } else {
-      resolve();
-    }
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'id': id
+      },
+      UpdateExpression: 'set wallet  = :f',
+      ExpressionAttributeValues: {
+        ':f' : wallet.wallet
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
   });
 }
 
@@ -306,16 +355,45 @@ exports.patchProfileWallet = function(id,wallet) {
  * body Profile request
  * returns profile
  **/
-// AWS putItem
 exports.postProfile = function(body) {
   return new Promise(function(resolve, reject) {
-    db('profiles').push( body )
-    db.save()
-    if (body) {
-      resolve(body);
-    } else {
-      resolve();
+    let params = {
+      "TableName": TABLE,
     }
+    // Call DynamoDB to delete the item from the table
+    ddb.scan(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        // Create unique ID value
+        let ID_VALUE = data.Count + 1;
+
+        let params = {
+          TableName: TABLE,
+          Item: {
+            'id': ID_VALUE,
+            'ipi': body.ipi,
+            'contributorRole': body.contributorRole,
+            'wallet': body.wallet,
+            'media': body.media,
+            'firstName': body.firstName,
+            'email': body.email,
+            'lastName': body.lastName
+          }
+        };
+        ddb.put(params, function(err, data) {
+          if (err) {
+            console.log("Error", err);
+            resolve();
+          } else {
+            console.log("Success", data);
+            resolve(data);
+          }
+        });
+      }
+
+    });
   });
 }
 
@@ -330,22 +408,33 @@ exports.postProfile = function(body) {
 // AWS updateItem
 exports.updateProfile = function(id,body) {
   return new Promise(function(resolve, reject) {
-    db('profiles').find({ id: id }).assign({ 
-      id: id,
-      ipi: body.ipi,
-      'first-name': body['first-name'],
-      'last-name': body['last-name'],
-      role: body.role,
-      wallet: body.wallet,
-      email: body.email,
-      media: body.media
-    })
-    let profile =  db('profiles').find({ id: id }).value();
-    if (body) {
-      resolve(profile);
-    } else {
-      resolve();
-    }
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'id': id
+      },
+      UpdateExpression: 'set ipi  = :i, contributorRole = :r, wallet = :w, media = :m, firstName = :f, email = :e, lastName = :l',
+      ExpressionAttributeValues: {
+        ':i' : body.ipi,
+        ':r' : body.contributorRole,
+        ':w' : body.wallet,
+        ':m' : body.media,
+        ':f' : body.firstName,
+        ':e' : body.email,
+        ':l' : body.lastName
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
   });
 }
 
