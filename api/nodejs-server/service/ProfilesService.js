@@ -243,27 +243,15 @@ exports.patchProfileLastName = function(id,lastName) {
  **/
 exports.patchProfileMedia = function(id,mediaId) {
   return new Promise(function(resolve, reject) {
-    // let mediaOld = (db('profiles').find({ id: id }).value()).media;
-    // let mediaString = mediaOld + "," + mediaId;
-    // // convert to an array of sorted numbers
-    // let mediaValue = mediaString.split(',').map(Number).sort();
-    // db('profiles').find({ id: id }).assign({ media: [...new Set(mediaValue)] });
-    // db.save();
-    // let profile = db('profiles').find({ id: id }).value();
-    // if (profile.media != mediaOld) {
-    //   resolve("Media added: " + profile.media);
-    // } else {
-    //   resolve();
-    // }
     let params = {
       TableName: TABLE,
       Key: {
         'id': id
       },
-      UpdateExpression: 'set media = :m',
-      ExpressionAttributeNames: {'media' : 'Sum'}, // TODO
+      UpdateExpression: 'set media = list_append(if_not_exists(media, :empty_list), :m)',
       ExpressionAttributeValues: {
-        ':m' : Number(mediaId.media)
+        ':m' : mediaId,
+        ':empty_list': []
       },
       ReturnValues: 'UPDATED_NEW'
     };
