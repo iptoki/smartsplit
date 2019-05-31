@@ -1,0 +1,1379 @@
+openapi: 3.0.0
+info:
+  description: Provides a RESTful API for interacting with Smartsplit
+  version: "v1-oas3"
+  title: Smartsplit API
+  x-origin:
+    - format: yaml
+      url: >-
+        https://raw.githubusercontent.com/iptoki/smartsplit/develop/api/swagger.yaml
+  x-providerName: smartsplit.org
+  x-logo:
+    url: 'http://smartsplit.org/wp-content/uploads/2019/05/Logo-v02-005-noir.png'
+tags:
+  - name: Authentication Details
+    description: Obtaining and refreshing your JWT token
+  - name: Profiles
+    description: Viewing and creating right holder profiles
+  - name: Media
+    description: Viewing and creating media
+  - name: Payments
+    description: Viewing and updating payment details
+security:
+  - jwt: []
+paths:
+  /auth:
+    post:
+      tags:
+        - Authentication Details
+      description: Get a JWT token for the rest of the requests
+      operationId: postAuth
+      responses:
+        '200':
+          description: OK. JWT returned for use with the rest of the API requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authResult'
+        '401':
+          description: Invalid credentials and/or API token
+      x-swagger-router-controller: AuthenticationDetails
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/auth'
+        description: JSON string containing your authentication details
+        required: true
+  /refreshToken:
+    get:
+      tags:
+        - Authentication Details
+      description: 'Refreshes your current, valid JWT token'
+      operationId: getRefreshToken
+      responses:
+        '200':
+          description: OK. JWT returned to use in your subsequent requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authResult'
+        '401':
+          description: JWT token is missing or expired
+      security:
+        - jwt: []
+      x-swagger-router-controller: AuthenticationDetails
+  /profiles:
+    get:
+      tags:
+        - Profiles
+      description: Get a list of all right holder profiles
+      operationId: getAllProfiles
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/profiles'
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Profiles
+    post:
+      tags:
+        - Profiles
+      description: This method creates a new profile
+      operationId: postProfile
+      responses:
+        '200':
+          description: OK. The profile was created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/profile'
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Profiles
+      requestBody:
+        $ref: '#/components/requestBodies/profile'
+  '/profiles/{id}':
+    get:
+      tags:
+        - Profiles
+      description: Get a right holder's profile with the given ID
+      operationId: getProfile
+      parameters:
+        - name: id
+          in: path
+          description: The rights holder's unique profile ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/profile'
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Profiles
+    put:
+      tags:
+        - Profiles
+      description: This method updates a profile
+      operationId: updateProfile
+      parameters:
+        - name: id
+          in: path
+          description: The rights holder's unique profile ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK. The profile was created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/profile'
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Profiles
+      requestBody:
+        $ref: '#/components/requestBodies/profile'
+    delete:
+      tags:
+        - Profiles
+      description: Delete a right holder's profile with the given ID
+      operationId: deleteProfile
+      parameters:
+        - name: id
+          in: path
+          description: The rights holder's unique profile ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK. Profile deleted.
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Profiles
+  '/profiles/{id}/firstName':
+    patch:
+      tags:
+        - Profiles
+      description: Update right holder's first name with the given ID
+      operationId: patchProfileFirstName
+      parameters:
+        - name: id
+          in: path
+          description: The rights holder's unique profile ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  name:
+                    type: string
+                    description: The right holder's first name
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Profiles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/profile/properties/firstName'
+        description: The rights holder's first name
+        required: true
+  '/profiles/{id}/lastName':
+    patch:
+      tags:
+        - Profiles
+      description: Update right holder's last name with the given ID
+      operationId: patchProfileLastName
+      parameters:
+        - name: id
+          in: path
+          description: The rights holder's unique profile ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  name:
+                    type: string
+                    description: The right holder's last name
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Profiles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/profile/properties/lastName'
+        description: The rights holder's last name
+        required: true
+  '/profiles/{id}/email':
+    patch:
+      tags:
+        - Profiles
+      description: Update right holder's email address with given ID
+      operationId: patchProfileEmail
+      parameters:
+        - name: id
+          in: path
+          description: The right holder's unique profile ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  email:
+                    type: string
+                    description: The right holder's email address
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Profiles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/profile/properties/email'
+        description: The rights holder's email address
+        required: true
+  '/profiles/{id}/contributorRole':
+    patch:
+      tags:
+        - Profiles
+      description: >-
+        Update right holder's role with the given ID       (Or list of roles
+        including copyright, performance, and/or recording)
+      operationId: patchProfileContributorRole
+      parameters:
+        - name: id
+          in: path
+          description: The right holder's unique profile ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  contributorRole:
+                    type: string
+                    description: The right holder's role
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Profiles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/profile/properties/contributorRole'
+        description: The right holder's role
+        required: true
+  '/profiles/{id}/ipi':
+    patch:
+      tags:
+        - Profiles
+      description: Update right holder's IPI number
+      operationId: patchProfileIPI
+      parameters:
+        - name: id
+          in: path
+          description: The right holder's unique profile ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  ipi:
+                    type: string
+                    description: The right holder's interested party information number
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Profiles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/profile/properties/ipi'
+        description: The right holder's IPI number
+        required: true
+  '/profiles/{id}/media':
+    patch:
+      tags:
+        - Profiles
+      description: Update list of media for the given right holder
+      operationId: patchProfileMedia
+      parameters:
+        - name: id
+          in: path
+          description: The right holder's unique profile ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/profile'
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Profiles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/mediaIds'
+        description: The unique ID of the given media
+        required: true
+  '/profiles/{id}/wallet':
+    patch:
+      tags:
+        - Profiles
+      description: Update the wallet address of a right holder
+      operationId: patchProfileWallet
+      parameters:
+        - name: id
+          in: path
+          description: The right holder's unique profile ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  wallet:
+                    type: string
+                    description: The user's wallet address
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Profiles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/profile/properties/wallet'
+        description: The right holder's wallet address
+        required: true
+  /media:
+    get:
+      tags:
+        - Media
+      description: Get a list of all media
+      operationId: getAllMedia
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/medias'
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Media
+    post:
+      tags:
+        - Media
+      description: This method creates a new media item
+      operationId: postMedia
+      responses:
+        '200':
+          description: OK. The media was created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/media'
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Media
+      requestBody:
+        $ref: '#/components/requestBodies/media'
+  '/media/{mediaId}':
+    get:
+      tags:
+        - Media
+      description: Get media with the given ID
+      operationId: getMedia
+      parameters:
+        - name: mediaId
+          in: path
+          description: The artwork agreement's unique ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/media'
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Media
+    put:
+      tags:
+        - Media
+      description: Update media with the given ID
+      operationId: updateMedia
+      parameters:
+        - name: mediaId
+          in: path
+          description: The artwork agreement's unique ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/media'
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Media
+      requestBody:
+        $ref: '#/components/requestBodies/media'
+    delete:
+      tags:
+        - Media
+      description: Delete a right holder's profile with the given ID
+      operationId: deleteMedia
+      parameters:
+        - name: mediaId
+          in: path
+          description: The rights holder's unique profile ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Media
+  '/media/{mediaId}/title':
+    patch:
+      tags:
+        - Media
+      description: Update the title of the given media identified by ID
+      operationId: patchMediaTitle
+      parameters:
+        - name: mediaId
+          in: path
+          description: The artwork agreement's unique ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  title:
+                    type: string
+                    description: The title of the given artwork
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Media
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/media/properties/title'
+        description: The title of the artwork
+        required: true
+  '/media/{mediaId}/description':
+    patch:
+      tags:
+        - Media
+      description: Update the description of a piece of media
+      operationId: patchMediaDescription
+      parameters:
+        - name: mediaId
+          in: path
+          description: The artwork agreement's unique ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  description:
+                    type: string
+                    description: The description of the artwork
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Media
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/media/properties/description'
+        description: The description of the artwork
+        required: true
+  '/media/{mediaId}/jurisdiction':
+    patch:
+      tags:
+        - Media
+      description: Update the jurisdiction of the given media
+      operationId: patchMediaJurisdiction
+      parameters:
+        - name: mediaId
+          in: path
+          description: The artwork agreement's unique ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  jurisdiction:
+                    type: string
+                    description: >-
+                      The jusrisdiction of the artwork agreement of the given
+                      media
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Media
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/media/properties/jurisdiction'
+        description: The jurisdiction of the given media
+        required: true
+  '/media/{mediaId}/modificationDate':
+    patch:
+      tags:
+        - Media
+      description: Update the modification date of the given media
+      operationId: patchModificationDate
+      parameters:
+        - name: mediaId
+          in: path
+          description: The artwork agreement's unique ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  modificationDate:
+                    type: string
+                    format: iso8601-date-time
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Media
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/media/properties/modificationDate'
+        description: The date the rights agreement for the given media was modified
+        required: true
+  '/media/{mediaId}/publishDate':
+    patch:
+      tags:
+        - Media
+      description: Update the publish date of the given media
+      operationId: patchPublishDate
+      parameters:
+        - name: mediaId
+          in: path
+          description: The artwork agreement's unique ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  publishDate:
+                    type: string
+                    format: iso8601-date-time
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Media
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/media/properties/publishDate'
+        description: The date the given media was published
+        required: true
+  '/media/{mediaId}/genre':
+    patch:
+      tags:
+        - Media
+      description: Update the genre of the media with the given ID
+      operationId: patchMediaGenre
+      parameters:
+        - name: mediaId
+          in: path
+          description: The artwork agreement's unique ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  genre:
+                    type: string
+                    description: The genre of the given media.
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Media
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/media/properties/genre'
+        description: The genre of the artwork
+        required: true
+  '/media/{mediaId}/secondaryGenre':
+    patch:
+      tags:
+        - Media
+      description: Update the secondary genre of the media with the given ID
+      operationId: patchMediaSecondaryGenre
+      parameters:
+        - name: mediaId
+          in: path
+          description: The artwork agreement's unique ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  secondaryGenre:
+                    type: string
+                    description: The secondary genre of the given media.
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Media
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/media/properties/secondaryGenre'
+        description: The secondary genre of the artwork
+        required: true
+  '/media/{mediaId}/album':
+    patch:
+      tags:
+        - Media
+      description: Update the album name of the media with the given ID
+      operationId: patchMediaAlbum
+      parameters:
+        - name: mediaId
+          in: path
+          description: The artwork agreement's unique ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  genre:
+                    type: string
+                    description: The genre of the given media.
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Media
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/media/properties/album'
+        description: The album of the artwork
+        required: true
+  '/media/{mediaId}/publisher':
+    patch:
+      tags:
+        - Media
+      description: Update publisher of the media with the given ID
+      operationId: patchMediaPublisher
+      parameters:
+        - name: mediaId
+          in: path
+          description: The artwork agreement's unique ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  publisher:
+                    type: string
+                    description: The publisher name of the media with the given ID
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Media
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/media/properties/publisher'
+        description: The publisher of the media
+        required: true
+  /payments:
+    get:
+      tags:
+        - Payments
+      description: Get a list of all payments' details
+      operationId: getAllPayments
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/payments'
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Payments
+    post:
+      tags:
+        - Payments
+      description: Add a new payment
+      operationId: postPayment
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/payment'
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Payments
+      requestBody:
+        $ref: '#/components/requestBodies/payment'
+  '/payments/{id}':
+    get:
+      tags:
+        - Payments
+      description: Get the details of a payment with the given ID
+      operationId: getPayment
+      parameters:
+        - name: id
+          in: path
+          description: The payment's unique ID
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/payment'
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Payments
+    put:
+      tags:
+        - Payments
+      description: Update the details of a payment with the given ID
+      operationId: updatePayment
+      parameters:
+        - name: id
+          in: path
+          description: The payment's unique ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/payment'
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Payments
+      requestBody:
+        $ref: '#/components/requestBodies/payment'
+    delete:
+      tags:
+        - Payments
+      description: Delete a right holder's profile with the given ID
+      operationId: deletePayment
+      parameters:
+        - name: id
+          in: path
+          description: The rights holder's unique profile ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK. Payment deleted
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Payments
+  '/payments/{id}/transactionId':
+    patch:
+      tags:
+        - Payments
+      description: Update management societies' payment transaction ID
+      operationId: patchPaymentTransactionID
+      parameters:
+        - name: id
+          in: path
+          description: The payment's unique ID
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  transactionId:
+                    type: string
+                    description: The management societies' transaction ID
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Payments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/payment/properties/transactionId'
+        description: The payment transaction ID
+        required: true
+  '/payments/{id}/transactionHash':
+    patch:
+      tags:
+        - Payments
+      description: Update blockchain transaction hash of a payment
+      operationId: patchPaymentTransactionHash
+      parameters:
+        - name: id
+          in: path
+          description: The payment's unique ID
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  transactionHash:
+                    type: string
+                    description: The transaction hash on the blockchain
+        '400':
+          description: Bad request
+        '403':
+          description: Permission denied
+        '404':
+          description: Endpoint not found
+        '500':
+          description: An unknown error occured
+      security:
+        - jwt: []
+      x-swagger-router-controller: Payments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/payment/properties/transactionHash'
+        description: The blockchain hash of the transaction
+        required: true
+servers:
+  - url: 'https://localhost:8080/v1'
+components:
+  requestBodies:
+    media:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/media'
+      description: request
+      required: true
+    profile:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/profile'
+      description: request
+      required: true
+    payment:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/payment'
+      description: The payment details
+      required: true
+  securitySchemes:
+    jwt:
+      type: apiKey
+      name: Authorization
+      in: header
+      description: Amazon Signature authorization v4
+      x-amazon-apigateway-authtype: awsSigv4
+  schemas:
+    auth:
+      properties:
+        apiKey:
+          type: string
+        username:
+          type: string
+        password:
+          type: string
+    authResult:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: The JWT access token for the current session
+    profiles:
+      type: array
+      description: An array of profile information
+      items:
+        $ref: '#/components/schemas/profile'
+    profile:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The unique ID of the given profile
+        firstName:
+          type: string
+          description: The name displayed on the user's profile
+        lastName:
+          type: string
+          description: The name displayed on the user's profile
+        email:
+          type: string
+          description: The email address for this user profile
+        media:
+          $ref: '#/components/schemas/mediaIds'
+        ipi:
+          type: string
+          description: The right holder's interested party information number
+        contributorRole:
+          type: string
+          description: The role of the right holder for this user profile
+        wallet:
+          type: string
+          description: The blockchain wallet address for this user profile
+    medias:
+      type: array
+      description: An array of pieces of media
+      items:
+        $ref: '#/components/schemas/media'
+    mediaIds:
+      type: array
+      description: An array of mediaIds referencing media
+      items:
+        type: integer
+    media:
+      properties:
+        mediaId:
+          type: integer
+          description: The id of this piece of media
+        title:
+          type: string
+          description: The title of this piece of media
+        album:
+          type: string
+          description: The title of the album for this piece of media
+        description:
+          type: string
+          description: The short descriptioon of this piece of media
+        cover:
+          type: boolean
+          description: Whether or not this piece of media is a cover
+        rightHolders:
+          type: object
+          description: The full name of the right holder
+        jurisdiction:
+          type: string
+          description: The Jurisdiction for the given media
+        rightsType:
+          type: object
+          description: 'The boolean, ''True'' or ''False'''
+        genre:
+          type: string
+          description: The genre of the given media
+        secondaryGenre:
+          type: string
+          description: The secondary genre of the given media
+        creationDate:
+          type: string
+          format: iso8601-date-time
+          description: The creation date of the rights agreement for the given media
+        modificationDate:
+          type: string
+          format: iso8601-date-time
+          description: The date the rights agreement for the given media was modified
+        publishDate:
+          type: string
+          format: iso8601-date-time
+          description: The date of first broadcast/publication for the given media
+        publisher:
+          type: string
+          description: The publisher for the given media (Left blank if no publisher)
+        rightsSplit:
+          type: object
+          description: The percentage split of each right holder
+    payments:
+      type: array
+      description: An array of information about payments
+      items:
+        $ref: '#/components/schemas/payment'
+    payment:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Media ID related to this payment
+        amount:
+          type: number
+          description: The amount of the payment in $ CAD
+        payee:
+          type: number
+          description: The ID of the profile of the creator who was paid
+        transactionId:
+          type: string
+          description: The transaction string of the management company for this payment
+        transactionHash:
+          type: string
+          description: The blockchain transaction hash for this payment
