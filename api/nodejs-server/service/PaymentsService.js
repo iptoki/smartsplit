@@ -8,8 +8,8 @@ const REGION = 'us-east-2';
 
 AWS.config.update({
   region: REGION,
-  accessKeyId: process.env.AWS_ACCESS_KEY,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+  accessKeyId: getParameter("/aws/reference/secretsmanager/ACCESS_KEY"),
+  secretAccessKey: getParameter("/aws/reference/secretsmanager/SECRET_ACCESS_KEY")
 });
 
 const ddb = new AWS.DynamoDB.DocumentClient({region: REGION});

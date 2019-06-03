@@ -8,6 +8,19 @@ const app = express();
 const jwt = require('json-web-token');
 app.use(bodyParser.urlencoded({ extended: false }));
 
+// AWS
+const AWS = require('aws-sdk');
+const REGION = 'us-east-2';
+
+AWS.config.update({
+  region: REGION,
+  accessKeyId: getParameter("/aws/reference/secretsmanager/ACCESS_KEY"),
+  secretAccessKey: getParameter("/aws/reference/secretsmanager/SECRET_ACCESS_KEY")
+});
+
+const ddb = new AWS.DynamoDB.DocumentClient({region: REGION});
+
+
 /**
  * Refreshes your current, valid JWT token
  *
