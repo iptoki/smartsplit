@@ -15,8 +15,6 @@ AWS.config.update({
 
 const ddb = new AWS.DynamoDB.DocumentClient({region: REGION});
 
-
-
 /**
  * Delete a right holder's profile with the given ID
  *

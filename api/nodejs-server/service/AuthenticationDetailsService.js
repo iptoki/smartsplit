@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const app = express();
 const jwt = require('json-web-token');
+
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // AWS
