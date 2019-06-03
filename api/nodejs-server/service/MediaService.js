@@ -1,16 +1,15 @@
 'use strict';
-const lodb = require('lodb');
-const db = lodb('./data/db.json');
 const TABLE = 'media';
+const utils = require('../utils/utils.js');
 
 // AWS
 const AWS = require('aws-sdk');
 const REGION = 'us-east-2';
 
 AWS.config.update({
-  region: REGION,
-  accessKeyId: getParameter("/aws/reference/secretsmanager/ACCESS_KEY"),
-  secretAccessKey: getParameter("/aws/reference/secretsmanager/SECRET_ACCESS_KEY")
+  region: REGION, 
+  accessKeyId: utils.getParameter('ACCESS_KEY'),
+  secretAccessKey: utils.getParameter('SECRET_ACCESS_KEY')
 });
 
 const ddb = new AWS.DynamoDB.DocumentClient({region: REGION});
