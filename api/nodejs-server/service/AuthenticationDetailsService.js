@@ -10,6 +10,7 @@ const jwt = require('json-web-token');
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // AWS
+// Besoin de bootstraper la récupération des paramètres puis l'activation de la BD AWS
 const AWS = require('aws-sdk');
 const REGION = 'us-east-2';
 
