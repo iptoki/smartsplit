@@ -35,10 +35,10 @@ module.exports.getMedia = function getMedia (req, res, next) {
     });
 };
 
-module.exports.patchMediaDescription = function patchMediaDescription (req, res, next) {
+module.exports.patchMediaGenre = function patchMediaGenre (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
-  var description = req.swagger.params['description'].value;
-  Media.patchMediaDescription(mediaId,description)
+  var genre = req.swagger.params['genre'].value;
+  Media.patchMediaGenre(mediaId,genre)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -47,10 +47,22 @@ module.exports.patchMediaDescription = function patchMediaDescription (req, res,
     });
 };
 
-module.exports.patchMediaGenre = function patchMediaGenre (req, res, next) {
+module.exports.patchMediaISRC = function patchMediaISRC (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
-  var genre = req.swagger.params['genre'].value;
-  Media.patchMediaGenre(mediaId,genre)
+  var isrc = req.swagger.params['isrc'].value;
+  Media.patchMediaISRC(mediaId,isrc)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.patchMediaUPC = function patchMediaUPC (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  var upc = req.swagger.params['upc'].value;
+  Media.patchMediaUPC(mediaId,upc)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -119,6 +131,30 @@ module.exports.patchMediaAlbum = function patchMediaAlbum (req, res, next) {
     });
 };
 
+module.exports.patchMediaArtist = function patchMediaArtist (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  var artist = req.swagger.params['artist'].value;
+  Media.patchMediaArtist(mediaId,artist)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.patchMediaDuration = function patchMediaDuration (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  var duration = req.swagger.params['duration'].value;
+  Media.patchMediaDuration(mediaId,duration)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
 module.exports.patchModificationDate = function patchModificationDate (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
   var modificationDate = req.swagger.params['modificationDate'].value;
@@ -135,6 +171,115 @@ module.exports.patchPublishDate = function patchPublishDate (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
   var modificationDate = req.swagger.params['publishDate'].value;
   Media.patchModificationDate(mediaId,publishDate)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+
+module.exports.patchMediaRightHolders = function patchMediaRightHolders (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  var rightHolders = req.swagger.params['rightHolders'].value;
+  Media.patchMediaRightHolders(mediaId,rightHolders)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.patchMediaRightsSplit = function patchMediaRightsSplit (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  var rightsSplit = req.swagger.params['rightsSplit'].value;
+  Media.patchMediaRightsSplit(mediaId,rightsSplit)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.patchMediaRightsType = function patchMediaRightsType (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  var rightsType = req.swagger.params['rightsType'].value;
+  Media.patchMediaRightsType(mediaId,rightsType)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.patchMediaLyrics = function patchMediaLyrics (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  var lyrics = req.swagger.params['lyrics'].value;
+  Media.patchMediaLyrics(mediaId,lyrics)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.patchMediaLyricsLanguages = function patchMediaLyricsLanguages (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  var lyricsLanguages = req.swagger.params['lyricsLanguages'].value;
+  Media.patchMediaLyricsLanguages(mediaId,lyricsLanguages)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.patchMediaPlaylistLinks = function patchMediaPlaylistLinks (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  var playlistLinks = req.swagger.params['playlistLinks'].value;
+  Media.patchMediaPlaylistLinks(mediaId,playlistLinks)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.patchMediaPressArticleLinks = function patchMediaPressArticleLinks (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  var pressArticleLinks = req.swagger.params['pressArticleLinks'].value;
+  Media.patchMediaPressArticleLinks(mediaId,pressArticleLinks)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.patchMediaSocialMediaLinks = function patchMediaSocialMediaLinks (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  var socialMediaLinks = req.swagger.params['socialMediaLinks'].value;
+  Media.patchMediaSocialMediaLinks(mediaId,socialMediaLinks)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.patchMediaStreamingServiceLinks = function patchMediaStreamingServiceLinks (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  var streamingServiceLinks = req.swagger.params['streamingServiceLinks'].value;
+  Media.patchMediaStreamingServiceLinks(mediaId,streamingServiceLinks)
     .then(function (response) {
       utils.writeJson(res, response);
     })

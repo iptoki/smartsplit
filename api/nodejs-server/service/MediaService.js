@@ -99,22 +99,56 @@ exports.getMedia = function(mediaId) {
 
 
 /**
- * Update the description of a piece of media
+ * Update the artist name of a piece of media
  *
  * mediaId Integer The artwork agreement's unique ID
- * description Description The description of the artwork
+ * artist Artist The artist name of the artwork
  * returns Object
  **/
-exports.patchMediaDescription = function(mediaId,description) {
+exports.patchMediaArtist = function(mediaId,artist) {
   return new Promise(function(resolve, reject) {
     let params = {
       TableName: TABLE,
       Key: {
         'mediaId': mediaId
       },
-      UpdateExpression: 'set description = :d',
+      UpdateExpression: 'set artist = :a',
       ExpressionAttributeValues: {
-        ':d' : description.description
+        ':a' : artist.artist
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
+  });
+}
+
+
+/**
+ * Update the duration of the media with the given ID
+ *
+ * mediaId Integer The artwork agreement's unique ID
+ * duration Duration The duration in seconds of the given piece of media
+ * returns Object
+ **/
+exports.patchMediaDuration = function(mediaId,duration) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'mediaId': mediaId
+      },
+      UpdateExpression: 'set duration = :d',
+      ExpressionAttributeValues: {
+        ':d' : duration.duration
       },
       ReturnValues: 'UPDATED_NEW'
     };
@@ -232,6 +266,75 @@ exports.patchMediaJurisdiction = function(mediaId,jurisdiction) {
     });
   });
 }
+
+
+/**
+ * Update the ISRC of the media with the given ID
+ *
+ * mediaId Integer The artwork agreement's unique ID
+ * isrc Isrc The ISRC of the artwork
+ * returns Object
+ **/
+exports.patchMediaISRC = function(mediaId,isrc) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'mediaId': mediaId
+      },
+      UpdateExpression: 'set irsc = :i',
+      ExpressionAttributeValues: {
+        ':i' : isrc.isrc
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
+  });
+}
+
+
+/**
+ * Update the UPC of the media with the given ID
+ *
+ * mediaId Integer The artwork agreement's unique ID
+ * upc Upc The UPC of the artwork
+ * returns Object
+ **/
+exports.patchMediaUPC = function(mediaId,upc) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'mediaId': mediaId
+      },
+      UpdateExpression: 'set upc = :u',
+      ExpressionAttributeValues: {
+        ':u' : upc.upc
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
+  });
+}
+
 
 /**
  * Update the modification date of the given media
@@ -386,6 +489,312 @@ exports.patchMediaAlbum = function(mediaId,album) {
       UpdateExpression: 'set album  = :a',
       ExpressionAttributeValues: {
         ':a' : album.album
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
+  });
+}
+
+
+/**
+ * Update the lyrics for the given piece of media
+ *
+ * mediaId Integer The artwork agreement's unique ID
+ * lyrics Lyrics The lyrics for the given media
+ * returns media
+ **/
+exports.patchMediaLyrics = function(mediaId,lyrics) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'mediaId': mediaId
+      },
+      UpdateExpression: 'set lyrics  = :l',
+      ExpressionAttributeValues: {
+        ':l' : lyrics.lyrics
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
+  });
+}
+
+
+/**
+ * Update list of languages for the lyrics for the given piece of media
+ *
+ * mediaId Integer The artwork agreement's unique ID
+ * lyricsLanguages LyricsLanguages The object containing the languages for the given media's lyrics
+ * returns media
+ **/
+exports.patchMediaLyricsLanguages = function(mediaId,lyricsLanguages) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'mediaId': mediaId
+      },
+      UpdateExpression: 'set lyricsLanguages  = :c',
+      ExpressionAttributeValues: {
+        ':c' : lyricsLanguages.lyricsLanguages
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
+  });
+}
+
+
+/**
+ * Update list of playlist links for the given piece of media
+ *
+ * mediaId Integer The artwork agreement's unique ID
+ * playlistLinks PlaylistLinks The object containing the given piece of media's playlist links
+ * returns media
+ **/
+exports.patchMediaPlaylistLinks = function(mediaId,playlistLinks) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'mediaId': mediaId
+      },
+      UpdateExpression: 'set playlistLinks  = :p',
+      ExpressionAttributeValues: {
+        ':p' : playlistLinks.playlistLinks
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
+  });
+}
+
+
+/**
+ * Update list of press article links for the given piece of media
+ *
+ * mediaId Integer The artwork agreement's unique ID
+ * pressArticleLinks PressArticleLinks The object containing the given piece of media's press article links
+ * returns media
+ **/
+exports.patchMediaPressArticleLinks = function(mediaId,pressArticleLinks) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'mediaId': mediaId
+      },
+      UpdateExpression: 'set pressArticleLinks  = :p',
+      ExpressionAttributeValues: {
+        ':p' : pressArticleLinks.pressArticleLinks
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
+  });
+}
+
+
+/**
+ * Update the right holders who collaborated on media
+ *
+ * mediaId Integer The artwork agreement's unique ID
+ * rightHolders RightHolders The object containing the right holders for the given media
+ * returns media
+ **/
+exports.patchMediaRightHolders = function(mediaId,rightHolders) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'mediaId': mediaId
+      },
+      UpdateExpression: 'set rightHolders  = :r',
+      ExpressionAttributeValues: {
+        ':r' : rightHolders.rightHolders
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
+  });
+}
+
+
+/**
+ * Update rights holders' percentage split given media
+ *
+ * mediaId Integer The artwork agreement's unique ID
+ * rightsSplit RightsSplit The object containing the percentage split for the given media
+ * returns media
+ **/
+exports.patchMediaRightsSplit = function(mediaId,rightsSplit) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'mediaId': mediaId
+      },
+      UpdateExpression: 'set rightsSplit  = :s',
+      ExpressionAttributeValues: {
+        ':s' : rightsSplit.rightsSplit
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
+  });
+}
+
+
+/**
+ * Update the type of rights of the given media         (Including copyright, performance, recording)
+ *
+ * mediaId Integer The artwork agreement's unique ID
+ * rightsType RightsType The object containing the type of rights for the given media
+ * returns media
+ **/
+exports.patchMediaRightsType = function(mediaId,rightsType) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'mediaId': mediaId
+      },
+      UpdateExpression: 'set rightsType  = :t',
+      ExpressionAttributeValues: {
+        ':t' : rightsType.rightsType
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
+  });
+}
+
+
+/**
+ * Update list of social media links for the given piece of media
+ *
+ * mediaId Integer The artwork agreement's unique ID
+ * socialMediaLinks SocialMediaLinks The object containing the given piece of media's social media links
+ * returns media
+ **/
+exports.patchMediaSocialMediaLinks = function(mediaId,socialMediaLinks) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'mediaId': mediaId
+      },
+      UpdateExpression: 'set socialMediaLinks  = :m',
+      ExpressionAttributeValues: {
+        ':m' : socialMediaLinks.socialMediaLinks
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
+  });
+}
+
+
+/**
+ * Update list of streaming service links for the given piece of media
+ *
+ * mediaId Integer The artwork agreement's unique ID
+ * streamingServiceLinks StreamingServiceLinks The object containing the given piece of media's streaming service links
+ * returns media
+ **/
+exports.patchMediaStreamingServiceLinks = function(mediaId,streamingServiceLinks) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'mediaId': mediaId
+      },
+      UpdateExpression: 'set streamingServiceLinks  = :s',
+      ExpressionAttributeValues: {
+        ':s' : streaminServiceLinks.streamingServiceLinks
       },
       ReturnValues: 'UPDATED_NEW'
     };

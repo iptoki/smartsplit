@@ -1,4 +1,3 @@
----
 swagger: "2.0"
 info:
   description: "Provides a RESTful API for interacting with Smartsplit"
@@ -10,7 +9,7 @@ info:
   x-providerName: "smartsplit.org"
   x-logo:
     url: "http://smartsplit.org/wp-content/uploads/2019/05/Logo-v02-005-noir.png"
-host: "localhost:8080"
+host: "api.smartsplit.org:8080"
 basePath: "/v1"
 tags:
 - name: "Authentication Details"
@@ -224,7 +223,7 @@ paths:
           description: "OK"
           schema:
             properties:
-              name:
+              firstName:
                 type: "string"
                 example: "John"
                 description: "The right holder's first name"
@@ -260,10 +259,46 @@ paths:
           description: "OK"
           schema:
             properties:
-              name:
+              lastName:
                 type: "string"
                 example: "Smith"
                 description: "The right holder's last name"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Profiles"
+  /profiles/{id}/artistName:
+    patch:
+      tags:
+      - "Profiles"
+      description: "Update right holder's artist name with the given ID"
+      operationId: "patchProfileArtistName"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The rights holder's unique profile ID"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "artistName"
+        description: "The rights holder's artist name"
+        required: true
+        schema:
+          $ref: "#/definitions/profile/properties/artistName"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            properties:
+              artistName:
+                type: "string"
+                example: "LYB"
+                description: "The right holder's artist name"
         400:
           description: "Bad request"
         403:
@@ -452,6 +487,38 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Profiles"
+  /profiles/{id}/socialMediaLinks:
+    patch:
+      tags:
+      - "Profiles"
+      description: "Update list of social media links for the given right holder"
+      operationId: "patchProfileSocialMediaLinks"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The right holder's unique profile ID"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "socialMediaLinks"
+        description: "The object containing the given profile's social media links"
+        required: true
+        schema:
+          $ref: "#/definitions/profile/properties/socialMediaLinks"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/profile"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Profiles"
   /media:
     get:
       tags:
@@ -619,12 +686,12 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
-  /media/{mediaId}/description:
+  /media/{mediaId}/artist:
     patch:
       tags:
       - "Media"
-      description: "Update the description of a piece of media"
-      operationId: "patchMediaDescription"
+      description: "Update the artist name of a piece of media"
+      operationId: "patchMediaArtist"
       parameters:
       - name: "mediaId"
         in: "path"
@@ -632,11 +699,11 @@ paths:
         required: true
         type: "integer"
       - in: "body"
-        name: "description"
-        description: "The description of the artwork"
+        name: "artist"
+        description: "The artist name of the artwork"
         required: true
         schema:
-          $ref: "#/definitions/media/properties/description"
+          $ref: "#/definitions/media/properties/artist"
       responses:
         200:
           description: "OK"
@@ -644,8 +711,8 @@ paths:
             properties:
               description:
                 type: "string"
-                example: "The wonderful classic hit song, Love You Honey"
-                description: "The description of the artwork"
+                example: "LYB"
+                description: "The artist who created the artwork"
         400:
           description: "Bad request"
         403:
@@ -655,38 +722,38 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
-  # /media/{mediaId}/rightHolders:
-  #   get:
-  #     tags:
-  #     - "Media"
-  #     description: "Get the right holders who collaborated on media"
-  #     operationId: "getMediaRightHolders"
-  #     parameters:
-  #     - name: "mediaId"
-  #       in: "path"
-  #       description: "The artwork agreement's unique ID"
-  #       required: true
-  #       type: "integer"
-  #     responses:
-  #       200:
-  #         description: "OK"
-  #         schema:
-  #           properties:
-  #             rightHolders:
-  #               type: "object"
-  #               description: "The full name of the right holder"
-  #               additionalProperties:
-  #                 type: "string"
-  #                 description: "The type of right holder, for example, writer, producer"
-  #       400:
-  #         description: "Bad request"
-  #       403:
-  #         description: "Permission denied"
-  #       404:
-  #         description: "Endpoint not found"
-  #       500:
-  #         description: "An unknown error occured"
-  #     x-swagger-router-controller: "Media"
+  /media/{mediaId}/rightHolders:
+    patch:
+      tags:
+      - "Media"
+      description: "Update the right holders who collaborated on media"
+      operationId: "patchMediaRightHolders"
+      parameters:
+      - name: "mediaId"
+        in: "path"
+        description: "The artwork agreement's unique ID"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "rightHolders"
+        description: "The object containing the right holders for the given media"
+        required: true
+        schema:
+          $ref: "#/definitions/media/properties/rightHolders"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/media"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Media"
   /media/{mediaId}/jurisdiction:
     patch:
       tags:
@@ -796,41 +863,39 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
-  # /media/{mediaId}/rightsType:
-  #   get:
-  #     tags:
-  #     - "Media"
-  #     description: "Get the type of rights of the given media         (Including copyright,\
-  #       \ performance, recording)"
-  #     operationId: "getMediaRightsType"
-  #     parameters:
-  #     - name: "mediaId"
-  #       in: "path"
-  #       description: "The artwork agreement's unique ID"
-  #       required: true
-  #       type: "integer"
-  #     responses:
-  #       200:
-  #         description: "OK"
-  #         schema:
-  #           properties:
-  #             rightsType:
-  #               type: "object"
-  #               example:
-  #                 copyright: true
-  #                 performance: true
-  #                 recording: false
-  #               description: "The type of rights associated with the artwork"
-  #               properties: {}
-  #       400:
-  #         description: "Bad request"
-  #       403:
-  #         description: "Permission denied"
-  #       404:
-  #         description: "Endpoint not found"
-  #       500:
-  #         description: "An unknown error occured"
-  #     x-swagger-router-controller: "Media"
+  /media/{mediaId}/rightsType:
+    patch:
+      tags:
+      - "Media"
+      description: "Update the type of rights of the given media         (Including copyright,\
+        \ performance, recording)"
+      operationId: "patchMediaRightsType"
+      parameters:
+      - name: "mediaId"
+        in: "path"
+        description: "The artwork agreement's unique ID"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "rightsType"
+        description: "The object containing the type of rights for the given media"
+        required: true
+        schema:
+          $ref: "#/definitions/media/properties/rightsType"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/media"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Media"
   /media/{mediaId}/genre:
     patch:
       tags:
@@ -939,38 +1004,6 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
-  # /media/{mediaId}/creationDate:
-  #   get:
-  #     tags:
-  #     - "Media"
-  #     description: "Get creation date of the media with the given ID"
-  #     operationId: "getMediaCreationDate"
-  #     parameters:
-  #     - name: "mediaId"
-  #       in: "path"
-  #       description: "The artwork agreement's unique ID"
-  #       required: true
-  #       type: "integer"
-  #     responses:
-  #       200:
-  #         description: "OK"
-  #         schema:
-  #           properties:
-  #             creationDate:
-  #               type: "string"
-  #               format: "iso8601-date-time"
-  #               example: "2019-01-01T15:53:00"
-  #               description: "The creation date of the smartsplit contract for the\
-  #                 \ given media"
-  #       400:
-  #         description: "Bad request"
-  #       403:
-  #         description: "Permission denied"
-  #       404:
-  #         description: "Endpoint not found"
-  #       500:
-  #         description: "An unknown error occured"
-  #     x-swagger-router-controller: "Media"
   /media/{mediaId}/publisher:
     patch:
       tags:
@@ -1007,40 +1040,338 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
-  # /media/{mediaId}/rightsSplit:
-  #   get:
-  #     tags:
-  #     - "Media"
-  #     description: "Get rights holders' percentage split given media"
-  #     operationId: "getMediaRightsSplit"
-  #     parameters:
-  #     - name: "mediaId"
-  #       in: "path"
-  #       description: "The artwork agreement's unique ID"
-  #       required: true
-  #       type: "integer"
-  #     responses:
-  #       200:
-  #         description: "OK"
-  #         schema:
-  #           properties:
-  #             rightsSplit:
-  #               type: "object"
-  #               description: "The percentage split of each right holder"
-  #               additionalProperties:
-  #                 type: "number"
-  #                 description: "The names of the right holders for the given media"
-  #       400:
-  #         description: "Bad request"
-  #       403:
-  #         description: "Permission denied"
-  #       404:
-  #         description: "Endpoint not found"
-  #       500:
-  #         description: "An unknown error occured"
-  #     security:
-  #     - jwt: []
-  #     x-swagger-router-controller: "Media"
+  /media/{mediaId}/rightsSplit:
+    patch:
+      tags:
+      - "Media"
+      description: "Update rights holders' percentage split given media"
+      operationId: "patchMediaRightsSplit"
+      parameters:
+      - name: "mediaId"
+        in: "path"
+        description: "The artwork agreement's unique ID"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "rightsSplit"
+        description: "The object containing the percentage split for the given media"
+        required: true
+        schema:
+          $ref: "#/definitions/media/properties/rightsSplit"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/media"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Media"
+  /media/{mediaId}/lyrics:
+    patch:
+      tags:
+      - "Media"
+      description: "Update the lyrics for the given piece of media"
+      operationId: "patchMediaLyrics"
+      parameters:
+      - name: "mediaId"
+        in: "path"
+        description: "The artwork agreement's unique ID"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "lyrics"
+        description: "The lyrics for the given media"
+        required: true
+        schema:
+          $ref: "#/definitions/media/properties/lyrics"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/media"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Media"
+  /media/{mediaId}/lyricsLanguages:
+    patch:
+      tags:
+      - "Media"
+      description: "Update list of languages for the lyrics for the given piece of media"
+      operationId: "patchMediaLyricsLanguages"
+      parameters:
+      - name: "mediaId"
+        in: "path"
+        description: "The artwork agreement's unique ID"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "lyricsLanguages"
+        description: "The object containing the languages for the given media's lyrics"
+        required: true
+        schema:
+          $ref: "#/definitions/media/properties/lyricsLanguages"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/media"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Media"
+  /media/{mediaId}/isrc:
+    patch:
+      tags:
+      - "Media"
+      description: "Update the ISRC of the media with the given ID"
+      operationId: "patchMediaISRC"
+      parameters:
+      - name: "mediaId"
+        in: "path"
+        description: "The artwork agreement's unique ID"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "isrc"
+        description: "The ISRC of the artwork"
+        required: true
+        schema:
+          $ref: "#/definitions/media/properties/isrc"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            properties:
+              isrc:
+                type: "string"
+                example: "abcdef1234567"
+                description: "The isrc of the given media."
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Media"
+  /media/{mediaId}/upc:
+    patch:
+      tags:
+      - "Media"
+      description: "Update the UPC of the media with the given ID"
+      operationId: "patchMediaUPC"
+      parameters:
+      - name: "mediaId"
+        in: "path"
+        description: "The artwork agreement's unique ID"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "upc"
+        description: "The UPC of the artwork"
+        required: true
+        schema:
+          $ref: "#/definitions/media/properties/upc"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            properties:
+              upc:
+                type: "string"
+                example: "123456789111"
+                description: "The upc of the given media."
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Media"
+  /media/{mediaId}/duration:
+    patch:
+      tags:
+      - "Media"
+      description: "Update the duration of the media with the given ID"
+      operationId: "patchMediaDuration"
+      parameters:
+      - name: "mediaId"
+        in: "path"
+        description: "The artwork agreement's unique ID"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "duration"
+        description: "The duration in seconds of the given piece of media"
+        required: true
+        schema:
+          $ref: "#/definitions/media/properties/duration"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            properties:
+              duration:
+                type: "number"
+                example: 122
+                description: "The duration in seconds of of the given media."
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Media"
+  /media/{mediaId}/socialMediaLinks:
+    patch:
+      tags:
+      - "Media"
+      description: "Update list of social media links for the given piece of media"
+      operationId: "patchMediaSocialMediaLinks"
+      parameters:
+      - name: "mediaId"
+        in: "path"
+        description: "The artwork agreement's unique ID"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "socialMediaLinks"
+        description: "The object containing the given piece of media's social media links"
+        required: true
+        schema:
+          $ref: "#/definitions/media/properties/socialMediaLinks"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/media"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Media"
+  /media/{mediaId}/streamingServiceLinks:
+    patch:
+      tags:
+      - "Media"
+      description: "Update list of streaming service links for the given piece of media"
+      operationId: "patchMediaStreamingServiceLinks"
+      parameters:
+      - name: "mediaId"
+        in: "path"
+        description: "The artwork agreement's unique ID"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "streamingServiceLinks"
+        description: "The object containing the given piece of media's streaming service links"
+        required: true
+        schema:
+          $ref: "#/definitions/media/properties/streamingServiceLinks"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/media"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Media"
+  /media/{mediaId}/pressArticleLinks:
+    patch:
+      tags:
+      - "Media"
+      description: "Update list of press article links for the given piece of media"
+      operationId: "patchMediaPressArticleLinks"
+      parameters:
+      - name: "mediaId"
+        in: "path"
+        description: "The artwork agreement's unique ID"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "pressArticleLinks"
+        description: "The object containing the given piece of media's press article links"
+        required: true
+        schema:
+          $ref: "#/definitions/media/properties/pressArticleLinks"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/media"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Media"
+  /media/{mediaId}/playlistLinks:
+    patch:
+      tags:
+      - "Media"
+      description: "Update list of playlist links for the given piece of media"
+      operationId: "patchMediaPlaylistLinks"
+      parameters:
+      - name: "mediaId"
+        in: "path"
+        description: "The artwork agreement's unique ID"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "playlistLinks"
+        description: "The object containing the given piece of media's playlist links"
+        required: true
+        schema:
+          $ref: "#/definitions/media/properties/playlistLinks"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/media"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Media"
   /payments:
     get:
       tags:
@@ -1099,7 +1430,7 @@ paths:
         in: "path"
         description: "The payment's unique ID"
         required: true
-        type: "number"
+        type: "integer"
       responses:
         200:
           description: "OK"
@@ -1181,7 +1512,7 @@ paths:
         in: "path"
         description: "The payment's unique ID"
         required: true
-        type: "number"
+        type: "integer"
       - in: "body"
         name: "transactionId"
         description: "The payment transaction ID"
@@ -1219,7 +1550,7 @@ paths:
         in: "path"
         description: "The payment's unique ID"
         required: true
-        type: "number"
+        type: "integer"
       - in: "body"
         name: "transactionHash"
         description: "The blockchain hash of the transaction"
@@ -1288,11 +1619,15 @@ definitions:
       firstName:
         type: "string"
         example: "John"
-        description: "The name displayed on the user's profile"
+        description: "The first name displayed on the user's profile"
       lastName:
         type: "string"
         example: "Smith"
-        description: "The name displayed on the user's profile"
+        description: "The last name displayed on the user's profile"
+      artistName:
+        type: "string"
+        example: "LYB"
+        description: "The artist name displayed on the user's profile"
       email:
         type: "string"
         example: "john.smith@example.com"
@@ -1311,6 +1646,12 @@ definitions:
         type: "string"
         example: "0xdd87ae15f4be97e2739c9069ddef674f907d27a8"
         description: "The blockchain wallet address for this user profile"
+      socialMediaLinks:
+        type: "object"
+        description: "The urls for the social media profiles for the given user, like Facebook, Instagram, Youtube, Twitter"
+        additionalProperties:
+          type: "string"
+          description: "social media links for the given profile"
     example:
       ipi: "00004576"
       contributorRole: "writer"
@@ -1319,6 +1660,9 @@ definitions:
       firstName: "John"
       email: "john.smith@example.com"
       lastName: "Smith"
+      artistName: "LYB"
+      socialMediaLinks: 
+        key: "socialMediaLinks"
   medias:
     type: "array"
     description: "An array of pieces of media"
@@ -1344,10 +1688,14 @@ definitions:
         type: "string"
         example: "Love You Baby Album"
         description: "The title of the album for this piece of media"
-      description:
+      artist:
         type: "string"
-        example: "The wonderful classic hit song, Love You Baby"
-        description: "The short descriptioon of this piece of media"
+        example: "LYB"
+        description: "The artist name who created this piece of media"
+      duration:
+        type: "number"
+        example: 120
+        description: "The duration in seconds for the given media"
       cover:
         type: "boolean"
         example: false
@@ -1401,20 +1749,80 @@ definitions:
         additionalProperties:
           type: "number"
           description: "The names of the right holders for the given media"
+      lyrics:
+        type: "string"
+        description: "The lyrics of the given media"
+        example: "Love you Baby. Love you Baby. Love you Baby. Love you Baby.
+        Love you Baby. Baby. Wooo. Love You Baby."
+      lyricsLanguages:
+        type: "object"
+        description: "The languages of the lyrics for the given media"
+        additionalProperties:
+          type: "string"
+          description: "The languages of the lyrics for the given media"
+      isrc:
+        type: "string"
+        description: "The ISRC of the given media"
+        example: "abcde1234567"
+      upc:
+        type: "string"
+        description: "The UPC of the given media"
+        example: "123456789111"
+      socialMediaLinks:
+        type: "object"
+        description: "The urls for the given media for social media like Facebook, Instagram, and Twitter."
+        additionalProperties:
+          type: "string"
+          description: "social media links for the given media" 
+      streamingServiceLinks:
+        type: "object"
+        description: "The urls for the given media for streaming services like Spotify and Apple Music"
+        additionalProperties:
+          type: "string"
+          description: "streaming service links for the given media" 
+      pressArticleLinks:
+        type: "object"
+        description: "The urls for news articles about the given media like music blogs and newspapers"
+        additionalProperties:
+          type: "string"
+          description: "press article links for the given media" 
+      playlistLinks:
+        type: "object"
+        description: "The urls for playlists of similar songs to the given media like Spotify or Youtube playlists"
+        additionalProperties:
+          type: "string"
+          description: "playlist links for the given media" 
     example:
       rightsSplit:
         key: 0.80082819046101150206595775671303272247314453125
       jurisdiction: "SOCAN"
       genre: "Rock"
-      description: "The wonderful classic hit song, Love You Baby"
+      artist: "LYB"
       creationDate: "2019-01-01T15:53:00"
+      modificationDate: "2019-01-01T15:53:01"
+      publishDate: "2019-01-01T15:53:02"
       cover: false
+      isrc: "abcde1234567"
+      upc: "123456789111"
       publisher: "sync publishing"
+      duration: 120
       rightsType:
         key: "rightsType"
       title: "Love You Baby"
       rightHolders:
         key: "rightHolders"
+      lyrics: "Love you Baby. Love you Baby. Love you Baby. Love you Baby.
+        Love you Baby. Baby. Wooo. Love You Baby."
+      lyricsLanguages:
+        key: "lyricsLanguages"
+      socialMediaLinks:
+        key: "socialMediaLinks"
+      streamingServiceLinks:
+        key: "streaminServiceLinks"
+      pressArticleLinks:
+        key: "pressArticleLinks"
+      playlistLinks:
+        key: "playlistLinks"
   payments:
     type: "array"
     description: "An array of information about payments"
@@ -1447,4 +1855,5 @@ definitions:
       transactionId: "12345678"
       id: 1
       amount: 20
+      payee: 1
       transactionHash: "0x58a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c"

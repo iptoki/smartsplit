@@ -168,6 +168,39 @@ exports.patchProfileFirstName = function(id,firstName) {
 
 
 /**
+ * Update right holder's artist name with the given ID
+ *
+ * id Integer The rights holder's unique profile ID
+ * artistName Artist name The rights holder's artist name
+ * returns Object
+ **/
+exports.patchProfileArtistName = function(id,artistName) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'id': id
+      },
+      UpdateExpression: 'set artistName  = :f',
+      ExpressionAttributeValues: {
+        ':f' : artistName.artistName
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
+  });
+}
+
+
+/**
  * Update right holder's IPI number
  *
  * id Integer The right holder's unique profile ID
@@ -321,6 +354,40 @@ exports.patchProfileWallet = function(id,wallet) {
       UpdateExpression: 'set wallet  = :f',
       ExpressionAttributeValues: {
         ':f' : wallet.wallet
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
+  });
+}
+
+/**
+ * Update list of social media links for the given right holder
+ *
+ * id Integer The right holder's unique profile ID
+ * socialMediaLinks Social Media Links The Social Media URLs of the given profile  
+ * returns profile
+ **/
+exports.patchProfileSocialMediaLinks = function(id,socialMediaLinks) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'id': id
+      },
+      UpdateExpression: 'set socialMediaLinks = list_append(if_not_exists(socialMediaLinks, :empty_list), :s)',
+      ExpressionAttributeValues: {
+        ':s' : socialMediaLinks,
+        ':empty_list': []
       },
       ReturnValues: 'UPDATED_NEW'
     };
