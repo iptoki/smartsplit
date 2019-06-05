@@ -45,9 +45,9 @@
                 },
                 "socialMediaLinks": {
                     "M": {
-                        "Facebook": {"S": "https://facebook.com/johnnyjohnny"}, 
-                        "Instagram": {"S": "https://instagram.com/johnnyjohnny"}, 
-                        "Twitter": {"S": "https://twitter.com/johnnyjohnny"}
+                        "facebook": {"S": "https://facebook.com/johnnyjohnny"}, 
+                        "instagram": {"S": "https://instagram.com/johnnyjohnny"}, 
+                        "twitter": {"S": "https://twitter.com/johnnyjohnny"}
                     }
                 }
             }
@@ -98,9 +98,9 @@
                 },
                 "socialMediaLinks": {
                     "M": {
-                        "Facebook": {"S": "https://facebook.com/bobbya"}, 
-                        "Instagram": {"S": "https://instagram.com/bobbya"}, 
-                        "Twitter": {"S": "https://twitter.com/bobbya"}
+                        "facebook": {"S": "https://facebook.com/bobbya"}, 
+                        "instagram": {"S": "https://instagram.com/bobbya"}, 
+                        "twitter": {"S": "https://twitter.com/bobbya"}
                     }
                 }
             }
@@ -142,9 +142,9 @@
                 },
                 "socialMediaLinks": {
                     "M": {
-                        "Facebook": {"S": "https://facebook.com/jj"}, 
-                        "Youtube": {"S": "https://instagram.com/jj"}, 
-                        "Twitter": {"S": "https://twitter.com/jj"}
+                        "facebook": {"S": "https://facebook.com/jj"}, 
+                        "youtube": {"S": "https://instagram.com/jj"}, 
+                        "twitter": {"S": "https://twitter.com/jj"}
                     }
                 }
             }
@@ -186,9 +186,9 @@
                 },
                 "socialMediaLinks": {
                     "M": {
-                        "Facebook": {"S": "https://facebook.com/dmcmiller"}, 
-                        "Instagram": {"S": "https://instagram.com/dmcmiller"}, 
-                        "Youtube": {"S": "https://twitter.com/dmcmiller"}
+                        "facebook": {"S": "https://facebook.com/dmcmiller"}, 
+                        "instagram": {"S": "https://instagram.com/dmcmiller"}, 
+                        "youtube": {"S": "https://twitter.com/dmcmiller"}
                     }
                 }
             }

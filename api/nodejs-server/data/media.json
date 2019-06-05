@@ -31,8 +31,8 @@
                 "upc": {
                     "S": "123456789111"
                 },
-                "duration": {
-                    "N": "120"
+                "msDuration": {
+                    "N": "120000"
                 },
                 "creationDate": {
                     "S": "019-01-01T15:53:00"
@@ -73,34 +73,31 @@
                     "S": "Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics"
                 },
                 "lyricsLanguages": {
-                    "M": {
-                        "language1": {"S": "french"}, 
-                        "language2": {"S": "english"} 
-                    }
+                    "SS": ["french", "english"]
                 },
                 "socialMediaLinks": {
                     "M": {
-                        "Facebook": {"S": "https://facebook.com/test"}, 
-                        "Instagram": {"S": "https://instagram.com/test"}, 
-                        "Twitter": {"S": "https://twitter.com/test"}
+                        "facebook": {"S": "https://facebook.com/test"},
+                        "instagram": {"S": "https://instagram.com/test"},
+                        "twitter": {"S": "https://twitter.com/test"}
                     }
                 },
                 "streamingServiceLinks": {
                     "M": {
-                        "Spotify": {"S": "https://facebook.com/johnnyjohnny"}, 
-                        "Youtube": {"S": "https://www.youtube.com/watch?v=4F9DxYhqmKw"}
+                        "spotify": {"S": "https://facebook.com/johnnyjohnny"}, 
+                        "youtube": {"S": "https://www.youtube.com/watch?v=4F9DxYhqmKw"}
                     }
                 },
                 "pressArticleLinks": {
                     "M": {
-                        "Facebook": {"S": "https://facebook.com/"}, 
-                        "Medium": {"S": "https://medium.com"}
+                        "facebook": {"S": "https://facebook.com/"}, 
+                        "medium": {"S": "https://medium.com"}
                     }
                 },
                 "playlistLinks": {
                     "M": {
-                        "Spotify-1": {"S": "https://open.spotify.com/playlist/37i9dQZEVXbKfIuOAZrk7G"},
-                        "Spotify-2": {"S": "https://open.spotify.com/playlist/052XtM0s4GQ8n8xXp60ryw"}
+                        "spotify": {"S": "https://open.spotify.com/playlist/37i9dQZEVXbKfIuOAZrk7G"},
+                        "youtube": {"S": "https://open.spotify.com/playlist/052XtM0s4GQ8n8xXp60ryw"}
                     }
                 }
             }
@@ -135,8 +132,8 @@
                 "upc": {
                     "S": "123456789112"
                 },
-                "duration": {
-                    "N": "121"
+                "msDuration": {
+                    "N": "121000"
                 },
                 "creationDate": {
                     "S": "2019-01-02T15:53:00"
@@ -174,33 +171,30 @@
                     "S": "Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics"
                 },
                 "lyricsLanguages": {
-                    "M": {
-                        "language1": {"S": "french"}
-                    }
+                    "SS": ["french"]
                 },
                 "socialMediaLinks": {
                     "M": {
-                        "Facebook": {"S": "https://facebook.com/test"}, 
-                        "Instagram": {"S": "https://instagram.com/test"}, 
-                        "Twitter": {"S": "https://twitter.com/test"}
+                        "facebook": {"S": "https://facebook.com/test"}, 
+                        "instagram": {"S": "https://instagram.com/test"}, 
+                        "twitter": {"S": "https://twitter.com/test"}
                     }
                 },
                 "streamingServiceLinks": {
                     "M": {
-                        "Spotify": {"S": "https://facebook.com/johnnyjohnny"}, 
-                        "Youtube": {"S": "https://www.youtube.com/watch?v=4F9DxYhqmKw"}
+                        "spotify": {"S": "https://facebook.com/johnnyjohnny"}, 
+                        "youtube": {"S": "https://www.youtube.com/watch?v=4F9DxYhqmKw"}
                     }
                 },
                 "pressArticleLinks": {
                     "M": {
-                        "Facebook": {"S": "https://facebook.com/"}, 
-                        "Medium": {"S": "https://medium.com"}
+                        "facebook": {"S": "https://facebook.com/"}, 
+                        "medium": {"S": "https://medium.com"}
                     }
                 },
                 "playlistLinks": {
                     "M": {
-                        "Spotify-1": {"S": "https://open.spotify.com/playlist/37i9dQZEVXbKfIuOAZrk7G"},
-                        "Spotify-2": {"S": "https://open.spotify.com/playlist/052XtM0s4GQ8n8xXp60ryw"}
+                        "spotify": {"S": "https://open.spotify.com/playlist/37i9dQZEVXbKfIuOAZrk7G"}
                     }
                 }
             }
@@ -235,8 +229,8 @@
                 "upc": {
                     "S": "123456789110"
                 },
-                "duration": {
-                    "N": "122"
+                "msDuration": {
+                    "N": "122000"
                 },
                 "creationDate": {
                     "S": "2019-01-02T15:54:00"
@@ -262,7 +256,8 @@
                 },
                 "rightHolders": {
                     "M": {
-                        "John Smith": {"S": "writer"}                    }
+                        "John Smith": {"S": "writer"}                    
+                    }
                 },
                 "genre": {
                     "S": "Pop"
@@ -274,34 +269,31 @@
                     "S": "Test Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics"
                 },
                 "lyricsLanguages": {
-                    "M": {
-                        "language1": {"S": "french"}, 
-                        "language2": {"S": "english"} 
-                    }
+                    "SS": ["french", "english"]
                 },
                 "socialMediaLinks": {
                     "M": {
-                        "Facebook": {"S": "https://facebook.com/test"}, 
-                        "Instagram": {"S": "https://instagram.com/test"}, 
-                        "Twitter": {"S": "https://twitter.com/test"}
+                        "facebook": {"S": "https://facebook.com/test"}, 
+                        "instagram": {"S": "https://instagram.com/test"}, 
+                        "twitter": {"S": "https://twitter.com/test"}
                     }
                 },
                 "streamingServiceLinks": {
                     "M": {
-                        "Spotify": {"S": "https://facebook.com/johnnyjohnny"}, 
-                        "Youtube": {"S": "https://www.youtube.com/watch?v=4F9DxYhqmKw"}
+                        "spotify": {"S": "https://facebook.com/johnnyjohnny"}, 
+                        "youtube": {"S": "https://www.youtube.com/watch?v=4F9DxYhqmKw"}
                     }
                 },
                 "pressArticleLinks": {
                     "M": {
-                        "Facebook": {"S": "https://facebook.com/"}, 
-                        "Medium": {"S": "https://medium.com"}
+                        "facebook": {"S": "https://facebook.com/"}, 
+                        "medium": {"S": "https://medium.com"}
                     }
                 },
                 "playlistLinks": {
                     "M": {
-                        "Spotify-1": {"S": "https://open.spotify.com/playlist/37i9dQZEVXbKfIuOAZrk7G"},
-                        "Spotify-2": {"S": "https://open.spotify.com/playlist/052XtM0s4GQ8n8xXp60ryw"}
+                        "spotify": {"S": "https://open.spotify.com/playlist/37i9dQZEVXbKfIuOAZrk7G"},
+                        "youtube": {"S": "https://open.spotify.com/playlist/052XtM0s4GQ8n8xXp60ryw"}
                     }
                 }
             }
@@ -337,8 +329,8 @@
                 "upc": {
                     "S": "123456789100"
                 },
-                "duration": {
-                    "N": "119"
+                "msDuration": {
+                    "N": "119000"
                 },
                 "creationDate": {
                     "S": "2019-01-01T15:53:00"
@@ -378,34 +370,31 @@
                     "S": "Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics"
                 },
                 "lyricsLanguages": {
-                    "M": {
-                        "language1": {"S": "french"}, 
-                        "language2": {"S": "english"} 
-                    }
+                    "SS": ["french", "english"]
                 },
                 "socialMediaLinks": {
                     "M": {
-                        "Facebook": {"S": "https://facebook.com/test"}, 
-                        "Instagram": {"S": "https://instagram.com/test"}, 
-                        "Twitter": {"S": "https://twitter.com/test"}
+                        "facebook": {"S": "https://facebook.com/test"}, 
+                        "instagram": {"S": "https://instagram.com/test"}, 
+                        "twitter": {"S": "https://twitter.com/test"}
                     }
                 },
                 "streamingServiceLinks": {
                     "M": {
-                        "Spotify": {"S": "https://facebook.com/johnnyjohnny"}, 
-                        "Youtube": {"S": "https://www.youtube.com/watch?v=4F9DxYhqmKw"}
+                        "spotify": {"S": "https://facebook.com/johnnyjohnny"}, 
+                        "youtube": {"S": "https://www.youtube.com/watch?v=4F9DxYhqmKw"}
                     }
                 },
                 "pressArticleLinks": {
                     "M": {
-                        "Facebook": {"S": "https://facebook.com/"}, 
-                        "Medium": {"S": "https://medium.com"}
+                        "facebook": {"S": "https://facebook.com/"}, 
+                        "medium": {"S": "https://medium.com"}
                     }
                 },
                 "playlistLinks": {
                     "M": {
-                        "Spotify-1": {"S": "https://open.spotify.com/playlist/37i9dQZEVXbKfIuOAZrk7G"},
-                        "Spotify-2": {"S": "https://open.spotify.com/playlist/052XtM0s4GQ8n8xXp60ryw"}
+                        "spotify": {"S": "https://open.spotify.com/playlist/37i9dQZEVXbKfIuOAZrk7G"},
+                        "youtube": {"S": "https://open.spotify.com/playlist/052XtM0s4GQ8n8xXp60ryw"}
                     }
                 }
             }
@@ -440,8 +429,8 @@
                 "upc": {
                     "S": "123456789222"
                 },
-                "duration": {
-                    "N": "110"
+                "msDuration": {
+                    "N": "110000"
                 },
                 "creationDate": {
                     "S": "2019-01-02T15:54:00"
@@ -480,34 +469,31 @@
                     "S": "Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics"
                 },
                 "lyricsLanguages": {
-                    "M": {
-                        "language1": {"S": "french"}, 
-                        "language2": {"S": "english"} 
-                    }
+                    "SS": ["french", "english"]
                 },
                 "socialMediaLinks": {
                     "M": {
-                        "Facebook": {"S": "https://facebook.com/test"}, 
-                        "Instagram": {"S": "https://instagram.com/test"}, 
-                        "Twitter": {"S": "https://twitter.com/test"}
+                        "facebook": {"S": "https://facebook.com/test"}, 
+                        "instagram": {"S": "https://instagram.com/test"}, 
+                        "twitter": {"S": "https://twitter.com/test"}
                     }
                 },
                 "streamingServiceLinks": {
                     "M": {
-                        "Spotify": {"S": "https://facebook.com/johnnyjohnny"}, 
-                        "Youtube": {"S": "https://www.youtube.com/watch?v=4F9DxYhqmKw"}
+                        "spotify": {"S": "https://facebook.com/johnnyjohnny"}, 
+                        "youtube": {"S": "https://www.youtube.com/watch?v=4F9DxYhqmKw"}
                     }
                 },
                 "pressArticleLinks": {
                     "M": {
-                        "Facebook": {"S": "https://facebook.com/"}, 
-                        "Medium": {"S": "https://medium.com"}
+                        "facebook": {"S": "https://facebook.com/"}, 
+                        "medium": {"S": "https://medium.com"}
                     }
                 },
                 "playlistLinks": {
                     "M": {
-                        "Spotify-1": {"S": "https://open.spotify.com/playlist/37i9dQZEVXbKfIuOAZrk7G"},
-                        "Spotify-2": {"S": "https://open.spotify.com/playlist/052XtM0s4GQ8n8xXp60ryw"}
+                        "spotify": {"S": "https://open.spotify.com/playlist/37i9dQZEVXbKfIuOAZrk7G"},
+                        "youtube": {"S": "https://open.spotify.com/playlist/052XtM0s4GQ8n8xXp60ryw"}
                     }
                 }
             }
@@ -542,8 +528,8 @@
                 "upc": {
                     "S": "123456789333"
                 },
-                "duration": {
-                    "N": "123"
+                "msDuration": {
+                    "N": "123000"
                 },
                 "creationDate": {
                     "S": "2019-01-07T16:00:00"
@@ -582,34 +568,31 @@
                     "S": "Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics"
                 },
                 "lyricsLanguages": {
-                    "M": {
-                        "language1": {"S": "french"}, 
-                        "language2": {"S": "english"} 
-                    }
+                    "SS": ["french", "english"]
                 },
                 "socialMediaLinks": {
                     "M": {
-                        "Facebook": {"S": "https://facebook.com/test"}, 
-                        "Instagram": {"S": "https://instagram.com/test"}, 
-                        "Twitter": {"S": "https://twitter.com/test"}
+                        "facebook": {"S": "https://facebook.com/test"}, 
+                        "instagram": {"S": "https://instagram.com/test"}, 
+                        "twitter": {"S": "https://twitter.com/test"}
                     }
                 },
                 "streamingServiceLinks": {
                     "M": {
-                        "Spotify": {"S": "https://facebook.com/johnnyjohnny"}, 
-                        "Youtube": {"S": "https://www.youtube.com/watch?v=4F9DxYhqmKw"}
+                        "spotify": {"S": "https://facebook.com/johnnyjohnny"}, 
+                        "youtube": {"S": "https://www.youtube.com/watch?v=4F9DxYhqmKw"}
                     }
                 },
                 "pressArticleLinks": {
                     "M": {
-                        "Facebook": {"S": "https://facebook.com/"}, 
-                        "Medium": {"S": "https://medium.com"}
+                        "facebook": {"S": "https://facebook.com/"}, 
+                        "medium": {"S": "https://medium.com"}
                     }
                 },
                 "playlistLinks": {
                     "M": {
-                        "Spotify-1": {"S": "https://open.spotify.com/playlist/37i9dQZEVXbKfIuOAZrk7G"},
-                        "Spotify-2": {"S": "https://open.spotify.com/playlist/052XtM0s4GQ8n8xXp60ryw"}
+                        "spotify": {"S": "https://open.spotify.com/playlist/37i9dQZEVXbKfIuOAZrk7G"},
+                        "youtube": {"S": "https://open.spotify.com/playlist/052XtM0s4GQ8n8xXp60ryw"}
                     }
                 }
             }
@@ -644,8 +627,8 @@
                 "upc": {
                     "S": "123456789118"
                 },
-                "duration": {
-                    "N": "128"
+                "msDuration": {
+                    "N": "128000"
                 },
                 "creationDate": {
                     "S": "2019-01-20T15:30:00"
@@ -684,34 +667,31 @@
                     "S": "Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics"
                 },
                 "lyricsLanguages": {
-                    "M": {
-                        "language1": {"S": "french"}, 
-                        "language2": {"S": "english"} 
-                    }
+                    "SS": ["french", "english"]
                 },
                 "socialMediaLinks": {
                     "M": {
-                        "Facebook": {"S": "https://facebook.com/test"}, 
-                        "Instagram": {"S": "https://instagram.com/test"}, 
-                        "Twitter": {"S": "https://twitter.com/test"}
+                        "facebook": {"S": "https://facebook.com/test"}, 
+                        "instagram": {"S": "https://instagram.com/test"}, 
+                        "twitter": {"S": "https://twitter.com/test"}
                     }
                 },
                 "streamingServiceLinks": {
                     "M": {
-                        "Spotify": {"S": "https://facebook.com/johnnyjohnny"}, 
-                        "Youtube": {"S": "https://www.youtube.com/watch?v=4F9DxYhqmKw"}
+                        "spotify": {"S": "https://facebook.com/johnnyjohnny"}, 
+                        "youtube": {"S": "https://www.youtube.com/watch?v=4F9DxYhqmKw"}
                     }
                 },
                 "pressArticleLinks": {
                     "M": {
-                        "Facebook": {"S": "https://facebook.com/"}, 
-                        "Medium": {"S": "https://medium.com"}
+                        "facebook": {"S": "https://facebook.com/"}, 
+                        "medium": {"S": "https://medium.com"}
                     }
                 },
                 "playlistLinks": {
                     "M": {
-                        "Spotify-1": {"S": "https://open.spotify.com/playlist/37i9dQZEVXbKfIuOAZrk7G"},
-                        "Spotify-2": {"S": "https://open.spotify.com/playlist/052XtM0s4GQ8n8xXp60ryw"}
+                        "spotify": {"S": "https://open.spotify.com/playlist/37i9dQZEVXbKfIuOAZrk7G"},
+                        "youtube": {"S": "https://open.spotify.com/playlist/052XtM0s4GQ8n8xXp60ryw"}
                     }
                 }
             }
@@ -747,8 +727,8 @@
                 "upc": {
                     "S": "123456789121"
                 },
-                "duration": {
-                    "N": "131"
+                "msDuration": {
+                    "N": "131000"
                 },
                 "creationDate": {
                     "S": "2019-01-01T15:53:00"
@@ -788,34 +768,31 @@
                     "S": "Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics"
                 },
                 "lyricsLanguages": {
-                    "M": {
-                        "language1": {"S": "french"}, 
-                        "language2": {"S": "english"} 
-                    }
+                    "SS": ["english"]
                 },
                 "socialMediaLinks": {
                     "M": {
-                        "Facebook": {"S": "https://facebook.com/test"}, 
-                        "Instagram": {"S": "https://instagram.com/test"}, 
-                        "Twitter": {"S": "https://twitter.com/test"}
+                        "facebook": {"S": "https://facebook.com/test"}, 
+                        "instagram": {"S": "https://instagram.com/test"}, 
+                        "twitter": {"S": "https://twitter.com/test"}
                     }
                 },
                 "streamingServiceLinks": {
                     "M": {
-                        "Spotify": {"S": "https://facebook.com/johnnyjohnny"}, 
-                        "Youtube": {"S": "https://www.youtube.com/watch?v=4F9DxYhqmKw"}
+                        "spotify": {"S": "https://facebook.com/johnnyjohnny"}, 
+                        "youtube": {"S": "https://www.youtube.com/watch?v=4F9DxYhqmKw"}
                     }
                 },
                 "pressArticleLinks": {
                     "M": {
-                        "Facebook": {"S": "https://facebook.com/"}, 
-                        "Medium": {"S": "https://medium.com"}
+                        "facebook": {"S": "https://facebook.com/"}, 
+                        "medium": {"S": "https://medium.com"}
                     }
                 },
                 "playlistLinks": {
                     "M": {
-                        "Spotify-1": {"S": "https://open.spotify.com/playlist/37i9dQZEVXbKfIuOAZrk7G"},
-                        "Spotify-2": {"S": "https://open.spotify.com/playlist/052XtM0s4GQ8n8xXp60ryw"}
+                        "spotify": {"S": "https://open.spotify.com/playlist/37i9dQZEVXbKfIuOAZrk7G"},
+                        "youtube": {"S": "https://open.spotify.com/playlist/052XtM0s4GQ8n8xXp60ryw"}
                     }
                 }
             }

@@ -289,7 +289,6 @@ exports.patchProfileMedia = function(id,mediaId) {
       },
       ReturnValues: 'UPDATED_NEW'
     };
-    // Call DynamoDB to delete the item from the table
     ddb.update(params, function(err, data) {
       if (err) {
         console.log("Error", err);
@@ -317,13 +316,13 @@ exports.patchProfileContributorRole = function(id,contributorRole) {
       Key: {
         'id': id
       },
-      UpdateExpression: 'set contributorRole  = :r',
+      UpdateExpression: 'set contributorRole = list_append(if_not_exists(contributorRole, :empty_list), :r)',
       ExpressionAttributeValues: {
-        ':r' : contributorRole.contributorRole
+        ':r' : contributorRole,
+        ':empty_list': []
       },
       ReturnValues: 'UPDATED_NEW'
     };
-    // Call DynamoDB to delete the item from the table
     ddb.update(params, function(err, data) {
       if (err) {
         console.log("Error", err);
@@ -380,25 +379,39 @@ exports.patchProfileWallet = function(id,wallet) {
 exports.patchProfileSocialMediaLinks = function(id,socialMediaLinks) {
   return new Promise(function(resolve, reject) {
     let params = {
-      TableName: TABLE,
+      "TableName": TABLE,
       Key: {
         'id': id
-      },
-      UpdateExpression: 'set socialMediaLinks = list_append(if_not_exists(socialMediaLinks, :empty_list), :s)',
-      ExpressionAttributeValues: {
-        ':s' : socialMediaLinks,
-        ':empty_list': []
-      },
-      ReturnValues: 'UPDATED_NEW'
-    };
-    // Call DynamoDB to delete the item from the table
-    ddb.update(params, function(err, data) {
+      }
+    }
+    // Get old social media links
+    ddb.get(params, function(err, data) {
       if (err) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
-        resolve(data.Attributes);
+        let oldSocialMediaLinks = data.Item.socialMediaLinks;
+        let socialMediaLinksJoined = Object.assign({}, oldSocialMediaLinks, socialMediaLinks);
+        let params = {
+          TableName: TABLE,
+          Key: {
+            'id': id
+          },
+          UpdateExpression: 'set socialMediaLinks  = :m',
+          ExpressionAttributeValues: {
+            ':m' : socialMediaLinksJoined
+          },
+          ReturnValues: 'UPDATED_NEW'
+        };
+        ddb.update(params, function(err, data) {
+          if (err) {
+            console.log("Error", err);
+            resolve();
+          } else {
+            console.log("Success", data.Attributes);
+            resolve(data.Attributes);
+          }
+        });
       }
     });
   });
@@ -435,7 +448,9 @@ exports.postProfile = function(body) {
             'media': body.media,
             'firstName': body.firstName,
             'email': body.email,
-            'lastName': body.lastName
+            'lastName': body.lastName,
+            'artistName': body.artistName,
+            'socialMediaLinks': body.socialMediaLinks
           }
         };
         ddb.put(params, function(err, data) {
@@ -469,7 +484,7 @@ exports.updateProfile = function(id,body) {
       Key: {
         'id': id
       },
-      UpdateExpression: 'set ipi  = :i, contributorRole = :r, wallet = :w, media = :m, firstName = :f, email = :e, lastName = :l',
+      UpdateExpression: 'set ipi  = :i, contributorRole = :r, wallet = :w, media = :m, firstName = :f, email = :e, lastName = :l, socialMediaLinks = :s, artistName = :a',
       ExpressionAttributeValues: {
         ':i' : body.ipi,
         ':r' : body.contributorRole,
@@ -477,7 +492,9 @@ exports.updateProfile = function(id,body) {
         ':m' : body.media,
         ':f' : body.firstName,
         ':e' : body.email,
-        ':l' : body.lastName
+        ':l' : body.lastName,
+        ':s' : body.socialMediaLinks,
+        ':a' : body.artistName
       },
       ReturnValues: 'UPDATED_NEW'
     };

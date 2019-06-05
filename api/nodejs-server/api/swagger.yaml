@@ -371,9 +371,10 @@ paths:
           schema:
             properties:
               contributorRole:
-                type: "string"
-                example: "writer"
-                description: "The right holder's role"
+                type: "array"
+                items: 
+                  example: "writer"
+                  description: "The right holder's role"
         400:
           description: "Bad request"
         403:
@@ -1208,7 +1209,7 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
-  /media/{mediaId}/duration:
+  /media/{mediaId}/msDuration:
     patch:
       tags:
       - "Media"
@@ -1221,20 +1222,20 @@ paths:
         required: true
         type: "integer"
       - in: "body"
-        name: "duration"
-        description: "The duration in seconds of the given piece of media"
+        name: "msDuration"
+        description: "The duration in milliseconds of the given piece of media"
         required: true
         schema:
-          $ref: "#/definitions/media/properties/duration"
+          $ref: "#/definitions/media/properties/msDuration"
       responses:
         200:
           description: "OK"
           schema:
             properties:
-              duration:
+              msDuration:
                 type: "number"
                 example: 122
-                description: "The duration in seconds of of the given media."
+                description: "The duration in milliseconds of of the given media."
         400:
           description: "Bad request"
         403:
@@ -1639,9 +1640,11 @@ definitions:
         example: "00004576"
         description: "The right holder's interested party information number"
       contributorRole:
-        type: "string"
-        example: "writer"
-        description: "The role of the right holder for this user profile"
+        type: "array"
+        description: "The array of role(s) of the right holder for this user profile"
+        items:
+          type: "string"
+          example: "writer"
       wallet:
         type: "string"
         example: "0xdd87ae15f4be97e2739c9069ddef674f907d27a8"
@@ -1654,7 +1657,7 @@ definitions:
           description: "social media links for the given profile"
     example:
       ipi: "00004576"
-      contributorRole: "writer"
+      contributorRole: ["writer"]
       wallet: "0xdd87ae15f4be97e2739c9069ddef674f907d27a8"
       media: ""
       firstName: "John"
@@ -1662,7 +1665,9 @@ definitions:
       lastName: "Smith"
       artistName: "LYB"
       socialMediaLinks: 
-        key: "socialMediaLinks"
+        facebook: "https://facebook.com/ex"
+        twitter: "https://twitter.com/ex"
+        youtube: "https://youtube.com/ex"
   medias:
     type: "array"
     description: "An array of pieces of media"
@@ -1692,10 +1697,10 @@ definitions:
         type: "string"
         example: "LYB"
         description: "The artist name who created this piece of media"
-      duration:
+      msDuration:
         type: "number"
         example: 120
-        description: "The duration in seconds for the given media"
+        description: "The duration in milliseconds for the given media"
       cover:
         type: "boolean"
         example: false
@@ -1755,11 +1760,11 @@ definitions:
         example: "Love you Baby. Love you Baby. Love you Baby. Love you Baby.
         Love you Baby. Baby. Wooo. Love You Baby."
       lyricsLanguages:
-        type: "object"
-        description: "The languages of the lyrics for the given media"
-        additionalProperties:
+        type: "array"
+        description: "An array of languages of the lyrics for the given media"
+        items:
           type: "string"
-          description: "The languages of the lyrics for the given media"
+          example: "english"
       isrc:
         type: "string"
         description: "The ISRC of the given media"
@@ -1794,7 +1799,9 @@ definitions:
           description: "playlist links for the given media" 
     example:
       rightsSplit:
-        key: 0.80082819046101150206595775671303272247314453125
+        Andy Smith: 41.6
+        Johnny Smith: 16.6
+        Bob Andrews: 41.6 
       jurisdiction: "SOCAN"
       genre: "Rock"
       artist: "LYB"
@@ -1805,24 +1812,32 @@ definitions:
       isrc: "abcde1234567"
       upc: "123456789111"
       publisher: "sync publishing"
-      duration: 120
+      msDuration: 288000
       rightsType:
-        key: "rightsType"
+        copyright: true
+        performance: true
+        recording: true
       title: "Love You Baby"
       rightHolders:
-        key: "rightHolders"
+        Andy Smith: "writer"
+        Johnny Smith: "producer"
+        Bob Andrews: "singer"
       lyrics: "Love you Baby. Love you Baby. Love you Baby. Love you Baby.
         Love you Baby. Baby. Wooo. Love You Baby."
-      lyricsLanguages:
-        key: "lyricsLanguages"
+      lyricsLanguages: ["english"]
       socialMediaLinks:
-        key: "socialMediaLinks"
+        facebook: "https://facebook.com/ex"
+        twitter: "https://twitter.com/ex"
+        youtube: "https://youtube.com/ex"
       streamingServiceLinks:
-        key: "streaminServiceLinks"
+        spotify: "https://open.spotify.com/track/asdgj4qhfasd"
+        apple: "https://twitter.com/ex"
       pressArticleLinks:
-        key: "pressArticleLinks"
+        medium: "https://medium.com/ex"
+        metro: "https://metro.ca/ex"
       playlistLinks:
-        key: "playlistLinks"
+        spotify: "https://open.spotify.com/playlist/37i9dQZEVXbKfIuOAZrk7G"
+        youtube: "https://www.youtube.com/playlist?list=PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx"
   payments:
     type: "array"
     description: "An array of information about payments"

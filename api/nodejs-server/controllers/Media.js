@@ -73,7 +73,7 @@ module.exports.patchMediaUPC = function patchMediaUPC (req, res, next) {
 
 module.exports.patchMediaSecondaryGenre = function patchMediaSecondaryGenre (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
-  var genre = req.swagger.params['secondaryGenre'].value;
+  var secondaryGenre = req.swagger.params['secondaryGenre'].value;
   Media.patchMediaSecondaryGenre(mediaId,secondaryGenre)
     .then(function (response) {
       utils.writeJson(res, response);
@@ -145,8 +145,8 @@ module.exports.patchMediaArtist = function patchMediaArtist (req, res, next) {
 
 module.exports.patchMediaDuration = function patchMediaDuration (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
-  var duration = req.swagger.params['duration'].value;
-  Media.patchMediaDuration(mediaId,duration)
+  var msDuration = req.swagger.params['msDuration'].value;
+  Media.patchMediaDuration(mediaId,msDuration)
     .then(function (response) {
       utils.writeJson(res, response);
     })
