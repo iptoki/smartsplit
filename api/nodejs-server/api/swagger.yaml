@@ -1105,12 +1105,12 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
-  /media/{mediaId}/lyricsLanguages:
+  /media/{mediaId}/inLanguages:
     patch:
       tags:
       - "Media"
       description: "Update list of languages for the lyrics for the given piece of media"
-      operationId: "patchMediaLyricsLanguages"
+      operationId: "patchMediaInLanguages"
       parameters:
       - name: "mediaId"
         in: "path"
@@ -1118,11 +1118,11 @@ paths:
         required: true
         type: "integer"
       - in: "body"
-        name: "lyricsLanguages"
+        name: "inLanguages"
         description: "The object containing the languages for the given media's lyrics"
         required: true
         schema:
-          $ref: "#/definitions/media/properties/lyricsLanguages"
+          $ref: "#/definitions/media/properties/inLanguages"
       responses:
         200:
           description: "OK"
@@ -1233,8 +1233,8 @@ paths:
           schema:
             properties:
               msDuration:
-                type: "number"
-                example: 122
+                type: "string"
+                example: "122000"
                 description: "The duration in milliseconds of of the given media."
         400:
           description: "Bad request"
@@ -1698,8 +1698,8 @@ definitions:
         example: "LYB"
         description: "The artist name who created this piece of media"
       msDuration:
-        type: "number"
-        example: 120
+        type: "string"
+        example: "120000"
         description: "The duration in milliseconds for the given media"
       cover:
         type: "boolean"
@@ -1759,7 +1759,7 @@ definitions:
         description: "The lyrics of the given media"
         example: "Love you Baby. Love you Baby. Love you Baby. Love you Baby.
         Love you Baby. Baby. Wooo. Love You Baby."
-      lyricsLanguages:
+      inLanguages:
         type: "array"
         description: "An array of languages of the lyrics for the given media"
         items:
@@ -1812,7 +1812,7 @@ definitions:
       isrc: "abcde1234567"
       upc: "123456789111"
       publisher: "sync publishing"
-      msDuration: 288000
+      msDuration: "288000"
       rightsType:
         copyright: true
         performance: true
@@ -1824,7 +1824,7 @@ definitions:
         Bob Andrews: "singer"
       lyrics: "Love you Baby. Love you Baby. Love you Baby. Love you Baby.
         Love you Baby. Baby. Wooo. Love You Baby."
-      lyricsLanguages: ["english"]
+      inLanguages: ["english"]
       socialMediaLinks:
         facebook: "https://facebook.com/ex"
         twitter: "https://twitter.com/ex"

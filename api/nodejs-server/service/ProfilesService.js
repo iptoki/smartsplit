@@ -458,8 +458,7 @@ exports.postProfile = function(body) {
             console.log("Error", err);
             resolve();
           } else {
-            console.log("Success", data);
-            resolve(data);
+            resolve("Success. Item Added");
           }
         });
       }
