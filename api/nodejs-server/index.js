@@ -13,6 +13,7 @@ const app = express();
 const swaggerTools = require('swagger-tools');
 const jsyaml = require('js-yaml');
 const serverPort = 8080;
+const cors = require('cors');
 
 // swaggerRouter configuration
 let options = {
@@ -32,20 +33,30 @@ app.use(morgan('short'));
 app.use(express.static('./public'));
 
 // Add headers
-app.use(function (req, res, next) {
+// app.use(function (req, res, next) {
 
-  // Wildcard set for CORS
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  // Request methods to allow
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  // Request headers to allow
-  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-  // Request to include cookies
-  res.setHeader('Access-Control-Allow-Credentials', true);
+//   // Wildcard set for CORS
+//   res.setHeader('Access-Control-Allow-Origin', '*');
+//   // Request methods to allow
+//   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+//   // Request headers to allow
+//   res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+//   // Request to include cookies
+//   res.setHeader('Access-Control-Allow-Credentials', true);
 
-  // Pass to next layer of middleware
-  next();
-});
+//   // Pass to next layer of middleware
+//   next();
+// });
+
+app.use(cors())
+
+app.options('v1/media/', cors()) // enable pre-flight request for DELETE request
+app.del('v1/media/:mediaId', cors(), function (req, res, next) {
+  res.json({msg: 'This is CORS-enabled for all origins!'})
+})
+app.post('v1/media/', cors(), function (req, res, next) {
+  res.json({msg: 'This is CORS-enabled for all origins!'})
+})
 
 // Initialize the Swagger middleware
 swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
