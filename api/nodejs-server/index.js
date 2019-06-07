@@ -1,5 +1,8 @@
 'use strict';
 
+
+require('./utils/utils');
+
 const fs = require('fs');
 const path = require('path');
 const http = require('http');
@@ -7,6 +10,7 @@ const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
+const VERSION = 'v1';
 
 const app = express();
 
@@ -31,32 +35,39 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(morgan('short'));
 app.use(express.static('./public'));
-
-// Add headers
-// app.use(function (req, res, next) {
-
-//   // Wildcard set for CORS
-//   res.setHeader('Access-Control-Allow-Origin', '*');
-//   // Request methods to allow
-//   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-//   // Request headers to allow
-//   res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-//   // Request to include cookies
-//   res.setHeader('Access-Control-Allow-Credentials', true);
-
-//   // Pass to next layer of middleware
-//   next();
-// });
-
 app.use(cors())
 
-app.options('v1/media/', cors()) // enable pre-flight request for DELETE request
-app.del('v1/media/:mediaId', cors(), function (req, res, next) {
+app.options(VERSION + '/media/', cors()) // enable pre-flight request for DELETE request
+app.delete(VERSION + '/media/:mediaId', cors(), function (req, res, next) {
   res.json({msg: 'This is CORS-enabled for all origins!'})
 })
-app.post('v1/media/', cors(), function (req, res, next) {
+app.post(VERSION + '/media/', cors(), function (req, res, next) {
   res.json({msg: 'This is CORS-enabled for all origins!'})
 })
+app.put(VERSION + '/media/:mediaId', cors(), function (req, res, next) {
+  res.json({msg: 'This is CORS-enabled for all origins!'})
+})
+app.options(VERSION + '/profiles/', cors()) // enable pre-flight request for DELETE request
+app.delete(VERSION + '/profiles/:id', cors(), function (req, res, next) {
+  res.json({msg: 'This is CORS-enabled for all origins!'})
+})
+app.post(VERSION + '/profiles/', cors(), function (req, res, next) {
+  res.json({msg: 'This is CORS-enabled for all origins!'})
+})
+app.put(VERSION + '/profiles/:id', cors(), function (req, res, next) {
+  res.json({msg: 'This is CORS-enabled for all origins!'})
+})
+app.options(VERSION + '/payments/', cors()) // enable pre-flight request for DELETE request
+app.delete(VERSION + '/payments/:id', cors(), function (req, res, next) {
+  res.json({msg: 'This is CORS-enabled for all origins!'})
+})
+app.post(VERSION + '/payments/', cors(), function (req, res, next) {
+  res.json({msg: 'This is CORS-enabled for all origins!'})
+})
+app.put(VERSION + '/payments/:id', cors(), function (req, res, next) {
+  res.json({msg: 'This is CORS-enabled for all origins!'})
+})
+
 
 // Initialize the Swagger middleware
 swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
@@ -73,11 +84,30 @@ swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
   // Serve the Swagger documents and Swagger UI
   app.use(middleware.swaggerUi());
 
-  // Start the server
-  http.createServer(app).listen(serverPort, function () {
-    console.log('Your server is listening on port %d (http://localhost:%d)', serverPort, serverPort);
-    console.log('Swagger-ui is available on http://localhost:%d/docs', serverPort);
-  });
+  try {
+    // myroutine(); // may throw three types of exceptions
+    http.createServer(app).listen(serverPort, function () {
+      console.log('Your server is listening on port %d (http://localhost:%d)', serverPort, serverPort);
+      console.log('Swagger-ui is available on http://localhost:%d/docs', serverPort);
+    });
+  } catch (err) {
+    if (err instanceof TypeError) {
+      // statements to handle TypeError exceptions
+      console.log("Recognized TypeError", err.message, err.fileName, err.lineNumber)
+
+    } else if (err instanceof RangeError) {
+      // statements to handle RangeError exceptions
+      console.log("Recognized RangerError", err.message, err.fileName, err.lineNumber)
+
+    } else if (err instanceof EvalError) {
+      // statements to handle EvalError exceptions
+      console.log("Recognized EvalError", err.message, err.fileName, err.lineNumber)
+
+    } else {
+      // statements to handle any unspecified exceptions
+      logMyErrors(e); // pass exception object to error handler
+    }
+  }
 
 });
 

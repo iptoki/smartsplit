@@ -32,7 +32,7 @@
                     "S": "123456789111"
                 },
                 "msDuration": {
-                    "N": "120000"
+                    "S": "120000"
                 },
                 "creationDate": {
                     "S": "019-01-01T15:53:00"
@@ -72,7 +72,7 @@
                 "lyrics": {
                     "S": "Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics"
                 },
-                "lyricsLanguages": {
+                "inLanguages": {
                     "SS": ["french", "english"]
                 },
                 "socialMediaLinks": {
@@ -133,7 +133,7 @@
                     "S": "123456789112"
                 },
                 "msDuration": {
-                    "N": "121000"
+                    "S": "121000"
                 },
                 "creationDate": {
                     "S": "2019-01-02T15:53:00"
@@ -170,7 +170,7 @@
                 "lyrics": {
                     "S": "Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics"
                 },
-                "lyricsLanguages": {
+                "inLanguages": {
                     "SS": ["french"]
                 },
                 "socialMediaLinks": {
@@ -230,7 +230,7 @@
                     "S": "123456789110"
                 },
                 "msDuration": {
-                    "N": "122000"
+                    "S": "122000"
                 },
                 "creationDate": {
                     "S": "2019-01-02T15:54:00"
@@ -268,7 +268,7 @@
                 "lyrics": {
                     "S": "Test Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics"
                 },
-                "lyricsLanguages": {
+                "inLanguages": {
                     "SS": ["french", "english"]
                 },
                 "socialMediaLinks": {
@@ -330,7 +330,7 @@
                     "S": "123456789100"
                 },
                 "msDuration": {
-                    "N": "119000"
+                    "S": "119000"
                 },
                 "creationDate": {
                     "S": "2019-01-01T15:53:00"
@@ -369,7 +369,7 @@
                 "lyrics": {
                     "S": "Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics"
                 },
-                "lyricsLanguages": {
+                "inLanguages": {
                     "SS": ["french", "english"]
                 },
                 "socialMediaLinks": {
@@ -430,7 +430,7 @@
                     "S": "123456789222"
                 },
                 "msDuration": {
-                    "N": "110000"
+                    "S": "110000"
                 },
                 "creationDate": {
                     "S": "2019-01-02T15:54:00"
@@ -468,7 +468,7 @@
                 "lyrics": {
                     "S": "Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics"
                 },
-                "lyricsLanguages": {
+                "inLanguages": {
                     "SS": ["french", "english"]
                 },
                 "socialMediaLinks": {
@@ -529,7 +529,7 @@
                     "S": "123456789333"
                 },
                 "msDuration": {
-                    "N": "123000"
+                    "S": "123000"
                 },
                 "creationDate": {
                     "S": "2019-01-07T16:00:00"
@@ -567,7 +567,7 @@
                 "lyrics": {
                     "S": "Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics"
                 },
-                "lyricsLanguages": {
+                "inLanguages": {
                     "SS": ["french", "english"]
                 },
                 "socialMediaLinks": {
@@ -628,7 +628,7 @@
                     "S": "123456789118"
                 },
                 "msDuration": {
-                    "N": "128000"
+                    "S": "128000"
                 },
                 "creationDate": {
                     "S": "2019-01-20T15:30:00"
@@ -666,7 +666,7 @@
                 "lyrics": {
                     "S": "Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics"
                 },
-                "lyricsLanguages": {
+                "inLanguages": {
                     "SS": ["french", "english"]
                 },
                 "socialMediaLinks": {
@@ -728,7 +728,7 @@
                     "S": "123456789121"
                 },
                 "msDuration": {
-                    "N": "131000"
+                    "S": "131000"
                 },
                 "creationDate": {
                     "S": "2019-01-01T15:53:00"
@@ -767,7 +767,7 @@
                 "lyrics": {
                     "S": "Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics"
                 },
-                "lyricsLanguages": {
+                "inLanguages": {
                     "SS": ["english"]
                 },
                 "socialMediaLinks": {

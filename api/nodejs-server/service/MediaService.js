@@ -14,8 +14,6 @@ AWS.config.update({
 
 const ddb = new AWS.DynamoDB.DocumentClient({region: REGION});
 
-
-
 /**
  * Delete a right holder's profile with the given ID
  *
@@ -544,19 +542,19 @@ exports.patchMediaLyrics = function(mediaId,lyrics) {
  * Update list of languages for the lyrics for the given piece of media
  *
  * mediaId Integer The artwork agreement's unique ID
- * lyricsLanguages LyricsLanguages The object containing the languages for the given media's lyrics
+ * inLanguages inLanguages The object containing the languages for the given media's lyrics
  * returns media
  **/
-exports.patchMediaLyricsLanguages = function(mediaId,lyricsLanguages) {
+exports.patchMediaInLanguages = function(mediaId,inLanguages) {
   return new Promise(function(resolve, reject) {
     let params = {
       TableName: TABLE,
       Key: {
         'mediaId': mediaId
       },
-      UpdateExpression: 'set lyricsLanguages = list_append(if_not_exists(lyricsLanguages, :empty_list), :l)',
+      UpdateExpression: 'set inLanguages = list_append(if_not_exists(inLanguages, :empty_list), :l)',
       ExpressionAttributeValues: {
-        ':l' : lyricsLanguages,
+        ':l' : inLanguages,
         ':empty_list': []
       },
       ReturnValues: 'UPDATED_NEW'
@@ -929,7 +927,7 @@ exports.postMedia = function(body) {
             'genre': body[0].genre,
             'secondaryGenre': body[0].secondaryGenre,
             'lyrics': body[0].lyrics,
-            'lyricsLanguages': body[0].lyricsLanguages,
+            'inLanguages': body[0].inLanguages,
             'isrc': body[0].isrc,
             'upc': body[0].upc,
             'duration': body[0].duration,       
@@ -937,7 +935,8 @@ exports.postMedia = function(body) {
             'streamingServiceLinks': body[0].streamingServiceLinks,
             'pressArticleLinks': body[0].pressArticleLinks,
             'playlistLinks': body[0].playlistLinks
-          }
+          },
+          ReturnValues: 'ALL_OLD'
         };
         // Check Types, and Split Calculation
         // 
@@ -946,8 +945,7 @@ exports.postMedia = function(body) {
             console.log("Error", err);
             resolve();
           } else {
-            console.log("Success", data);
-            resolve(data);
+            resolve("Success. Item Added");
           }
         });
       }
@@ -976,7 +974,7 @@ exports.updateMedia = function(mediaId,body) {
       },
       UpdateExpression: 'set title  = :t, rightsSplit = :s, jurisdiction = :j, genre = :g, secondaryGenre = :y, album = :a, \
         \ artist = :y, creationDate = :c, modificationDate = :f, publishDate = :i, cover = :v, publisher = :p, rightsType = :r, rightHolders = :h \
-        \ lyrics = :l, lyricsLanguages = :u, isrc = :z, upc = :b, duration = :d, socialMediaLinks = :e, streamingServiceLinks = :k, pressArticleLinks = :x, playlistLinks = :q', 
+        \ lyrics = :l, inLanguages = :u, isrc = :z, upc = :b, duration = :d, socialMediaLinks = :e, streamingServiceLinks = :k, pressArticleLinks = :x, playlistLinks = :q', 
 
       ExpressionAttributeValues: {
         ':t' : body[0].title,
@@ -994,7 +992,7 @@ exports.updateMedia = function(mediaId,body) {
         ':r' : body[0].rightsType,
         ':h' : body[0].rightHolders,
         ':l' : body[0].lyrics,
-        ':u' : body[0].lyricsLanguages,
+        ':u' : body[0].inLanguages,
         ':z' : body[0].isrc,
         ':b' : body[0].upc,
         ':d' : body[0].duration,       

@@ -2,6 +2,7 @@
 
 var utils = require('../utils/writer.js');
 var Media = require('../service/MediaService');
+var app = require('../index.js');
 
 module.exports.deleteMedia = function deleteMedia (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
@@ -195,14 +196,46 @@ module.exports.patchMediaRightHolders = function patchMediaRightHolders (req, re
 module.exports.patchMediaRightsSplit = function patchMediaRightsSplit (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
   var rightsSplit = req.swagger.params['rightsSplit'].value;
-  Media.patchMediaRightsSplit(mediaId,rightsSplit)
+  function exception(message) {
+    this.message = message;
+    this.name = 'Exception';
+  }
+  if (rightsSplit !== undefined) {
+    Media.patchMediaRightsSplit(mediaId,rightsSplit)
     .then(function (response) {
       utils.writeJson(res, response);
     })
     .catch(function (response) {
       utils.writeJson(res, response);
     });
+  } else {
+    throw new exception('Undefined rightsSplit');
+  }
+  try {
+    // statements to try
+    let myRightsSplit = undefined; // 15 is out of bound to raise the exception
+    Media.patchMediaRightsSplit(mediaId, myRightsSplit);
+  } catch (err) {
+    rightsSplit = {};
+    console.log(err.message, err.name); // pass exception object to err handler
+  }  
 };
+
+// if (months[mo] !== undefined) {
+//   return months[mo];
+// } else {
+//   throw new UserException('InvalidMonthNo');
+// }
+// }
+
+// try {
+// // statements to try
+// var myMonth = 15; // 15 is out of bound to raise the exception
+// var monthName = getMonthName(myMonth);
+// } catch (e) {
+// monthName = 'unknown';
+// console.log(e.message, e.name); // pass exception object to err handler
+// }
 
 module.exports.patchMediaRightsType = function patchMediaRightsType (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
@@ -228,10 +261,10 @@ module.exports.patchMediaLyrics = function patchMediaLyrics (req, res, next) {
     });
 };
 
-module.exports.patchMediaLyricsLanguages = function patchMediaLyricsLanguages (req, res, next) {
+module.exports.patchMediaInLanguages = function patchMediaInLanguages (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
-  var lyricsLanguages = req.swagger.params['lyricsLanguages'].value;
-  Media.patchMediaLyricsLanguages(mediaId,lyricsLanguages)
+  var inLanguages = req.swagger.params['inLanguages'].value;
+  Media.patchMediaInLanguages(mediaId,inLanguages)
     .then(function (response) {
       utils.writeJson(res, response);
     })
