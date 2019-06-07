@@ -5,8 +5,6 @@ const path = require('path');
 const http = require('http');
 const express = require('express');
 const router = express.Router();
-const lodb = require('lodb');
-const db = lodb('./data/db.json');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 
@@ -33,6 +31,21 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(morgan('short'));
 app.use(express.static('./public'));
 
+// Add headers
+app.use(function (req, res, next) {
+
+  // Wildcard set for CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  // Request methods to allow
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  // Request headers to allow
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  // Request to include cookies
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  // Pass to next layer of middleware
+  next();
+});
 
 // Initialize the Swagger middleware
 swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
