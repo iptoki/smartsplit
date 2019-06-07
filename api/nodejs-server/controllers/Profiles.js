@@ -35,6 +35,18 @@ module.exports.getProfile = function getProfile (req, res, next) {
     });
 };
 
+module.exports.patchProfileArtistName = function patchProfileArtistName (req, res, next) {
+  var id = req.swagger.params['id'].value;
+  var artistName = req.swagger.params['artistName'].value;
+  Profiles.patchProfileArtistName(id,artistName)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
 module.exports.patchProfileEmail = function patchProfileEmail (req, res, next) {
   var id = req.swagger.params['id'].value;
   var email = req.swagger.params['email'].value;
@@ -99,6 +111,18 @@ module.exports.patchProfileContributorRole = function patchProfileContributorRol
   var id = req.swagger.params['id'].value;
   var role = req.swagger.params['contributorRole'].value;
   Profiles.patchProfileContributoRole(id,contributorRole)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.patchProfileSocialMediaLinks = function patchProfileSocialMediaLinks (req, res, next) {
+  var id = req.swagger.params['id'].value;
+  var socialMediaLinks = req.swagger.params['socialMediaLinks'].value;
+  Profiles.patchProfileSocialMediaLinks(id,socialMediaLinks)
     .then(function (response) {
       utils.writeJson(res, response);
     })
