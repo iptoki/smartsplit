@@ -1,0 +1,62 @@
+{               
+	"rightsSplit": {
+        "John Smith": "41.6", 
+        "Bob Andrews": "16.6", 
+        "Andy Wilson": "41.6"
+	},
+                "jurisdiction": "SOCAN", 
+                "artist": "LYB",
+                "album": "You",
+                "cover": false,
+                "isrc": "abcde1234567",
+                "upc": "123456789111",
+                "msDuration": "120000",
+                "creationDate": "019-01-01T15:53:00",
+                "modificationDate": "019-01-01T15:53:00",
+                "publishDate": "019-01-01T15:53:00",
+                "publisher": "sync publishing",
+                "rightsType": {
+                        "copyright": true, 
+                        "performance": true, 
+                        "recording": true
+                },
+                "title": "Love You Baby",
+                "rightHolders": {
+                        "John Smith": "writer", 
+                        "Bob Andrews": "composer", 
+                        "Andy Wilson": "singer"
+                },
+                "genre": "Pop",
+                "secondaryGenre": "Rock",
+                "lyrics": "Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics Lyrics",
+                "inLanguages": ["french", "english"],
+                "socialMediaLinks": {
+                        "facebook": "https://facebook.com/test",
+                        "instagram": "https://instagram.com/test",
+                        "twitter": "https://twitter.com/test"
+                },
+                "streamingServiceLinks": {
+                        "spotify": "https://facebook.com/johnnyjohnny", 
+                        "youtube": "https://www.youtube.com/watch?v=4F9DxYhqmKw"
+                },
+                "pressArticleLinks": {
+                        "facebook": "https://facebook.com/", 
+                        "medium": "https://medium.com"
+                },
+                "playlistLinks": {
+                        "spotify": "https://open.spotify.com/playlist/37i9dQZEVXbKfIuOAZrk7G",
+                        "youtube": "https://open.spotify.com/playlist/052XtM0s4GQ8n8xXp60ryw"
+                }
+}
+
+
+
+
+
+    {
+                "amount": "20",
+                "payee": "2",
+                "transactionId": "87654321",
+                "transactionHash": "0x18a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0d"
+        
+    }

@@ -10,7 +10,7 @@ const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
-const VERSION = 'v1';
+// const VERSION = 'v1';
 
 const app = express();
 
@@ -37,34 +37,34 @@ app.use(morgan('short'));
 app.use(express.static('./public'));
 app.use(cors())
 
-app.options(VERSION + '/media/', cors()) // enable pre-flight request for DELETE request
-app.delete(VERSION + '/media/:mediaId', cors(), function (req, res, next) {
+app.options('v1/media/', cors()) // enable pre-flight request for DELETE request
+app.delete('v1/media/:mediaId', cors(), function (req, res, next) {
   res.json({msg: 'This is CORS-enabled for all origins!'})
 })
-app.post(VERSION + '/media/', cors(), function (req, res, next) {
+app.post('v1/media/', cors(), function (req, res, next) {
   res.json({msg: 'This is CORS-enabled for all origins!'})
 })
-app.put(VERSION + '/media/:mediaId', cors(), function (req, res, next) {
+app.put('v1/media/:mediaId', cors(), function (req, res, next) {
   res.json({msg: 'This is CORS-enabled for all origins!'})
 })
-app.options(VERSION + '/profiles/', cors()) // enable pre-flight request for DELETE request
-app.delete(VERSION + '/profiles/:id', cors(), function (req, res, next) {
+app.options('v1/profiles/', cors()) // enable pre-flight request for DELETE request
+app.delete('v1/profiles/:id', cors(), function (req, res, next) {
   res.json({msg: 'This is CORS-enabled for all origins!'})
 })
-app.post(VERSION + '/profiles/', cors(), function (req, res, next) {
+app.post('v1/profiles/', cors(), function (req, res, next) {
   res.json({msg: 'This is CORS-enabled for all origins!'})
 })
-app.put(VERSION + '/profiles/:id', cors(), function (req, res, next) {
+app.put('v1/profiles/:id', cors(), function (req, res, next) {
   res.json({msg: 'This is CORS-enabled for all origins!'})
 })
-app.options(VERSION + '/payments/', cors()) // enable pre-flight request for DELETE request
-app.delete(VERSION + '/payments/:id', cors(), function (req, res, next) {
+app.options('v1/payments/', cors()) // enable pre-flight request for DELETE request
+app.delete('v1/payments/:id', cors(), function (req, res, next) {
   res.json({msg: 'This is CORS-enabled for all origins!'})
 })
-app.post(VERSION + '/payments/', cors(), function (req, res, next) {
+app.post('v1/payments/', cors(), function (req, res, next) {
   res.json({msg: 'This is CORS-enabled for all origins!'})
 })
-app.put(VERSION + '/payments/:id', cors(), function (req, res, next) {
+app.put('v1/payments/:id', cors(), function (req, res, next) {
   res.json({msg: 'This is CORS-enabled for all origins!'})
 })
 

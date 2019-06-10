@@ -1798,46 +1798,32 @@ definitions:
           type: "string"
           description: "playlist links for the given media" 
     example:
-      rightsSplit:
-        Andy Smith: 41.6
-        Johnny Smith: 16.6
-        Bob Andrews: 41.6 
-      jurisdiction: "SOCAN"
-      genre: "Rock"
-      artist: "LYB"
-      creationDate: "2019-01-01T15:53:00"
-      modificationDate: "2019-01-01T15:53:01"
-      publishDate: "2019-01-01T15:53:02"
-      cover: false
-      isrc: "abcde1234567"
-      upc: "123456789111"
-      publisher: "sync publishing"
-      msDuration: "288000"
-      rightsType:
-        copyright: true
-        performance: true
-        recording: true
-      title: "Love You Baby"
-      rightHolders:
-        Andy Smith: "writer"
-        Johnny Smith: "producer"
-        Bob Andrews: "singer"
-      lyrics: "Love you Baby. Love you Baby. Love you Baby. Love you Baby.
-        Love you Baby. Baby. Wooo. Love You Baby."
-      inLanguages: ["english"]
-      socialMediaLinks:
-        facebook: "https://facebook.com/ex"
-        twitter: "https://twitter.com/ex"
-        youtube: "https://youtube.com/ex"
-      streamingServiceLinks:
-        spotify: "https://open.spotify.com/track/asdgj4qhfasd"
-        apple: "https://twitter.com/ex"
-      pressArticleLinks:
-        medium: "https://medium.com/ex"
-        metro: "https://metro.ca/ex"
-      playlistLinks:
-        spotify: "https://open.spotify.com/playlist/37i9dQZEVXbKfIuOAZrk7G"
-        youtube: "https://www.youtube.com/playlist?list=PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx"
+      [
+        {
+          jurisdiction: "SOCAN",
+          genre: "Rock",
+          secondaryGenre: "Pop",
+          artist: "LYB",
+          creationDate: "2019-01-01T15:53:00",
+          modificationDate: "2019-01-01T15:53:01",
+          publishDate: "2019-01-01T15:53:02",
+          cover: false,
+          isrc: "abcde1234567",
+          upc: "123456789111",
+          publisher: "sync publishing",
+          msDuration: "288000",
+          lyrics: "Love you Baby. Love you Baby. Love you Baby. Love you Baby.
+          Love you Baby. Baby. Wooo. Love You Baby.",
+          inLanguages: ["english"],
+          rightsSplit: {Andy Smith: 41.6, Johnny Smith: 16.6, Bob Andrews: 41.6 },
+          rightsType: {copyright: true, performance: true, recording: true},
+          rightHolders: {Andy Smith: "writer", Johnny Smith: "producer", Bob Andrews: "singer"},
+          socialMediaLinks: {facebook: "https://facebook.com/ex", twitter: "https://twitter.com/ex", youtube: "https://youtube.com/ex"},
+          streamingServiceLinks: {spotify: "https://open.spotify.com/track/asdgj4qhfasd", apple: "https://twitter.com/ex"},
+          pressArticleLinks: {medium: "https://medium.com/ex", metro: "https://metro.ca/ex"},
+          playlistLinks: {spotify: "https://open.spotify.com/playlist/37i9dQZEVXbKfIuOAZrk7G", youtube: "https://www.youtube.com/playlist?list=PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx"}
+        }
+      ]
   payments:
     type: "array"
     description: "An array of information about payments"

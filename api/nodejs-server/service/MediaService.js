@@ -935,8 +935,7 @@ exports.postMedia = function(body) {
             'streamingServiceLinks': body[0].streamingServiceLinks,
             'pressArticleLinks': body[0].pressArticleLinks,
             'playlistLinks': body[0].playlistLinks
-          },
-          ReturnValues: 'ALL_OLD'
+          }
         };
         // Check Types, and Split Calculation
         // 
