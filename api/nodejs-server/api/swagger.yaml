@@ -14,8 +14,12 @@ basePath: "/v1"
 tags:
 - name: "Authentication Details"
   description: "Obtaining and refreshing your JWT token"
-- name: "Profiles"
+- name: "Right Holders"
   description: "Viewing and creating right holder profiles"
+- name: "Rights Split"
+  description: "Viewing and creating splits for a given right holder profile"
+- name: "Splits"
+  description: "Viewing and creating splits for a given media"
 - name: "Media"
   description: "Viewing and creating media"
 - name: "Payments"
@@ -67,18 +71,18 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "AuthenticationDetails"
-  /profiles:
+  /splits:
     get:
       tags:
-      - "Profiles"
-      description: "Get a list of all right holder profiles"
-      operationId: "getAllProfiles"
+      - "Splits"
+      description: "Get a list of all media splits"
+      operationId: "getAllSplits"
       parameters: []
       responses:
         200:
           description: "OK"
           schema:
-            $ref: "#/definitions/profiles"
+            $ref: "#/definitions/listSplits"
         400:
           description: "Bad request"
         403:
@@ -87,24 +91,24 @@ paths:
           description: "Endpoint not found"
         500:
           description: "An unknown error occured"
-      x-swagger-router-controller: "Profiles"
+      x-swagger-router-controller: "Splits"
     post:
       tags:
-      - "Profiles"
-      description: "This method creates a new profile"
-      operationId: "postProfile"
+      - "Splits"
+      description: "This method creates a new split for a given media"
+      operationId: "postSplit"
       parameters:
       - in: "body"
         name: "body"
         description: "request"
         required: true
         schema:
-          $ref: "#/definitions/profile"
+          $ref: "#/definitions/splits"
       responses:
         200:
-          description: "OK. The profile was created."
+          description: "OK. The split was created."
           schema:
-            $ref: "#/definitions/profile"
+            $ref: "#/definitions/splits"
         400:
           description: "Bad request"
         403:
@@ -115,15 +119,585 @@ paths:
           description: "An unknown error occured"
       security:
       - jwt: []
-      x-swagger-router-controller: "Profiles"
-  /profiles/{id}:
+      x-swagger-router-controller: "Splits"
+  /splits/{uuid}:
     get:
       tags:
-      - "Profiles"
-      description: "Get a right holder's profile with the given ID"
-      operationId: "getProfile"
+      - "Splits"
+      description: "Get a split with the given ID"
+      operationId: "getSplit"
+      parameters:
+      - name: "uuid"
+        in: "path"
+        description: "The split's unique  ID"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/splits"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Splits"
+    put:
+      tags:
+      - "Splits"
+      description: "This method updates a split"
+      operationId: "updateSplit"
+      parameters:
+      - name: "uuid"
+        in: "path"
+        description: "The splits unique profile ID"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/splits"
+      responses:
+        200:
+          description: "OK. The split was created."
+          schema:
+            $ref: "#/definitions/splits"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Splits"
+    delete:
+      tags:
+      - "Splits"
+      description: "Delete a right holder's profile with the given ID"
+      operationId: "deleteSplit"
+      parameters:
+      - name: "uuid"
+        in: "path"
+        description: "The splits's unique profile ID"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "OK. Splits deleted."
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Splits"
+  /splits/{uuid}/emailToken:
+    patch:
+      tags:
+      - "Splits"
+      description: "Update email token for given split"
+      operationId: "patchSplitEmailToken"
+      parameters:
+      - name: "uuid"
+        in: "path"
+        description: "The split's unique ID"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "emailToken"
+        description: "The split's email token"
+        required: true
+        schema:
+          $ref: "#/definitions/splits/properties/emailToken"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            properties:
+              emailToken:
+                type: "string"
+                example: "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e"
+                description: "The email token for the given split"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Splits"
+  /splits/{uuid}/mediaId:
+    patch:
+      tags:
+      - "Splits"
+      description: "Update mediaId for given split"
+      operationId: "patchSplitMediaId"
+      parameters:
+      - name: "uuid"
+        in: "path"
+        description: "The split's unique ID"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "mediaId"
+        description: "The split's email token"
+        required: true
+        schema:
+          $ref: "#/definitions/splits/properties/mediaId"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            properties:
+              mediaId:
+                type: "integer"
+                example: 1
+                description: "The mediaId for the given split"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Splits"
+  /splits/{uuid}/splitType:
+    patch:
+      tags:
+      - "Splits"
+      description: "Update split type for a given split"
+      operationId: "patchSplitType"
+      parameters:
+      - name: "uuid"
+        in: "path"
+        description: "The split's unique ID"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "splitType"
+        description: "The split type of the split"
+        required: true
+        schema:
+          $ref: "#/definitions/splits/properties/splitType"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            properties:
+              splitType:
+                type: "array"
+                example: ["workCopyrightSplit"]
+                description: "The split type of the given split"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Splits"
+  /rightsSplit:
+    get:
+      tags:
+      - "Rights Split"
+      description: "Get a list of all rights splits"
+      operationId: "getAllRightsSplits"
+      parameters: []
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/rightsSplits"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Rights Split"
+    post:
+      tags:
+      - "Rights Split"
+      description: "This method creates a new rights split for a given right holder"
+      operationId: "postRightsSplit"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/rightsSplits"
+      responses:
+        200:
+          description: "OK. The rights split was created."
+          schema:
+            $ref: "#/definitions/rightsSplits"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Rights Split"
+  /rightsSplit/{id}:
+    get:
+      tags:
+      - "Rights Split"
+      description: "Get a rights split with the given ID"
+      operationId: "getRightsSplit"
       parameters:
       - name: "id"
+        in: "path"
+        description: "The split's unique ID"
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/rightsSplit"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Rights Split"
+    put:
+      tags:
+      - "Rights Split"
+      description: "This method updates a rights split"
+      operationId: "updateRightsSplit"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The splits unique id"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "body"
+        description: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/rightsSplit"
+      responses:
+        200:
+          description: "OK. The rights split was created."
+          schema:
+            $ref: "#/definitions/rightsSplit"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Rights Split"
+    delete:
+      tags:
+      - "Rights Split"
+      description: "Delete a right split with the given ID"
+      operationId: "deleteRightsSplit"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The split's unique profile ID"
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "OK. Right Split deleted."
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Rights Split"
+  /rightsSplit/{id}/splitUuid:
+    patch:
+      tags:
+      - "Rights Split"
+      description: "Update split uuid for given rights split"
+      operationId: "patchRightsSplitSplitUuid"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The rights split's unique ID"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "splitUuid"
+        description: "The uuid of the split for the given rights split"
+        required: true
+        schema:
+          $ref: "#/definitions/rightsSplit/properties/splitUuid"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            properties:
+              splitUuid:
+                type: "string"
+                example: "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e"
+                description: "The split uuid for the given rights split"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Rights Split"
+  /rightsSplit/{id}/rightHolderId:
+    patch:
+      tags:
+      - "Rights Split"
+      description: "Update right holder for given rights split"
+      operationId: "patchRightsSplitRightHolder"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The rights split's unique ID"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "rightHolderId"
+        description: "The split's email token"
+        required: true
+        schema:
+          $ref: "#/definitions/rightsSplit/properties/rightHolderId"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            properties:
+              rightHolderId:
+                type: "integer"
+                example: 2
+                description: "The right holder id for the given rights split"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Rights Split"
+  /rightsSplit/{id}/splitPct:
+    patch:
+      tags:
+      - "Rights Split"
+      description: "Update split percentage for given rights split"
+      operationId: "patchRightsSplitPct"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The split's unique ID"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "splitPct"
+        description: "The split percentage for the given rights split"
+        required: true
+        schema:
+          $ref: "#/definitions/rightsSplit/properties/splitPct"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            properties:
+              splitPct:
+                type: "number"
+                example: 41.6667
+                description: "The split percentage for the given rights split"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Rights Split"
+  /rightsSplit/{id}/state:
+    patch:
+      tags:
+      - "Rights Split"
+      description: "Update state for a given rights split"
+      operationId: "patchRightsSplitState"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The split's unique ID"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "state"
+        description: "The state of the rights split"
+        required: true
+        schema:
+          $ref: "#/definitions/rightsSplit/properties/state"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            properties:
+              state:
+                type: "string"
+                example: "active"
+                description: "The state of the given rights split"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Rights Split"
+  /rightsSplit/{id}/roles:
+    patch:
+      tags:
+      - "Rights Split"
+      description: "Update roles of the right holder for a given rights split"
+      operationId: "patchRightsSplitRoles"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The rights split's unique ID"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "roles"
+        description: "The roles array of the given rights split for the right holder"
+        required: true
+        schema:
+          $ref: "#/definitions/rightsSplit/properties/roles"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            properties:
+              roles:
+                type: "object"
+                example: {"45745c60-7b1a-11e8-9c9c-2d42b21b1a3e": "writer"}
+                description: "The roles of the right holder for the given rights split"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Splits"
+  /rightHolders:
+    get:
+      tags:
+      - "Right Holders"
+      description: "Get a list of all right holder profiles"
+      operationId: "getAllRightHolders"
+      parameters: []
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/rightHolders"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Right Holders"
+    post:
+      tags:
+      - "Right Holders"
+      description: "This method creates a new right holder profile"
+      operationId: "postRightHolder"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/rightHolder"
+      responses:
+        200:
+          description: "OK. The right holder profile was created."
+          schema:
+            $ref: "#/definitions/rightHolder"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Right Holders"
+  /rightHolders/{rightHolderId}:
+    get:
+      tags:
+      - "Right Holders"
+      description: "Get a right holder's profile with the given ID"
+      operationId: "getRightHolder"
+      parameters:
+      - name: "rightHolderId"
         in: "path"
         description: "The rights holder's unique profile ID"
         required: true
@@ -132,7 +706,7 @@ paths:
         200:
           description: "OK"
           schema:
-            $ref: "#/definitions/profile"
+            $ref: "#/definitions/rightHolder"
         400:
           description: "Bad request"
         403:
@@ -141,14 +715,14 @@ paths:
           description: "Endpoint not found"
         500:
           description: "An unknown error occured"
-      x-swagger-router-controller: "Profiles"
+      x-swagger-router-controller: "Right Holders"
     put:
       tags:
-      - "Profiles"
-      description: "This method updates a profile"
-      operationId: "updateProfile"
+      - "Right Holders"
+      description: "This method updates a right holder profile"
+      operationId: "updateRightHolder"
       parameters:
-      - name: "id"
+      - name: "rightHolderId"
         in: "path"
         description: "The rights holder's unique profile ID"
         required: true
@@ -158,12 +732,12 @@ paths:
         description: "request"
         required: true
         schema:
-          $ref: "#/definitions/profile"
+          $ref: "#/definitions/rightHolder"
       responses:
         200:
-          description: "OK. The profile was created."
+          description: "OK. The right holder profile was created."
           schema:
-            $ref: "#/definitions/profile"
+            $ref: "#/definitions/rightHolder"
         400:
           description: "Bad request"
         403:
@@ -174,21 +748,21 @@ paths:
           description: "An unknown error occured"
       security:
       - jwt: []
-      x-swagger-router-controller: "Profiles"
+      x-swagger-router-controller: "Right Holders"
     delete:
       tags:
-      - "Profiles"
+      - "Right Holders"
       description: "Delete a right holder's profile with the given ID"
-      operationId: "deleteProfile"
+      operationId: "deleteRightHolder"
       parameters:
-      - name: "id"
+      - name: "rightHolderId"
         in: "path"
         description: "The rights holder's unique profile ID"
         required: true
         type: "integer"
       responses:
         200:
-          description: "OK. Profile deleted."
+          description: "OK. Right holder profile deleted."
         400:
           description: "Bad request"
         403:
@@ -199,15 +773,15 @@ paths:
           description: "An unknown error occured"
       security:
       - jwt: []
-      x-swagger-router-controller: "Profiles"
-  /profiles/{id}/firstName:
+      x-swagger-router-controller: "Right Holders"
+  /rightHolders/{rightHolderId}/firstName:
     patch:
       tags:
-      - "Profiles"
+      - "Right Holders"
       description: "Update right holder's first name with the given ID"
-      operationId: "patchProfileFirstName"
+      operationId: "patchRightHolderFirstName"
       parameters:
-      - name: "id"
+      - name: "rightHolderId"
         in: "path"
         description: "The rights holder's unique profile ID"
         required: true
@@ -217,7 +791,7 @@ paths:
         description: "The rights holder's first name"
         required: true
         schema:
-          $ref: "#/definitions/profile/properties/firstName"
+          $ref: "#/definitions/rightHolder/properties/firstName"
       responses:
         200:
           description: "OK"
@@ -235,15 +809,15 @@ paths:
           description: "Endpoint not found"
         500:
           description: "An unknown error occured"
-      x-swagger-router-controller: "Profiles"
-  /profiles/{id}/lastName:
+      x-swagger-router-controller: "Right Holders"
+  /rightHolders/{rightHolderId}/lastName:
     patch:
       tags:
-      - "Profiles"
+      - "Right Holders"
       description: "Update right holder's last name with the given ID"
-      operationId: "patchProfileLastName"
+      operationId: "patchRightHolderLastName"
       parameters:
-      - name: "id"
+      - name: "rightHolderId"
         in: "path"
         description: "The rights holder's unique profile ID"
         required: true
@@ -253,7 +827,7 @@ paths:
         description: "The rights holder's last name"
         required: true
         schema:
-          $ref: "#/definitions/profile/properties/lastName"
+          $ref: "#/definitions/rightHolder/properties/lastName"
       responses:
         200:
           description: "OK"
@@ -271,51 +845,15 @@ paths:
           description: "Endpoint not found"
         500:
           description: "An unknown error occured"
-      x-swagger-router-controller: "Profiles"
-  /profiles/{id}/artistName:
+      x-swagger-router-controller: "Right Holders"
+  /rightHolders/{rightHolderId}/email:
     patch:
       tags:
-      - "Profiles"
-      description: "Update right holder's artist name with the given ID"
-      operationId: "patchProfileArtistName"
-      parameters:
-      - name: "id"
-        in: "path"
-        description: "The rights holder's unique profile ID"
-        required: true
-        type: "integer"
-      - in: "body"
-        name: "artistName"
-        description: "The rights holder's artist name"
-        required: true
-        schema:
-          $ref: "#/definitions/profile/properties/artistName"
-      responses:
-        200:
-          description: "OK"
-          schema:
-            properties:
-              artistName:
-                type: "string"
-                example: "LYB"
-                description: "The right holder's artist name"
-        400:
-          description: "Bad request"
-        403:
-          description: "Permission denied"
-        404:
-          description: "Endpoint not found"
-        500:
-          description: "An unknown error occured"
-      x-swagger-router-controller: "Profiles"
-  /profiles/{id}/email:
-    patch:
-      tags:
-      - "Profiles"
+      - "Right Holders"
       description: "Update right holder's email address with given ID"
-      operationId: "patchProfileEmail"
+      operationId: "patchRightHolderEmail"
       parameters:
-      - name: "id"
+      - name: "rightHolderId"
         in: "path"
         description: "The right holder's unique profile ID"
         required: true
@@ -325,7 +863,7 @@ paths:
         description: "The rights holder's email address"
         required: true
         schema:
-          $ref: "#/definitions/profile/properties/email"
+          $ref: "#/definitions/rightHolder/properties/email"
       responses:
         200:
           description: "OK"
@@ -345,36 +883,28 @@ paths:
           description: "An unknown error occured"
       security:
       - jwt: []
-      x-swagger-router-controller: "Profiles"
-  /profiles/{id}/contributorRole:
+      x-swagger-router-controller: "Right Holders"
+  /rightHolders/{rightHolderId}/password:
     patch:
       tags:
-      - "Profiles"
-      description: "Update right holder's role with the given ID       (Or list of\
-        \ roles including copyright, performance, and/or recording)"
-      operationId: "patchProfileContributorRole"
+      - "Right Holders"
+      description: "Update right holder's password with given ID"
+      operationId: "patchRightHolderPassword"
       parameters:
-      - name: "id"
+      - name: "rightHolderId"
         in: "path"
         description: "The right holder's unique profile ID"
         required: true
         type: "integer"
       - in: "body"
-        name: "contributorRole"
-        description: "The right holder's role"
+        name: "password"
+        description: "The rights holder's password"
         required: true
         schema:
-          $ref: "#/definitions/profile/properties/contributorRole"
+          $ref: "#/definitions/rightHolder/properties/password"
       responses:
         200:
-          description: "OK"
-          schema:
-            properties:
-              contributorRole:
-                type: "array"
-                items: 
-                  example: "writer"
-                  description: "The right holder's role"
+          description: "OK. Password updated"
         400:
           description: "Bad request"
         403:
@@ -383,15 +913,17 @@ paths:
           description: "Endpoint not found"
         500:
           description: "An unknown error occured"
-      x-swagger-router-controller: "Profiles"
-  /profiles/{id}/ipi:
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Right Holders"
+  /rightHolders/{rightHolderId}/ipi:
     patch:
       tags:
-      - "Profiles"
+      - "Right Holders"
       description: "Update right holder's IPI number"
-      operationId: "patchProfileIPI"
+      operationId: "patchRightHolderIPI"
       parameters:
-      - name: "id"
+      - name: "rightHolderId"
         in: "path"
         description: "The right holder's unique profile ID"
         required: true
@@ -401,7 +933,7 @@ paths:
         description: "The right holder's IPI number"
         required: true
         schema:
-          $ref: "#/definitions/profile/properties/ipi"
+          $ref: "#/definitions/rightHolder/properties/ipi"
       responses:
         200:
           description: "OK"
@@ -419,30 +951,35 @@ paths:
           description: "Endpoint not found"
         500:
           description: "An unknown error occured"
-      x-swagger-router-controller: "Profiles"
-  /profiles/{id}/media:
+      x-swagger-router-controller: "Right Holders"
+  /rightHolders/{rightHolderId}/jurisdiction:
     patch:
       tags:
-      - "Profiles"
-      description: "Update list of media for the given right holder"
-      operationId: "patchProfileMedia"
+      - "Right Holders"
+      description: "Update the jurisdiction for the given right holder"
+      operationId: "patchRightHolderJurisdiction"
       parameters:
-      - name: "id"
+      - name: "rightHolderId"
         in: "path"
-        description: "The right holder's unique profile ID"
+        description: "The artwork agreement's unique ID"
         required: true
         type: "integer"
       - in: "body"
-        name: "mediaId"
-        description: "The unique ID of the given media"
+        name: "jurisdiction"
+        description: "The jurisdiction of the given right holder"
         required: true
         schema:
-          $ref: "#/definitions/mediaIds"
+          $ref: "#/definitions/rightHolder/properties/jurisdiction"
       responses:
         200:
           description: "OK"
           schema:
-            $ref: "#/definitions/profile"
+            properties:
+              jurisdiction:
+                type: "string"
+                example: "Canada"
+                description: "The jusrisdiction of the artwork agreement of the given\
+                  \ media"
         400:
           description: "Bad request"
         403:
@@ -451,15 +988,15 @@ paths:
           description: "Endpoint not found"
         500:
           description: "An unknown error occured"
-      x-swagger-router-controller: "Profiles"
-  /profiles/{id}/wallet:
+      x-swagger-router-controller: "Right Holders"
+  /rightHolders/{rightHolderId}/wallet:
     patch:
       tags:
-      - "Profiles"
+      - "Right Holders"
       description: "Update the wallet address of a right holder"
-      operationId: "patchProfileWallet"
+      operationId: "patchRightHolderWallet"
       parameters:
-      - name: "id"
+      - name: "rightHolderId"
         in: "path"
         description: "The right holder's unique profile ID"
         required: true
@@ -469,7 +1006,7 @@ paths:
         description: "The right holder's wallet address"
         required: true
         schema:
-          $ref: "#/definitions/profile/properties/wallet"
+          $ref: "#/definitions/rightHolder/properties/wallet"
       responses:
         200:
           description: "OK"
@@ -478,7 +1015,7 @@ paths:
               wallet:
                 type: "string"
                 example: "0xdd87ae15f4be97e2739c9069ddef674f907d27a9"
-                description: "The user's wallet address"
+                description: "The right holder's wallet address"
         400:
           description: "Bad request"
         403:
@@ -488,29 +1025,29 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Profiles"
-  /profiles/{id}/socialMediaLinks:
+  /rightHolders/{rightHolderId}/socialMediaLinks:
     patch:
       tags:
-      - "Profiles"
+      - "Right Holders"
       description: "Update list of social media links for the given right holder"
-      operationId: "patchProfileSocialMediaLinks"
+      operationId: "patchRightHolderSocialMediaLinks"
       parameters:
-      - name: "id"
+      - name: "rightHolderId"
         in: "path"
         description: "The right holder's unique profile ID"
         required: true
         type: "integer"
       - in: "body"
         name: "socialMediaLinks"
-        description: "The object containing the given profile's social media links"
+        description: "The object containing the given right holder profile's social media links"
         required: true
         schema:
-          $ref: "#/definitions/profile/properties/socialMediaLinks"
+          $ref: "#/definitions/rightHolder/properties/socialMediaLinks"
       responses:
         200:
           description: "OK"
           schema:
-            $ref: "#/definitions/profile"
+            $ref: "#/definitions/rightHolder"
         400:
           description: "Bad request"
         403:
@@ -519,7 +1056,7 @@ paths:
           description: "Endpoint not found"
         500:
           description: "An unknown error occured"
-      x-swagger-router-controller: "Profiles"
+      x-swagger-router-controller: "Right Holders"
   /media:
     get:
       tags:
@@ -723,12 +1260,12 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
-  /media/{mediaId}/rightHolders:
+  /media/{mediaId}/s3Etag:
     patch:
       tags:
       - "Media"
-      description: "Update the right holders who collaborated on media"
-      operationId: "patchMediaRightHolders"
+      description: "Update the AWS s3 Etag for given media"
+      operationId: "patchMediaS3Etag"
       parameters:
       - name: "mediaId"
         in: "path"
@@ -736,53 +1273,16 @@ paths:
         required: true
         type: "integer"
       - in: "body"
-        name: "rightHolders"
-        description: "The object containing the right holders for the given media"
+        name: "s3Etag"
+        description: "The AWS s3 Etag string for the given media"
         required: true
         schema:
-          $ref: "#/definitions/media/properties/rightHolders"
+          $ref: "#/definitions/media/properties/s3Etag"
       responses:
         200:
           description: "OK"
           schema:
             $ref: "#/definitions/media"
-        400:
-          description: "Bad request"
-        403:
-          description: "Permission denied"
-        404:
-          description: "Endpoint not found"
-        500:
-          description: "An unknown error occured"
-      x-swagger-router-controller: "Media"
-  /media/{mediaId}/jurisdiction:
-    patch:
-      tags:
-      - "Media"
-      description: "Update the jurisdiction of the given media"
-      operationId: "patchMediaJurisdiction"
-      parameters:
-      - name: "mediaId"
-        in: "path"
-        description: "The artwork agreement's unique ID"
-        required: true
-        type: "integer"
-      - in: "body"
-        name: "jurisdiction"
-        description: "The jurisdiction of the given media"
-        required: true
-        schema:
-          $ref: "#/definitions/media/properties/jurisdiction"
-      responses:
-        200:
-          description: "OK"
-          schema:
-            properties:
-              jurisdiction:
-                type: "string"
-                example: "SOPROQ"
-                description: "The jusrisdiction of the artwork agreement of the given\
-                  \ media"
         400:
           description: "Bad request"
         403:
@@ -855,39 +1355,6 @@ paths:
                 type: "string"
                 format: "iso8601-date-time"
                 example: "2019-01-01T15:53:00"
-        400:
-          description: "Bad request"
-        403:
-          description: "Permission denied"
-        404:
-          description: "Endpoint not found"
-        500:
-          description: "An unknown error occured"
-      x-swagger-router-controller: "Media"
-  /media/{mediaId}/rightsType:
-    patch:
-      tags:
-      - "Media"
-      description: "Update the type of rights of the given media         (Including copyright,\
-        \ performance, recording)"
-      operationId: "patchMediaRightsType"
-      parameters:
-      - name: "mediaId"
-        in: "path"
-        description: "The artwork agreement's unique ID"
-        required: true
-        type: "integer"
-      - in: "body"
-        name: "rightsType"
-        description: "The object containing the type of rights for the given media"
-        required: true
-        schema:
-          $ref: "#/definitions/media/properties/rightsType"
-      responses:
-        200:
-          description: "OK"
-          schema:
-            $ref: "#/definitions/media"
         400:
           description: "Bad request"
         403:
@@ -1032,38 +1499,6 @@ paths:
                 type: "string"
                 example: "tune publishing"
                 description: "The publisher name of the media with the given ID"
-        400:
-          description: "Bad request"
-        403:
-          description: "Permission denied"
-        404:
-          description: "Endpoint not found"
-        500:
-          description: "An unknown error occured"
-      x-swagger-router-controller: "Media"
-  /media/{mediaId}/rightsSplit:
-    patch:
-      tags:
-      - "Media"
-      description: "Update rights holders' percentage split given media"
-      operationId: "patchMediaRightsSplit"
-      parameters:
-      - name: "mediaId"
-        in: "path"
-        description: "The artwork agreement's unique ID"
-        required: true
-        type: "integer"
-      - in: "body"
-        name: "rightsSplit"
-        description: "The object containing the percentage split for the given media"
-        required: true
-        schema:
-          $ref: "#/definitions/media/properties/rightsSplit"
-      responses:
-        200:
-          description: "OK"
-          schema:
-            $ref: "#/definitions/media"
         400:
           description: "Bad request"
         403:
@@ -1605,65 +2040,60 @@ definitions:
         description: "The JWT access token for the current session"
     example:
       accessToken: "fyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJjb21wYW55IjoiRnV0dXJlRWQiLCJzdWIiOjEsImlzcyI6Imh0dHA6XC9cL2Z1dHVyZWVkLmRldlwvYXBpXC92MVwvc3R1ZGVudFwvbG9naW5cL3VzZXJuYW1lIiwiaWF0IjoiMTQyNzQyNjc3MSIsImV4cCI6IjE0Mjc0MzAzNzEiLCJuYmYiOiIxNDI3NDI2NzcxIiwianRpIjoiNmFlZDQ3MGFiOGMxYTk0MmE0MTViYTAwOTBlMTFlZTUifQ.MmM2YTUwMjEzYTE0OGNhNjk5Y2Y2MjEwZDdkN2Y1OTQ2NWVhZTdmYmI4OTA5YmM1Y2QwYTMzZjUwNTgwY2Y0MQ"
-  profiles:
+  rightHolders:
     type: "array"
-    description: "An array of profile information"
+    description: "An array of right holder profile information"
     items:
-      $ref: "#/definitions/profile"
-  profile:
+      $ref: "#/definitions/rightHolder"
+  rightHolder:
     type: "object"
     properties:
-      id:
-        type: integer
+      rightHolderId:
+        type: "integer"
         example: 1
-        description: "The unique ID of the given profile"
+        description: "The unique ID of the given right holder profile"
       firstName:
         type: "string"
         example: "John"
-        description: "The first name displayed on the user's profile"
+        description: "The first name displayed on the right holder's profile"
       lastName:
         type: "string"
         example: "Smith"
-        description: "The last name displayed on the user's profile"
-      artistName:
-        type: "string"
-        example: "LYB"
-        description: "The artist name displayed on the user's profile"
+        description: "The last name displayed on the right holder's profile"
       email:
         type: "string"
         example: "john.smith@example.com"
-        description: "The email address for this user profile"
-      media:
-        $ref: "#/definitions/mediaIds"
+        description: "The email address for this right holder profile"
+      password:
+        type: "string"
+        example: "3c9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3"
+        description: "The hash of the password of the given right holder's profile"
+      jurisdiction:
+        type: "string"
+        example: "Canada"
+        description: "The country that has jurisdiction over the rights of the right holder"
       ipi:
         type: "string"
         example: "00004576"
         description: "The right holder's interested party information number"
-      contributorRole:
-        type: "array"
-        description: "The array of role(s) of the right holder for this user profile"
-        items:
-          type: "string"
-          example: "writer"
       wallet:
         type: "string"
         example: "0xdd87ae15f4be97e2739c9069ddef674f907d27a8"
-        description: "The blockchain wallet address for this user profile"
+        description: "The blockchain wallet address for this right holder profile"
       socialMediaLinks:
         type: "object"
-        description: "The urls for the social media profiles for the given user, like Facebook, Instagram, Youtube, Twitter"
+        description: "The urls for the social media profiles for the given right holder, like Facebook, Instagram, Youtube, Twitter"
         additionalProperties:
           type: "string"
-          description: "social media links for the given profile"
+          description: "social media links for the given right holder profile"
     example:
-      ipi: "00004576"
-      contributorRole: ["writer"]
-      wallet: "0xdd87ae15f4be97e2739c9069ddef674f907d27a8"
-      media: ""
       firstName: "John"
-      email: "john.smith@example.com"
       lastName: "Smith"
-      artistName: "LYB"
+      email: "john.smith@example.com"
+      password: "3c9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3"
+      jurisdiction: "Canada"
+      ipi: "00004576"
+      wallet: "0xdd87ae15f4be97e2739c9069ddef674f907d27a8"
       socialMediaLinks: 
         facebook: "https://facebook.com/ex"
         twitter: "https://twitter.com/ex"
@@ -1705,22 +2135,6 @@ definitions:
         type: "boolean"
         example: false
         description: "Whether or not this piece of media is a cover"
-      rightHolders:
-        type: "object"
-        description: "The full name of the right holder"
-        additionalProperties:
-          type: "string"
-          description: "The type of right holder, for example, writer, producer"
-      jurisdiction:
-        type: "string"
-        example: "SOCAN"
-        description: "The Jurisdiction for the given media"
-      rightsType:
-        type: "object"
-        description: "The boolean, 'True' or 'False'"
-        additionalProperties:
-          type: "string"
-          description: "The type of right, for example, copyright, performance, recording"
       genre:
         type: "string"
         example: "Rock"
@@ -1748,12 +2162,6 @@ definitions:
         type: "string"
         example: "sync publishing"
         description: "The publisher for the given media (Left blank if no publisher)"
-      rightsSplit:
-        type: "object"
-        description: "The percentage split of each right holder"
-        additionalProperties:
-          type: "number"
-          description: "The names of the right holders for the given media"
       lyrics:
         type: "string"
         description: "The lyrics of the given media"
@@ -1797,47 +2205,109 @@ definitions:
         additionalProperties:
           type: "string"
           description: "playlist links for the given media" 
+      s3Etag:
+        type: "string"
+        description: "The ETag in AWS S3 for the given media"
+        example: "2f03d99fbf37d8d585285fd4cce27feb"
     example:
-      rightsSplit:
-        Andy Smith: 41.6
-        Johnny Smith: 16.6
-        Bob Andrews: 41.6 
-      jurisdiction: "SOCAN"
-      genre: "Rock"
-      artist: "LYB"
-      creationDate: "2019-01-01T15:53:00"
-      modificationDate: "2019-01-01T15:53:01"
-      publishDate: "2019-01-01T15:53:02"
-      cover: false
-      isrc: "abcde1234567"
-      upc: "123456789111"
-      publisher: "sync publishing"
-      msDuration: "288000"
-      rightsType:
-        copyright: true
-        performance: true
-        recording: true
-      title: "Love You Baby"
-      rightHolders:
-        Andy Smith: "writer"
-        Johnny Smith: "producer"
-        Bob Andrews: "singer"
-      lyrics: "Love you Baby. Love you Baby. Love you Baby. Love you Baby.
-        Love you Baby. Baby. Wooo. Love You Baby."
-      inLanguages: ["english"]
-      socialMediaLinks:
-        facebook: "https://facebook.com/ex"
-        twitter: "https://twitter.com/ex"
-        youtube: "https://youtube.com/ex"
-      streamingServiceLinks:
-        spotify: "https://open.spotify.com/track/asdgj4qhfasd"
-        apple: "https://twitter.com/ex"
-      pressArticleLinks:
-        medium: "https://medium.com/ex"
-        metro: "https://metro.ca/ex"
-      playlistLinks:
-        spotify: "https://open.spotify.com/playlist/37i9dQZEVXbKfIuOAZrk7G"
-        youtube: "https://www.youtube.com/playlist?list=PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx"
+      [
+        {
+          title: "Love You Baby",
+          artist: "LYB",
+          genre: "Rock",
+          secondaryGenre: "Pop",
+          creationDate: "2019-01-01T15:53:00",
+          modificationDate: "2019-01-01T15:53:01",
+          publishDate: "2019-01-01T15:53:02",
+          cover: false,
+          isrc: "abcde1234567",
+          upc: "123456789111",
+          publisher: "sync publishing",
+          msDuration: "288000",
+          lyrics: "Love you Baby. Love you Baby. Love you Baby. Love you Baby.
+          Love you Baby. Baby. Wooo. Love You Baby.",
+          inLanguages: ["english"],
+          socialMediaLinks: {facebook: "https://facebook.com/ex", twitter: "https://twitter.com/ex", youtube: "https://youtube.com/ex"},
+          streamingServiceLinks: {spotify: "https://open.spotify.com/track/asdgj4qhfasd", apple: "https://twitter.com/ex"},
+          pressArticleLinks: {medium: "https://medium.com/ex", metro: "https://metro.ca/ex"},
+          playlistLinks: {spotify: "https://open.spotify.com/playlist/37i9dQZEVXbKfIuOAZrk7G", youtube: "https://www.youtube.com/playlist?list=PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx"},
+          s3Etag: "2f03d99fbf37d8d585285fd4cce27feb"
+        }
+      ]
+  listSplits:
+    type: "array"
+    description: "An array of information about splits"
+    items:
+      $ref: "#/definitions/splits"
+  splits:
+    type: "object"
+    properties: 
+      uuid:
+        type: "string"
+        example: "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e"
+        description: "The unique ID for the given split"
+      emailToken:
+        type: "string"
+        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+        description: "The email token for the given split"
+      splitType:
+        type: "array"
+        items:
+          type: "string"
+          description: "Types of copyright for the given media" 
+        example: ["workCopyrightSplit", "performanceNeighboringRightSplit", "masterNeighboringRightSplit"] 
+      mediaId:
+        type: "integer"
+        example: 1
+    example:
+      {
+        uuid: "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e",
+        emailToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+        splitType: "workCopyrightSplit",
+        mediaId: 1
+      }
+  rightsSplits:
+    type: "array"
+    description: "An array of information about rights splits"
+    items:
+      $ref: "#/definitions/rightsSplits"
+  rightsSplit:
+    type: "object"
+    properties: 
+      id:
+        type: "integer"
+        example: 1
+        description: "The primary key ID for the given rights split record"
+      splitUuid:
+        type: "string"
+        example: "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e"
+        description: "The unique ID for the given split"
+      rightHolderId:
+        type: "integer"
+        example: 1
+        description: "The ID for the given right holder"
+      splitPct:
+        type: "number"
+        example: 41.6667
+        description: "The percentage split of the given right holder for the given rights split"
+      state:
+        type: "string"
+        example: "active"
+        description: "The state of the given rights split"
+      roles:
+        type: "object"
+        additionalProperties:
+          type: "string"
+          description: "the role(s) of the right holder for the given right split"
+    example:
+      {
+        id: 1,
+        splitUuid: "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e",
+        rightHolderId: 1,
+        splitPct: 41.6667,
+        state: "active",
+        contributorRole: {"45745c60-7b1a-11e8-9c9c-2d42b21b1a3e": "writer"}
+      }
   payments:
     type: "array"
     description: "An array of information about payments"

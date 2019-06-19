@@ -1,6 +1,7 @@
 'use strict';
 const TABLE = 'media';
 const utils = require('../utils/utils.js');
+const uuidv1 = require('uuid/v1');
 
 // AWS
 const AWS = require('aws-sdk');
@@ -215,40 +216,6 @@ exports.patchMediaSecondaryGenre = function(mediaId,secondaryGenre) {
       UpdateExpression: 'set secondaryGenre = :g',
       ExpressionAttributeValues: {
         ':g' : secondaryGenre.secondaryGenre
-      },
-      ReturnValues: 'UPDATED_NEW'
-    };
-    // Call DynamoDB to delete the item from the table
-    ddb.update(params, function(err, data) {
-      if (err) {
-        console.log("Error", err);
-        resolve();
-      } else {
-        console.log("Success", data.Attributes);
-        resolve(data.Attributes);
-      }
-    });
-  });
-}
-
-
-/**
- * Update the jurisdiction of the given media
- *
- * mediaId Integer The artwork agreement's unique ID
- * jurisdiction Jurisdiction The jurisdiction of the given media
- * returns Object
- **/
-exports.patchMediaJurisdiction = function(mediaId,jurisdiction) {
-  return new Promise(function(resolve, reject) {
-    let params = {
-      TableName: TABLE,
-      Key: {
-        'mediaId': mediaId
-      },
-      UpdateExpression: 'set jurisdiction = :j',
-      ExpressionAttributeValues: {
-        ':j' : jurisdiction.jurisdiction
       },
       ReturnValues: 'UPDATED_NEW'
     };
@@ -505,6 +472,39 @@ exports.patchMediaAlbum = function(mediaId,album) {
 
 
 /**
+ * Update the AWS s3 Etag for given media
+ *
+ * mediaId Integer The artwork agreement's unique ID
+ * s3Etag S3Etag The AWS s3 Etag string for the given media
+ * returns media
+ **/
+exports.patchMediaS3Etag = function(mediaId,s3Etag) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'mediaId': mediaId
+      },
+      UpdateExpression: 'set s3Etag  = :s',
+      ExpressionAttributeValues: {
+        ':s' : s3Etag.s3Etag
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
+  });
+}
+
+
+/**
  * Update the lyrics for the given piece of media
  *
  * mediaId Integer The artwork agreement's unique ID
@@ -524,7 +524,6 @@ exports.patchMediaLyrics = function(mediaId,lyrics) {
       },
       ReturnValues: 'UPDATED_NEW'
     };
-    // Call DynamoDB to delete the item from the table
     ddb.update(params, function(err, data) {
       if (err) {
         console.log("Error", err);
@@ -672,123 +671,6 @@ exports.patchMediaPressArticleLinks = function(mediaId,pressArticleLinks) {
 
 
 /**
- * Update the right holders who collaborated on media
- *
- * mediaId Integer The artwork agreement's unique ID
- * rightHolders RightHolders The object containing the right holders for the given media
- * returns media
- **/
-exports.patchMediaRightHolders = function(mediaId,rightHolders) {
-  return new Promise(function(resolve, reject) {
-    let params = {
-      "TableName": TABLE,
-      Key: {
-        'mediaId': mediaId
-      }
-    }
-    // Get old social media links
-    ddb.get(params, function(err, data) {
-      if (err) {
-        console.log("Error", err);
-        resolve();
-      } else {
-        let oldrightHolders = data.Item.rightHolders;
-        let rightHoldersJoined = Object.assign({}, oldrightHolders, rightHolders);
-        let params = {
-          TableName: TABLE,
-          Key: {
-            'mediaId': mediaId
-          },
-          UpdateExpression: 'set rightHolders  = :r',
-          ExpressionAttributeValues: {
-            ':r' : rightHoldersJoined
-          },
-          ReturnValues: 'UPDATED_NEW'
-        };
-        ddb.update(params, function(err, data) {
-          if (err) {
-            console.log("Error", err);
-            resolve();
-          } else {
-            console.log("Success", data.Attributes);
-            resolve(data.Attributes);
-          }
-        });
-      }
-    });
-  });
-}
-
-
-/**
- * Update rights holders' percentage split given media
- *
- * mediaId Integer The artwork agreement's unique ID
- * rightsSplit RightsSplit The object containing the percentage split for the given media
- * returns media
- **/
-exports.patchMediaRightsSplit = function(mediaId,rightsSplit) {
-  return new Promise(function(resolve, reject) {
-    let params = {
-      TableName: TABLE,
-      Key: {
-        'mediaId': mediaId
-      },
-      UpdateExpression: 'set rightsSplit  = :s',
-      ExpressionAttributeValues: {
-        ':s' : rightsSplit.rightsSplit
-      },
-      ReturnValues: 'UPDATED_NEW'
-    };
-    // Call DynamoDB to delete the item from the table
-    ddb.update(params, function(err, data) {
-      if (err) {
-        console.log("Error", err);
-        resolve();
-      } else {
-        console.log("Success", data.Attributes);
-        resolve(data.Attributes);
-      }
-    });
-  });
-}
-
-
-/**
- * Update the type of rights of the given media         (Including copyright, performance, recording)
- *
- * mediaId Integer The artwork agreement's unique ID
- * rightsType RightsType The object containing the type of rights for the given media
- * returns media
- **/
-exports.patchMediaRightsType = function(mediaId,rightsType) {
-  return new Promise(function(resolve, reject) {
-    let params = {
-      TableName: TABLE,
-      Key: {
-        'mediaId': mediaId
-      },
-      UpdateExpression: 'set rightsType  = :t',
-      ExpressionAttributeValues: {
-        ':t' : rightsType.rightsType
-      },
-      ReturnValues: 'UPDATED_NEW'
-    };
-    // Call DynamoDB to delete the item from the table
-    ddb.update(params, function(err, data) {
-      if (err) {
-        console.log("Error", err);
-        resolve();
-      } else {
-        console.log("Success", data.Attributes);
-        resolve(data.Attributes);
-      }
-    });
-  });
-}
-
-
-/**
  * Update list of social media links for the given piece of media
  *
  * mediaId Integer The artwork agreement's unique ID
@@ -907,36 +789,31 @@ exports.postMedia = function(body) {
         // Assign creationDate to current date time
         let d = Date(Date.now());   
         let DATE_CREATED = d.toString();
-        console.log(DATE_CREATED);
         let params = {
           TableName: TABLE,
           Item: {
             'mediaId': ID_VALUE,
-            'rightsSplit': body[0].rightsSplit,
-            'jurisdiction': body[0].jurisdiction,
             'artist': body[0].artist,
             'album': body[0].album,
             'cover': body[0].cover,
             'creationDate': DATE_CREATED,
             'modificationDate': body[0].modificationDate,
+            's3Etag': body[0].s3Etag,
             'publishDate': body[0].publishDate,
             'publisher': body[0].publisher,
-            'rightsType': body[0].rightsType,
             'title': body[0].title,
-            'rightHolders': body[0].rightHolders,
             'genre': body[0].genre,
             'secondaryGenre': body[0].secondaryGenre,
             'lyrics': body[0].lyrics,
             'inLanguages': body[0].inLanguages,
             'isrc': body[0].isrc,
             'upc': body[0].upc,
-            'duration': body[0].duration,       
+            'msDuration': body[0].msDuration,       
             'socialMediaLinks': body[0].socialMediaLinks,
             'streamingServiceLinks': body[0].streamingServiceLinks,
             'pressArticleLinks': body[0].pressArticleLinks,
             'playlistLinks': body[0].playlistLinks
-          },
-          ReturnValues: 'ALL_OLD'
+          }
         };
         // Check Types, and Split Calculation
         // 
@@ -972,14 +849,12 @@ exports.updateMedia = function(mediaId,body) {
       Key: {
         'mediaId': mediaId
       },
-      UpdateExpression: 'set title  = :t, rightsSplit = :s, jurisdiction = :j, genre = :g, secondaryGenre = :y, album = :a, \
-        \ artist = :y, creationDate = :c, modificationDate = :f, publishDate = :i, cover = :v, publisher = :p, rightsType = :r, rightHolders = :h \
-        \ lyrics = :l, inLanguages = :u, isrc = :z, upc = :b, duration = :d, socialMediaLinks = :e, streamingServiceLinks = :k, pressArticleLinks = :x, playlistLinks = :q', 
+      UpdateExpression: 'set title  = :t, genre = :g, secondaryGenre = :y, album = :a, s3Etag = :s\
+        \ artist = :y, creationDate = :c, modificationDate = :f, publishDate = :i, cover = :v, publisher = :p, \
+        \ lyrics = :l, inLanguages = :u, isrc = :z, upc = :b, msDuration = :d, socialMediaLinks = :e, streamingServiceLinks = :k, pressArticleLinks = :x, playlistLinks = :q', 
 
       ExpressionAttributeValues: {
         ':t' : body[0].title,
-        ':s' : body[0].rightsSplit,
-        ':j' : body[0].jurisdiction,
         ':g' : body[0].genre,
         ':y' : body[0].secondaryGenre,
         ':a' : body[0].album,
@@ -989,13 +864,12 @@ exports.updateMedia = function(mediaId,body) {
         ':i' : body[0].publishDate,
         ':v' : body[0].cover,
         ':p' : body[0].publisher,
-        ':r' : body[0].rightsType,
-        ':h' : body[0].rightHolders,
         ':l' : body[0].lyrics,
         ':u' : body[0].inLanguages,
+        ':s' : body[0].s3Etag,
         ':z' : body[0].isrc,
         ':b' : body[0].upc,
-        ':d' : body[0].duration,       
+        ':d' : body[0].msDuration,       
         ':e' : body[0].socialMediaLinks,
         ':k' : body[0].streamingServiceLinks,
         ':x' : body[0].pressArticleLinks,

@@ -1,0 +1,58 @@
+{
+    "rightsSplit": [
+      {
+        "PutRequest": {
+            "Item": {
+                "id": {
+                    "N": "1"
+                },
+                "splitUuid": {
+                    "S": "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e"
+                },
+                "rightHolderId":{
+                    "N": "1"
+                },
+                "splitPct": {
+                    "N": "50.0000"
+                },
+                "state": {
+                    "S": "active"
+                },
+                "contributorRole": {
+                    "M": {
+                        "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e": {"S": "writer"}, 
+                        "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e": {"S": "guitarist"}
+                    }
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "id": {
+                    "N": "2"
+                },
+                "splitUuid": {
+                    "S": "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e"
+                },
+                "rightHolderId":{
+                    "N": "1"
+                },
+                "splitPct": {
+                    "N": "50.0000"
+                },
+                "state": {
+                    "S": "active"
+                },
+                "contributorRole": {
+                    "M": {
+                        "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e": {"S": "writer"}, 
+                        "54321c60-7b1a-11e8-9c9c-2d42b21b1a3e": {"S": "singer"}
+                    }
+                }
+            }
+        }
+      }
+    ]
+}

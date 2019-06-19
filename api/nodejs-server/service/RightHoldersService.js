@@ -1,8 +1,6 @@
 'use strict';
-const lodb = require('lodb');
-const db = lodb('./data/db.json');
-const uuid = require('uuid');
-const TABLE = 'profiles';
+const uuidv1 = require('uuid/v1');
+const TABLE = 'rightHolder';
 const utils = require('../utils/utils.js');
 
 // AWS
@@ -18,19 +16,18 @@ AWS.config.update({
 const ddb = new AWS.DynamoDB.DocumentClient({region: REGION});
 
 
-
 /**
  * Delete a right holder's profile with the given ID
  *
- * id Integer The rights holder's unique profile ID
+ * rightHolderId Integer The rights holder's unique profile ID
  * no response value expected for this operation
- **/ 
-exports.deleteProfile = function(id) {
+ **/
+exports.deleteRightHolder = function(rightHolderId) {
   return new Promise(function(resolve, reject) {
     let params = {
       TableName: TABLE,
       Key: {
-        'id': id
+        'rightHolderId': rightHolderId
       }
     };
     // Call DynamoDB to delete the item from the table
@@ -40,7 +37,7 @@ exports.deleteProfile = function(id) {
         resolve();
       } else {
         console.log("Success", data);
-        resolve('Profile removed');
+        resolve('Right holder removed');
       }
     });
   });
@@ -50,14 +47,13 @@ exports.deleteProfile = function(id) {
 /**
  * Get a list of all right holder profiles
  *
- * returns profiles
+ * returns rightHolders
  **/
-exports.getAllProfiles = function() {
+exports.getAllRightHolders = function() {
   return new Promise(function(resolve, reject) {
     let params = {
       "TableName": TABLE,
     }
-    // Call DynamoDB to delete the item from the table
     ddb.scan(params, function(err, data) {
       if (err) {
         console.log("Error", err);
@@ -74,15 +70,15 @@ exports.getAllProfiles = function() {
 /**
  * Get a right holder's profile with the given ID
  *
- * id Integer The rights holder's unique profile ID
- * returns profile
+ * rightHolderId Integer The rights holder's unique profile ID
+ * returns rightHolder
  **/
-exports.getProfile = function(id) {
+exports.getRightHolder = function(rightHolderId) {
   return new Promise(function(resolve, reject) {
     let params = {
       TableName: TABLE,
       Key: {
-        'id': id
+        'rightHolderId': rightHolderId
       }
     };
     // Call DynamoDB to delete the item from the table
@@ -102,16 +98,16 @@ exports.getProfile = function(id) {
 /**
  * Update right holder's email address with given ID
  *
- * id Integer The right holder's unique profile ID
+ * rightHolderId Integer The right holder's unique profile ID
  * email Email The rights holder's email address
  * returns Object
  **/
-exports.patchProfileEmail = function(id,email) {
+exports.patchRightHolderEmail = function(rightHolderId,email) {
   return new Promise(function(resolve, reject) {
     let params = {
       TableName: TABLE,
       Key: {
-        'id': id
+        'rightHolderId': rightHolderId
       },
       UpdateExpression: 'set email = :e',
       ExpressionAttributeValues: {
@@ -136,16 +132,16 @@ exports.patchProfileEmail = function(id,email) {
 /**
  * Update right holder's first name with the given ID
  *
- * id Integer The rights holder's unique profile ID
- * firstName First-name The rights holder's first name
+ * rightHolderId Integer The rights holder's unique profile ID
+ * firstName FirstName The rights holder's first name
  * returns Object
  **/
-exports.patchProfileFirstName = function(id,firstName) {
+exports.patchRightHolderFirstName = function(rightHolderId,firstName) {
   return new Promise(function(resolve, reject) {
     let params = {
       TableName: TABLE,
       Key: {
-        'id': id
+        'rightHolderId': rightHolderId
       },
       UpdateExpression: 'set firstName  = :f',
       ExpressionAttributeValues: {
@@ -168,51 +164,18 @@ exports.patchProfileFirstName = function(id,firstName) {
 
 
 /**
- * Update right holder's artist name with the given ID
- *
- * id Integer The rights holder's unique profile ID
- * artistName Artist name The rights holder's artist name
- * returns Object
- **/
-exports.patchProfileArtistName = function(id,artistName) {
-  return new Promise(function(resolve, reject) {
-    let params = {
-      TableName: TABLE,
-      Key: {
-        'id': id
-      },
-      UpdateExpression: 'set artistName  = :f',
-      ExpressionAttributeValues: {
-        ':f' : artistName.artistName
-      },
-      ReturnValues: 'UPDATED_NEW'
-    };
-    ddb.update(params, function(err, data) {
-      if (err) {
-        console.log("Error", err);
-        resolve();
-      } else {
-        console.log("Success", data.Attributes);
-        resolve(data.Attributes);
-      }
-    });
-  });
-}
-
-
-/**
  * Update right holder's IPI number
  *
- * id Integer The right holder's unique profile ID
+ * rightHolderId Integer The right holder's unique profile ID
  * ipi Ipi The right holder's IPI number
  * returns Object
  **/
-exports.patchProfileIPI = function(id,ipi) {
+exports.patchRightHolderIPI = function(rightHolderId,ipi) {
   return new Promise(function(resolve, reject) {
     let params = {
       TableName: TABLE,
       Key: {
-        'id': id
+        'rightHolderId': rightHolderId
       },
       UpdateExpression: 'set ipi = :i',
       ExpressionAttributeValues: {
@@ -235,18 +198,52 @@ exports.patchProfileIPI = function(id,ipi) {
 
 
 /**
- * Update right holder's last name with the given ID
+ * Update the jurisdiction for the given right holder
  *
- * id Integer The rights holder's unique profile ID
- * lastName Last-name The rights holder's last name
+ * rightHolderId Integer The artwork agreement's unique ID
+ * jurisdiction Jurisdiction The jurisdiction of the given right holder
  * returns Object
  **/
-exports.patchProfileLastName = function(id,lastName) {
+exports.patchRightHolderJurisdiction = function(rightHolderId,jurisdiction) {
   return new Promise(function(resolve, reject) {
     let params = {
       TableName: TABLE,
       Key: {
-        'id': id
+        'rightHolderId': rightHolderId
+      },
+      UpdateExpression: 'set jurisdiction = :j',
+      ExpressionAttributeValues: {
+        ':j' : jurisdiction.jurisdiction
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
+  });
+}
+
+
+/**
+ * Update right holder's last name with the given ID
+ *
+ * rightHolderId Integer The rights holder's unique profile ID
+ * lastName LastName The rights holder's last name
+ * returns Object
+ **/
+exports.patchRightHolderLastName = function(rightHolderId,lastName) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'rightHolderId': rightHolderId
       },
       UpdateExpression: 'set lastName  = :l',
       ExpressionAttributeValues: {
@@ -269,90 +266,22 @@ exports.patchProfileLastName = function(id,lastName) {
 
 
 /**
- * Update list of media for the given right holder
+ * Update right holder's password with given ID
  *
- * id Integer The right holder's unique profile ID
- * mediaId MediaIds The unique ID of the given media
- * returns profile
+ * rightHolderId Integer The right holder's unique profile ID
+ * password Password The rights holder's password
+ * no response value expected for this operation
  **/
-exports.patchProfileMedia = function(id,mediaId) {
+exports.patchRightHolderPassword = function(rightHolderId,password) {
   return new Promise(function(resolve, reject) {
     let params = {
       TableName: TABLE,
       Key: {
-        'id': id
+        'rightHolderId': rightHolderId
       },
-      UpdateExpression: 'set media = list_append(if_not_exists(media, :empty_list), :m)',
+      UpdateExpression: 'set password = :p',
       ExpressionAttributeValues: {
-        ':m' : mediaId,
-        ':empty_list': []
-      },
-      ReturnValues: 'UPDATED_NEW'
-    };
-    ddb.update(params, function(err, data) {
-      if (err) {
-        console.log("Error", err);
-        resolve();
-      } else {
-        console.log("Success", data.Attributes);
-        resolve(data.Attributes);
-      }
-    });
-  });
-}
-
-
-/**
- * Update right holder's role with the given ID       (Or list of roles including copyright, performance, and/or recording)
- *
- * id Integer The right holder's unique profile ID
- * contributorRole Contributor Role The right holder's role
- * returns Object
- **/
-exports.patchProfileContributorRole = function(id,contributorRole) {
-  return new Promise(function(resolve, reject) {
-    let params = {
-      TableName: TABLE,
-      Key: {
-        'id': id
-      },
-      UpdateExpression: 'set contributorRole = list_append(if_not_exists(contributorRole, :empty_list), :r)',
-      ExpressionAttributeValues: {
-        ':r' : contributorRole,
-        ':empty_list': []
-      },
-      ReturnValues: 'UPDATED_NEW'
-    };
-    ddb.update(params, function(err, data) {
-      if (err) {
-        console.log("Error", err);
-        resolve();
-      } else {
-        console.log("Success", data.Attributes);
-        resolve(data.Attributes);
-      }
-    });
-  });
-}
-
-
-/**
- * Update the wallet address of a right holder
- *
- * id Integer The right holder's unique profile ID
- * wallet Wallet The right holder's wallet address
- * returns Object
- **/
-exports.patchProfileWallet = function(id,wallet) {
-  return new Promise(function(resolve, reject) {
-    let params = {
-      TableName: TABLE,
-      Key: {
-        'id': id
-      },
-      UpdateExpression: 'set wallet  = :f',
-      ExpressionAttributeValues: {
-        ':f' : wallet.wallet
+        ':p' : password.password
       },
       ReturnValues: 'UPDATED_NEW'
     };
@@ -369,19 +298,20 @@ exports.patchProfileWallet = function(id,wallet) {
   });
 }
 
+
 /**
  * Update list of social media links for the given right holder
  *
- * id Integer The right holder's unique profile ID
- * socialMediaLinks Social Media Links The Social Media URLs of the given profile  
- * returns profile
+ * rightHolderId Integer The right holder's unique profile ID
+ * socialMediaLinks SocialMediaLinks The object containing the given right holder profile's social media links
+ * returns rightHolder
  **/
-exports.patchProfileSocialMediaLinks = function(id,socialMediaLinks) {
+exports.patchRightHolderSocialMediaLinks = function(rightHolderId,socialMediaLinks) {
   return new Promise(function(resolve, reject) {
     let params = {
       "TableName": TABLE,
       Key: {
-        'id': id
+        'rightHolderId': rightHolderId
       }
     }
     // Get old social media links
@@ -395,7 +325,7 @@ exports.patchProfileSocialMediaLinks = function(id,socialMediaLinks) {
         let params = {
           TableName: TABLE,
           Key: {
-            'id': id
+            'rightHolderId': rightHolderId
           },
           UpdateExpression: 'set socialMediaLinks  = :m',
           ExpressionAttributeValues: {
@@ -419,12 +349,46 @@ exports.patchProfileSocialMediaLinks = function(id,socialMediaLinks) {
 
 
 /**
- * This method creates a new profile
+ * Update the wallet address of a right holder
  *
- * body Profile request
- * returns profile
+ * rightHolderId Integer The right holder's unique profile ID
+ * wallet Wallet The right holder's wallet address
+ * returns Object
  **/
-exports.postProfile = function(body) {
+exports.patchRightHolderWallet = function(rightHolderId,wallet) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'rightHolderId': rightHolderId
+      },
+      UpdateExpression: 'set wallet  = :f',
+      ExpressionAttributeValues: {
+        ':f' : wallet.wallet
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
+  });
+}
+
+
+/**
+ * This method creates a new right holder profile
+ *
+ * body RightHolder request
+ * returns rightHolder
+ **/
+exports.postRightHolder = function(body) {
   return new Promise(function(resolve, reject) {
     let params = {
       "TableName": TABLE,
@@ -436,20 +400,20 @@ exports.postProfile = function(body) {
         resolve();
       } else {
         // Create unique ID value
-        let ID_VALUE = data.Count + 1;
+        let RIGHT_HOLDER_ID = data.Count + 1;
 
         let params = {
           TableName: TABLE,
           Item: {
-            'id': ID_VALUE,
+            'rightHolderId': RIGHT_HOLDER_ID,
             'ipi': body.ipi,
-            'contributorRole': body.contributorRole,
             'wallet': body.wallet,
             'media': body.media,
             'firstName': body.firstName,
             'email': body.email,
             'lastName': body.lastName,
-            'artistName': body.artistName,
+            'password': body.password,
+            'jurisdiction' : body.jurisdiction,
             'socialMediaLinks': body.socialMediaLinks
           }
         };
@@ -469,31 +433,30 @@ exports.postProfile = function(body) {
 
 
 /**
- * This method updates a profile
+ * This method updates a right holder profile
  *
- * id Integer The rights holder's unique profile ID
- * body Profile request
- * returns profile
+ * rightHolderId Integer The rights holder's unique profile ID
+ * body RightHolder request
+ * returns rightHolder
  **/
-// AWS updateItem
-exports.updateProfile = function(id,body) {
+exports.updateRightHolder = function(rightHolderId,body) {
   return new Promise(function(resolve, reject) {
     let params = {
       TableName: TABLE,
       Key: {
-        'id': id
+        'rightHolderId': rightHolderId
       },
-      UpdateExpression: 'set ipi  = :i, contributorRole = :r, wallet = :w, media = :m, firstName = :f, email = :e, lastName = :l, socialMediaLinks = :s, artistName = :a',
+      UpdateExpression: 'set ipi  = :i, wallet = :w, media = :m, firstName = :f, email = :e, lastName = :l, socialMediaLinks = :s, jurisdiction = :j, password = :p',
       ExpressionAttributeValues: {
         ':i' : body.ipi,
-        ':r' : body.contributorRole,
         ':w' : body.wallet,
         ':m' : body.media,
         ':f' : body.firstName,
         ':e' : body.email,
         ':l' : body.lastName,
+        ':p' : body.password,
+        ':j' : body.jurisdiction,
         ':s' : body.socialMediaLinks,
-        ':a' : body.artistName
       },
       ReturnValues: 'UPDATED_NEW'
     };
