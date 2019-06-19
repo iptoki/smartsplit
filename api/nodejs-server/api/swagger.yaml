@@ -16,6 +16,10 @@ tags:
   description: "Obtaining and refreshing your JWT token"
 - name: "Right Holders"
   description: "Viewing and creating right holder profiles"
+- name: "Rights Split"
+  description: "Viewing and creating splits for a given right holder profile"
+- name: "Splits"
+  description: "Viewing and creating splits for a given media"
 - name: "Media"
   description: "Viewing and creating media"
 - name: "Payments"
@@ -67,6 +71,538 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "AuthenticationDetails"
+  /splits:
+    get:
+      tags:
+      - "Splits"
+      description: "Get a list of all media splits"
+      operationId: "getAllSplits"
+      parameters: []
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/listSplits"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Splits"
+    post:
+      tags:
+      - "Splits"
+      description: "This method creates a new split for a given media"
+      operationId: "postSplit"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/splits"
+      responses:
+        200:
+          description: "OK. The split was created."
+          schema:
+            $ref: "#/definitions/splits"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Splits"
+  /splits/{uuid}:
+    get:
+      tags:
+      - "Splits"
+      description: "Get a split with the given ID"
+      operationId: "getSplit"
+      parameters:
+      - name: "uuid"
+        in: "path"
+        description: "The split's unique  ID"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/splits"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Splits"
+    put:
+      tags:
+      - "Splits"
+      description: "This method updates a split"
+      operationId: "updateSplit"
+      parameters:
+      - name: "uuid"
+        in: "path"
+        description: "The splits unique profile ID"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/splits"
+      responses:
+        200:
+          description: "OK. The split was created."
+          schema:
+            $ref: "#/definitions/splits"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Splits"
+    delete:
+      tags:
+      - "Splits"
+      description: "Delete a right holder's profile with the given ID"
+      operationId: "deleteSplit"
+      parameters:
+      - name: "uuid"
+        in: "path"
+        description: "The splits's unique profile ID"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "OK. Splits deleted."
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Splits"
+  /splits/{uuid}/emailToken:
+    patch:
+      tags:
+      - "Splits"
+      description: "Update email token for given split"
+      operationId: "patchSplitEmailToken"
+      parameters:
+      - name: "uuid"
+        in: "path"
+        description: "The split's unique ID"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "emailToken"
+        description: "The split's email token"
+        required: true
+        schema:
+          $ref: "#/definitions/splits/properties/emailToken"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            properties:
+              emailToken:
+                type: "string"
+                example: "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e"
+                description: "The email token for the given split"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Splits"
+  /splits/{uuid}/mediaId:
+    patch:
+      tags:
+      - "Splits"
+      description: "Update mediaId for given split"
+      operationId: "patchSplitMediaId"
+      parameters:
+      - name: "uuid"
+        in: "path"
+        description: "The split's unique ID"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "mediaId"
+        description: "The split's email token"
+        required: true
+        schema:
+          $ref: "#/definitions/splits/properties/mediaId"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            properties:
+              mediaId:
+                type: "integer"
+                example: 1
+                description: "The mediaId for the given split"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Splits"
+  /splits/{uuid}/splitType:
+    patch:
+      tags:
+      - "Splits"
+      description: "Update split type for a given split"
+      operationId: "patchSplitType"
+      parameters:
+      - name: "uuid"
+        in: "path"
+        description: "The split's unique ID"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "splitType"
+        description: "The split type of the split"
+        required: true
+        schema:
+          $ref: "#/definitions/splits/properties/splitType"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            properties:
+              splitType:
+                type: "array"
+                example: ["workCopyrightSplit"]
+                description: "The split type of the given split"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Splits"
+  /rightsSplit:
+    get:
+      tags:
+      - "Rights Split"
+      description: "Get a list of all rights splits"
+      operationId: "getAllRightsSplits"
+      parameters: []
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/rightsSplits"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Rights Split"
+    post:
+      tags:
+      - "Rights Split"
+      description: "This method creates a new rights split for a given right holder"
+      operationId: "postRightsSplit"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/rightsSplits"
+      responses:
+        200:
+          description: "OK. The rights split was created."
+          schema:
+            $ref: "#/definitions/rightsSplits"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Rights Split"
+  /rightsSplit/{splitUuid}:
+    get:
+      tags:
+      - "Rights Split"
+      description: "Get a rights split with the given ID"
+      operationId: "getRightsSplit"
+      parameters:
+      - name: "splitUuid"
+        in: "path"
+        description: "The split's unique ID"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/rightsSplit"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Rights Split"
+    put:
+      tags:
+      - "Rights Split"
+      description: "This method updates a rights split"
+      operationId: "updateRightsSplit"
+      parameters:
+      - name: "splitUuid"
+        in: "path"
+        description: "The splits unique id"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/rightsSplit"
+      responses:
+        200:
+          description: "OK. The rights split was created."
+          schema:
+            $ref: "#/definitions/rightsSplit"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Rights Split"
+    delete:
+      tags:
+      - "Rights Split"
+      description: "Delete a right split with the given ID"
+      operationId: "deleteRightsSplit"
+      parameters:
+      - name: "splitUuid"
+        in: "path"
+        description: "The split's unique profile ID"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "OK. Right Split deleted."
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Rights Split"
+  /rightsSplit/{splitUuid}/rightHolderId:
+    patch:
+      tags:
+      - "Rights Split"
+      description: "Update right holder for given rights split"
+      operationId: "patchRightsSplitRightHolder"
+      parameters:
+      - name: "splitUuid"
+        in: "path"
+        description: "The rights split's unique ID"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "rightHolderId"
+        description: "The split's email token"
+        required: true
+        schema:
+          $ref: "#/definitions/rightsSplit/properties/rightHolderId"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            properties:
+              rightHolderId:
+                type: "integer"
+                example: 2
+                description: "The right holder id for the given rights split"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Rights Split"
+  /rightsSplit/{splitUuid}/splitPct:
+    patch:
+      tags:
+      - "Rights Split"
+      description: "Update split percentage for given rights split"
+      operationId: "patchRightsSplitPct"
+      parameters:
+      - name: "splitUuid"
+        in: "path"
+        description: "The split's unique ID"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "splitPct"
+        description: "The split percentage for the given rights split"
+        required: true
+        schema:
+          $ref: "#/definitions/rightsSplit/properties/splitPct"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            properties:
+              splitPct:
+                type: "number"
+                example: 41.6667
+                description: "The split percentage for the given rights split"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Rights Split"
+  /rightsSplit/{splitUuid}/state:
+    patch:
+      tags:
+      - "Rights Split"
+      description: "Update state for a given rights split"
+      operationId: "patchRightsSplitState"
+      parameters:
+      - name: "splitUuid"
+        in: "path"
+        description: "The split's unique ID"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "state"
+        description: "The state of the rights split"
+        required: true
+        schema:
+          $ref: "#/definitions/rightsSplit/properties/state"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            properties:
+              state:
+                type: "string"
+                example: "active"
+                description: "The state of the given rights split"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Rights Split"
+  /rightsSplit/{splitUuid}/roles:
+    patch:
+      tags:
+      - "Rights Split"
+      description: "Update roles of the right holder for a given rights split"
+      operationId: "patchRightsSplitRoles"
+      parameters:
+      - name: "splitUuid"
+        in: "path"
+        description: "The rights split's unique ID"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "roles"
+        description: "The roles array of the given rights split for the right holder"
+        required: true
+        schema:
+          $ref: "#/definitions/rightsSplit/properties/roles"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            properties:
+              roles:
+                type: "object"
+                example: {"45745c60-7b1a-11e8-9c9c-2d42b21b1a3e": "writer"}
+                description: "The roles of the right holder for the given rights split"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Splits"
   /rightHolders:
     get:
       tags:
@@ -1475,7 +2011,7 @@ definitions:
     type: "object"
     properties:
       rightHolderId:
-        type: integer
+        type: "integer"
         example: 1
         description: "The unique ID of the given right holder profile"
       firstName:
@@ -1660,6 +2196,11 @@ definitions:
           s3Etag: "2f03d99fbf37d8d585285fd4cce27feb"
         }
       ]
+  listSplits:
+    type: "array"
+    description: "An array of information about splits"
+    items:
+      $ref: "#/definitions/splits"
   splits:
     type: "object"
     properties: 
@@ -1687,6 +2228,11 @@ definitions:
         splitType: "workCopyrightSplit",
         mediaId: 1
       }
+  rightsSplits:
+    type: "array"
+    description: "An array of information about rights splits"
+    items:
+      $ref: "#/definitions/rightsSplits"
   rightsSplit:
     type: "object"
     properties: 
@@ -1703,10 +2249,10 @@ definitions:
         example: 41.6667
         description: "The percentage split of the given right holder for the given rights split"
       state:
-        type: "object"
-        example: {}
+        type: "string"
+        example: "active"
         description: "The state of the given rights split"
-      contributorRole:
+      roles:
         type: "object"
         additionalProperties:
           type: "string"
@@ -1716,7 +2262,7 @@ definitions:
         splitUuid: "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e",
         rightHolderId: 1,
         splitPct: 41.6667,
-        state: {},
+        state: "active",
         contributorRole: {"45745c60-7b1a-11e8-9c9c-2d42b21b1a3e": "writer"}
       }
   payments:
