@@ -47,14 +47,34 @@ app.post('v1/media/', cors(), function (req, res, next) {
 app.put('v1/media/:mediaId', cors(), function (req, res, next) {
   res.json({msg: 'This is CORS-enabled for all origins!'})
 })
-app.options('v1/profiles/', cors()) // enable pre-flight request for DELETE request
-app.delete('v1/profiles/:id', cors(), function (req, res, next) {
+app.options('v1/splits/', cors()) // enable pre-flight request for DELETE request
+app.delete('v1/splits/:uuid', cors(), function (req, res, next) {
   res.json({msg: 'This is CORS-enabled for all origins!'})
 })
-app.post('v1/profiles/', cors(), function (req, res, next) {
+app.post('v1/splits/', cors(), function (req, res, next) {
   res.json({msg: 'This is CORS-enabled for all origins!'})
 })
-app.put('v1/profiles/:id', cors(), function (req, res, next) {
+app.put('v1/splits/:uuid', cors(), function (req, res, next) {
+  res.json({msg: 'This is CORS-enabled for all origins!'})
+})
+app.options('v1/rightsSplit/', cors()) // enable pre-flight request for DELETE request
+app.delete('v1/rightsSplit/:splitUuid', cors(), function (req, res, next) {
+  res.json({msg: 'This is CORS-enabled for all origins!'})
+})
+app.post('v1/rightsSplit/', cors(), function (req, res, next) {
+  res.json({msg: 'This is CORS-enabled for all origins!'})
+})
+app.put('v1/rightsSplit/:SplitUuid', cors(), function (req, res, next) {
+  res.json({msg: 'This is CORS-enabled for all origins!'})
+})
+app.options('v1/rightHolders/', cors()) // enable pre-flight request for DELETE request
+app.delete('v1/rightHolders/:rightHolderId', cors(), function (req, res, next) {
+  res.json({msg: 'This is CORS-enabled for all origins!'})
+})
+app.post('v1/rightHolders/', cors(), function (req, res, next) {
+  res.json({msg: 'This is CORS-enabled for all origins!'})
+})
+app.put('v1/rightHolders/:rightHolderId', cors(), function (req, res, next) {
   res.json({msg: 'This is CORS-enabled for all origins!'})
 })
 app.options('v1/payments/', cors()) // enable pre-flight request for DELETE request

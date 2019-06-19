@@ -2,7 +2,6 @@
 
 var utils = require('../utils/writer.js');
 var Media = require('../service/MediaService');
-var app = require('../index.js');
 
 module.exports.deleteMedia = function deleteMedia (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
@@ -28,78 +27,6 @@ module.exports.getAllMedia = function getAllMedia (req, res, next) {
 module.exports.getMedia = function getMedia (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
   Media.getMedia(mediaId)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.patchMediaGenre = function patchMediaGenre (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  var genre = req.swagger.params['genre'].value;
-  Media.patchMediaGenre(mediaId,genre)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.patchMediaISRC = function patchMediaISRC (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  var isrc = req.swagger.params['isrc'].value;
-  Media.patchMediaISRC(mediaId,isrc)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.patchMediaUPC = function patchMediaUPC (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  var upc = req.swagger.params['upc'].value;
-  Media.patchMediaUPC(mediaId,upc)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.patchMediaSecondaryGenre = function patchMediaSecondaryGenre (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  var secondaryGenre = req.swagger.params['secondaryGenre'].value;
-  Media.patchMediaSecondaryGenre(mediaId,secondaryGenre)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.patchMediaPublisher = function patchMediaPublisher (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  var publisher = req.swagger.params['publisher'].value;
-  Media.patchMediaPublisher(mediaId,publisher)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.patchMediaTitle = function patchMediaTitle (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  var title = req.swagger.params['title'].value;
-  Media.patchMediaTitle(mediaId,title)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -144,10 +71,10 @@ module.exports.patchMediaDuration = function patchMediaDuration (req, res, next)
     });
 };
 
-module.exports.patchModificationDate = function patchModificationDate (req, res, next) {
+module.exports.patchMediaGenre = function patchMediaGenre (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
-  var modificationDate = req.swagger.params['modificationDate'].value;
-  Media.patchModificationDate(mediaId,modificationDate)
+  var genre = req.swagger.params['genre'].value;
+  Media.patchMediaGenre(mediaId,genre)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -156,22 +83,10 @@ module.exports.patchModificationDate = function patchModificationDate (req, res,
     });
 };
 
-module.exports.patchPublishDate = function patchPublishDate (req, res, next) {
+module.exports.patchMediaISRC = function patchMediaISRC (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
-  var modificationDate = req.swagger.params['publishDate'].value;
-  Media.patchModificationDate(mediaId,publishDate)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.patchMediaLyrics = function patchMediaLyrics (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  var lyrics = req.swagger.params['lyrics'].value;
-  Media.patchMediaLyrics(mediaId,lyrics)
+  var isrc = req.swagger.params['isrc'].value;
+  Media.patchMediaISRC(mediaId,isrc)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -184,6 +99,18 @@ module.exports.patchMediaInLanguages = function patchMediaInLanguages (req, res,
   var mediaId = req.swagger.params['mediaId'].value;
   var inLanguages = req.swagger.params['inLanguages'].value;
   Media.patchMediaInLanguages(mediaId,inLanguages)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.patchMediaLyrics = function patchMediaLyrics (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  var lyrics = req.swagger.params['lyrics'].value;
+  Media.patchMediaLyrics(mediaId,lyrics)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -216,6 +143,42 @@ module.exports.patchMediaPressArticleLinks = function patchMediaPressArticleLink
     });
 };
 
+module.exports.patchMediaPublisher = function patchMediaPublisher (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  var publisher = req.swagger.params['publisher'].value;
+  Media.patchMediaPublisher(mediaId,publisher)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.patchMediaS3Etag = function patchMediaS3Etag (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  var s3Etag = req.swagger.params['s3Etag'].value;
+  Media.patchMediaS3Etag(mediaId,s3Etag)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.patchMediaSecondaryGenre = function patchMediaSecondaryGenre (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  var secondaryGenre = req.swagger.params['secondaryGenre'].value;
+  Media.patchMediaSecondaryGenre(mediaId,secondaryGenre)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
 module.exports.patchMediaSocialMediaLinks = function patchMediaSocialMediaLinks (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
   var socialMediaLinks = req.swagger.params['socialMediaLinks'].value;
@@ -232,6 +195,54 @@ module.exports.patchMediaStreamingServiceLinks = function patchMediaStreamingSer
   var mediaId = req.swagger.params['mediaId'].value;
   var streamingServiceLinks = req.swagger.params['streamingServiceLinks'].value;
   Media.patchMediaStreamingServiceLinks(mediaId,streamingServiceLinks)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.patchMediaTitle = function patchMediaTitle (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  var title = req.swagger.params['title'].value;
+  Media.patchMediaTitle(mediaId,title)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.patchMediaUPC = function patchMediaUPC (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  var upc = req.swagger.params['upc'].value;
+  Media.patchMediaUPC(mediaId,upc)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.patchModificationDate = function patchModificationDate (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  var modificationDate = req.swagger.params['modificationDate'].value;
+  Media.patchModificationDate(mediaId,modificationDate)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.patchPublishDate = function patchPublishDate (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  var publishDate = req.swagger.params['publishDate'].value;
+  Media.patchPublishDate(mediaId,publishDate)
     .then(function (response) {
       utils.writeJson(res, response);
     })

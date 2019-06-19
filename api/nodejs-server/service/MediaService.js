@@ -1,6 +1,7 @@
 'use strict';
 const TABLE = 'media';
 const utils = require('../utils/utils.js');
+const uuidv1 = require('uuid/v1');
 
 // AWS
 const AWS = require('aws-sdk');
@@ -471,6 +472,39 @@ exports.patchMediaAlbum = function(mediaId,album) {
 
 
 /**
+ * Update the AWS s3 Etag for given media
+ *
+ * mediaId Integer The artwork agreement's unique ID
+ * s3Etag S3Etag The AWS s3 Etag string for the given media
+ * returns media
+ **/
+exports.patchMediaS3Etag = function(mediaId,s3Etag) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'mediaId': mediaId
+      },
+      UpdateExpression: 'set s3Etag  = :s',
+      ExpressionAttributeValues: {
+        ':s' : s3Etag.s3Etag
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
+  });
+}
+
+
+/**
  * Update the lyrics for the given piece of media
  *
  * mediaId Integer The artwork agreement's unique ID
@@ -490,7 +524,6 @@ exports.patchMediaLyrics = function(mediaId,lyrics) {
       },
       ReturnValues: 'UPDATED_NEW'
     };
-    // Call DynamoDB to delete the item from the table
     ddb.update(params, function(err, data) {
       if (err) {
         console.log("Error", err);
@@ -756,7 +789,6 @@ exports.postMedia = function(body) {
         // Assign creationDate to current date time
         let d = Date(Date.now());   
         let DATE_CREATED = d.toString();
-        console.log(DATE_CREATED);
         let params = {
           TableName: TABLE,
           Item: {
@@ -766,6 +798,7 @@ exports.postMedia = function(body) {
             'cover': body[0].cover,
             'creationDate': DATE_CREATED,
             'modificationDate': body[0].modificationDate,
+            's3Etag': body[0].s3Etag,
             'publishDate': body[0].publishDate,
             'publisher': body[0].publisher,
             'title': body[0].title,
@@ -816,7 +849,7 @@ exports.updateMedia = function(mediaId,body) {
       Key: {
         'mediaId': mediaId
       },
-      UpdateExpression: 'set title  = :t, genre = :g, secondaryGenre = :y, album = :a, \
+      UpdateExpression: 'set title  = :t, genre = :g, secondaryGenre = :y, album = :a, s3Etag = :s\
         \ artist = :y, creationDate = :c, modificationDate = :f, publishDate = :i, cover = :v, publisher = :p, \
         \ lyrics = :l, inLanguages = :u, isrc = :z, upc = :b, msDuration = :d, socialMediaLinks = :e, streamingServiceLinks = :k, pressArticleLinks = :x, playlistLinks = :q', 
 
@@ -833,6 +866,7 @@ exports.updateMedia = function(mediaId,body) {
         ':p' : body[0].publisher,
         ':l' : body[0].lyrics,
         ':u' : body[0].inLanguages,
+        ':s' : body[0].s3Etag,
         ':z' : body[0].isrc,
         ':b' : body[0].upc,
         ':d' : body[0].msDuration,       

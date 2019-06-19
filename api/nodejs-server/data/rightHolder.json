@@ -1,0 +1,78 @@
+{
+    "rightHolder": [
+      {
+        "PutRequest": {
+            "Item": {
+                "rightHolderId": {
+                    "N": "1"
+                },
+                "ipi": {
+                    "N": "11114576"
+                },
+                "wallet": {
+                    "S": "0xaa87ae15f4be97e2739c9069ddef674f907d27a8"
+                },
+                "firstName": {
+                    "S": "Johnny"
+                },
+                "email": {
+                    "S": "johnny.smithy@example.com"
+                },
+                "lastName": {
+                    "S": "Smithy"
+                },
+                "password":{
+                    "S": "3c9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3"
+                },
+                "jurisdiction":{
+                    "S": "Canada"
+                },
+                "socialMediaLinks": {
+                    "M": {
+                        "facebook": {"S": "https://facebook.com/johnnyjohnny"}, 
+                        "instagram": {"S": "https://instagram.com/johnnyjohnny"}, 
+                        "twitter": {"S": "https://twitter.com/johnnyjohnny"}
+                    }
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "rightHolderId": {
+                    "N": "2"
+                },
+                "ipi": {
+                    "N": "00004577"
+                },
+                "wallet": {
+                    "S": "0xff87ae15f4be97e2739c9069ddef674f907d27a8"
+                },
+                "firstName": {
+                    "S": "Bob"
+                },
+                "email": {
+                    "S": "bandrews@example.com"
+                },
+                "lastName": {
+                    "S": "Andrews"
+                },
+                "password":{
+                    "S": "4c9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3"
+                },
+                "jurisdiction":{
+                    "S": "Canada"
+                },
+                "socialMediaLinks": {
+                    "M": {
+                        "facebook": {"S": "https://facebook.com/bobbya"}, 
+                        "instagram": {"S": "https://instagram.com/bobbya"}, 
+                        "twitter": {"S": "https://twitter.com/bobbya"}
+                    }
+                }
+            }
+        }
+      }
+    ]
+}

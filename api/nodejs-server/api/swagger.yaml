@@ -367,18 +367,18 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "Rights Split"
-  /rightsSplit/{splitUuid}:
+  /rightsSplit/{id}:
     get:
       tags:
       - "Rights Split"
       description: "Get a rights split with the given ID"
       operationId: "getRightsSplit"
       parameters:
-      - name: "splitUuid"
+      - name: "id"
         in: "path"
         description: "The split's unique ID"
         required: true
-        type: "string"
+        type: "integer"
       responses:
         200:
           description: "OK"
@@ -399,11 +399,11 @@ paths:
       description: "This method updates a rights split"
       operationId: "updateRightsSplit"
       parameters:
-      - name: "splitUuid"
+      - name: "id"
         in: "path"
         description: "The splits unique id"
         required: true
-        type: "string"
+        type: "integer"
       - in: "body"
         name: "body"
         description: "request"
@@ -432,11 +432,11 @@ paths:
       description: "Delete a right split with the given ID"
       operationId: "deleteRightsSplit"
       parameters:
-      - name: "splitUuid"
+      - name: "id"
         in: "path"
         description: "The split's unique profile ID"
         required: true
-        type: "string"
+        type: "integer"
       responses:
         200:
           description: "OK. Right Split deleted."
@@ -451,18 +451,56 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "Rights Split"
-  /rightsSplit/{splitUuid}/rightHolderId:
+  /rightsSplit/{id}/splitUuid:
+    patch:
+      tags:
+      - "Rights Split"
+      description: "Update split uuid for given rights split"
+      operationId: "patchRightsSplitSplitUuid"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The rights split's unique ID"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "splitUuid"
+        description: "The uuid of the split for the given rights split"
+        required: true
+        schema:
+          $ref: "#/definitions/rightsSplit/properties/splitUuid"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            properties:
+              splitUuid:
+                type: "string"
+                example: "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e"
+                description: "The split uuid for the given rights split"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Rights Split"
+  /rightsSplit/{id}/rightHolderId:
     patch:
       tags:
       - "Rights Split"
       description: "Update right holder for given rights split"
       operationId: "patchRightsSplitRightHolder"
       parameters:
-      - name: "splitUuid"
+      - name: "id"
         in: "path"
         description: "The rights split's unique ID"
         required: true
-        type: "string"
+        type: "integer"
       - in: "body"
         name: "rightHolderId"
         description: "The split's email token"
@@ -489,18 +527,18 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "Rights Split"
-  /rightsSplit/{splitUuid}/splitPct:
+  /rightsSplit/{id}/splitPct:
     patch:
       tags:
       - "Rights Split"
       description: "Update split percentage for given rights split"
       operationId: "patchRightsSplitPct"
       parameters:
-      - name: "splitUuid"
+      - name: "id"
         in: "path"
         description: "The split's unique ID"
         required: true
-        type: "string"
+        type: "integer"
       - in: "body"
         name: "splitPct"
         description: "The split percentage for the given rights split"
@@ -527,18 +565,18 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "Rights Split"
-  /rightsSplit/{splitUuid}/state:
+  /rightsSplit/{id}/state:
     patch:
       tags:
       - "Rights Split"
       description: "Update state for a given rights split"
       operationId: "patchRightsSplitState"
       parameters:
-      - name: "splitUuid"
+      - name: "id"
         in: "path"
         description: "The split's unique ID"
         required: true
-        type: "string"
+        type: "integer"
       - in: "body"
         name: "state"
         description: "The state of the rights split"
@@ -565,18 +603,18 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "Rights Split"
-  /rightsSplit/{splitUuid}/roles:
+  /rightsSplit/{id}/roles:
     patch:
       tags:
       - "Rights Split"
       description: "Update roles of the right holder for a given rights split"
       operationId: "patchRightsSplitRoles"
       parameters:
-      - name: "splitUuid"
+      - name: "id"
         in: "path"
         description: "The rights split's unique ID"
         required: true
-        type: "string"
+        type: "integer"
       - in: "body"
         name: "roles"
         description: "The roles array of the given rights split for the right holder"
@@ -2236,6 +2274,10 @@ definitions:
   rightsSplit:
     type: "object"
     properties: 
+      id:
+        type: "integer"
+        example: 1
+        description: "The primary key ID for the given rights split record"
       splitUuid:
         type: "string"
         example: "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e"
@@ -2259,6 +2301,7 @@ definitions:
           description: "the role(s) of the right holder for the given right split"
     example:
       {
+        id: 1,
         splitUuid: "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e",
         rightHolderId: 1,
         splitPct: 41.6667,
