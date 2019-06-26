@@ -6,16 +6,6 @@
                 "mediaId": {
                     "N": "1"
                 },
-                "rightsSplit": {
-                    "M": {
-                        "John Smith": {"N": "41.6"}, 
-                        "Bob Andrews": {"N": "16.6"}, 
-                        "Andy Wilson": {"N": "41.6"}
-                    }
-                },
-                "jurisdiction": {
-                    "S": "SOCAN"
-                },
                 "artist": {
                     "S": "LYB"
                 },
@@ -46,22 +36,11 @@
                 "publisher": {
                     "S": "sync publishing"
                 },
-                "rightsType": {
-                    "M": {
-                        "copyright": {"BOOL": true}, 
-                        "performance": {"BOOL": true}, 
-                        "recording": {"BOOL": true}
-                    }
-                },
                 "title": {
                     "S": "Love You Baby"
                 },
-                "rightHolders": {
-                    "M": {
-                        "John Smith": {"S": "writer"}, 
-                        "Bob Andrews": {"S": "composer"}, 
-                        "Andy Wilson": {"S": "singer"}
-                    }
+                "s3Etag": {
+                    "S": "bf9389c4c1982c04099c46ddd311a90d"
                 },
                 "genre": {
                     "S": "Pop"
@@ -109,14 +88,6 @@
                 "mediaId": {
                     "N": "2"
                 },
-                "rightsSplit": {
-                    "M": {
-                        "John Smith": {"N": "100"}
-                    }
-                },
-                "jurisdiction": {
-                    "S": "SOPROQ"
-                },
                 "artist": {
                     "S": "Artist2"
                 },
@@ -147,19 +118,11 @@
                 "publisher": {
                     "S": "pop publishing"
                 },
-                "rightsType": {
-                    "M": {
-                        "copyright": {"BOOL": true}, 
-                        "performance": {"BOOL": false}, 
-                        "recording": {"BOOL": true}
-                    }
-                },
                 "title": {
                     "S": "Rock You Baby"
                 },
-                "rightHolders": {
-                    "M": {
-                        "John Smith": {"S": "writer"}                    }
+                "s3Etag": {
+                    "S": "74af247078f0557c8d919e1fef38ad4b"
                 },
                 "genre": {
                     "S": "Pop"
@@ -206,14 +169,6 @@
                 "mediaId": {
                     "N": "3"
                 },
-                "rightsSplit": {
-                    "M": {
-                        "John Smith": {"N": "100"}
-                    }
-                },
-                "jurisdiction": {
-                    "S": "SOPROQ"
-                },
                 "artist": {
                     "S": "Artist Name"
                 },
@@ -244,20 +199,11 @@
                 "publisher": {
                     "S": "pop publishing"
                 },
-                "rightsType": {
-                    "M": {
-                        "copyright": {"BOOL": true}, 
-                        "performance": {"BOOL": false}, 
-                        "recording": {"BOOL": true}
-                    }
-                },
                 "title": {
                     "S": "Rock You Baby (Acoustic Version)"
                 },
-                "rightHolders": {
-                    "M": {
-                        "John Smith": {"S": "writer"}                    
-                    }
+                "s3Etag": {
+                    "S": "3b8c37c32465fa527aa8b24fde0f8ff4"
                 },
                 "genre": {
                     "S": "Pop"
@@ -305,15 +251,6 @@
                 "mediaId": {
                     "N": "4"
                 },
-                "rightsSplit": {
-                    "M": {
-                        "John Smith": {"N": "50"},
-                        "Bob Andrews": {"N": "50"}
-                    }
-                },
-                "jurisdiction": {
-                    "S": "SOCAN"
-                },
                 "artist": {
                     "S": "Artist Name"
                 },
@@ -344,21 +281,11 @@
                 "publisher": {
                     "S": "sync publishing"
                 },
-                "rightsType": {
-                    "M": {
-                        "copyright": {"BOOL": true}, 
-                        "performance": {"BOOL": true}, 
-                        "recording": {"BOOL": true}
-                    }
-                },
                 "title": {
                     "S": "The Sun"
                 },
-                "rightHolders": {
-                    "M": {
-                        "John Smith": {"S": "writer"},
-                        "Bob Andrews": {"S": "composer"}
-                    }
+                "s3Etag": {
+                    "S": "75705e3118aa19daf5dbe478019b763c"
                 },
                 "genre": {
                     "S": "Rock"
@@ -406,14 +333,6 @@
                 "mediaId": {
                     "N": "5"
                 },
-                "rightsSplit": {
-                    "M": {
-                        "Bob Andrews": {"N": "100"}
-                    }
-                },
-                "jurisdiction": {
-                    "S": "ARTISTI"
-                },
                 "artist": {
                     "S": "Artist Name"
                 },
@@ -444,20 +363,11 @@
                 "publisher": {
                     "S": "SWAYER publishing"
                 },
-                "rightsType": {
-                    "M": {
-                        "copyright": {"BOOL": true}, 
-                        "performance": {"BOOL": true}, 
-                        "recording": {"BOOL": true}
-                    }
-                },
                 "title": {
                     "S": "Go"
                 },
-                "rightHolders": {
-                    "M": {
-                        "Bob Andrews": {"S": "composer"}
-                    }
+                "s3Etag": {
+                    "S": "09b1c444c2c99a661afcbae946e3f89f"
                 },
                 "genre": {
                     "S": "Hip Hop"
@@ -505,14 +415,6 @@
                 "mediaId": {
                     "N": "6"
                 },
-                "rightsSplit": {
-                    "M": {
-                        "Bob Andrews": {"N": "100"}
-                    }
-                },
-                "jurisdiction": {
-                    "S": "ARTISTI"
-                },
                 "artist": {
                     "S": "Artist Name Six"
                 },
@@ -543,20 +445,11 @@
                 "publisher": {
                     "S": "SWAYER publishing"
                 },
-                "rightsType": {
-                    "M": {
-                        "copyright": {"BOOL": true}, 
-                        "performance": {"BOOL": true}, 
-                        "recording": {"BOOL": true}
-                    }
-                },
                 "title": {
                     "S": "Sway"
                 },
-                "rightHolders": {
-                    "M": {
-                        "Bob Andrews": {"S": "composer"}
-                    }
+                "s3Etag": {
+                    "S": "84e055d7023a4d89bd1dc96926732bb3"
                 },
                 "genre": {
                     "S": "Hip Hop"
@@ -604,14 +497,6 @@
                 "mediaId": {
                     "N": "7"
                 },
-                "rightsSplit": {
-                    "M": {
-                        "Joe Jones": {"N": "100"}
-                    }
-                },
-                "jurisdiction": {
-                    "S": "SOCAN"
-                },
                 "artist": {
                     "S": "Seven"
                 },
@@ -642,20 +527,11 @@
                 "publisher": {
                     "S": "North publishing"
                 },
-                "rightsType": {
-                    "M": {
-                        "copyright": {"BOOL": true}, 
-                        "performance": {"BOOL": false}, 
-                        "recording": {"BOOL": true}
-                    }
-                },
                 "title": {
                     "S": "Symphony 9000"
                 },
-                "rightHolders": {
-                    "M": {
-                        "Bob Andrews": {"S": "songwriter"}
-                    }
+                "s3Etag": {
+                    "S": "6fc0115381ded2c5feba054b28e63eef"
                 },
                 "genre": {
                     "S": "Classical"
@@ -703,15 +579,6 @@
                 "mediaId": {
                     "N": "8"
                 },
-                "rightsSplit": {
-                    "M": {
-                        "Drew Miller": {"N": "50"},
-                        "Andy Wilson": {"N": "50"}
-                    }
-                },
-                "jurisdiction": {
-                    "S": "SOCAN"
-                },
                 "artist": {
                     "S": "Artist Name"
                 },
@@ -742,21 +609,11 @@
                 "publisher": {
                     "S": "sync publishing"
                 },
-                "rightsType": {
-                    "M": {
-                        "copyright": {"BOOL": true}, 
-                        "performance": {"BOOL": true}, 
-                        "recording": {"BOOL": true}
-                    }
-                },
                 "title": {
                     "S": "Love You Baby 2"
                 },
-                "rightHolders": {
-                    "M": {
-                        "Drew Miller": {"S": "writer"},
-                        "Andy Wilson": {"S": "performer"}
-                    }
+                "s3Etag": {
+                    "S": "6ef5bf6adcde21275838291994641758"
                 },
                 "genre": {
                     "S": "Rock"

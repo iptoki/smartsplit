@@ -1188,6 +1188,32 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "Media"
+  /media/{mediaId}/split:
+    get:
+      tags:
+      - "Media"
+      description: "Get split info for media with the given ID"
+      operationId: "getMediaSplit"
+      parameters:
+      - name: "mediaId"
+        in: "path"
+        description: "The artwork agreement's unique ID"
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/mediaSplits"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Media"
   /media/{mediaId}/title:
     patch:
       tags:
@@ -2234,6 +2260,127 @@ definitions:
           s3Etag: "2f03d99fbf37d8d585285fd4cce27feb"
         }
       ]
+  mediaSplits:
+    type: "object"
+    properties:
+      media:
+        type: "object"
+        additionalProperties:
+          type: "string"
+          description: "the media object for the given split"
+      initiator: 
+        type: "object"
+        additionalProperties:
+          type: "string"
+          description: "the initiator object for the given right split"
+      workCopyrightSplit: 
+        type: "object"
+        additionalProperties:
+          type: "string"
+          description: "the copyright object for the given right split"
+      performanceNeighboringRightSplit: 
+        type: "object"
+        additionalProperties:
+          type: "string"
+          description: "the performance rights object for the given right split"
+      masterNeighboringRightSplit: 
+        type: "object"
+        additionalProperties:
+          type: "string"
+          description: "the master rights object for the given right split"
+    example:
+      {
+        media: {"id": 1, "title": "Love You Baby"},
+        initiator: {"id": 1, "name": "Jim Smith"},
+        workCopyrightSplit: {
+          "splitType": "workCopyrightSplit",
+          "emailToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+          "uuid": "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e",
+          "rightsSplit": [
+            {
+              "contributorRole": {
+                "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e": "guitarist",
+                "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "writer"
+              },
+              "id": 1,
+              "rightHolder": {
+                "uuid": "1",
+                "email": "vincent@iptoki.com",
+                "name": "Vincent de Grandpré"
+              },
+              "splitPct": 50,
+              "splitUuid": "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e",
+              "state": "active"
+            },
+            {
+              "contributorRole": {
+                "12345c60-7b1a-11e8-9c9c-2d42b21b1a3f": "flutist",
+                "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "writer"
+              },
+              "id": 2,
+              "rightHolder": {
+                "uuid": "2",
+                "email": "david@iptoki.com",
+                "name": "David Wawryko"
+              },
+              "splitPct": 25,
+              "splitUuid": "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e",
+              "state": "active"
+            },
+            {
+              "contributorRole": {
+                "12345c60-7b1a-11e8-9c9c-2d42b21b1a4g": "composer"
+              },
+              "id": 3,
+              "rightHolder": {
+                "uuid": "3",
+                "email": "mario@iptoki.com",
+                "name": "Mario Perron"
+              },
+              "splitPct": 25,
+              "splitUuid": "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e",
+              "state": "active"
+            }
+          ]
+        },
+        "performanceNeighboringRightSplit": {
+          "splitType": "performanceNeighboringRightSplit",
+          "emailToken": "eyJhaaaabbbbbbbbbbbbaaaaaaaaa",
+          "uuid": "abababab-7b1a-11e8-9c9c-2d42b21b1a3e",
+          "rightsSplit": [
+            {
+              "contributorRole": {
+                "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e": "guitarist",
+                "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "writer"
+              },
+              "id": 4,
+              "rightHolder": {
+                "uuid": "1",
+                "email": "vincent@iptoki.com",
+                "name": "Vincent de Grandpré"
+              },
+              "splitPct": 50,
+              "splitUuid": "abababab-7b1a-11e8-9c9c-2d42b21b1a3e",
+              "state": "active"
+            },
+            {
+              "contributorRole": {
+                "12345c60-7b1a-11e8-9c9c-2d42b21b1a3f": "flutist",
+                "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "writer"
+              },
+              "id": 5,
+              "rightHolder": {
+                "uuid": "2",
+                "email": "david@iptoki.com",
+                "name": "David Wawryko"
+              },
+              "splitPct": 50,
+              "splitUuid": "abababab-7b1a-11e8-9c9c-2d42b21b1a3e",
+              "state": "active"
+            }
+          ]
+        }
+      }
   listSplits:
     type: "array"
     description: "An array of information about splits"
@@ -2251,11 +2398,9 @@ definitions:
         example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
         description: "The email token for the given split"
       splitType:
-        type: "array"
-        items:
-          type: "string"
-          description: "Types of copyright for the given media" 
-        example: ["workCopyrightSplit", "performanceNeighboringRightSplit", "masterNeighboringRightSplit"] 
+        type: "string"
+        description: "Types of copyright for the given media" 
+        example: "workCopyrightSplit"
       mediaId:
         type: "integer"
         example: 1
@@ -2306,7 +2451,7 @@ definitions:
         rightHolderId: 1,
         splitPct: 41.6667,
         state: "active",
-        contributorRole: {"45745c60-7b1a-11e8-9c9c-2d42b21b1a3e": "writer"}
+        roles: {"45745c60-7b1a-11e8-9c9c-2d42b21b1a3e": "writer"}
       }
   payments:
     type: "array"

@@ -10,7 +10,7 @@
                     "S": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
                 },
                 "splitType": {
-                    "SS": ["workCopyrightSplit", "performanceNeighboringRightSplit", "masterNeighboringRightSplit"]
+                    "S": "workCopyrightSplit"
                 },
                 "mediaId": {
                     "N": "1"
@@ -28,7 +28,7 @@
                     "S": "fzJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
                 },
                 "splitType": {
-                    "SS": ["workCopyrightSplit", "performanceNeighboringRightSplit", "masterNeighboringRightSplit"]
+                    "S": "performanceNeighboringRightSplit"
                 },
                 "mediaId": {
                     "N": "2"
