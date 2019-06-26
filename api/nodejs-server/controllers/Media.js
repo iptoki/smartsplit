@@ -35,6 +35,17 @@ module.exports.getMedia = function getMedia (req, res, next) {
     });
 };
 
+module.exports.getMediaSplit = function getMediaSplit (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  Media.getMediaSplit(mediaId)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
 module.exports.patchMediaAlbum = function patchMediaAlbum (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
   var album = req.swagger.params['album'].value;
