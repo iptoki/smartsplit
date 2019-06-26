@@ -167,7 +167,7 @@ exports.getMediaSplit = function(mediaId) {
                   TableName: "rightHolder",
                   FilterExpression: "rightHolderId = :rightHolderId",
                   ExpressionAttributeValues: {
-                    ":rightHolderId": data.Items[0].rightHolderId
+                    ":rightHolderId": 2
                   }
                 }
                 ddb.scan(rightHolderParams, function(err, data) {
@@ -185,7 +185,7 @@ exports.getMediaSplit = function(mediaId) {
                   TableName: "rightHolder",
                   FilterExpression: "rightHolderId = :rightHolderId",
                   ExpressionAttributeValues: {
-                    ":rightHolderId": data.Items[1].rightHolderId
+                    ":rightHolderId": 1
                   }
                 }
                 ddb.scan(rightHolderParams2, function(err, data) {
