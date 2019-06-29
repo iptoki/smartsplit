@@ -120,6 +120,64 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "Splits"
+  /splits/invite:    
+    post:
+      tags:
+      - "Splits"
+      description: "This method invite a right holder to a split"
+      operationId: "inviteSplit"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/splits"
+      responses:
+        200:
+          description: "OK."
+          schema:
+            $ref: "#/definitions/splits"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Splits"
+  /splits/decode:    
+    post:
+      tags:
+      - "Splits"
+      description: "This method decode a vote token for a Split"
+      operationId: "decodeSplit"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/splits"
+      responses:
+        200:
+          description: "OK."
+          schema:
+            $ref: "#/definitions/splits"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Splits"
   /splits/{uuid}:
     get:
       tags:

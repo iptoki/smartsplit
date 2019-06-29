@@ -1,5 +1,5 @@
 // Connexion à AWSSecretManager pour récupérer des secrets
-let getParameter = exports.getParameter = function (paramKey) {    
+let getParameter = exports.getParameter = function (paramKey, fn) {    
     const AWS = require('aws-sdk');
     const REGION = 'us-east-2';
     AWS.config.update({
@@ -14,7 +14,7 @@ let getParameter = exports.getParameter = function (paramKey) {
         if (err) {
             console.log(err, err.stack); // an error occurred
         } else {
-            return (data.Parameter.Value);
+            fn (data.Parameter.Value);
         };
     })
 }

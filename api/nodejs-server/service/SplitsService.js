@@ -2,6 +2,7 @@
 const uuidv1 = require('uuid/v1');
 const TABLE = 'splits';
 const utils = require('../utils/utils.js');
+const jwt = require('json-web-token')
 
 // AWS
 const AWS = require('aws-sdk');
@@ -15,6 +16,56 @@ AWS.config.update({
 
 const ddb = new AWS.DynamoDB.DocumentClient({region: REGION});
 
+exports.invite = function(splitId, rightHolderId, nom, initiateur, titre) {
+
+  return new Promise(function(resolve, reject) {
+
+    // Réceptionne le secret des paramètres AWS
+    utils.getParameter('SECRET_JWS_INVITE', (secret)=>{
+      // Génère un jeton JWT pour la votation
+      const EXPIRATION = "7 days"
+      let jeton = jwt.sign(
+          {
+              data: {splitId: splitId, rightHolderId: rightHolderId}                
+          },
+          secret,
+          {expiresIn: EXPIRATION}
+      )      
+
+      // Envoi un courriel pour voter
+      let body = [
+          {
+              "template": "splitCreated",
+              "firstName": nom,
+              "splitInitiator": initiateur,
+              "workTitle": titre,
+              "callbackURL": `http://proto.smartsplit.org:3000/split/voter/${jeton}`
+          }
+      ]
+    
+      console.log(body)
+      axios.post('http://courriel.smartsplit.org:3034', body, ()=>{
+        resolve()
+      })
+    })
+    
+  })
+
+}
+
+exports.decode = function(jeton) {
+  return new Promise(function(resolve, reject) {
+    // Réceptionne le secret des paramètres AWS
+    utils.getParameter('SECRET_JWS_INVITE', (secret)=>{
+      try {
+          let contenu = jwt.verify(jeton, secret)
+          resolve(contenu.data)
+      } catch(err) {
+          throw err
+      }
+    })
+  })
+}
 
 /**
  * Delete a right holder's profile with the given ID

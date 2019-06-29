@@ -3,6 +3,38 @@
 var utils = require('../utils/writer.js');
 var Splits = require('../service/SplitsService');
 
+module.exports.decodeSplit = function inviteSplit (req, res, next) {
+  let _body = req.swagger.params['body'].value
+  let jeton = _body.jeton
+
+  Splits.decode(jeton)
+  .then(function (response) {
+    utils.writeJson(res, response)
+  })
+  .catch(function (response) {
+    utils.writeJson(res, response)
+  });  
+
+};
+
+module.exports.inviteSplit = function inviteSplit (req, res, next) {
+  let _body = req.swagger.params['body'].value
+  let splitId = _body.splitId,
+      rightHolderId = _body.rightHolderId,
+      nom = _body.nom,
+      initiateur = _body.initiateur,
+      titre = _body.titre
+
+  Splits.invite(splitId, rightHolderId, nom, initiateur, titre)
+  .then(function (response) {
+    utils.writeJson(res, response)
+  })
+  .catch(function (response) {
+    utils.writeJson(res, response)
+  });  
+
+};
+
 module.exports.deleteSplit = function deleteSplit (req, res, next) {
   var uuid = req.swagger.params['uuid'].value;
   Splits.deleteSplit(uuid)
