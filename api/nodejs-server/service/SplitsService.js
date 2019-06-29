@@ -45,7 +45,7 @@ exports.invite = function(splitId, rightHolderId, nom, initiateur, titre) {
       ]
     
       console.log(body)
-      axios.post('http://messaging.smartsplit.org:3034', body, ()=>{
+      axios.post('http://messaging.smartsplit.org:3034/sendEmail', body, ()=>{
         resolve()
       })
     })
