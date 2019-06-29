@@ -17,6 +17,9 @@ AWS.config.update({
 
 const ddb = new AWS.DynamoDB.DocumentClient({region: REGION});
 
+// Structure de données des Splits proposés et des invitations
+let _splits = []
+
 exports.invite = function(splitId, rightHolderId, nom, initiateur, titre) {
 
   return new Promise(function(resolve, reject) {
@@ -28,11 +31,29 @@ exports.invite = function(splitId, rightHolderId, nom, initiateur, titre) {
       const EXPIRATION = "7 days"
       let jeton = jwt.sign(          
           {
-              data: {splitId: splitId, rightHolderId: rightHolderId}                
+              data: {splitId: splitId, rightHolderId: rightHolderId}
           },
           secret,
           {expiresIn: EXPIRATION}
       )
+
+      let _s = {
+        rightHolderId: rightHolderId,
+        nom: nom,
+        titre: titre,
+        initiateur: initiateur,
+        jeton: jeton
+      }
+
+      let splitCree = (undefined !== _splits[splitId])
+
+      if(splitCree) {
+        _splits[splitId].parts[rightHolderId] = _s
+      } else {
+        _splits[splitId] = {}
+        _splits[splitId].parts = {}
+        _splits[splitId].parts[rightHolderId] = _s
+      }
 
       // Envoi un courriel pour voter
       let body = [
@@ -47,6 +68,7 @@ exports.invite = function(splitId, rightHolderId, nom, initiateur, titre) {
     
       axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)
       .then((resp)=>{
+        console.log(_splits)
         resolve(resp)
       })
     })
