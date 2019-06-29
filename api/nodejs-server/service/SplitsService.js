@@ -23,7 +23,8 @@ exports.invite = function(splitId, rightHolderId, nom, initiateur, titre) {
 
     // Réceptionne le secret des paramètres AWS
     utils.getParameter('SECRET_JWS_INVITE', (secret)=>{
-      // Génère un jeton JWT pour la votation
+
+      // Génère un jeton JWT pour la votation      
       const EXPIRATION = "7 days"
       let jeton = jwt.sign(          
           {
@@ -31,7 +32,7 @@ exports.invite = function(splitId, rightHolderId, nom, initiateur, titre) {
           },
           secret,
           {expiresIn: EXPIRATION}
-      )      
+      )
 
       // Envoi un courriel pour voter
       let body = [
@@ -44,9 +45,9 @@ exports.invite = function(splitId, rightHolderId, nom, initiateur, titre) {
           }
       ]
     
-      console.log(body)
-      axios.post('http://messaging.smartsplit.org:3034/sendEmail', body, ()=>{
-        resolve()
+      axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)
+      .then((resp)=>{
+        resolve(resp)
       })
     })
     

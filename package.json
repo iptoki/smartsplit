@@ -4,7 +4,7 @@
   "description": "Provides a RESTful API for interacting with Smartsplit messaging service",
   "main": "index.js",
   "scripts": {
-    "debug": "node --nolazy --inspect-brk=9229 api/nodejs-server/index.js"
+    "debug": "node --nolazy --inspect-brk=9230 api/nodejs-server/index.js"
   },
   "keywords": [
     "swagger"
