@@ -14,7 +14,11 @@ let getParameter = exports.getParameter = function (paramKey, fn) {
         if (err) {
             console.log(err, err.stack); // an error occurred
         } else {
-            fn (data.Parameter.Value);
+            if (fn) {
+                fn (data.Parameter.Value)
+            } else {
+                return (data.Parameter.Value)
+            }            
         };
     })
 }
