@@ -3,6 +3,7 @@ const uuidv1 = require('uuid/v1');
 const TABLE = 'splits';
 const utils = require('../utils/utils.js');
 const jwt = require('jsonwebtoken');
+const axios = require('axios');
 
 // AWS
 const AWS = require('aws-sdk');

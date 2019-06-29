@@ -2466,11 +2466,11 @@ definitions:
       initiateur:
         type: "string"
         description: "Initiateur du split" 
-        example: "Songe d'une nuit d'été"
+        example: "Vincent de Grandpré"
     example:
       {
         "splitId": "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e",
-        "rightHolderId": 1,
+        "rightHolderId": "1",
         "nom": "Vincent",
         "initiateur": "Vincent de Grandpré",
         "titre": "Love U Baby"

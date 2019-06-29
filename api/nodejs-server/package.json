@@ -15,6 +15,7 @@
   "private": true,
   "dependencies": {
     "aws-sdk": "^2.463.0",
+    "axios": "^0.19.0",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "connect": "^3.7.0",
