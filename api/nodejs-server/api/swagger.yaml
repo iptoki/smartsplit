@@ -132,12 +132,12 @@ paths:
         description: "request"
         required: true
         schema:
-          $ref: "#/definitions/splits"
+          $ref: "#/definitions/inviteSplit"
       responses:
         200:
           description: "OK."
           schema:
-            $ref: "#/definitions/splits"
+            $ref: "#/definitions/inviteSplit"
         400:
           description: "Bad request"
         403:
@@ -161,12 +161,12 @@ paths:
         description: "request"
         required: true
         schema:
-          $ref: "#/definitions/splits"
+          $ref: "#/definitions/decodeSplit"
       responses:
         200:
           description: "OK."
           schema:
-            $ref: "#/definitions/splits"
+            $ref: "#/definitions/decodeSplit"
         400:
           description: "Bad request"
         403:
@@ -2444,6 +2444,48 @@ definitions:
     description: "An array of information about splits"
     items:
       $ref: "#/definitions/splits"
+  inviteSplit:
+    type: "object"
+    properties: 
+      splitId:
+        type: "string"
+        example: "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e"
+        description: "The unique ID for the given split"
+      rightHolderId:
+        type: "string"
+        example: "1"
+        description: "The UUID of the right holder"
+      nom:
+        type: "string"
+        description: "Nom à qui on s'adresse dans l'invitation" 
+        example: "Vincent"
+      titre:
+        type: "string"
+        description: "Titre de l'oeuvre qui fait l'objet du split" 
+        example: "Songe d'une nuit d'été"
+      initiateur:
+        type: "string"
+        description: "Initiateur du split" 
+        example: "Songe d'une nuit d'été"
+    example:
+      {
+        "splitId": "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e",
+        "rightHolderId": 1,
+        "nom": "Vincent",
+        "initiateur": "Vincent de Grandpré",
+        "titre": "Love U Baby"
+      }
+  decodeSplit:
+    type: "object"
+    properties: 
+      jeton:
+        type: "string"
+        example: "JWT Token"
+        description: "Le jeton JWT à décoder"      
+    example:
+      {
+        "JWT": "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e.xyz.xzdv"
+      }
   splits:
     type: "object"
     properties: 
