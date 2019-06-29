@@ -2,7 +2,7 @@
 const uuidv1 = require('uuid/v1');
 const TABLE = 'splits';
 const utils = require('../utils/utils.js');
-const jwt = require('json-web-token')
+const jwt = require('jsonwebtoken');
 
 // AWS
 const AWS = require('aws-sdk');
@@ -24,7 +24,7 @@ exports.invite = function(splitId, rightHolderId, nom, initiateur, titre) {
     utils.getParameter('SECRET_JWS_INVITE', (secret)=>{
       // Génère un jeton JWT pour la votation
       const EXPIRATION = "7 days"
-      let jeton = jwt.sign(
+      let jeton = jwt.sign(          
           {
               data: {splitId: splitId, rightHolderId: rightHolderId}                
           },

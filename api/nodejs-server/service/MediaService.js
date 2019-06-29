@@ -60,7 +60,7 @@ exports.getAllMedia = function() {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data);
+        console.log("Success, length of data: ", data.length);
         resolve(data.Items);
       }
     });
