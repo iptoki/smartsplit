@@ -120,7 +120,7 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "Splits"
-  /splits/invite:    
+  /splits/invite:
     post:
       tags:
       - "Splits"
@@ -138,6 +138,35 @@ paths:
           description: "OK."
           schema:
             $ref: "#/definitions/inviteSplit"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Splits"
+  /splits/liste-votes:    
+    post:
+      tags:
+      - "Splits"
+      description: "This method returns the votation state for the split"
+      operationId: "listeVotes"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/listeVote"
+      responses:
+        200:
+          description: "OK."
+          schema:
+            $ref: "#/definitions/listeVote"
         400:
           description: "Bad request"
         403:
@@ -167,6 +196,64 @@ paths:
           description: "OK."
           schema:
             $ref: "#/definitions/decodeSplit"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Splits"
+  /splits/accepter:    
+    post:
+      tags:
+      - "Splits"
+      description: "This method accept a vote for a Split"
+      operationId: "accepterSplit"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/voteSplit"
+      responses:
+        200:
+          description: "OK."
+          schema:
+            $ref: "#/definitions/voteSplit"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Splits"
+  /splits/refuser:    
+    post:
+      tags:
+      - "Splits"
+      description: "This method decode a vote token for a Split"
+      operationId: "refuserSplit"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/voteSplit"
+      responses:
+        200:
+          description: "OK."
+          schema:
+            $ref: "#/definitions/voteSplit"
         400:
           description: "Bad request"
         403:
@@ -2455,6 +2542,10 @@ definitions:
         type: "string"
         example: "1"
         description: "The UUID of the right holder"
+      courriel:
+        type: "string"
+        description: "Courriel du destinataire - en attente du gestionnaire d'identités" 
+        example: "vincent@smartsplit.org"
       nom:
         type: "string"
         description: "Nom à qui on s'adresse dans l'invitation" 
@@ -2467,13 +2558,29 @@ definitions:
         type: "string"
         description: "Initiateur du split" 
         example: "Vincent de Grandpré"
+      initiateurId:
+        type: "string"
+        description: "ID de l'nitiateur du split" 
+        example: "1"
     example:
       {
         "splitId": "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e",
         "rightHolderId": "1",
         "nom": "Vincent",
         "initiateur": "Vincent de Grandpré",
+        "initiateurId": "1",
         "titre": "Love U Baby"
+      }
+  listeVote:
+    type: "object"
+    properties: 
+      splitId:
+        type: "string"
+        example: "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e"
+        description: "UUID du split"
+    example:
+      {
+        "splitId": "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e.xyz.xzdv"
       }
   decodeSplit:
     type: "object"
@@ -2485,6 +2592,27 @@ definitions:
     example:
       {
         "JWT": "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e.xyz.xzdv"
+      }
+  voteSplit:
+    type: "object"
+    properties:
+      userId:
+        type: "string"
+        example: "1"
+        description: "UUID utilisateur"
+      droit:
+        type: "string"
+        example: "performanceNeighboringRightSplit"
+        description: "UUID utilisateur"
+      jeton:
+        type: "string"
+        example: "JWT Token"
+        description: "Le jeton JWT à décoder"      
+    example:
+      {
+        "jeton": "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e.xyz.xzdv",
+        "userId": "1",
+        "droit": "workCopyrightSplit"
       }
   splits:
     type: "object"

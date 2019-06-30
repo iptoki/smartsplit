@@ -17,15 +17,59 @@ module.exports.decodeSplit = function inviteSplit (req, res, next) {
 
 };
 
+module.exports.accepterSplit = function accepterSplit (req, res, next) {
+  let _body = req.swagger.params['body'].value
+  let jeton = _body.jeton, droit = _body.droit, userId = _body.userId
+
+  Splits.accepter(userId, droit, jeton)
+  .then(function (response) {
+    utils.writeJson(res, response)
+  })
+  .catch(function (response) {
+    utils.writeJson(res, response)
+  });  
+
+};
+
+module.exports.refuserSplit = function refuserSplit (req, res, next) {
+  let _body = req.swagger.params['body'].value
+  let jeton = _body.jeton, droit = _body.droit, userId = _body.userId
+
+  Splits.refuser(userId, droit, jeton)
+  .then(function (response) {
+    utils.writeJson(res, response)
+  })
+  .catch(function (response) {
+    utils.writeJson(res, response)
+  });  
+
+};
+
+module.exports.listeVotes = function listeVotes (req, res, next) {
+  let _body = req.swagger.params['body'].value
+  let splitId = _body.splitId
+
+  Splits.listeVotes(splitId)
+  .then(function (response) {
+    utils.writeJson(res, response)
+  })
+  .catch(function (response) {
+    utils.writeJson(res, response)
+  });  
+
+};
+
 module.exports.inviteSplit = function inviteSplit (req, res, next) {
   let _body = req.swagger.params['body'].value
   let splitId = _body.splitId,
       rightHolderId = _body.rightHolderId,
       nom = _body.nom,
+      courriel = _body.courriel,
       initiateur = _body.initiateur,
+      initiateurId = _body.initiateurId,
       titre = _body.titre
 
-  Splits.invite(splitId, rightHolderId, nom, initiateur, titre)
+  Splits.invite(splitId, rightHolderId, nom, courriel, initiateur, initiateurId, titre)
   .then(function (response) {
     utils.writeJson(res, response)
   })

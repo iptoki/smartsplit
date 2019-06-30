@@ -20,7 +20,9 @@ const ddb = new AWS.DynamoDB.DocumentClient({region: REGION});
 // Structure de données des Splits proposés et des invitations
 let _splits = []
 
-exports.invite = function(splitId, rightHolderId, nom, initiateur, titre) {
+exports.invite = function(splitId, rightHolderId, nom, courriel, initiateur, initiateurId, titre) {
+
+  console.log(`Inviation pour splitID ${splitId}`)
 
   return new Promise(function(resolve, reject) {
 
@@ -42,7 +44,8 @@ exports.invite = function(splitId, rightHolderId, nom, initiateur, titre) {
         nom: nom,
         titre: titre,
         initiateur: initiateur,
-        jeton: jeton
+        jeton: jeton,
+        etat: initiateurId === rightHolderId ? 'ACCEPTE' : 'ATTENTE'
       }
 
       let splitCree = (undefined !== _splits[splitId])
@@ -53,11 +56,13 @@ exports.invite = function(splitId, rightHolderId, nom, initiateur, titre) {
         _splits[splitId] = {}
         _splits[splitId].parts = {}
         _splits[splitId].parts[rightHolderId] = _s
-      }
+        console.log(JSON.stringify(_splits[splitId]))
+      }      
 
       // Envoi un courriel pour voter
       let body = [
           {
+              "toEmail": courriel,
               "template": "splitCreated",
               "firstName": nom,
               "splitInitiator": initiateur,
@@ -68,13 +73,56 @@ exports.invite = function(splitId, rightHolderId, nom, initiateur, titre) {
     
       axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)
       .then((resp)=>{
-        console.log(JSON.stringify(_splits))
         resolve(resp)
       })
     })
     
   })
 
+}
+
+exports.refuser = function(userId, droit, jeton) {
+  return new Promise(function(resolve, reject) {
+    // Réceptionne le secret des paramètres AWS
+    utils.getParameter('SECRET_JWS_INVITE', (secret)=>{
+      try {
+          let contenu = jwt.verify(jeton, secret)          
+          if(userId === contenu.data.rightHolderId) {
+            console.log(`${userId} refuse le droit ${droit} sur le split ${contenu.data.splitId}`)
+            _splits[contenu.data.splitId].parts[contenu.data.rightHolderId].etat = "REFUSE"
+          }
+          resolve(contenu.data)
+      } catch(err) {
+          throw err
+      }
+    })
+  })
+}
+
+exports.accepter = function(userId, droit, jeton) {
+  return new Promise(function(resolve, reject) {
+    // Réceptionne le secret des paramètres AWS
+    utils.getParameter('SECRET_JWS_INVITE', (secret)=>{
+      try {
+          let contenu = jwt.verify(jeton, secret)
+
+          if(userId === contenu.data.rightHolderId) {
+            console.log(`${userId} accepte le droit ${droit} sur le split ${contenu.data.splitId}`)
+            _splits[contenu.data.splitId].parts[contenu.data.rightHolderId].etat = "ACCEPTE"
+          }
+
+          resolve(contenu.data)
+      } catch(err) {
+          throw err
+      }
+    })
+  })
+}
+
+exports.listeVotes = function(splitId) {
+  return new Promise(function(resolve, reject) {    
+    resolve(_splits[splitId])
+  })
 }
 
 exports.decode = function(jeton) {
