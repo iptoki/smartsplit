@@ -149,6 +149,35 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "Splits"
+  /splits/justifier-refus:
+    post:
+      tags:
+      - "Splits"
+      description: "This method justify a split decline"
+      operationId: "justifierRefus"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/justifierRefus"
+      responses:
+        200:
+          description: "OK."
+          schema:
+            $ref: "#/definitions/justifierRefus"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Splits"
   /splits/liste-votes:    
     post:
       tags:
@@ -2531,6 +2560,25 @@ definitions:
     description: "An array of information about splits"
     items:
       $ref: "#/definitions/splits"
+  justifierRefus:
+    type: "object"
+    properties:
+      userId:
+        type: "string"
+        example: "1"
+        description: "UUID utilisateur"
+      droit:
+        type: "string"
+        example: "performanceNeighboringRightSplit"
+        description: "UUID utilisateur"
+      jeton:
+        type: "string"
+        example: "JWT Token"
+        description: "Le jeton JWT à décoder"
+      raison:
+        type: "string"
+        example: "Je ne suis pas d'accord"
+        description: "Raison du refus"
   inviteSplit:
     type: "object"
     properties: 
@@ -2542,34 +2590,20 @@ definitions:
         type: "string"
         example: "1"
         description: "The UUID of the right holder"
+      rightType:
+        type: "string"
+        example: "workCopyrightSplit"
+        description: "The type of right"
       courriel:
         type: "string"
         description: "Courriel du destinataire - en attente du gestionnaire d'identités" 
-        example: "vincent@smartsplit.org"
-      nom:
-        type: "string"
-        description: "Nom à qui on s'adresse dans l'invitation" 
-        example: "Vincent"
-      titre:
-        type: "string"
-        description: "Titre de l'oeuvre qui fait l'objet du split" 
-        example: "Songe d'une nuit d'été"
-      initiateur:
-        type: "string"
-        description: "Initiateur du split" 
-        example: "Vincent de Grandpré"
-      initiateurId:
-        type: "string"
-        description: "ID de l'nitiateur du split" 
-        example: "1"
+        example: "vincent@smartsplit.org"      
     example:
       {
         "splitId": "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e",
         "rightHolderId": "1",
-        "nom": "Vincent",
-        "initiateur": "Vincent de Grandpré",
-        "initiateurId": "1",
-        "titre": "Love U Baby"
+        "rightType": "workCopyrightSplit",
+        "courriel": "vincent@smartsplit.org"        
       }
   listeVote:
     type: "object"
