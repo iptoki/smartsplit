@@ -48,8 +48,6 @@ function finDuVote(splitId, jeton) {
     })
   })
 
-  let body
-
   if(acceptationDeTout) {
 
     Object.keys(destinataires).forEach(dest=>{
@@ -64,7 +62,9 @@ function finDuVote(splitId, jeton) {
         }
       ]
       axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)    
-    })    
+    })
+
+    _splits[splitId].estClos = true
 
   } else if (!acceptationEnAttente) {
     // Il n'y a rien en attente et ce n'est pas unanime
@@ -81,6 +81,7 @@ function finDuVote(splitId, jeton) {
       ]
       axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)    
     })
+    _splits[splitId].estClos = true
   }
 
 }
@@ -132,9 +133,7 @@ exports.invite = function(splitId, rightHolderId, courriel) {
 
       genererTypeDroit('workCopyrightSplit', courriel)
       genererTypeDroit('performanceNeighboringRightSplit', courriel)
-      genererTypeDroit('masterNeighboringRightSplit', courriel)
-
-      console.log(`Structure du split ${splitId}`)      
+      genererTypeDroit('masterNeighboringRightSplit', courriel)   
 
     }
 
@@ -179,7 +178,7 @@ exports.invite = function(splitId, rightHolderId, courriel) {
         let body
         
         if(initiateurId === rightHolderId) {
-          // Envoi courriel de création de partage à l'initiateur du split
+          // Envoi courriel de création de partage à l'initiateur du split          
           body = [
             {
                 "toEmail": _infos.courriel,
@@ -189,6 +188,7 @@ exports.invite = function(splitId, rightHolderId, courriel) {
                 "callbackURL": `http://proto.smartsplit.org:3000/split/voter/${jeton}`
             }
           ]
+          resolve(jeton)
         } else {
           // Envoi une invitation à voter
           body = [
@@ -201,6 +201,7 @@ exports.invite = function(splitId, rightHolderId, courriel) {
                 "callbackURL": `http://proto.smartsplit.org:3000/split/voter/${jeton}`
             }
           ]
+          resolve()
         }
 
         // N'envoyer que s'il y a plus d'un destinataire pour ce split (si non c'est à soi-même)
@@ -218,7 +219,7 @@ exports.invite = function(splitId, rightHolderId, courriel) {
         if(Object.keys(destinataires).length > 0) {
           axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)
           .then((resp)=>{
-            resolve(resp)
+            
           })
         }        
 
@@ -339,7 +340,7 @@ exports.accepter = function(userId, droit, jeton) {
 }
 
 exports.listeVotes = function(splitId) {
-  return new Promise(function(resolve, reject) {    
+  return new Promise(function(resolve, reject) {   
     resolve(_splits[splitId])
   })
 }
