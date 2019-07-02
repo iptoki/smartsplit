@@ -258,7 +258,7 @@ exports.refuser = function(userId, droit, jeton) {
           resolve(contenu.data)
           
       } catch(err) {
-          throw err
+          console.log(err)
       }
     })
   })
@@ -282,7 +282,7 @@ exports.justifierRefus = function(userId, droit, jeton, raison) {
           console.log(`Justification du refus de ${droit} par ${userId} parce que ${raison}`)
           resolve(contenu.data)          
       } catch(err) {
-          throw err
+          console.log(err)
       }
     })
   })
@@ -333,7 +333,7 @@ exports.accepter = function(userId, droit, jeton) {
             resolve(contenu.data)
           })
       } catch(err) {
-          throw err
+          console.log(err)
       }
     })
   })
@@ -353,7 +353,7 @@ exports.decode = function(jeton) {
           let contenu = jwt.verify(jeton, secret)
           resolve(contenu.data)
       } catch(err) {
-          throw err
+          console.log(err)
       }
     })
   })
