@@ -20,11 +20,10 @@ module.exports.decodeSplit = function inviteSplit (req, res, next) {
 module.exports.justifierRefus = function justifierRefus (req, res, next) {
   let _body = req.swagger.params['body'].value
   let jeton = _body.jeton, 
-      droit = _body.droit, 
       userId = _body.userId,
       raison = _body.raison
 
-  Splits.justifierRefus(userId, droit, jeton, raison)  
+  Splits.justifierRefus(userId,  jeton, raison)  
   .then(function (response) {
     utils.writeJson(res, response)
   })
@@ -34,28 +33,14 @@ module.exports.justifierRefus = function justifierRefus (req, res, next) {
 
 };
 
-module.exports.accepterSplit = function accepterSplit (req, res, next) {
+module.exports.voteSplit = function accepterSplit (req, res, next) {
   let _body = req.swagger.params['body'].value
   let jeton = _body.jeton, 
-      droit = _body.droit, 
+      droits = _body.droits, 
       userId = _body.userId
 
-  Splits.accepter(userId, droit, jeton)
+  Splits.voteSplit(userId, jeton, droits)
 
-  .then(function (response) {
-    utils.writeJson(res, response)
-  })
-  .catch(function (response) {
-    utils.writeJson(res, response)
-  });  
-
-};
-
-module.exports.refuserSplit = function refuserSplit (req, res, next) {
-  let _body = req.swagger.params['body'].value
-  let jeton = _body.jeton, droit = _body.droit, userId = _body.userId
-
-  Splits.refuser(userId, droit, jeton)
   .then(function (response) {
     utils.writeJson(res, response)
   })

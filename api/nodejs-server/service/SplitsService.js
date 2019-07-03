@@ -109,7 +109,9 @@ exports.invite = function(splitId, rightHolderId, courriel) {
         },
         media: {
           title: titre
-        }
+        },
+        commentaire: {},
+        transmis: {}
       }
 
       function genererIndividuel(partage) {
@@ -173,6 +175,9 @@ exports.invite = function(splitId, rightHolderId, courriel) {
         _infos = _splits[splitId].parts.masterNeighboringRightSplit[rightHolderId] 
       }
 
+      _splits[splitId].commentaire[initiateurId] = 'Initiateur du partage'
+      _splits[splitId].transmis[initiateurId] = true
+
       if(_infos) {
 
         let body
@@ -232,13 +237,12 @@ exports.invite = function(splitId, rightHolderId, courriel) {
         finDuVote(splitId, jeton)
       }
       
-    })
-    
+    })    
   })
-
 }
 
-exports.refuser = function(userId, droit, jeton) {
+
+exports.justifierRefus = function(userId, jeton, raison) {
 
   return new Promise(function(resolve, reject) {
 
@@ -249,37 +253,11 @@ exports.refuser = function(userId, droit, jeton) {
           let splitId = contenu.data.splitId,
               rightHolderId = contenu.data.rightHolderId
 
-          if(userId === rightHolderId) {
-            console.log(`${userId} refuse le droit ${droit} sur le split ${splitId}`)
-            _splits[splitId].parts[droit][rightHolderId].etat = "REFUSE"
-          }
-          // Teste la fin du vote
-          finDuVote(splitId)
-          resolve(contenu.data)
-          
-      } catch(err) {
-          console.log(err)
-      }
-    })
-  })
-}
-
-exports.justifierRefus = function(userId, droit, jeton, raison) {
-
-  return new Promise(function(resolve, reject) {
-
-    // Réceptionne le secret des paramètres AWS
-    utils.getParameter('SECRET_JWS_INVITE', (secret)=>{
-      try {
-          let contenu = jwt.verify(jeton, secret)      
-          let splitId = contenu.data.splitId,
-              rightHolderId = contenu.data.rightHolderId
-
-          if(userId === rightHolderId) {            
-            _splits[splitId].parts[droit][rightHolderId].raison = raison
+          if(userId === rightHolderId) {              
+            _splits[splitId].commentaire[rightHolderId] = raison
           }
 
-          console.log(`Justification du refus de ${droit} par ${userId} parce que ${raison}`)
+          console.log(`Justification du refus de par ${userId} parce que ${raison}`)
           resolve(contenu.data)          
       } catch(err) {
           console.log(err)
@@ -288,7 +266,7 @@ exports.justifierRefus = function(userId, droit, jeton, raison) {
   })
 }
 
-exports.accepter = function(userId, droit, jeton) {
+exports.voteSplit = function(userId, jeton, droits) {
 
   return new Promise(function(resolve, reject) {        
 
@@ -301,8 +279,12 @@ exports.accepter = function(userId, droit, jeton) {
               rightHolderId = contenu.data.rightHolderId
 
           if(userId === rightHolderId) {
-            console.log(`${userId} accepte le droit ${droit} sur le split ${splitId}`)
-            _splits[splitId].parts[droit][rightHolderId].etat = "ACCEPTE"
+            console.log(`${userId} a voté sur le split ${splitId}`)
+            _splits[splitId].transmis[rightHolderId] = true
+
+            Object.keys(droits).forEach(elem=>{
+              _splits[splitId].parts[elem][rightHolderId].etat = droits[elem]
+            })
           }
 
           let destinataires = {}

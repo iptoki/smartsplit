@@ -235,42 +235,13 @@ paths:
           description: "An unknown error occured"
       security:
       - jwt: []
-      x-swagger-router-controller: "Splits"
-  /splits/accepter:    
-    post:
-      tags:
-      - "Splits"
-      description: "This method accept a vote for a Split"
-      operationId: "accepterSplit"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "request"
-        required: true
-        schema:
-          $ref: "#/definitions/voteSplit"
-      responses:
-        200:
-          description: "OK."
-          schema:
-            $ref: "#/definitions/voteSplit"
-        400:
-          description: "Bad request"
-        403:
-          description: "Permission denied"
-        404:
-          description: "Endpoint not found"
-        500:
-          description: "An unknown error occured"
-      security:
-      - jwt: []
-      x-swagger-router-controller: "Splits"
-  /splits/refuser:    
+      x-swagger-router-controller: "Splits"  
+  /splits/voter:    
     post:
       tags:
       - "Splits"
       description: "This method decode a vote token for a Split"
-      operationId: "refuserSplit"
+      operationId: "voteSplit"
       parameters:
       - in: "body"
         name: "body"
@@ -2566,11 +2537,7 @@ definitions:
       userId:
         type: "string"
         example: "1"
-        description: "UUID utilisateur"
-      droit:
-        type: "string"
-        example: "performanceNeighboringRightSplit"
-        description: "UUID utilisateur"
+        description: "UUID utilisateur"      
       jeton:
         type: "string"
         example: "JWT Token"
@@ -2634,14 +2601,16 @@ definitions:
         type: "string"
         example: "1"
         description: "UUID utilisateur"
-      droit:
-        type: "string"
-        example: "performanceNeighboringRightSplit"
-        description: "UUID utilisateur"
       jeton:
         type: "string"
         example: "JWT Token"
-        description: "Le jeton JWT à décoder"      
+        description: "Le jeton JWT à décoder"
+      droits:
+        type: "object"
+        additionalProperties:
+          type: "string"
+        example: "{workCopyrightSplit: 'ACCEPTE', ...}"
+        description: "Objet décrivant les splits et les états"
     example:
       {
         "jeton": "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e.xyz.xzdv",
