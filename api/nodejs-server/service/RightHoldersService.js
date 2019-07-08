@@ -1,19 +1,4 @@
 'use strict';
-const uuidv1 = require('uuid/v1');
-const TABLE = 'rightHolder';
-const utils = require('../utils/utils.js');
-
-// AWS
-const AWS = require('aws-sdk');
-const REGION = 'us-east-2';
-
-AWS.config.update({
-  region: REGION,
-  accessKeyId: utils.getParameter('ACCESS_KEY'),
-  secretAccessKey: utils.getParameter('SECRET_ACCESS_KEY')
-});
-
-const ddb = new AWS.DynamoDB.DocumentClient({region: REGION});
 
 
 /**
@@ -24,22 +9,7 @@ const ddb = new AWS.DynamoDB.DocumentClient({region: REGION});
  **/
 exports.deleteRightHolder = function(rightHolderId) {
   return new Promise(function(resolve, reject) {
-    let params = {
-      TableName: TABLE,
-      Key: {
-        'rightHolderId': rightHolderId
-      }
-    };
-    // Call DynamoDB to delete the item from the table
-    ddb.delete(params, function(err, data) {
-      if (err) {
-        console.log("Error", err);
-        resolve();
-      } else {
-        console.log("Success", data);
-        resolve('Right holder removed');
-      }
-    });
+    resolve();
   });
 }
 
@@ -51,18 +21,13 @@ exports.deleteRightHolder = function(rightHolderId) {
  **/
 exports.getAllRightHolders = function() {
   return new Promise(function(resolve, reject) {
-    let params = {
-      "TableName": TABLE,
+    var examples = {};
+    examples['application/json'] = "";
+    if (Object.keys(examples).length > 0) {
+      resolve(examples[Object.keys(examples)[0]]);
+    } else {
+      resolve();
     }
-    ddb.scan(params, function(err, data) {
-      if (err) {
-        console.log("Error", err);
-        resolve();
-      } else {
-        console.log("Success", data);
-        resolve(data.Items);
-      }
-    });
   });
 }
 
@@ -75,22 +40,88 @@ exports.getAllRightHolders = function() {
  **/
 exports.getRightHolder = function(rightHolderId) {
   return new Promise(function(resolve, reject) {
-    let params = {
-      TableName: TABLE,
-      Key: {
-        'rightHolderId': rightHolderId
-      }
-    };
-    // Call DynamoDB to delete the item from the table
-    ddb.get(params, function(err, data) {
-      if (err) {
-        console.log("Error", err);
-        resolve();
-      } else {
-        console.log("Success", data);
-        resolve(data);
-      }
-    });
+    var examples = {};
+    examples['application/json'] = {
+  "firstName" : "John",
+  "lastName" : "Smith",
+  "email" : "john.smith@example.com",
+  "password" : "3c9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3",
+  "jurisdiction" : "Canada",
+  "ipi" : "00004576",
+  "wallet" : "0xdd87ae15f4be97e2739c9069ddef674f907d27a8",
+  "avatarS3Etag" : "2f03d99fbf37d8d585285fd4cce27fea",
+  "artistName" : "Questlove",
+  "socialMediaLinks" : {
+    "facebook" : "https://facebook.com/ex",
+    "twitter" : "https://twitter.com/ex",
+    "youtube" : "https://youtube.com/ex"
+  }
+};
+    if (Object.keys(examples).length > 0) {
+      resolve(examples[Object.keys(examples)[0]]);
+    } else {
+      resolve();
+    }
+  });
+}
+
+
+/**
+ * Update the artist name of a right holder
+ *
+ * rightHolderId Integer The right holder's unique profile ID
+ * artistName ArtistName The right holder's artist name
+ * returns Object
+ **/
+exports.patchRightHolderArtistName = function(rightHolderId,artistName) {
+  return new Promise(function(resolve, reject) {
+    var examples = {};
+    examples['application/json'] = "";
+    if (Object.keys(examples).length > 0) {
+      resolve(examples[Object.keys(examples)[0]]);
+    } else {
+      resolve();
+    }
+  });
+}
+
+
+/**
+ * Update the artist name of a right holder
+ *
+ * rightHolderId Integer The right holder's unique profile ID
+ * avatarS3ETag AvatarS3Etag The right holder's S3 Etag for the profile avatar image
+ * returns rightHolder/properties/avatarS3Etag
+ **/
+exports.patchRightHolderAvatarS3ETag = function(rightHolderId,avatarS3ETag) {
+  return new Promise(function(resolve, reject) {
+    var examples = {};
+    examples['application/json'] = "";
+    if (Object.keys(examples).length > 0) {
+      resolve(examples[Object.keys(examples)[0]]);
+    } else {
+      resolve();
+    }
+  });
+}
+
+
+/**
+ * Update the cognito user pool Id of a right holder
+ *
+ * rightHolderId Integer The right holder's unique profile ID
+ * cognitoId CognitoId The right holder's cognito Id in AWS user pools
+ * returns rightHolder/properties/cognitoId
+ **/
+exports.patchRightHolderCognitoId = function(rightHolderId,cognitoId) {
+  return new Promise(function(resolve, reject) {
+    var examples = {};
+    examples['application/json'] = "";
+    if (Object.keys(examples).length > 0) {
+      resolve(examples[Object.keys(examples)[0]]);
+    } else {
+      resolve();
+    }
   });
 }
 
@@ -104,27 +135,13 @@ exports.getRightHolder = function(rightHolderId) {
  **/
 exports.patchRightHolderEmail = function(rightHolderId,email) {
   return new Promise(function(resolve, reject) {
-    let params = {
-      TableName: TABLE,
-      Key: {
-        'rightHolderId': rightHolderId
-      },
-      UpdateExpression: 'set email = :e',
-      ExpressionAttributeValues: {
-        ':e' : email.email
-      },
-      ReturnValues: 'UPDATED_NEW'
-    };
-    // Call DynamoDB to delete the item from the table
-    ddb.update(params, function(err, data) {
-      if (err) {
-        console.log("Error", err);
-        resolve();
-      } else {
-        console.log("Success", data.Attributes);
-        resolve(data.Attributes);
-      }
-    });
+    var examples = {};
+    examples['application/json'] = "";
+    if (Object.keys(examples).length > 0) {
+      resolve(examples[Object.keys(examples)[0]]);
+    } else {
+      resolve();
+    }
   });
 }
 
@@ -138,27 +155,13 @@ exports.patchRightHolderEmail = function(rightHolderId,email) {
  **/
 exports.patchRightHolderFirstName = function(rightHolderId,firstName) {
   return new Promise(function(resolve, reject) {
-    let params = {
-      TableName: TABLE,
-      Key: {
-        'rightHolderId': rightHolderId
-      },
-      UpdateExpression: 'set firstName  = :f',
-      ExpressionAttributeValues: {
-        ':f' : firstName.firstName
-      },
-      ReturnValues: 'UPDATED_NEW'
-    };
-    // Call DynamoDB to delete the item from the table
-    ddb.update(params, function(err, data) {
-      if (err) {
-        console.log("Error", err);
-        resolve();
-      } else {
-        console.log("Success", data.Attributes);
-        resolve(data.Attributes);
-      }
-    });
+    var examples = {};
+    examples['application/json'] = "";
+    if (Object.keys(examples).length > 0) {
+      resolve(examples[Object.keys(examples)[0]]);
+    } else {
+      resolve();
+    }
   });
 }
 
@@ -172,27 +175,13 @@ exports.patchRightHolderFirstName = function(rightHolderId,firstName) {
  **/
 exports.patchRightHolderIPI = function(rightHolderId,ipi) {
   return new Promise(function(resolve, reject) {
-    let params = {
-      TableName: TABLE,
-      Key: {
-        'rightHolderId': rightHolderId
-      },
-      UpdateExpression: 'set ipi = :i',
-      ExpressionAttributeValues: {
-        ':i' : ipi.ipi
-      },
-      ReturnValues: 'UPDATED_NEW'
-    };
-    // Call DynamoDB to delete the item from the table
-    ddb.update(params, function(err, data) {
-      if (err) {
-        console.log("Error", err);
-        resolve();
-      } else {
-        console.log("Success", data.Attributes);
-        resolve(data.Attributes);
-      }
-    });
+    var examples = {};
+    examples['application/json'] = "";
+    if (Object.keys(examples).length > 0) {
+      resolve(examples[Object.keys(examples)[0]]);
+    } else {
+      resolve();
+    }
   });
 }
 
@@ -206,27 +195,13 @@ exports.patchRightHolderIPI = function(rightHolderId,ipi) {
  **/
 exports.patchRightHolderJurisdiction = function(rightHolderId,jurisdiction) {
   return new Promise(function(resolve, reject) {
-    let params = {
-      TableName: TABLE,
-      Key: {
-        'rightHolderId': rightHolderId
-      },
-      UpdateExpression: 'set jurisdiction = :j',
-      ExpressionAttributeValues: {
-        ':j' : jurisdiction.jurisdiction
-      },
-      ReturnValues: 'UPDATED_NEW'
-    };
-    // Call DynamoDB to delete the item from the table
-    ddb.update(params, function(err, data) {
-      if (err) {
-        console.log("Error", err);
-        resolve();
-      } else {
-        console.log("Success", data.Attributes);
-        resolve(data.Attributes);
-      }
-    });
+    var examples = {};
+    examples['application/json'] = "";
+    if (Object.keys(examples).length > 0) {
+      resolve(examples[Object.keys(examples)[0]]);
+    } else {
+      resolve();
+    }
   });
 }
 
@@ -240,27 +215,13 @@ exports.patchRightHolderJurisdiction = function(rightHolderId,jurisdiction) {
  **/
 exports.patchRightHolderLastName = function(rightHolderId,lastName) {
   return new Promise(function(resolve, reject) {
-    let params = {
-      TableName: TABLE,
-      Key: {
-        'rightHolderId': rightHolderId
-      },
-      UpdateExpression: 'set lastName  = :l',
-      ExpressionAttributeValues: {
-        ':l' : lastName.lastName
-      },
-      ReturnValues: 'UPDATED_NEW'
-    };
-    // Call DynamoDB to delete the item from the table
-    ddb.update(params, function(err, data) {
-      if (err) {
-        console.log("Error", err);
-        resolve();
-      } else {
-        console.log("Success", data.Attributes);
-        resolve(data.Attributes);
-      }
-    });
+    var examples = {};
+    examples['application/json'] = "";
+    if (Object.keys(examples).length > 0) {
+      resolve(examples[Object.keys(examples)[0]]);
+    } else {
+      resolve();
+    }
   });
 }
 
@@ -274,27 +235,7 @@ exports.patchRightHolderLastName = function(rightHolderId,lastName) {
  **/
 exports.patchRightHolderPassword = function(rightHolderId,password) {
   return new Promise(function(resolve, reject) {
-    let params = {
-      TableName: TABLE,
-      Key: {
-        'rightHolderId': rightHolderId
-      },
-      UpdateExpression: 'set password = :p',
-      ExpressionAttributeValues: {
-        ':p' : password.password
-      },
-      ReturnValues: 'UPDATED_NEW'
-    };
-    // Call DynamoDB to delete the item from the table
-    ddb.update(params, function(err, data) {
-      if (err) {
-        console.log("Error", err);
-        resolve();
-      } else {
-        console.log("Success", data.Attributes);
-        resolve(data.Attributes);
-      }
-    });
+    resolve();
   });
 }
 
@@ -308,42 +249,28 @@ exports.patchRightHolderPassword = function(rightHolderId,password) {
  **/
 exports.patchRightHolderSocialMediaLinks = function(rightHolderId,socialMediaLinks) {
   return new Promise(function(resolve, reject) {
-    let params = {
-      "TableName": TABLE,
-      Key: {
-        'rightHolderId': rightHolderId
-      }
+    var examples = {};
+    examples['application/json'] = {
+  "firstName" : "John",
+  "lastName" : "Smith",
+  "email" : "john.smith@example.com",
+  "password" : "3c9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3",
+  "jurisdiction" : "Canada",
+  "ipi" : "00004576",
+  "wallet" : "0xdd87ae15f4be97e2739c9069ddef674f907d27a8",
+  "avatarS3Etag" : "2f03d99fbf37d8d585285fd4cce27fea",
+  "artistName" : "Questlove",
+  "socialMediaLinks" : {
+    "facebook" : "https://facebook.com/ex",
+    "twitter" : "https://twitter.com/ex",
+    "youtube" : "https://youtube.com/ex"
+  }
+};
+    if (Object.keys(examples).length > 0) {
+      resolve(examples[Object.keys(examples)[0]]);
+    } else {
+      resolve();
     }
-    // Get old social media links
-    ddb.get(params, function(err, data) {
-      if (err) {
-        console.log("Error", err);
-        resolve();
-      } else {
-        let oldSocialMediaLinks = data.Item.socialMediaLinks;
-        let socialMediaLinksJoined = Object.assign({}, oldSocialMediaLinks, socialMediaLinks);
-        let params = {
-          TableName: TABLE,
-          Key: {
-            'rightHolderId': rightHolderId
-          },
-          UpdateExpression: 'set socialMediaLinks  = :m',
-          ExpressionAttributeValues: {
-            ':m' : socialMediaLinksJoined
-          },
-          ReturnValues: 'UPDATED_NEW'
-        };
-        ddb.update(params, function(err, data) {
-          if (err) {
-            console.log("Error", err);
-            resolve();
-          } else {
-            console.log("Success", data.Attributes);
-            resolve(data.Attributes);
-          }
-        });
-      }
-    });
   });
 }
 
@@ -357,27 +284,13 @@ exports.patchRightHolderSocialMediaLinks = function(rightHolderId,socialMediaLin
  **/
 exports.patchRightHolderWallet = function(rightHolderId,wallet) {
   return new Promise(function(resolve, reject) {
-    let params = {
-      TableName: TABLE,
-      Key: {
-        'rightHolderId': rightHolderId
-      },
-      UpdateExpression: 'set wallet  = :f',
-      ExpressionAttributeValues: {
-        ':f' : wallet.wallet
-      },
-      ReturnValues: 'UPDATED_NEW'
-    };
-    // Call DynamoDB to delete the item from the table
-    ddb.update(params, function(err, data) {
-      if (err) {
-        console.log("Error", err);
-        resolve();
-      } else {
-        console.log("Success", data.Attributes);
-        resolve(data.Attributes);
-      }
-    });
+    var examples = {};
+    examples['application/json'] = "";
+    if (Object.keys(examples).length > 0) {
+      resolve(examples[Object.keys(examples)[0]]);
+    } else {
+      resolve();
+    }
   });
 }
 
@@ -390,44 +303,28 @@ exports.patchRightHolderWallet = function(rightHolderId,wallet) {
  **/
 exports.postRightHolder = function(body) {
   return new Promise(function(resolve, reject) {
-    let params = {
-      "TableName": TABLE,
+    var examples = {};
+    examples['application/json'] = {
+  "firstName" : "John",
+  "lastName" : "Smith",
+  "email" : "john.smith@example.com",
+  "password" : "3c9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3",
+  "jurisdiction" : "Canada",
+  "ipi" : "00004576",
+  "wallet" : "0xdd87ae15f4be97e2739c9069ddef674f907d27a8",
+  "avatarS3Etag" : "2f03d99fbf37d8d585285fd4cce27fea",
+  "artistName" : "Questlove",
+  "socialMediaLinks" : {
+    "facebook" : "https://facebook.com/ex",
+    "twitter" : "https://twitter.com/ex",
+    "youtube" : "https://youtube.com/ex"
+  }
+};
+    if (Object.keys(examples).length > 0) {
+      resolve(examples[Object.keys(examples)[0]]);
+    } else {
+      resolve();
     }
-    // Call DynamoDB to delete the item from the table
-    ddb.scan(params, function(err, data) {
-      if (err) {
-        console.log("Error", err);
-        resolve();
-      } else {
-        // Create unique ID value
-        let RIGHT_HOLDER_ID = data.Count + 1;
-
-        let params = {
-          TableName: TABLE,
-          Item: {
-            'rightHolderId': RIGHT_HOLDER_ID,
-            'ipi': body.ipi,
-            'wallet': body.wallet,
-            'media': body.media,
-            'firstName': body.firstName,
-            'email': body.email,
-            'lastName': body.lastName,
-            'password': body.password,
-            'jurisdiction' : body.jurisdiction,
-            'socialMediaLinks': body.socialMediaLinks
-          }
-        };
-        ddb.put(params, function(err, data) {
-          if (err) {
-            console.log("Error", err);
-            resolve();
-          } else {
-            resolve("Success. Item Added");
-          }
-        });
-      }
-
-    });
   });
 }
 
@@ -441,35 +338,28 @@ exports.postRightHolder = function(body) {
  **/
 exports.updateRightHolder = function(rightHolderId,body) {
   return new Promise(function(resolve, reject) {
-    let params = {
-      TableName: TABLE,
-      Key: {
-        'rightHolderId': rightHolderId
-      },
-      UpdateExpression: 'set ipi  = :i, wallet = :w, media = :m, firstName = :f, email = :e, lastName = :l, socialMediaLinks = :s, jurisdiction = :j, password = :p',
-      ExpressionAttributeValues: {
-        ':i' : body.ipi,
-        ':w' : body.wallet,
-        ':m' : body.media,
-        ':f' : body.firstName,
-        ':e' : body.email,
-        ':l' : body.lastName,
-        ':p' : body.password,
-        ':j' : body.jurisdiction,
-        ':s' : body.socialMediaLinks,
-      },
-      ReturnValues: 'UPDATED_NEW'
-    };
-    // Call DynamoDB to delete the item from the table
-    ddb.update(params, function(err, data) {
-      if (err) {
-        console.log("Error", err);
-        resolve();
-      } else {
-        console.log("Success", data.Attributes);
-        resolve(data.Attributes);
-      }
-    });
+    var examples = {};
+    examples['application/json'] = {
+  "firstName" : "John",
+  "lastName" : "Smith",
+  "email" : "john.smith@example.com",
+  "password" : "3c9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3",
+  "jurisdiction" : "Canada",
+  "ipi" : "00004576",
+  "wallet" : "0xdd87ae15f4be97e2739c9069ddef674f907d27a8",
+  "avatarS3Etag" : "2f03d99fbf37d8d585285fd4cce27fea",
+  "artistName" : "Questlove",
+  "socialMediaLinks" : {
+    "facebook" : "https://facebook.com/ex",
+    "twitter" : "https://twitter.com/ex",
+    "youtube" : "https://youtube.com/ex"
+  }
+};
+    if (Object.keys(examples).length > 0) {
+      resolve(examples[Object.keys(examples)[0]]);
+    } else {
+      resolve();
+    }
   });
 }
 

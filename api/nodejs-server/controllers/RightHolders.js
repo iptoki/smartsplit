@@ -35,6 +35,42 @@ module.exports.getRightHolder = function getRightHolder (req, res, next) {
     });
 };
 
+module.exports.patchRightHolderArtistName = function patchRightHolderArtistName (req, res, next) {
+  var rightHolderId = req.swagger.params['rightHolderId'].value;
+  var artistName = req.swagger.params['artistName'].value;
+  RightHolders.patchRightHolderArtistName(rightHolderId,artistName)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.patchRightHolderAvatarS3ETag = function patchRightHolderAvatarS3ETag (req, res, next) {
+  var rightHolderId = req.swagger.params['rightHolderId'].value;
+  var avatarS3ETag = req.swagger.params['avatarS3ETag'].value;
+  RightHolders.patchRightHolderAvatarS3ETag(rightHolderId,avatarS3ETag)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.patchRightHolderCognitoId = function patchRightHolderCognitoId (req, res, next) {
+  var rightHolderId = req.swagger.params['rightHolderId'].value;
+  var cognitoId = req.swagger.params['cognitoId'].value;
+  RightHolders.patchRightHolderCognitoId(rightHolderId,cognitoId)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
 module.exports.patchRightHolderEmail = function patchRightHolderEmail (req, res, next) {
   var rightHolderId = req.swagger.params['rightHolderId'].value;
   var email = req.swagger.params['email'].value;

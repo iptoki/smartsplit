@@ -1,0 +1,52 @@
+{
+    "proposal": [
+      {
+        "PutRequest": {
+            "Item": {
+                "uuid": {
+                    "S": "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e"
+                },
+                "initiator": {
+                    "M": {
+                        "id": {"N": "1"}, 
+                        "name": {"S": "Joe Smith"}
+                    }
+                },
+                "mediaId": {
+                    "N": "1"
+                },
+                "rightsSplits": {
+                    "M": {
+                        "workCopyrightSplit": {"M": {}},
+                        "performanceNeighboringRightSplit": {"M": {}},
+                        "masterNeighboringRightSplit": {"SS": []}
+                    }
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "uuid": {
+                    "S": "55745c60-7b1a-11e8-9c9c-2d42b21b1a3e"
+                },
+                "initiator": {
+                    "M": {
+                        "id": {"N": "2"}, 
+                        "name": {"S": "Bob Andrews"}
+                    }
+                },
+                "mediaId": {
+                    "N": "2"
+                },
+                "rightsSplits": {
+                    "workCopyrightSplit": {"M": {}},
+                    "performanceNeighboringRightSplit": {"M": {}},
+                    "masterNeighboringRightSplit": {"SS": []}
+                }
+            }
+        }
+      }
+    ]
+}
