@@ -14,18 +14,11 @@
                 },
                 "mediaId": {
                     "N": "1"
-                },
-                "rightsSplits": {
-                    "M": {
-                        "workCopyrightSplit": {"M": {}},
-                        "performanceNeighboringRightSplit": {"M": {}},
-                        "masterNeighboringRightSplit": {"SS": []}
-                    }
                 }
-            }
         }
-      },
-      {
+      }
+    },
+    {
         "PutRequest": {
             "Item": {
                 "uuid": {
@@ -39,11 +32,6 @@
                 },
                 "mediaId": {
                     "N": "2"
-                },
-                "rightsSplits": {
-                    "workCopyrightSplit": {"M": {}},
-                    "performanceNeighboringRightSplit": {"M": {}},
-                    "masterNeighboringRightSplit": {"SS": []}
                 }
             }
         }
