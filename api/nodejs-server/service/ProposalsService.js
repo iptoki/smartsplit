@@ -338,17 +338,15 @@ exports.patchProposalRightsSplits = function(uuid,rightsSplits) {
  **/
 exports.postProposal = function(body) {
   return new Promise(function(resolve, reject) {
-    let params = {
-      "TableName": TABLE,
-    }
     let SPLIT_UUID = uuidv1();
+    console.log('SPLIT UUID', SPLIT_UUID, SPLIT_UUID.type)
     let params = {
       TableName: TABLE,
       Item: {
         'uuid': SPLIT_UUID,
-        'rightsSplits': body.rightsSplits,
+        'mediaId': body.mediaId,
         'initiator': body.initiator,
-        'mediaId': body.mediaId
+        'rightsSplits': body.rightsSplits,
       }
     };
     ddb.put(params, function(err, data) {
@@ -394,6 +392,5 @@ exports.updateProposal = function(uuid,body) {
       resolve(data.Attributes);
     }
   });
-});
 }
 

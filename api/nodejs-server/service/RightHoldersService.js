@@ -134,19 +134,19 @@ exports.patchRightHolderArtistName = function(rightHolderId,artistName) {
  * Update the artist name of a right holder
  *
  * rightHolderId Integer The right holder's unique profile ID
- * avatarS3ETag AvatarS3Etag The right holder's S3 Etag for the profile avatar image
+ * avatarS3Etag AvatarS3Etag The right holder's S3 Etag for the profile avatar image
  * returns rightHolder/properties/avatarS3Etag
  **/
-exports.patchRightHolderAvatarS3ETag = function(rightHolderId,avatarS3ETag) {
+exports.patchRightHolderAvatarS3Etag = function(rightHolderId,avatarS3Etag) {
   return new Promise(function(resolve, reject) {
     let params = {
       TableName: TABLE,
       Key: {
         'rightHolderId': rightHolderId
       },
-      UpdateExpression: 'set avatarS3ETag = :a',
+      UpdateExpression: 'set avatarS3Etag = :a',
       ExpressionAttributeValues: {
-        ':a' : avatarS3ETag.avatarS3ETag
+        ':a' : avatarS3Etag.avatarS3Etag
       },
       ReturnValues: 'UPDATED_NEW'
     };
@@ -518,7 +518,7 @@ exports.postRightHolder = function(body) {
             'password': body.password,
             'jurisdiction' : body.jurisdiction,
             'artistName' : body.artistName,
-            'avatarS3ETag' : body.avatarS3ETag,
+            'avatarS3Etag' : body.avatarS3Etag,
             'cognitoId' : body.cognitoId,
             'socialMediaLinks': body.socialMediaLinks
           }
@@ -552,7 +552,7 @@ exports.updateRightHolder = function(rightHolderId,body) {
       Key: {
         'rightHolderId': rightHolderId
       },
-      UpdateExpression: 'set ipi  = :i, wallet = :w, media = :m, firstName = :f, email = :e, lastName = :l, socialMediaLinks = :s, jurisdiction = :j, password = :p, artistName = :n, avatarS3ETag = :t, cognitoId = :c',
+      UpdateExpression: 'set ipi  = :i, wallet = :w, media = :m, firstName = :f, email = :e, lastName = :l, socialMediaLinks = :s, jurisdiction = :j, password = :p, artistName = :n, avatarS3Etag = :t, cognitoId = :c',
       ExpressionAttributeValues: {
         ':i' : body.ipi,
         ':w' : body.wallet,
@@ -563,7 +563,7 @@ exports.updateRightHolder = function(rightHolderId,body) {
         ':p' : body.password,
         ':j' : body.jurisdiction,
         ':n' : body.artistName,
-        ':t' : body.avatarS3ETag,
+        ':t' : body.avatarS3Etag,
         ':c' : body.cognitoId,
         ':s' : body.socialMediaLinks
       },

@@ -47,10 +47,10 @@ module.exports.patchRightHolderArtistName = function patchRightHolderArtistName 
     });
 };
 
-module.exports.patchRightHolderAvatarS3ETag = function patchRightHolderAvatarS3ETag (req, res, next) {
+module.exports.patchRightHolderAvatarS3Etag = function patchRightHolderAvatarS3Etag (req, res, next) {
   var rightHolderId = req.swagger.params['rightHolderId'].value;
-  var avatarS3ETag = req.swagger.params['avatarS3ETag'].value;
-  RightHolders.patchRightHolderAvatarS3ETag(rightHolderId,avatarS3ETag)
+  var avatarS3Etag = req.swagger.params['avatarS3Etag'].value;
+  RightHolders.patchRightHolderAvatarS3Etag(rightHolderId,avatarS3Etag)
     .then(function (response) {
       utils.writeJson(res, response);
     })

@@ -14,7 +14,7 @@ basePath: "/v1"
 tags:
 - name: "Authentication Details"
   description: "Obtaining and refreshing your JWT token"
-- name: "Right Holders"
+- name: "RightHolders"
   description: "Viewing and creating right holder profiles"
 - name: "Proposals"
   description: "Viewing and creating rights splits for a given media"
@@ -315,7 +315,7 @@ paths:
   /rightHolders:
     get:
       tags:
-      - "Right Holders"
+      - "RightHolders"
       description: "Get a list of all right holder profiles"
       operationId: "getAllRightHolders"
       parameters: []
@@ -332,10 +332,10 @@ paths:
           description: "Endpoint not found"
         500:
           description: "An unknown error occured"
-      x-swagger-router-controller: "Right Holders"
+      x-swagger-router-controller: "RightHolders"
     post:
       tags:
-      - "Right Holders"
+      - "RightHolders"
       description: "This method creates a new right holder profile"
       operationId: "postRightHolder"
       parameters:
@@ -360,11 +360,11 @@ paths:
           description: "An unknown error occured"
       security:
       - jwt: []
-      x-swagger-router-controller: "Right Holders"
+      x-swagger-router-controller: "RightHolders"
   /rightHolders/{rightHolderId}:
     get:
       tags:
-      - "Right Holders"
+      - "RightHolders"
       description: "Get a right holder's profile with the given ID"
       operationId: "getRightHolder"
       parameters:
@@ -386,10 +386,10 @@ paths:
           description: "Endpoint not found"
         500:
           description: "An unknown error occured"
-      x-swagger-router-controller: "Right Holders"
+      x-swagger-router-controller: "RightHolders"
     put:
       tags:
-      - "Right Holders"
+      - "RightHolders"
       description: "This method updates a right holder profile"
       operationId: "updateRightHolder"
       parameters:
@@ -419,10 +419,10 @@ paths:
           description: "An unknown error occured"
       security:
       - jwt: []
-      x-swagger-router-controller: "Right Holders"
+      x-swagger-router-controller: "RightHolders"
     delete:
       tags:
-      - "Right Holders"
+      - "RightHolders"
       description: "Delete a right holder's profile with the given ID"
       operationId: "deleteRightHolder"
       parameters:
@@ -444,11 +444,11 @@ paths:
           description: "An unknown error occured"
       security:
       - jwt: []
-      x-swagger-router-controller: "Right Holders"
+      x-swagger-router-controller: "RightHolders"
   /rightHolders/{rightHolderId}/firstName:
     patch:
       tags:
-      - "Right Holders"
+      - "RightHolders"
       description: "Update right holder's first name with the given ID"
       operationId: "patchRightHolderFirstName"
       parameters:
@@ -480,11 +480,11 @@ paths:
           description: "Endpoint not found"
         500:
           description: "An unknown error occured"
-      x-swagger-router-controller: "Right Holders"
+      x-swagger-router-controller: "RightHolders"
   /rightHolders/{rightHolderId}/lastName:
     patch:
       tags:
-      - "Right Holders"
+      - "RightHolders"
       description: "Update right holder's last name with the given ID"
       operationId: "patchRightHolderLastName"
       parameters:
@@ -516,11 +516,11 @@ paths:
           description: "Endpoint not found"
         500:
           description: "An unknown error occured"
-      x-swagger-router-controller: "Right Holders"
+      x-swagger-router-controller: "RightHolders"
   /rightHolders/{rightHolderId}/email:
     patch:
       tags:
-      - "Right Holders"
+      - "RightHolders"
       description: "Update right holder's email address with given ID"
       operationId: "patchRightHolderEmail"
       parameters:
@@ -554,11 +554,11 @@ paths:
           description: "An unknown error occured"
       security:
       - jwt: []
-      x-swagger-router-controller: "Right Holders"
+      x-swagger-router-controller: "RightHolders"
   /rightHolders/{rightHolderId}/password:
     patch:
       tags:
-      - "Right Holders"
+      - "RightHolders"
       description: "Update right holder's password with given ID"
       operationId: "patchRightHolderPassword"
       parameters:
@@ -586,11 +586,11 @@ paths:
           description: "An unknown error occured"
       security:
       - jwt: []
-      x-swagger-router-controller: "Right Holders"
+      x-swagger-router-controller: "RightHolders"
   /rightHolders/{rightHolderId}/ipi:
     patch:
       tags:
-      - "Right Holders"
+      - "RightHolders"
       description: "Update right holder's IPI number"
       operationId: "patchRightHolderIPI"
       parameters:
@@ -622,11 +622,11 @@ paths:
           description: "Endpoint not found"
         500:
           description: "An unknown error occured"
-      x-swagger-router-controller: "Right Holders"
+      x-swagger-router-controller: "RightHolders"
   /rightHolders/{rightHolderId}/jurisdiction:
     patch:
       tags:
-      - "Right Holders"
+      - "RightHolders"
       description: "Update the jurisdiction for the given right holder"
       operationId: "patchRightHolderJurisdiction"
       parameters:
@@ -659,11 +659,11 @@ paths:
           description: "Endpoint not found"
         500:
           description: "An unknown error occured"
-      x-swagger-router-controller: "Right Holders"
+      x-swagger-router-controller: "RightHolders"
   /rightHolders/{rightHolderId}/wallet:
     patch:
       tags:
-      - "Right Holders"
+      - "RightHolders"
       description: "Update the wallet address of a right holder"
       operationId: "patchRightHolderWallet"
       parameters:
@@ -695,11 +695,11 @@ paths:
           description: "Endpoint not found"
         500:
           description: "An unknown error occured"
-      x-swagger-router-controller: "Right Holders"
+      x-swagger-router-controller: "RightHolders"
   /rightHolders/{rightHolderId}/artistName:
     patch:
       tags:
-      - "Right Holders"
+      - "RightHolders"
       description: "Update the artist name of a right holder"
       operationId: "patchRightHolderArtistName"
       parameters:
@@ -731,11 +731,11 @@ paths:
           description: "Endpoint not found"
         500:
           description: "An unknown error occured"
-      x-swagger-router-controller: "Right Holders"
-  /rightHolders/{rightHolderId}/avatarS3ETag:
+      x-swagger-router-controller: "RightHolders"
+  /rightHolders/{rightHolderId}/avatarS3Etag:
     patch:
       tags:
-      - "Right Holders"
+      - "RightHolders"
       description: "Update the artist name of a right holder"
       operationId: "patchRightHolderAvatarS3ETag"
       parameters:
@@ -745,7 +745,7 @@ paths:
         required: true
         type: "integer"
       - in: "body"
-        name: "avatarS3ETag"
+        name: "avatarS3Etag"
         description: "The right holder's S3 Etag for the profile avatar image"
         required: true
         schema:
@@ -763,11 +763,11 @@ paths:
           description: "Endpoint not found"
         500:
           description: "An unknown error occured"
-      x-swagger-router-controller: "Right Holders"
+      x-swagger-router-controller: "RightHolders"
   /rightHolders/{rightHolderId}/cognitoId:
     patch:
       tags:
-      - "Right Holders"
+      - "RightHolders"
       description: "Update the cognito user pool Id of a right holder"
       operationId: "patchRightHolderCognitoId"
       parameters:
@@ -795,11 +795,11 @@ paths:
           description: "Endpoint not found"
         500:
           description: "An unknown error occured"
-      x-swagger-router-controller: "Right Holders"
+      x-swagger-router-controller: "RightHolders"
   /rightHolders/{rightHolderId}/socialMediaLinks:
     patch:
       tags:
-      - "Right Holders"
+      - "RightHolders"
       description: "Update list of social media links for the given right holder"
       operationId: "patchRightHolderSocialMediaLinks"
       parameters:
@@ -827,7 +827,7 @@ paths:
           description: "Endpoint not found"
         500:
           description: "An unknown error occured"
-      x-swagger-router-controller: "Right Holders"
+      x-swagger-router-controller: "RightHolders"
   /media:
     get:
       tags:
@@ -1900,7 +1900,7 @@ definitions:
       lastName: "Smith"
       email: "john.smith@example.com"
       password: "3c9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3"
-      jurisdiction: "Canada"
+      jurisdiction: "Cansada"
       ipi: "00004576"
       wallet: "0xdd87ae15f4be97e2739c9069ddef674f907d27a8"
       avatarS3Etag: "2f03d99fbf37d8d585285fd4cce27fea"
@@ -2065,7 +2065,7 @@ definitions:
       rightsSplits:
         type: "object"
         additionalProperties:
-          type: "string"
+          type: "object"
           description: "the copyright object for the given right split"
       initiator: 
         type: "object"
@@ -2074,22 +2074,22 @@ definitions:
           description: "the initiator object for the given right split"
     example:
       {
-        uuid: "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e",
-        mediaId: 1,
-        initiator: {"id": 1, "name": "Jim Smith"},
-        rightsSplits: {
+        "uuid": "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e",
+        "mediaId": "1",
+        "initiator": {"id": "1", "name": "Jim Smith"},
+        "rightsSplits": {
           "workCopyrightSplit": {                                       
-            music: [
+            "music": [
             {
               "contributorRole": {
                 "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e": "songwriter",
                 "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "composer"
               },
               "rightHolder": {
-                "id": "1",
+                "rightHolderId": "1",
                 "name": "Joe Smith"
               },
-              "splitPct": 50,
+              "splitPct": "50",
               "voteStatus": "active",
               "_t": "2019-07-08T16:45:51Z"
             },
@@ -2099,59 +2099,56 @@ definitions:
                 "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "composer"
               },
               "rightHolder": {
-                "id": "2",
+                "rightHolderId": "2",
                 "name": "Bob Andrews"
               },
-              "splitPct": 25,
+              "splitPct": "25",
               "voteStatus": "active",
               "_t": "2019-07-08T16:46:51Z"
             }
             ],
-            lyrics: [
+            "lyrics": [
               {
                 "contributorRole": {
                   "12345c60-7b1a-11e8-9c9c-2d42b21b1a4g": "arranger"
                 },
-                "id": 3,
                 "rightHolder": {
-                  "uuid": "3",
+                  "rightHolderId": "3",
                   "name": "Joe Duchane"
                 },    
-                "splitPct": 25,
+                "splitPct": "25",
                 "voteStatus": "active",
                 "_t": "2019-07-08T16:47:51Z"
               }
             ]
           },
           "performanceNeighboringRightSplit": {
-          principal: [
+          "principal": [
             {
               "contributorRole": {
                 "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e": "guitarist",
                 "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "writer"
               },
-              "id": 4,
               "rightHolder": {
-                "uuid": "1",
+                "rightHolerId": "1",
                 "name": "Joe Smith"
               },
-              "splitPct": 80,
+              "splitPct": "80",
               "voteStatus": "active",
               "_t": "2019-07-08T16:40:51Z"
             }
           ],
-          accompaniment: [
+          "accompaniment": [
             {
               "contributorRole": {
                 "12345c60-7b1a-11e8-9c9c-2d42b21b1a3f": "flutist",
                 "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "writer"
               },
-              "id": 5,
               "rightHolder": {
-                "uuid": "2",
+                "rightHolderId": "2",
                 "name": "Bob Andrews"
               },
-              "splitPct": 20,
+              "splitPct": "20",
               "voteStatus": "active",
               "_t": "2019-07-08T16:39:51Z"
             }
@@ -2164,10 +2161,10 @@ definitions:
                 "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "writer"
               },
               "rightHolder": {
-                "id": "1",
+                "rightHolderId": "1",
                 "name": "Joe Smith"
               },
-              "splitPct": 50,
+              "splitPct": "50",
               "voteStatus": "active",
               "_t": "2019-07-08T16:45:51Z"
             },
@@ -2177,10 +2174,10 @@ definitions:
                 "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "writer"
               },
               "rightHolder": {
-                "id": "2",
+                "rightHolderId": "2",
                 "name": "Bob Andrews"
               },
-              "splitPct": 25,
+              "splitPct": "25",
               "voteStatus": "active",
               "_t": "2019-07-08T16:46:51Z"
             },
@@ -2188,18 +2185,18 @@ definitions:
               "contributorRole": {
                 "12345c60-7b1a-11e8-9c9c-2d42b21b1a4g": "composer"
               },
-              "id": 3,
+              "id": "3",
               "rightHolder": {
-                "uuid": "3",
+                "rightHolderId": "3",
                 "name": "Joe Duchane"
               },
-              "splitPct": 25,
+              "splitPct": "25",
               "voteStatus": "active",
               "_t": "2019-07-08T16:47:51Z"
             }
           ]
         }
-      }
+    }
   payments:
     type: "array"
     description: "An array of information about payments"

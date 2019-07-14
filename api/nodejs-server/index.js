@@ -96,7 +96,7 @@ swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
   app.use(middleware.swaggerMetadata());
 
   // Validate Swagger requests
-  app.use(middleware.swaggerValidator());
+  // app.use(middleware.swaggerValidator());
 
   // Route validated requests to appropriate controller
   app.use(middleware.swaggerRouter(options));
