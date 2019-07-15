@@ -1,0 +1,131 @@
+{
+    "mediaId": 4,
+    "initiator": {"id": "4", "name": "Hayley Skellon"},
+    "rightsSplits": {
+      "workCopyrightSplit": {                                       
+        "equal": [
+        {
+          "contributorRole": {
+            "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e": "songwriter",
+            "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "composer"
+          },
+          "rightHolder": {
+            "rightHolderId": "4",
+            "name": "Hayley Skellon"
+          },
+          "splitPct": "33.33333333",
+          "voteStatus": "active",
+          "_t": "2019-07-10T16:45:51Z"
+        },
+        {
+          "contributorRole": {
+            "12345c60-7b1a-11e8-9c9c-2d42b21b1a3f": "songwriter",
+            "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "composer"
+          },
+          "rightHolder": {
+            "rightHolderId": "5",
+            "name": "Sibley Tersay"
+          },
+          "splitPct": "33.33333333",
+          "voteStatus": "active",
+          "_t": "2019-07-10T16:46:51Z"
+        },
+        {
+            "contributorRole": {
+              "12345c60-7b1a-11e8-9c9c-2d42b21b1a3f": "songwriter",
+              "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "composer"
+            },
+            "rightHolder": {
+              "rightHolderId": "6",
+              "name": "Michaella Pering"
+            },
+            "splitPct": "33.33333333",
+            "voteStatus": "active",
+            "_t": "2019-07-10T16:46:51Z"
+        }
+        ]
+      },
+      "performanceNeighboringRightSplit": {
+      "principal": [
+        {
+          "contributorRole": {
+            "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e": "guitarist"
+          },
+          "rightHolder": {
+            "rightHolerId": "5",
+            "name": "Sibley Tersay"
+          },
+          "splitPct": "40.00000000",
+          "voteStatus": "active",
+          "_t": "2019-07-10T16:40:51Z"
+        },
+        {
+            "contributorRole": {
+              "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e": "singer"
+            },
+            "rightHolder": {
+              "rightHolerId": "6",
+              "name": "Michaella Pering"
+            },
+            "splitPct": "40.00000000",
+            "voteStatus": "active",
+            "_t": "2019-07-10T16:40:51Z"
+        }
+      ],
+      "accompaniment": [
+        {
+          "contributorRole": {
+            "12345c60-7b1a-11e8-9c9c-2d42b21b1a3f": "tambourine"
+          },
+          "rightHolder": {
+            "rightHolderId": "4",
+            "name": "Hayley Skellon"
+          },
+          "splitPct": "20.00000000",
+          "voteStatus": "active",
+          "_t": "2019-07-10T16:39:51Z"
+        }
+      ]
+      },
+      "masterNeighboringRightSplit": { "manual": [
+        {
+          "contributorRole": {
+            "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e": "producer"
+          },
+          "rightHolder": {
+            "rightHolderId": "4",
+            "name": "Hayley Skellon"
+          },
+          "splitPct": "50",
+          "voteStatus": "active",
+          "_t": "2019-07-11T16:45:51Z"
+        },
+        {
+          "contributorRole": {
+            "12345c60-7b1a-11e8-9c9c-2d42b21b1a3f": "studio",
+            "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e": "producer"
+          },
+          "rightHolder": {
+            "rightHolderId": "5",
+            "name": "Sibley Tersay"
+          },
+          "splitPct": "25",
+          "voteStatus": "active",
+          "_t": "2019-07-11T16:46:51Z"
+        },
+        {
+          "contributorRole": {
+            "12345c60-7b1a-11e8-9c9c-2d42b21b1a4g": "engineer"
+          },
+          "rightHolder": {
+            "rightHolderId": "6",
+            "name": "Michaella Pering"
+          },
+          "splitPct": "25",
+          "voteStatus": "active",
+          "_t": "2019-07-11T16:47:51Z"
+        }
+      ]
+      }
+    }
+}

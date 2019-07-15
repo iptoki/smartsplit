@@ -67,6 +67,7 @@ exports.getAllRightHolders = function() {
 }
 
 
+
 /**
  * Get a right holder's profile with the given ID
  *
@@ -89,6 +90,108 @@ exports.getRightHolder = function(rightHolderId) {
       } else {
         console.log("Success", data);
         resolve(data);
+      }
+    });
+  });
+}
+
+
+/**
+ * Update the artist name of a right holder
+ *
+ * rightHolderId Integer The right holder's unique profile ID
+ * artistName ArtistName The right holder's artist name
+ * returns Object
+ **/
+exports.patchRightHolderArtistName = function(rightHolderId,artistName) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'rightHolderId': rightHolderId
+      },
+      UpdateExpression: 'set artistNsme = :a',
+      ExpressionAttributeValues: {
+        ':a' : artistName.artistName
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
+  });
+}
+
+
+/**
+ * Update the artist name of a right holder
+ *
+ * rightHolderId Integer The right holder's unique profile ID
+ * avatarS3Etag AvatarS3Etag The right holder's S3 Etag for the profile avatar image
+ * returns rightHolder/properties/avatarS3Etag
+ **/
+exports.patchRightHolderAvatarS3Etag = function(rightHolderId,avatarS3Etag) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'rightHolderId': rightHolderId
+      },
+      UpdateExpression: 'set avatarS3Etag = :a',
+      ExpressionAttributeValues: {
+        ':a' : avatarS3Etag.avatarS3Etag
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
+      }
+    });
+  });
+}
+
+
+/**
+ * Update the cognito user pool Id of a right holder
+ *
+ * rightHolderId Integer The right holder's unique profile ID
+ * cognitoId CognitoId The right holder's cognito Id in AWS user pools
+ * returns rightHolder/properties/cognitoId
+ **/
+exports.patchRightHolderCognitoId = function(rightHolderId,cognitoId) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'rightHolderId': rightHolderId
+      },
+      UpdateExpression: 'set cognitoId = :c',
+      ExpressionAttributeValues: {
+        ':c' : cognitoId.cognitoId
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(data.Attributes);
       }
     });
   });
@@ -414,6 +517,9 @@ exports.postRightHolder = function(body) {
             'lastName': body.lastName,
             'password': body.password,
             'jurisdiction' : body.jurisdiction,
+            'artistName' : body.artistName,
+            'avatarS3Etag' : body.avatarS3Etag,
+            'cognitoId' : body.cognitoId,
             'socialMediaLinks': body.socialMediaLinks
           }
         };
@@ -446,7 +552,7 @@ exports.updateRightHolder = function(rightHolderId,body) {
       Key: {
         'rightHolderId': rightHolderId
       },
-      UpdateExpression: 'set ipi  = :i, wallet = :w, media = :m, firstName = :f, email = :e, lastName = :l, socialMediaLinks = :s, jurisdiction = :j, password = :p',
+      UpdateExpression: 'set ipi  = :i, wallet = :w, media = :m, firstName = :f, email = :e, lastName = :l, socialMediaLinks = :s, jurisdiction = :j, password = :p, artistName = :n, avatarS3Etag = :t, cognitoId = :c',
       ExpressionAttributeValues: {
         ':i' : body.ipi,
         ':w' : body.wallet,
@@ -456,7 +562,10 @@ exports.updateRightHolder = function(rightHolderId,body) {
         ':l' : body.lastName,
         ':p' : body.password,
         ':j' : body.jurisdiction,
-        ':s' : body.socialMediaLinks,
+        ':n' : body.artistName,
+        ':t' : body.avatarS3Etag,
+        ':c' : body.cognitoId,
+        ':s' : body.socialMediaLinks
       },
       ReturnValues: 'UPDATED_NEW'
     };
@@ -472,4 +581,3 @@ exports.updateRightHolder = function(rightHolderId,body) {
     });
   });
 }
-

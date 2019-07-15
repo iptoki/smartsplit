@@ -1,0 +1,23 @@
+{
+  "proposal": [
+    {
+      "PutRequest": {
+          "Item": {
+              "uuid": {
+                "S": "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e"
+              },
+              "mediaId": {
+                "N": "1"
+              },
+              "initiator": {
+                  "M": {
+                    "id": {"N": "1"}, 
+                    "name": {"S": "Joe Smith"}
+                  }
+              },
+"rightsSplits": { "M": {    "performanceNeighboringRightSplit" : { "M" : {        "accompaniment" : { "L" : [            { "M" : {                "_t" : { "S" : "2019-07-08T16:39:51Z" },                "contributorRole" : { "M" : {                    "12345c60-7b1a-11e8-9c9c-2d42b21b1a3f" : { "S" : "flutist" },                    "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i" : { "S" : "vocalist" }                  }                },                "rightHolder" : { "M" : {                    "name" : { "S" : "Bob Andrews" },                    "rightHolderId" : { "N" : "2" }                  }                },                "splitPct" : { "N" : "20" },                "voteStatus" : { "S" : "active" }              }            }          ]        },        "principal" : { "L" : [            { "M" : {                "_t" : { "S" : "2019-07-08T16:40:51Z" },                "contributorRole" : { "M" : {                    "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e" : { "S" : "guitarist" },                    "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i" : { "S" : "writer" }                  }                },                "rightHolder" : { "M" : {                    "name" : { "S" : "Joe Smith" },                    "rightHolderId" : { "N" : "1" }                  }                },                "splitPct" : { "N" : "80" },                "voteStatus" : { "S" : "active" }              }            }          ]        }      }    },    "workCopyrightSplit" : { "M" : {        "lyrics" : { "L" : [            { "M" : {                "_t" : { "S" : "2019-07-08T16:47:51Z" },                "contributorRole" : { "M" : {                    "12345c60-7b1a-11e8-9c9c-2d42b21b1a4g" : { "S" : "arranger" }                  }                },                "rightHolder" : { "M" : {                    "name" : { "S" : "Joe Duchane" },                    "rightHolderId" : { "N" : "3" }                  }                },                "splitPct" : { "N" : "25" },                "voteStatus" : { "S" : "active" }              }            }          ]        },        "music" : { "L" : [            { "M" : {                "_t" : { "S" : "2019-07-08T16:45:51Z" },                "contributorRole" : { "M" : {                    "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e" : { "S" : "songwriter" },                    "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i" : { "S" : "composer" }                  }                },                "rightHolder" : { "M" : {                    "name" : { "S" : "Bob Andrews" },                    "rightHolderId" : { "N" : "2" }                  }                },                "splitPct" : { "N" : "25" },                "voteStatus" : { "S" : "active" }              }            },            { "M" : {                "_t" : { "S" : "2019-07-08T16:46:51Z" },                "contributorRole" : { "M" : {                    "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e" : { "S" : "songwriter" },                    "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i" : { "S" : "composer" }                  }                },                "rightHolder" : { "M" : {                    "name" : { "S" : "Joe Smith" },                    "rightHolderId" : { "N" : "1" }                  }                },                "splitPct" : { "N" : "25" },                "voteStatus" : { "S" : "active" }              }            }          ]        }      }    }  }}
+          }
+      }
+    }
+  ]
+}

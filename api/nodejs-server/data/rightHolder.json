@@ -27,6 +27,15 @@
                 "jurisdiction":{
                     "S": "Canada"
                 },
+                "avatarS3Etag":{
+                    "S": "2f03d99fbf37d8d585285fd4cce27fea"
+                },
+                "artistName":{
+                    "S": "Questlove"
+                },
+                "cognitoId":{
+                    "S": "12345c60-7b1a-11e8-9c9c-2d42b21b1a4g"
+                },
                 "socialMediaLinks": {
                     "M": {
                         "facebook": {"S": "https://facebook.com/johnnyjohnny"}, 
@@ -64,11 +73,112 @@
                 "jurisdiction":{
                     "S": "Canada"
                 },
+                "avatarS3Etag":{
+                    "S": "3f03d99fbf37d8d585285fd4cce27fea"
+                },
+                "artistName":{
+                    "S": "Testlove"
+                },
+                "cognitoId":{
+                    "S": "22245c60-7b1a-11e8-9c9c-2d42b21b1a4g"
+                },
                 "socialMediaLinks": {
                     "M": {
                         "facebook": {"S": "https://facebook.com/bobbya"}, 
                         "instagram": {"S": "https://instagram.com/bobbya"}, 
                         "twitter": {"S": "https://twitter.com/bobbya"}
+                    }
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "rightHolderId": {
+                    "N": "3"
+                },
+                "ipi": {
+                    "N": "00003333"
+                },
+                "wallet": {
+                    "S": "0x3387ae15f4be97e2739c9069ddef674f907d27a8"
+                },
+                "firstName": {
+                    "S": "John"
+                },
+                "email": {
+                    "S": "john.banks@example.com"
+                },
+                "lastName": {
+                    "S": "Banks"
+                },
+                "password":{
+                    "S": "9h9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3"
+                },
+                "jurisdiction":{
+                    "S": "Canada"
+                },
+                "avatarS3Etag":{
+                    "S": "4d12d99fbf37d8d585285fd4cce27fea"
+                },
+                "artistName":{
+                    "S": "Bestlove"
+                },
+                "cognitoId":{
+                    "S": "33345c60-7b1a-11e8-9c9c-2d42b21b1a4g"
+                },
+                "socialMediaLinks": {
+                    "M": {
+                        "facebook": {"S": "https://facebook.com/banks"}, 
+                        "instagram": {"S": "https://instagram.com/banks"}, 
+                        "twitter": {"S": "https://twitter.com/banks2"}
+                    }
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "rightHolderId": {
+                    "N": "4"
+                },
+                "ipi": {
+                    "N": "40000444"
+                },
+                "wallet": {
+                    "S": "0x4487ae15f4be97e2739c9069ddef674f907d27b4"
+                },
+                "firstName": {
+                    "S": "Sarah"
+                },
+                "email": {
+                    "S": "sarahsmith@example.com"
+                },
+                "lastName": {
+                    "S": "Smith"
+                },
+                "password":{
+                    "S": "aa4c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3"
+                },
+                "jurisdiction":{
+                    "S": "Canada"
+                },
+                "avatarS3Etag":{
+                    "S": "bb12d99fbf37d8d585285fd4cce27fea"
+                },
+                "artistName":{
+                    "S": "Messlove"
+                },
+                "cognitoId":{
+                    "S": "44445c60-7b1a-11e8-9c9c-2d42b21b1a44"
+                },
+                "socialMediaLinks": {
+                    "M": {
+                        "facebook": {"S": "https://facebook.com/sas"}, 
+                        "instagram": {"S": "https://instagram.com/sas"}, 
+                        "twitter": {"S": "https://twitter.com/sas"}
                     }
                 }
             }
