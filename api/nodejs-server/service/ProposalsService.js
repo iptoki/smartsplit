@@ -3,6 +3,7 @@ const uuidv1 = require('uuid/v1');
 const TABLE = 'proposal';
 const utils = require('../utils/utils.js');
 
+
 // AWS
 const AWS = require('aws-sdk');
 const REGION = 'us-east-2';
@@ -14,6 +15,7 @@ AWS.config.update({
 });
 
 const ddb = new AWS.DynamoDB.DocumentClient({region: REGION});
+
 
 /**
  * Delete a right split proposal with the given ID
@@ -91,127 +93,6 @@ exports.getProposal = function(uuid) {
     });
   });
 }
-
-
-
-//     var examples = {};
-//     examples['application/json'] = {
-//   "uuid" : "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e",
-//   "mediaId" : 1,
-//   "initiator" : {
-//     "id" : 1,
-//     "name" : "Jim Smith"
-//   },
-//   "rightsSplits" : {
-//     "workCopyrightSplit" : {
-//       "music" : [ {
-//         "contributorRole" : {
-//           "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e" : "songwriter",
-//           "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i" : "composer"
-//         },
-//         "rightHolder" : {
-//           "id" : "1",
-//           "name" : "Joe Smith"
-//         },
-//         "splitPct" : 50,
-//         "voteStatus" : "active",
-//         "_t" : "2019-07-08T16:45:51Z"
-//       }, {
-//         "contributorRole" : {
-//           "12345c60-7b1a-11e8-9c9c-2d42b21b1a3f" : "songwriter",
-//           "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i" : "composer"
-//         },
-//         "rightHolder" : {
-//           "id" : "2",
-//           "name" : "Bob Andrews"
-//         },
-//         "splitPct" : 25,
-//         "voteStatus" : "active",
-//         "_t" : "2019-07-08T16:46:51Z"
-//       } ],
-//       "lyrics" : [ {
-//         "contributorRole" : {
-//           "12345c60-7b1a-11e8-9c9c-2d42b21b1a4g" : "arranger"
-//         },
-//         "id" : 3,
-//         "rightHolder" : {
-//           "uuid" : "3",
-//           "name" : "Joe Duchane"
-//         },
-//         "splitPct" : 25,
-//         "voteStatus" : "active",
-//         "_t" : "2019-07-08T16:47:51Z"
-//       } ]
-//     },
-//     "performanceNeighboringRightSplit" : {
-//       "principal" : [ {
-//         "contributorRole" : {
-//           "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e" : "guitarist",
-//           "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i" : "writer"
-//         },
-//         "id" : 4,
-//         "rightHolder" : {
-//           "uuid" : "1",
-//           "name" : "Joe Smith"
-//         },
-//         "splitPct" : 80,
-//         "voteStatus" : "active",
-//         "_t" : "2019-07-08T16:40:51Z"
-//       } ],
-//       "accompaniment" : [ {
-//         "contributorRole" : {
-//           "12345c60-7b1a-11e8-9c9c-2d42b21b1a3f" : "flutist",
-//           "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i" : "writer"
-//         },
-//         "id" : 5,
-//         "rightHolder" : {
-//           "uuid" : "2",
-//           "name" : "Bob Andrews"
-//         },
-//         "splitPct" : 20,
-//         "voteStatus" : "active",
-//         "_t" : "2019-07-08T16:39:51Z"
-//       } ]
-//     },
-//     "masterNeighboringRightSplit" : [ {
-//       "contributorRole" : {
-//         "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e" : "guitarist",
-//         "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i" : "writer"
-//       },
-//       "rightHolder" : {
-//         "id" : "1",
-//         "name" : "Joe Smith"
-//       },
-//       "splitPct" : 50,
-//       "voteStatus" : "active",
-//       "_t" : "2019-07-08T16:45:51Z"
-//     }, {
-//       "contributorRole" : {
-//         "12345c60-7b1a-11e8-9c9c-2d42b21b1a3f" : "flutist",
-//         "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i" : "writer"
-//       },
-//       "rightHolder" : {
-//         "id" : "2",
-//         "name" : "Bob Andrews"
-//       },
-//       "splitPct" : 25,
-//       "voteStatus" : "active",
-//       "_t" : "2019-07-08T16:46:51Z"
-//     }, {
-//       "contributorRole" : {
-//         "12345c60-7b1a-11e8-9c9c-2d42b21b1a4g" : "composer"
-//       },
-//       "id" : 3,
-//       "rightHolder" : {
-//         "uuid" : "3",
-//         "name" : "Joe Duchane"
-//       },
-//       "splitPct" : 25,
-//       "voteStatus" : "active",
-//       "_t" : "2019-07-08T16:47:51Z"
-//     } ]
-//   }
-// }
 
 
 /**
@@ -295,13 +176,14 @@ exports.patchProposalRightsSplits = function(uuid,rightsSplits) {
         'uuid': uuid
       }
     }
-    // Get old rightsSplits
+    // Get old proposals
     ddb.get(params, function(err, data) {
       if (err) {
         console.log("Error", err);
         resolve();
       } else {
         let oldRightsSplits = data.Item.rightsSplits; 
+        // if (workCopyrightSplit,performanceNeighboringRightSplit,masterNeighboringRightSplit) 
         // TODO ADD LOGIC TO UPDATE RIGHTS SPLITS OBJECT INTELLIGENTLY
         let rightsSplitsJoined = Object.assign({}, oldRightsSplits, rightsSplits);
         let params = {
@@ -367,6 +249,7 @@ exports.postProposal = function(body) {
  * uuid String The split proposal's unique profile ID
  * body Proposal request
  * returns proposal
+ * WIP - overrights existing splits
  **/
 exports.updateProposal = function(uuid,body) {
   let params = {
@@ -374,22 +257,39 @@ exports.updateProposal = function(uuid,body) {
     Key: {
       'uuid': uuid
     },
-    // TODO ADD LOGIC TO UPDATE RIGHTS SPLITS OBJECT INTELLIGENTLY
-    UpdateExpression: 'set rightsSplits  = :r, mediaId = :m, initiator = :i',
-    ExpressionAttributeValues: {
-      ':r' : body.rightsSplits,
-      ':m' : body.mediaId,
-      ':i' : body.initiator
-    },
-    ReturnValues: 'UPDATED_NEW'
+
   };
-  ddb.update(params, function(err, data) {
+  ddb.get(params, function(err, data) {
     if (err) {
       console.log("Error", err);
       resolve();
     } else {
-      console.log("Success", data.Attributes);
-      resolve(data.Attributes);
+      // let oldProposal = data.Item; 
+      // TODO ADD LOGIC TO UPDATE RIGHTS SPLITS OBJECT INTELLIGENTLY
+      // let proposal = Object.assign({}, oldProposal, data.Item);
+      let params = {
+        TableName: TABLE,
+        Key: {
+          'uuid': uuid
+        },
+        // TODO ADD LOGIC TO UPDATE RIGHTS SPLITS OBJECT INTELLIGENTLY
+        UpdateExpression: 'set rightsSplits  = :r, mediaId = :m, initiator = :i',
+        ExpressionAttributeValues: {
+          ':r' : body.rightsSplits,
+          ':m' : body.mediaId,
+          ':i' : body.initiator
+        },
+        ReturnValues: 'UPDATED_NEW'
+      };
+      ddb.update(params, function(err, data) {
+        if (err) {
+          console.log("Error", err);
+          resolve();
+        } else {
+          console.log("Success", data.Attributes);
+          resolve(data.Attributes);
+        }
+      });
     }
   });
 }

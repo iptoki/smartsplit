@@ -47,24 +47,14 @@ app.post('v1/media/', cors(), function (req, res, next) {
 app.put('v1/media/:mediaId', cors(), function (req, res, next) {
   res.json({msg: 'This is CORS-enabled for all origins!'})
 })
-app.options('v1/splits/', cors()) // enable pre-flight request for DELETE request
-app.delete('v1/splits/:uuid', cors(), function (req, res, next) {
+app.options('v1/proposal/', cors()) // enable pre-flight request for DELETE request
+app.delete('v1/proposal/:uuid', cors(), function (req, res, next) {
   res.json({msg: 'This is CORS-enabled for all origins!'})
 })
-app.post('v1/splits/', cors(), function (req, res, next) {
+app.post('v1/proposal/', cors(), function (req, res, next) {
   res.json({msg: 'This is CORS-enabled for all origins!'})
 })
-app.put('v1/splits/:uuid', cors(), function (req, res, next) {
-  res.json({msg: 'This is CORS-enabled for all origins!'})
-})
-app.options('v1/rightsSplit/', cors()) // enable pre-flight request for DELETE request
-app.delete('v1/rightsSplit/:splitUuid', cors(), function (req, res, next) {
-  res.json({msg: 'This is CORS-enabled for all origins!'})
-})
-app.post('v1/rightsSplit/', cors(), function (req, res, next) {
-  res.json({msg: 'This is CORS-enabled for all origins!'})
-})
-app.put('v1/rightsSplit/:SplitUuid', cors(), function (req, res, next) {
+app.put('v1/proposal/:uuid', cors(), function (req, res, next) {
   res.json({msg: 'This is CORS-enabled for all origins!'})
 })
 app.options('v1/rightHolders/', cors()) // enable pre-flight request for DELETE request
@@ -96,7 +86,7 @@ swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
   app.use(middleware.swaggerMetadata());
 
   // Validate Swagger requests
-  // app.use(middleware.swaggerValidator());
+  app.use(middleware.swaggerValidator());
 
   // Route validated requests to appropriate controller
   app.use(middleware.swaggerRouter(options));
