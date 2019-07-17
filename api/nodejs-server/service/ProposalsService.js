@@ -2,7 +2,8 @@
 const uuidv1 = require('uuid/v1');
 const TABLE = 'proposal';
 const utils = require('../utils/utils.js');
-
+const jwt = require('jsonwebtoken');
+const axios = require('axios');
 
 // AWS
 const AWS = require('aws-sdk');
@@ -16,6 +17,329 @@ AWS.config.update({
 
 const ddb = new AWS.DynamoDB.DocumentClient({region: REGION});
 
+function finDuVote(splitId, jeton) {  
+  // Si tous les votes sont récupérés, envoi du courriel de fin de votation  
+
+  let acceptationDeTout = true, acceptationEnAttente = false
+
+  // Détermine si un vote est encore en attente
+  Object.keys(_splits[splitId].parts).forEach(droit=>{
+    Object.keys(_splits[splitId].parts[droit]).forEach(_d=>{
+      if(_splits[splitId].parts[droit][_d].etat !== "ACCEPTE") {
+        acceptationDeTout = false
+        if(_splits[splitId].parts[droit][_d].etat === "ATTENTE") {
+          acceptationEnAttente = true
+        }
+      }
+    })
+  })
+
+  // Récupère tous les ayant droits dans tous les partages avec leurs nom et courriel
+  let destinataires = {}
+  Object.keys(_splits[splitId].parts).forEach(droit=>{
+    Object.keys(_splits[splitId].parts[droit]).forEach(uuid=>{        
+      if(!destinataires[uuid])
+      destinataires[uuid] = {
+        nom: _splits[splitId].parts[droit][uuid].nom, 
+        courriel: _splits[splitId].parts[droit][uuid].courriel
+      }
+    })
+  })
+
+  if(acceptationDeTout) {
+
+    Object.keys(destinataires).forEach(dest=>{
+      let _d = destinataires[dest]
+      let body = [
+        {
+            "toEmail": _d.courriel,
+            "template": "unanimousVote",
+            "firstName": _d.nom,
+            "workTitle": _splits[splitId].media.title,
+            "callbackURL": `http://proto.smartsplit.org:3000/split/voter/${jeton}`
+        }
+      ]
+      axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)    
+    })
+
+    _splits[splitId].estClos = true
+
+  } else if (!acceptationEnAttente) {
+    // Il n'y a rien en attente et ce n'est pas unanime
+    Object.keys(destinataires).forEach(dest=>{
+      let _d = destinataires[dest]
+      let body = [
+        {
+            "toEmail": _d.courriel,
+            "template": "nonUnanimousVote",
+            "firstName": _d.nom,
+            "workTitle": _splits[splitId].media.title,
+            "callbackURL": `http://proto.smartsplit.org:3000/split/voter/${jeton}`
+        }
+      ]
+      axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)    
+    })
+    _splits[splitId].estClos = true
+  }
+
+}
+  
+function updateRightSplits(uuid,rightsSplits) {
+  let params = {
+    TableName: TABLE,
+    Key: {
+      'uuid': uuid
+    },
+    UpdateExpression: 'set rightsSplits  = :r',
+    ExpressionAttributeValues: {
+      ':r' : rightsSplits
+    },
+    ReturnValues: 'UPDATED_NEW'
+  };
+  ddb.update(params, function(err, data) {
+    if (err) {
+      console.log("Error", err)
+    } else {
+      console.log("Success", data.Attributes)
+    }
+  });
+}
+
+exports.invite = function(proposalId, rightHolders) {   
+
+  return new Promise(function(resolve, reject) {
+
+    let _rH = rightHolders
+
+    // Récupère la proposition
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'uuid': proposalId
+      }
+    };
+    ddb.get(params, function(err, data) {
+      if (err) {
+        console.log("Error", err)
+      }
+        
+      let proposition = data.Item
+
+      let initiateur = proposition.initiator.name,
+          initiateurId = proposition.initiator.id,
+          rightsSplits = proposition.rightsSplits
+          //titre = proposition.media.title        
+
+      console.log(`Inviation pour la proposition ${proposalId} faite par ${initiateur}\n`, proposition)
+
+      // 0. Réceptionne le secret de génération JWT des paramètres AWS
+      utils.getParameter('SECRET_JWS_INVITE', (secret)=>{
+  
+        // 0.1 --> Génère un jeton JWT pour chaque ayant-droit
+        const EXPIRATION = "7 days"                              
+        Object.keys(rightHolders).forEach((elem)=>{
+          let jeton = jwt.sign(          
+            {
+                data: {proposalId: proposalId, rightHolderId: elem.rightHolderId}
+            },
+            secret,
+            {expiresIn: EXPIRATION}
+          )
+          rightHolders[elem].jeton = jeton
+        })
+
+        console.log(`Jetons de votation générés pour les ayants-droits\n`, rightHolders)
+        
+        const TYPE_PARTAGE = ['workCopyrightSplit', 'performanceNeighboringRightSplit', 'masterNeighboringRightSplit']
+
+        // 1. Initialisation des votes
+        
+        // a) Le vote positif de l'initiateur est mis à 'accept' partout où ce dernier aparaît
+        // b) Les votes de chaque autre collaborateur est laissé à 'active'
+        TYPE_PARTAGE.forEach((elem, idx)=>{
+          // Dépendant du type de partage ...
+
+          function accepter(elem, rightHolderId, type) {
+            if(type) {
+              rightsSplits[elem][type].forEach((droit, idx)=>{
+                if(droit.rightHolder.rightHolderId === rightHolderId) {
+                  droit.voteStatus = 'accept'
+                  rightsSplits[elem][type][idx] = droit
+                }
+              })
+            } else {
+              rightsSplits[elem].forEach((droit, idx)=>{
+                if(droit.rightHolder.rightHolderId === rightHolderId) {
+                  droit.voteStatus = 'accept'
+                  rightsSplits[elem][idx] = droit
+                }
+              })
+            }
+          }
+
+          switch(idx) {
+            case 0: // Droit d'auteur
+              if(rightsSplits[elem]) {                  
+                // Paroles
+                accepter(elem, initiateurId, 'lyrics')
+                accepter(elem, initiateurId, 'music')
+              }
+              break
+            case 1: // Droit voisin interprète
+              if(rightsSplits[elem]) {
+                accepter(elem, initiateurId, 'principal')
+                accepter(elem, initiateurId, 'accompaniment')
+              }
+              break
+            case 2: // Droit voisin enregistrement
+              if(rightsSplits[elem]) {
+                accepter(elem, initiateurId)
+              }
+              break
+            default:
+          }
+        })
+
+        // 2.a -> Mettre à jour la proposition
+        updateRightSplits(proposalId, rightsSplits)
+        console.log('Droits initiaux calculés\n', rightsSplits)
+        
+        // 3. Récupérer le titre du média avec le mediaId (async)        
+        axios.get(`http://api.smartsplit.org:8080/v1/media/${proposition.mediaId}`)
+        .then(res=>{
+          let titre = res.data.Item.title
+          // 3.a -> Envoyer un courriel à tous (différent si initiateur)
+          Object.keys(rightHolders).forEach((elem)=>{
+            let body = [
+              {
+                  "toEmail": rightHolders[elem].email,
+                  "firstName": rightHolders[elem].name,
+                  "workTitle": titre,
+                  "callbackURL": `http://proto.smartsplit.org:3000/proposition/vote/${rightHolders[elem].jeton}`
+              }
+            ]
+            
+            if(initiateurId === rightHolders[elem].rightHolderId) {
+              // Confirmation d'envoi de proposition
+              body[0].template = "splitSent"            
+            } else {
+              // Invitation à voter
+              body[0].template = "splitCreated"
+            }
+
+          })
+
+          // 4. Résoudre ce qui doit se produire dans le futur avec le jeton de l'initiateur
+          
+          // Test la fin du vote
+          //finDuVotefinDuVote(proposalId, rightHolders[initiateurId].jeton)
+          resolve(rightHolders[initiateurId].jeton)    
+        })        
+        
+      })
+
+    })  
+  })
+}
+
+exports.justifierRefus = function(userId, jeton, raison) {
+
+  return new Promise(function(resolve, reject) {
+
+    // Réceptionne le secret des paramètres AWS
+    utils.getParameter('SECRET_JWS_INVITE', (secret)=>{
+      try {
+          let contenu = jwt.verify(jeton, secret)      
+          let splitId = contenu.data.splitId,
+              rightHolderId = contenu.data.rightHolderId
+
+          if(userId === rightHolderId) {              
+            _splits[splitId].commentaire[rightHolderId] = raison
+          }
+
+          console.log(`Justification du refus de par ${userId} parce que ${raison}`)
+          resolve(contenu.data)          
+      } catch(err) {
+          console.log(err)
+      }
+    })
+  })
+}
+
+exports.voteProposal = function(userId, jeton, droits) {
+
+  return new Promise(function(resolve, reject) {        
+
+    // Réceptionne le secret des paramètres AWS
+    utils.getParameter('SECRET_JWS_INVITE', (secret)=>{
+      try {
+          let contenu = jwt.verify(jeton, secret)
+
+          let splitId = contenu.data.splitId,
+              rightHolderId = contenu.data.rightHolderId
+
+          if(userId === rightHolderId) {
+            console.log(`${userId} a voté sur le split ${splitId}`)
+            _splits[splitId].transmis[rightHolderId] = true
+
+            Object.keys(droits).forEach(elem=>{
+              _splits[splitId].parts[elem][rightHolderId].etat = droits[elem]
+            })
+          }
+
+          let destinataires = {}
+          Object.keys(_splits[splitId].parts).forEach(droit=>{
+            Object.keys(_splits[splitId].parts[droit]).forEach(uuid=>{        
+              if(!destinataires[uuid])
+              destinataires[uuid] = {
+                nom: _splits[splitId].parts[droit][uuid].nom, 
+                courriel: _splits[splitId].parts[droit][uuid].courriel
+              }
+            })
+          })
+
+          let des = destinataires[rightHolderId]
+
+          let body = [
+            {
+                "toEmail": des.courriel,
+                "template": "thanksForVoting",
+                "firstName": des.nom,
+                "workTitle": _splits[splitId].media.title,
+                "callbackURL": `http://proto.smartsplit.org:3000/split/voter/${jeton}`
+            }
+          ]
+          axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)
+          .then(()=>{
+            finDuVote(contenu.data.splitId, jeton)
+            resolve(contenu.data)
+          })
+      } catch(err) {
+          console.log(err)
+      }
+    })
+  })
+}
+
+exports.listeVotes = function(splitId) {
+  return new Promise(function(resolve, reject) {   
+    resolve(_splits[splitId])
+  })
+}
+
+exports.decode = function(jeton) {
+  return new Promise(function(resolve, reject) {
+    // Réceptionne le secret des paramètres AWS
+    utils.getParameter('SECRET_JWS_INVITE', (secret)=>{
+      try {
+          let contenu = jwt.verify(jeton, secret)
+          resolve(contenu.data)
+      } catch(err) {
+          console.log(err)
+      }
+    })
+  })
+}
 
 /**
  * Delete a right split proposal with the given ID
@@ -168,7 +492,7 @@ exports.patchProposalMediaId = function(uuid,mediaId) {
  * rightsSplits RightsSplits The split proposal's rights splits object
  * returns proposal/properties/rightsSplits
  **/
-exports.patchProposalRightsSplits = function(uuid,rightsSplits) {
+exports.patchProposalRightsSplits = function (uuid,rightsSplits) {
   return new Promise(function(resolve, reject) {
     let params = {
       "TableName": TABLE,
@@ -293,4 +617,3 @@ exports.updateProposal = function(uuid,body) {
     }
   });
 }
-

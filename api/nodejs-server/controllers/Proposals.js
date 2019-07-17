@@ -93,3 +93,80 @@ module.exports.updateProposal = function updateProposal (req, res, next) {
       utils.writeJson(res, response);
     });
 };
+
+module.exports.decodeProposal = function decodeProposal (req, res, next) {
+  let _body = req.swagger.params['body'].value
+  let jeton = _body.jeton
+
+  Proposals.decode(jeton)
+  .then(function (response) {
+    utils.writeJson(res, response)
+  })
+  .catch(function (response) {
+    utils.writeJson(res, response)
+  });  
+
+};
+
+module.exports.justifierRefus = function justifierRefus (req, res, next) {
+  let _body = req.swagger.params['body'].value
+  let jeton = _body.jeton, 
+      userId = _body.userId,
+      raison = _body.raison
+
+  Proposals.justifierRefus(userId,  jeton, raison)  
+  .then(function (response) {
+    utils.writeJson(res, response)
+  })
+  .catch(function (response) {
+    utils.writeJson(res, response)
+  });  
+
+};
+
+module.exports.voteProposal = function voteProposal (req, res, next) {
+  let _body = req.swagger.params['body'].value
+  let jeton = _body.jeton, 
+      droits = _body.droits, 
+      userId = _body.userId
+
+  Proposals.voteProposal(userId, jeton, droits)
+
+  .then(function (response) {
+    utils.writeJson(res, response)
+  })
+  .catch(function (response) {
+    utils.writeJson(res, response)
+  });  
+
+};
+
+module.exports.listeVotes = function listeVotes (req, res, next) {
+  let _body = req.swagger.params['body'].value
+  let splitId = _body.splitId
+
+  Proposals.listeVotes(splitId)
+  .then(function (response) {
+    utils.writeJson(res, response)
+  })
+  .catch(function (response) {
+    utils.writeJson(res, response)
+  });  
+
+};
+
+module.exports.inviteProposal = function inviteProposal (req, res, next) {  
+
+  let _body = req.swagger.params['body'].value
+  let proposalId = _body.proposalId
+  let rightHolders = _body.rightHolders
+
+  Proposals.invite(proposalId, rightHolders)
+  .then(function (response) {
+    utils.writeJson(res, response)
+  })
+  .catch(function (response) {
+    utils.writeJson(res, response)
+  });  
+
+};
