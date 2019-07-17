@@ -143,9 +143,9 @@ module.exports.voteProposal = function voteProposal (req, res, next) {
 
 module.exports.listeVotes = function listeVotes (req, res, next) {
   let _body = req.swagger.params['body'].value
-  let splitId = _body.splitId
+  let proposalId = _body.proposalId
 
-  Proposals.listeVotes(splitId)
+  Proposals.listeVotes(proposalId)
   .then(function (response) {
     utils.writeJson(res, response)
   })

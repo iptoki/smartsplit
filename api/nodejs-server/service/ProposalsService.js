@@ -143,7 +143,7 @@ function finDuVote(proposalId) {
 
 }
   
-function overwriteRightSplits(uuid,rightsSplits) {
+function overwriteRightSplits(uuid, rightsSplits) {
   let params = {
     TableName: TABLE,
     Key: {
@@ -207,7 +207,7 @@ exports.invite = function(proposalId, rightHolders) {
           rightHolders[elem].jeton = jeton
         })
 
-        console.log(`Jetons de votation générés pour les ayants-droits\n`, rightHolders)                
+        console.log(`Jetons de votation générés pour les ayants-droits\n`, rightHolders)
 
         // 1. Initialisation des votes
         
@@ -326,7 +326,7 @@ exports.justifierRefus = function(userId, jeton, raison) {
 
 exports.voteProposal = function(userId, jeton, droits) {
 
-  return new Promise(function(resolve, reject) {        
+  return new Promise(function(resolve, reject) {
 
     // Réceptionne le secret des paramètres AWS
     utils.getParameter('SECRET_JWS_INVITE', (secret)=>{
@@ -347,7 +347,7 @@ exports.voteProposal = function(userId, jeton, droits) {
 
           let destinataires = {}
           Object.keys(_splits[splitId].parts).forEach(droit=>{
-            Object.keys(_splits[splitId].parts[droit]).forEach(uuid=>{        
+            Object.keys(_splits[splitId].parts[droit]).forEach(uuid=>{
               if(!destinataires[uuid])
               destinataires[uuid] = {
                 nom: _splits[splitId].parts[droit][uuid].nom, 
@@ -364,7 +364,7 @@ exports.voteProposal = function(userId, jeton, droits) {
                 "template": "thanksForVoting",
                 "firstName": des.nom,
                 "workTitle": _splits[splitId].media.title,
-                "callbackURL": `http://proto.smartsplit.org:3000/split/voter/${jeton}`
+                "callbackURL": `http://proto.smartsplit.org:3000/proposition/vote/${jeton}`
             }
           ]
           axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)
@@ -379,9 +379,25 @@ exports.voteProposal = function(userId, jeton, droits) {
   })
 }
 
-exports.listeVotes = function(splitId) {
-  return new Promise(function(resolve, reject) {   
-    resolve(_splits[splitId])
+exports.listeVotes = function(proposalId) {
+  return new Promise(function(resolve, reject) {
+    // Récupère la proposition
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'uuid': proposalId
+      }
+    };
+    ddb.get(params, function(err, data) {
+      if (err) {
+        console.log("Error", err)
+        reject(err)
+      }
+        
+      let proposition = data.Item
+      resolve(proposition)
+
+    })
   })
 }
 

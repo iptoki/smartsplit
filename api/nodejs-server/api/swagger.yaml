@@ -2215,10 +2215,10 @@ definitions:
   listeVote:
     type: "object"
     properties: 
-      splitId:
+      proposalId:
         type: "string"
         example: "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e"
-        description: "UUID du split"
+        description: "UUID de la propositino"
     example:
       {
         "splitId": "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e.xyz.xzdv"
