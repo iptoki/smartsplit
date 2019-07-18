@@ -57,14 +57,7 @@ function finDuVote(proposalId) {
               return              
             }
           })
-        } else {
-          partages[elem].forEach((droit)=>{
-            if(droit.voteStatus === 'active') {
-              ret = false
-              return
-            }
-          })
-        }
+        } 
         return ret
       }
 
@@ -75,13 +68,6 @@ function finDuVote(proposalId) {
             if(droit.voteStatus === 'reject') {
               ret = false
               return              
-            }
-          })
-        } else {
-          partages[elem].forEach((droit)=>{
-            if(droit.voteStatus === 'reject') {
-              ret = false
-              return
             }
           })
         }
@@ -105,8 +91,8 @@ function finDuVote(proposalId) {
           break
         case 2: // Droit voisin enregistrement
           if(partages[elem]) {
-            tousOntVote = aVote(elem)
-            voteUnanime = estUnanime(elem)
+            tousOntVote = aVote(elem, 'split')
+            voteUnanime = estUnanime(elem, 'split')
           }
           break
         default:
@@ -217,18 +203,11 @@ exports.invite = function(proposalId, rightHolders) {
           // Dépendant du type de partage ...
 
           function accepter(elem, rightHolderId, type) {
-            if(type) {
+            if(elem && type) {
               rightsSplits[elem][type].forEach((droit, idx)=>{
                 if(droit.rightHolder.rightHolderId === rightHolderId) {
                   droit.voteStatus = 'accept'
                   rightsSplits[elem][type][idx] = droit
-                }
-              })
-            } else {
-              rightsSplits[elem].forEach((droit, idx)=>{
-                if(droit.rightHolder.rightHolderId === rightHolderId) {
-                  droit.voteStatus = 'accept'
-                  rightsSplits[elem][idx] = droit
                 }
               })
             }
@@ -250,7 +229,7 @@ exports.invite = function(proposalId, rightHolders) {
               break
             case 2: // Droit voisin enregistrement
               if(rightsSplits[elem]) {
-                accepter(elem, initiateurId)
+                accepter(elem, initiateurId, 'split')
               }
               break
             default:
