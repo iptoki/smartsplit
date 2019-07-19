@@ -16,7 +16,7 @@
                     "S": "Johnny"
                 },
                 "email": {
-                    "S": "johnny.smithy@example.com"
+                    "S": "natalya@iptoki.com"
                 },
                 "lastName": {
                     "S": "Smithy"
@@ -28,13 +28,13 @@
                     "S": "Canada"
                 },
                 "avatarS3Etag":{
-                    "S": "2f03d99fbf37d8d585285fd4cce27fea"
+                    "S": "b571877904c154125bd4bc05e3cb3f57"
                 },
                 "artistName":{
                     "S": "Questlove"
                 },
                 "cognitoId":{
-                    "S": "12345c60-7b1a-11e8-9c9c-2d42b21b1a4g"
+                    "S": "1bdf8c57-9176-42f4-91e1-7f686a22e641"
                 },
                 "socialMediaLinks": {
                     "M": {
@@ -74,13 +74,13 @@
                     "S": "Canada"
                 },
                 "avatarS3Etag":{
-                    "S": "3f03d99fbf37d8d585285fd4cce27fea"
+                    "S": "6416c06a3efe5cdaeead37fa09a910e2"
                 },
                 "artistName":{
                     "S": "Testlove"
                 },
                 "cognitoId":{
-                    "S": "22245c60-7b1a-11e8-9c9c-2d42b21b1a4g"
+                    "S": "40e5ad76-d2c6-4f1e-9eb4-98213e29e36f"
                 },
                 "socialMediaLinks": {
                     "M": {
@@ -108,7 +108,7 @@
                     "S": "John"
                 },
                 "email": {
-                    "S": "john.banks@example.com"
+                    "S": "georges@iptoki.com"
                 },
                 "lastName": {
                     "S": "Banks"
@@ -120,13 +120,13 @@
                     "S": "Canada"
                 },
                 "avatarS3Etag":{
-                    "S": "4d12d99fbf37d8d585285fd4cce27fea"
+                    "S": "2d2a20baeb57721d588ef8e3cfe7aacf"
                 },
                 "artistName":{
                     "S": "Bestlove"
                 },
                 "cognitoId":{
-                    "S": "33345c60-7b1a-11e8-9c9c-2d42b21b1a4g"
+                    "S": "5c35a46b-11f8-4366-a7cb-0a614c660af0"
                 },
                 "socialMediaLinks": {
                     "M": {
@@ -151,34 +151,402 @@
                     "S": "0x4487ae15f4be97e2739c9069ddef674f907d27b4"
                 },
                 "firstName": {
-                    "S": "Sarah"
+                    "S": "Hayley"
                 },
                 "email": {
-                    "S": "sarahsmith@example.com"
+                    "S": "HayleySkellon@example.com"
                 },
                 "lastName": {
-                    "S": "Smith"
+                    "S": "Skellon"
                 },
                 "password":{
-                    "S": "aa4c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3"
+                    "S": "ff4c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3d4"
                 },
                 "jurisdiction":{
                     "S": "Canada"
                 },
                 "avatarS3Etag":{
-                    "S": "bb12d99fbf37d8d585285fd4cce27fea"
+                    "S": "5edb7e60e430369c88aa91dd2fe4add6"
                 },
                 "artistName":{
-                    "S": "Messlove"
+                    "S": "Rey"
                 },
                 "cognitoId":{
-                    "S": "44445c60-7b1a-11e8-9c9c-2d42b21b1a44"
+                    "S": "789d8f48-d212-4de8-9e64-458f2ace6a86"
                 },
                 "socialMediaLinks": {
                     "M": {
-                        "facebook": {"S": "https://facebook.com/sas"}, 
-                        "instagram": {"S": "https://instagram.com/sas"}, 
-                        "twitter": {"S": "https://twitter.com/sas"}
+                        "facebook": {"S": "https://facebook.com/rey"}, 
+                        "instagram": {"S": "https://instagram.com/rey"}, 
+                        "twitter": {"S": "https://twitter.com/rey"}
+                    }
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "rightHolderId": {
+                    "N": "5"
+                },
+                "ipi": {
+                    "N": "22223333"
+                },
+                "wallet": {
+                    "S": "0xbb87ae15f4be97e2739c9069ddef674f907d27a8"
+                },
+                "firstName": {
+                    "S": "Sibley"
+                },
+                "email": {
+                    "S": "sibley.tersay@example.com"
+                },
+                "lastName": {
+                    "S": "Tersay"
+                },
+                "password":{
+                    "S": "9h9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3"
+                },
+                "jurisdiction":{
+                    "S": "Canada"
+                },
+                "avatarS3Etag":{
+                    "S": "b571877904c154125bd4bc05e3cb3f57"
+                },
+                "artistName":{
+                    "S": "Price"
+                },
+                "cognitoId":{
+                    "S": "7ed1975c-a84c-482d-aaf9-60b62fbb7c24"
+                },
+                "socialMediaLinks": {
+                    "M": {
+                        "facebook": {"S": "https://facebook.com/price"}, 
+                        "instagram": {"S": "https://instagram.com/price"}, 
+                        "twitter": {"S": "https://twitter.com/price"}
+                    }
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "rightHolderId": {
+                    "N": "6"
+                },
+                "ipi": {
+                    "N": "33344333"
+                },
+                "wallet": {
+                    "S": "0xcc87ae15f4be97e2739c9069ddef674f907d27a8"
+                },
+                "firstName": {
+                    "S": "Michaella"
+                },
+                "email": {
+                    "S": "mper@gmail.com"
+                },
+                "lastName": {
+                    "S": "Pering"
+                },
+                "password":{
+                    "S": "9h9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3"
+                },
+                "jurisdiction":{
+                    "S": "Canada"
+                },
+                "avatarS3Etag":{
+                    "S": "6416c06a3efe5cdaeead37fa09a910e2"
+                },
+                "artistName":{
+                    "S": "MP"
+                },
+                "cognitoId":{
+                    "S": "81a71410-ce64-4396-9308-b5216a9cb1bd"
+                },
+                "socialMediaLinks": {
+                    "M": {
+                        "facebook": {"S": "https://facebook.com/mp"}, 
+                        "instagram": {"S": "https://instagram.com/mp"}, 
+                        "twitter": {"S": "https://twitter.com/mp"}
+                    }
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "rightHolderId": {
+                    "N": "7"
+                },
+                "ipi": {
+                    "N": "44443333"
+                },
+                "wallet": {
+                    "S": "0xdd87ae15f4be97e2739c9069ddef674f907d27a8"
+                },
+                "firstName": {
+                    "S": "Kip"
+                },
+                "email": {
+                    "S": "kipj@example.com"
+                },
+                "lastName": {
+                    "S": "Jaskolski"
+                },
+                "password":{
+                    "S": "9h9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3"
+                },
+                "jurisdiction":{
+                    "S": "Canada"
+                },
+                "avatarS3Etag":{
+                    "S": "2d2a20baeb57721d588ef8e3cfe7aacf"
+                },
+                "artistName":{
+                    "S": "judy"
+                },
+                "cognitoId":{
+                    "S": "8ad5b162-d407-4baf-822a-d7d20584784c"
+                },
+                "socialMediaLinks": {
+                    "M": {
+                        "facebook": {"S": "https://facebook.com/judy"}, 
+                        "instagram": {"S": "https://instagram.com/judy"}, 
+                        "twitter": {"S": "https://twitter.com/judy"}
+                    }
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "rightHolderId": {
+                    "N": "8"
+                },
+                "ipi": {
+                    "N": "55553333"
+                },
+                "wallet": {
+                    "S": "0xff37ae15f4be97e2739c9069ddef674f907d27a8"
+                },
+                "firstName": {
+                    "S": "Dillan"
+                },
+                "email": {
+                    "S": "vincent@iptoki.com"
+                },
+                "lastName": {
+                    "S": "Luettgen"
+                },
+                "password":{
+                    "S": "9h9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3"
+                },
+                "jurisdiction":{
+                    "S": "Canada"
+                },
+                "avatarS3Etag":{
+                    "S": "5edb7e60e430369c88aa91dd2fe4add6"
+                },
+                "artistName":{
+                    "S": "Dillan"
+                },
+                "cognitoId":{
+                    "S": "914f2291-3f1e-49ae-a4a6-001352d5a781"
+                },
+                "socialMediaLinks": {
+                    "M": {
+                        "facebook": {"S": "https://facebook.com/dillan"}, 
+                        "instagram": {"S": "https://instagram.com/dillan"}, 
+                        "twitter": {"S": "https://twitter.com/dillan"}
+                    }
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "rightHolderId": {
+                    "N": "9"
+                },
+                "ipi": {
+                    "N": "66663333"
+                },
+                "wallet": {
+                    "S": "0x7777ae15f4be97e2739c9069ddef674f907d27a8"
+                },
+                "firstName": {
+                    "S": "Issac"
+                },
+                "email": {
+                    "S": "guillaume@iptoki.com"
+                },
+                "lastName": {
+                    "S": "Kub"
+                },
+                "password":{
+                    "S": "9h9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3"
+                },
+                "jurisdiction":{
+                    "S": "Canada"
+                },
+                "avatarS3Etag":{
+                    "S": "b571877904c154125bd4bc05e3cb3f57"
+                },
+                "artistName":{
+                    "S": "kub"
+                },
+                "cognitoId":{
+                    "S": "e8595ee5-371f-4f09-a0b7-4f710e73c156"
+                },
+                "socialMediaLinks": {
+                    "M": {
+                        "facebook": {"S": "https://facebook.com/kub"}, 
+                        "instagram": {"S": "https://instagram.com/kub"}, 
+                        "twitter": {"S": "https://twitter.com/kub"}
+                    }
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "rightHolderId": {
+                    "N": "10"
+                },
+                "ipi": {
+                    "N": "77773333"
+                },
+                "wallet": {
+                    "S": "0x2237ae15f4be97e2739c9069ddef674f907d27a8"
+                },
+                "firstName": {
+                    "S": "Tremaine"
+                },
+                "email": {
+                    "S": "hickle.tremaine@example.com"
+                },
+                "lastName": {
+                    "S": "Hickle"
+                },
+                "password":{
+                    "S": "9h9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3"
+                },
+                "jurisdiction":{
+                    "S": "Canada"
+                },
+                "avatarS3Etag":{
+                    "S": "6416c06a3efe5cdaeead37fa09a910e2"
+                },
+                "artistName":{
+                    "S": "Hickle"
+                },
+                "cognitoId":{
+                    "S": "33345c60-7b1a-11e8-9c9c-2d42b21b1a4g"
+                },
+                "socialMediaLinks": {
+                    "M": {
+                        "facebook": {"S": "https://facebook.com/hickle"}, 
+                        "instagram": {"S": "https://instagram.com/hickle"}, 
+                        "twitter": {"S": "https://twitter.com/hickle"}
+                    }
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "rightHolderId": {
+                    "N": "11"
+                },
+                "ipi": {
+                    "N": "88883333"
+                },
+                "wallet": {
+                    "S": "0x5585ae15f4be97e2739c9069ddef674f907d27a8"
+                },
+                "firstName": {
+                    "S": "Rosemary"
+                },
+                "email": {
+                    "S": "strosin@gmail.com"
+                },
+                "lastName": {
+                    "S": "Strosin"
+                },
+                "password":{
+                    "S": "9h9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3"
+                },
+                "jurisdiction":{
+                    "S": "Canada"
+                },
+                "avatarS3Etag":{
+                    "S": "2d2a20baeb57721d588ef8e3cfe7aacf"
+                },
+                "artistName":{
+                    "S": "Ahmad"
+                },
+                "cognitoId":{
+                    "S": "22245c60-7b1a-11e8-9c9c-2d42b21b1a3a"
+                },
+                "socialMediaLinks": {
+                    "M": {
+                        "facebook": {"S": "https://facebook.com/Ahmad"}, 
+                        "instagram": {"S": "https://instagram.com/Ahmad"}, 
+                        "twitter": {"S": "https://twitter.com/Ahmad"}
+                    }
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "rightHolderId": {
+                    "N": "12"
+                },
+                "ipi": {
+                    "N": "99993333"
+                },
+                "wallet": {
+                    "S": "0x1087ae15f4be97e2739c9069ddef674f907d27a8"
+                },
+                "firstName": {
+                    "S": "Peter"
+                },
+                "email": {
+                    "S": "peter.connelly@gmail.com"
+                },
+                "lastName": {
+                    "S": "Connelly"
+                },
+                "password":{
+                    "S": "9h9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3"
+                },
+                "jurisdiction":{
+                    "S": "Canada"
+                },
+                "avatarS3Etag":{
+                    "S": "5edb7e60e430369c88aa91dd2fe4add6"
+                },
+                "artistName":{
+                    "S": "Connie"
+                },
+                "cognitoId":{
+                    "S": "11145c60-7b1a-11e8-9c9c-2d42b21b1a4a"
+                },
+                "socialMediaLinks": {
+                    "M": {
+                        "facebook": {"S": "https://facebook.com/connie"}, 
+                        "instagram": {"S": "https://instagram.com/connie"}, 
+                        "twitter": {"S": "https://twitter.com/connie"}
                     }
                 }
             }

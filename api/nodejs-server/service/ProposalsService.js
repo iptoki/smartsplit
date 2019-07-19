@@ -473,6 +473,61 @@ exports.getProposal = function(uuid) {
 
 
 /**
+ * Get a split proposal with the given rightHolderId
+ *
+ * rightHolderId Number The right holder's unique ID
+ * returns listProposals
+ * 
+ * TODO Modify FilterExpression to query rightsSplits object for rightHolderId
+ **/
+exports.getProposalsRightHolder = function(rightHolderId) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      "TableName": TABLE,
+    }
+    ddb.scan(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data);
+        resolve(data.Items);
+      }
+    });
+  });
+  // return new Promise(function(resolve, reject) {
+  //   let params = {
+  //     TableName: TABLE,
+  //     ExpressionAttributeValues: {
+  //       ':rightHolderId' : {N: rightHolderId}
+  //     },
+  //     ProjectionExpression: "uuid, rightsSplits, initiator, mediaId, comments",
+  //     FilterExpression: "contains (rightsSplits, :rightHolderId)"
+  //   };
+  //   ddb.get(params, function(err, data) {
+  //     if (err) {
+  //       console.log("Error", err);
+  //       resolve();
+  //     } else {
+  //       console.log("Success", data);
+  //       resolve(data);
+  //     }
+  //   });
+  //   ddb.query(params, function(err, data) {
+  //     if (err) {
+  //       console.log("Error", err);
+  //     } else {
+  //       //console.log("Success", data.Items);
+  //       data.Items.forEach(function(element, index, array) {
+  //         console.log(element.uuid.N);
+  //       });
+  //     }
+  //   });
+  // });
+}
+
+
+/**
  * Update initiator for a given split proposal
  *
  * uuid String The split's unique ID
@@ -571,6 +626,58 @@ exports.patchProposalRightsSplits = function (uuid,rightsSplits) {
           UpdateExpression: 'set rightsSplits  = :r',
           ExpressionAttributeValues: {
             ':r' : rightsSplitsJoined
+          },
+          ReturnValues: 'UPDATED_NEW'
+        };
+        ddb.update(params, function(err, data) {
+          if (err) {
+            console.log("Error", err);
+            resolve();
+          } else {
+            console.log("Success", data.Attributes);
+            resolve(data.Attributes);
+          }
+        });
+      }
+    });
+  });
+}
+
+
+/**
+ * Update comments array for given split proposal
+ *
+ * uuid String The split proposal's unique ID
+ * comments Comments The split proposal's comments array
+ * returns proposal/properties/comments
+ **/
+exports.patchProposalComments = function(uuid, comments) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      "TableName": TABLE,
+      Key: {
+        'uuid': uuid
+      }
+    }
+    // Get old comments
+    ddb.get(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        let oldComments = data.Item.comments
+        let result = Object.keys(oldComments).map(function(key) {
+            return Number(key), oldComments[key];
+        });
+        let commentsJoined = result.concat(comments);
+        let params = {
+          TableName: TABLE,
+          Key: {
+            'uuid': uuid
+          },
+          UpdateExpression: 'set comments  = :c',
+          ExpressionAttributeValues: {
+            ':c' : commentsJoined
           },
           ReturnValues: 'UPDATED_NEW'
         };

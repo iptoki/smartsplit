@@ -35,6 +35,17 @@ module.exports.getProposal = function getProposal (req, res, next) {
     });
 };
 
+module.exports.getProposalsRightHolder = function getProposalsRightHolder (req, res, next) {
+  var rightHolderId = req.swagger.params['rightHolderId'].value;
+  Proposals.getProposalsRightHolder(rightHolderId)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
 module.exports.patchProposalInitiator = function patchProposalInitiator (req, res, next) {
   var uuid = req.swagger.params['uuid'].value;
   var initiator = req.swagger.params['initiator'].value;
@@ -63,6 +74,18 @@ module.exports.patchProposalRightsSplits = function patchProposalRightsSplits (r
   var uuid = req.swagger.params['uuid'].value;
   var rightsSplits = req.swagger.params['rightsSplits'].value;
   Proposals.patchProposalRightsSplits(uuid,rightsSplits)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.patchProposalComments = function patchProposalComments (req, res, next) {
+  var uuid = req.swagger.params['uuid'].value;
+  var comments = req.swagger.params['comments'].value;
+  Proposals.patchProposalComments(uuid,comments)
     .then(function (response) {
       utils.writeJson(res, response);
     })
