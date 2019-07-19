@@ -288,10 +288,11 @@ exports.patchProposalComments = function(uuid, comments) {
         console.log("Error", err);
         resolve();
       } else {
-        let oldComments = data.Item.comments; 
-        // if (workCopyrightSplit,performanceNeighboringRightSplit,masterNeighboringRightSplit) 
-        // TODO ADD LOGIC TO UPDATE RIGHTS SPLITS OBJECT INTELLIGENTLY
-        let commentsJoined = Object.assign({}, oldComments, comments);
+        let oldComments = data.Item.comments
+        let result = Object.keys(oldComments).map(function(key) {
+            return Number(key), oldComments[key];
+        });
+        let commentsJoined = result.concat(comments);
         let params = {
           TableName: TABLE,
           Key: {
