@@ -347,6 +347,32 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "Proposals"
+  /proposal/rightHolder/{rightHolderId}:
+    get:
+      tags:
+      - "Proposals"
+      description: "Get all split proposals for the given right holder"
+      operationId: "getProposalsRightHolder"
+      parameters:
+      - name: "rightHolderId"
+        in: "path"
+        description: "The Id of the given right holder"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/proposal"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Proposals"
   /proposal/{uuid}/mediaId:
     patch:
       tags:
@@ -446,6 +472,40 @@ paths:
           description: "OK"
           schema:
             $ref: "#/definitions/proposal/properties/rightsSplits"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Proposals"
+  /proposal/{uuid}/comments:
+    patch:
+      tags:
+      - "Proposals"
+      description: "Update coomments array for given split proposal"
+      operationId: "patchProposalComments"
+      parameters:
+      - name: "uuid"
+        in: "path"
+        description: "The split proposal's unique ID"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "comments"
+        description: "The split proposal's comments array"
+        required: true
+        schema:
+          $ref: "#/definitions/proposal/properties/comments"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/proposal/properties/comments"
         400:
           description: "Bad request"
         403:
@@ -2278,6 +2338,11 @@ definitions:
         additionalProperties:
           type: "string"
           description: "the initiator object for the given right split"
+      comments: 
+        type: "array"
+        items:
+          type: "object"
+          description: "the comment and rightHolderId for the given proposal"
     example:
       {
         "uuid": "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e",
@@ -2401,7 +2466,16 @@ definitions:
               "_t": "2019-07-08T16:47:51Z"
             }
           ]
+        },
+        "comments": [{
+          "rightHolderId": 1,
+          "comment": "Ok"
+        },
+        {
+          "rightHolderId": 2,
+          "comment": "Not enough, more split"
         }
+        ]
     }
   payments:
     type: "array"
