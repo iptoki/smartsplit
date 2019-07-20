@@ -2248,7 +2248,7 @@ definitions:
       droits:
         type: "object"
         additionalProperties:
-          type: "string"
+          type: "object"
         example: "{workCopyrightSplit: 'ACCEPTE', ...}"
         description: "Objet décrivant les splits et les états"
     example:

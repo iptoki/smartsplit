@@ -37,24 +37,31 @@ function finDuVote(proposalId) {
       console.log("Error", err)
     }
       
-    let partages = data.Item.rightsSplits    
+    let proposition = data.Item
+    let partages = proposition.rightsSplits
 
     let tousOntVote = true
     let voteUnanime = true
 
-    // Parcours tous les partages ...
+    // Contiendra les ayants-droits de la proposition
+    let rightHolders = {}
 
+    // Parcours tous les partages ...    
     TYPE_PARTAGE.forEach((elem, idx)=>{
       
       // Dépendant du type de partage ...
 
       function aVote(elem, type) {
         let ret = true
-        if(type) {
+        if(elem && type && partages[elem][type]) {
           partages[elem][type].forEach((droit)=>{
+            if(!rightHolders[droit.rightHolder.rightHolderId]) {
+              // Ajout l'ayant-droit dans le tableau local pour traitement 
+              // et envoi de courriel
+              rightHolders[droit.rightHolder.rightHolderId] = droit.rightHolder
+            }
             if(droit.voteStatus === 'active') {
-              ret = false
-              return              
+              ret = false            
             }
           })
         } 
@@ -63,11 +70,12 @@ function finDuVote(proposalId) {
 
       function estUnanime(elem, type) {
         let ret = true
-        if(type) {
+        if(elem && type && partages[elem][type]) {
           partages[elem][type].forEach((droit)=>{
+            console.log('estUnanime()', elem, type, droit.voteStatus)
             if(droit.voteStatus === 'reject') {
               ret = false
-              return              
+              return
             }
           })
         }
@@ -101,29 +109,57 @@ function finDuVote(proposalId) {
 
     if(tousOntVote) {
       // Tout le monde a voté
-      Object.keys(rightHolders).forEach(dest=>{
-        
+      Object.keys(rightHolders).forEach(dest=>{        
         let _d = rightHolders[dest]
-        let body = [
-          {
-              "toEmail": _d.courriel,              
-              "firstName": _d.nom,
-              "workTitle": _splits[proposalId].media.title,
-              "callbackURL": `http://proto.smartsplit.org:3000/partage/${proposalId}`
+
+        // Récupérer le courriel de l'ayant-droit
+        let params = {
+          TableName: 'rightHolder',
+          Key: {
+            'rightHolderId': parseInt(_d.rightHolderId)
           }
-        ]
-
-        if(estUnanime) {
-          // Enoi du courriel d'unanimité
-          body[0].template = "unanimousVote"          
-        } else {
-          // Envoi du courriel de non accord
-          body[0].template = "nonUnanimousVote"
         }
+        ddb.get(params, function(err, _rH) {
+          if (err) {
+            console.log("Error", err)
+          }
+          _rH = _rH.Item
 
-        axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)
+          // Récupérer le titre du média
+          let params = {
+            TableName: 'media',
+            Key: {
+              'mediaId': parseInt(proposition.mediaId)
+            }
+          }
+          ddb.get(params, function(err, media) {
+            if (err) {
+              console.log("Error", err)
+            }
+            let titre = media.Item.title
 
-      })    
+            let body = [
+              {
+                  "toEmail": _rH.email,
+                  "firstName": _rH.firstName,
+                  "workTitle": titre,
+                  "callbackURL": `http://proto.smartsplit.org:3000/partage/${proposalId}`
+              }
+            ]
+    
+            if(voteUnanime) {
+              // Enoi du courriel d'unanimité
+              body[0].template = "unanimousVote"          
+            } else {
+              // Envoi du courriel de non accord
+              body[0].template = "nonUnanimousVote"
+            }
+    
+            axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)
+
+          })
+        })
+      })
     }
   })  
 
@@ -147,14 +183,54 @@ function overwriteRightSplits(uuid, rightsSplits) {
     } else {
       console.log("Success", data.Attributes)
     }
-  });
+  })
+}
+
+function ajouterCommentaire(propositionId, userId, commentaire) {
+
+  // Récupère la proposition
+  let params = {
+    TableName: TABLE,
+    Key: {
+      'uuid': propositionId
+    }
+  }
+
+  ddb.get(params, function(err, data) {
+    if (err) {
+      console.log("Error", err)
+    }
+
+    let proposition = data.Item
+    let commentaires = proposition.comments
+
+    commentaires[userId] = commentaire
+
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'uuid': propositionId
+      },
+      UpdateExpression: 'set comments  = :c',
+      ExpressionAttributeValues: {
+        ':c' : commentaires
+      },
+      ReturnValues: 'UPDATED_NEW'
+    }
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err)
+      } else {
+        console.log("Success", data.Attributes)
+      }
+    })
+
+  })    
 }
 
 exports.invite = function(proposalId, rightHolders) {   
 
   return new Promise(function(resolve, reject) {
-
-    let _rH = rightHolders
 
     // Récupère la proposition
     let params = {
@@ -173,7 +249,6 @@ exports.invite = function(proposalId, rightHolders) {
       let initiateur = proposition.initiator.name,
           initiateurId = proposition.initiator.id,
           rightsSplits = proposition.rightsSplits
-          //titre = proposition.media.title        
 
       console.log(`Inviation pour la proposition ${proposalId} faite par ${initiateur}\n`, proposition)
 
@@ -185,7 +260,7 @@ exports.invite = function(proposalId, rightHolders) {
         Object.keys(rightHolders).forEach((elem)=>{
           let jeton = jwt.sign(          
             {
-                data: {proposalId: proposalId, rightHolderId: elem.rightHolderId}
+                data: {proposalId: proposalId, rightHolderId: rightHolders[elem].rightHolderId}
             },
             secret,
             {expiresIn: EXPIRATION}
@@ -203,7 +278,7 @@ exports.invite = function(proposalId, rightHolders) {
           // Dépendant du type de partage ...
 
           function accepter(elem, rightHolderId, type) {
-            if(elem && type) {
+            if(elem && type && rightsSplits[elem][type]) {
               rightsSplits[elem][type].forEach((droit, idx)=>{
                 if(droit.rightHolder.rightHolderId === rightHolderId) {
                   droit.voteStatus = 'accept'
@@ -234,6 +309,10 @@ exports.invite = function(proposalId, rightHolders) {
               break
             default:
           }
+
+          // Ajoute le commentaire
+          ajouterCommentaire(proposalId, initiateurId, 'Initiateur du split')
+
         })
 
         // 2.a -> Mettre à jour la proposition
@@ -271,7 +350,10 @@ exports.invite = function(proposalId, rightHolders) {
           // Test la fin du vote
           finDuVote(proposalId, rightHolders[initiateurId].jeton)
           resolve(rightHolders[initiateurId].jeton)    
-        })        
+        })
+        .catch(err=>{
+          console.log(err)
+        })
         
       })
 
@@ -287,15 +369,15 @@ exports.justifierRefus = function(userId, jeton, raison) {
     utils.getParameter('SECRET_JWS_INVITE', (secret)=>{
       try {
           let contenu = jwt.verify(jeton, secret)      
-          let splitId = contenu.data.splitId,
-              rightHolderId = contenu.data.rightHolderId
+          let propositionId = contenu.data.proposalId,
+              rightHolderId = contenu.data.rightHolderId          
 
-          if(userId === rightHolderId) {              
-            _splits[splitId].commentaire[rightHolderId] = raison
+          if(userId === rightHolderId) {
+            ajouterCommentaire(propositionId, rightHolderId, 'Initiateur du split')
           }
 
           console.log(`Justification du refus de par ${userId} parce que ${raison}`)
-          resolve(contenu.data)          
+          resolve(contenu.data)
       } catch(err) {
           console.log(err)
       }
@@ -304,53 +386,92 @@ exports.justifierRefus = function(userId, jeton, raison) {
 }
 
 exports.voteProposal = function(userId, jeton, droits) {
-
   return new Promise(function(resolve, reject) {
-
     // Réceptionne le secret des paramètres AWS
     utils.getParameter('SECRET_JWS_INVITE', (secret)=>{
       try {
-          let contenu = jwt.verify(jeton, secret)
+        let contenu = jwt.verify(jeton, secret)
 
-          let splitId = contenu.data.splitId,
-              rightHolderId = contenu.data.rightHolderId
+        let proposalId = contenu.data.proposalId,
+            rightHolderId = contenu.data.rightHolderId
 
-          if(userId === rightHolderId) {
-            console.log(`${userId} a voté sur le split ${splitId}`)
-            _splits[splitId].transmis[rightHolderId] = true
+        if(userId === rightHolderId) {
 
-            Object.keys(droits).forEach(elem=>{
-              _splits[splitId].parts[elem][rightHolderId].etat = droits[elem]
-            })
-          }
-
-          let destinataires = {}
-          Object.keys(_splits[splitId].parts).forEach(droit=>{
-            Object.keys(_splits[splitId].parts[droit]).forEach(uuid=>{
-              if(!destinataires[uuid])
-              destinataires[uuid] = {
-                nom: _splits[splitId].parts[droit][uuid].nom, 
-                courriel: _splits[splitId].parts[droit][uuid].courriel
-              }
-            })
-          })
-
-          let des = destinataires[rightHolderId]
-
-          let body = [
-            {
-                "toEmail": des.courriel,
-                "template": "thanksForVoting",
-                "firstName": des.nom,
-                "workTitle": _splits[splitId].media.title,
-                "callbackURL": `http://proto.smartsplit.org:3000/proposition/vote/${jeton}`
+          // Récupère la proposition
+          let params = {
+            TableName: TABLE,
+            Key: {
+              'uuid': proposalId
             }
-          ]
-          axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)
-          .then(()=>{
-            finDuVote(contenu.data.splitId, jeton)
-            resolve(contenu.data)
-          })
+          }
+          ddb.get(params, function(err, data) {
+            if (err) {
+              console.log("Error", err)
+            }
+              
+            let proposition = data.Item
+            let rightsSplits = proposition.rightsSplits
+
+            // Parcours tous les partages de l'utilisateur qui vote et modifie ces partages
+            Object.keys(rightsSplits).forEach(famille=>{
+              Object.keys(rightsSplits[famille]).forEach(type=>{
+                rightsSplits[famille][type].forEach((droit, idx)=>{
+                  if(droit.rightHolder.rightHolderId === userId) {
+                    // Trouver le bon droit qui a été envoyé
+                    droit.voteStatus = droits[famille][type]
+                    rightsSplits[famille][type][idx] = droit
+                  }
+                })
+              })
+            })
+
+            // Appliquer le changement de droits
+            overwriteRightSplits(proposalId, rightsSplits)
+
+              // Récupère la proposition
+            let params = {
+              TableName: 'rightHolder',
+              Key: {
+                'rightHolderId': parseInt(userId)
+              }
+            }
+            ddb.get(params, function(err, _rH) {
+              if (err) {
+                console.log("Error", err)
+              }
+              _rH = _rH.Item
+
+              // Récupère le titre du média
+              let params = {
+                TableName: 'media',
+                Key: {
+                  'mediaId': proposition.mediaId
+                }
+              }
+              ddb.get(params, function(err, media) {
+                if (err) {
+                  console.log("Error", err)
+                }    
+
+                let body = [
+                  {
+                      "toEmail": _rH.email,
+                      "template": "thanksForVoting",
+                      "firstName": `${_rH.firstName} ${_rH.lastName}`,
+                      "workTitle": media.Item.title,
+                      "callbackURL": `http://proto.smartsplit.org:3000/proposition/vote/${jeton}`
+                  }
+                ]
+
+                axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)
+                .then(()=>{
+                  finDuVote(proposalId, jeton)
+                  resolve(contenu.data)
+                })
+              })
+            })
+          })           
+        }          
       } catch(err) {
           console.log(err)
       }
