@@ -70,6 +70,7 @@ function finDuVote(proposalId) {
 
       function estUnanime(elem, type) {
         let ret = true
+        console.log('estUnanime ?',partages, elem, type)
         if(elem && type && partages[elem][type]) {
           partages[elem][type].forEach((droit)=>{
             console.log('estUnanime()', elem, type, droit.voteStatus)
@@ -86,21 +87,21 @@ function finDuVote(proposalId) {
         case 0: // Droit d'auteur
           if(partages[elem]) {                  
             // Paroles et musique
-            tousOntVote = aVote(elem,  'lyrics') && aVote(elem,  'music')
-            voteUnanime = estUnanime(elem,  'lyrics') && estUnanime(elem,  'music')
+            tousOntVote = tousOntVote && aVote(elem,  'lyrics') && aVote(elem,  'music')
+            voteUnanime = voteUnanime && estUnanime(elem,  'lyrics') && estUnanime(elem,  'music')
           }
           break
         case 1: // Droit voisin interprète
           if(partages[elem]) {
             // Principal et secondaire
-            tousOntVote = aVote(elem,  'principal') && aVote(elem,  'accompaniment')
-            voteUnanime = estUnanime(elem,  'principal') && estUnanime(elem,  'accompaniment')
+            tousOntVote = tousOntVote && aVote(elem,  'principal') && aVote(elem,  'accompaniment')
+            voteUnanime = voteUnanime && estUnanime(elem,  'principal') && estUnanime(elem,  'accompaniment')
           }
           break
         case 2: // Droit voisin enregistrement
           if(partages[elem]) {
-            tousOntVote = aVote(elem, 'split')
-            voteUnanime = estUnanime(elem, 'split')
+            tousOntVote = tousOntVote && aVote(elem, 'split')
+            voteUnanime = voteUnanime && estUnanime(elem, 'split')
           }
           break
         default:
