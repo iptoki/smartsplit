@@ -340,6 +340,7 @@ exports.invite = function(proposalId, rightHolders) {
               body[0].template = "splitSent"            
             } else {
               // Invitation à voter
+              body[0].splitInitiator = initiateur
               body[0].template = "splitCreated"
             }
 
