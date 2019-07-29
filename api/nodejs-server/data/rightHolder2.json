@@ -1,10 +1,10 @@
 {
-    "rightHolder2": [
+    "rightHolder": [
       {
         "PutRequest": {
             "Item": {
                 "rightHolderId": {
-                    "S": "1bdf8c57-9176-42f4-91e1-7f686a22e641"
+                    "S": "bac72434-fc88-4d75-9261-41e892cbb939"
                 },
                 "ipi": {
                     "N": "11114576"
@@ -20,9 +20,6 @@
                 },
                 "lastName": {
                     "S": "Smithy"
-                },
-                "password":{
-                    "S": "3c9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3"
                 },
                 "jurisdiction":{
                     "S": "Canada"
@@ -59,13 +56,10 @@
                     "S": "Bob"
                 },
                 "email": {
-                    "S": "bandrews@example.com"
+                    "S": "guillaume@iptoki.com"
                 },
                 "lastName": {
                     "S": "Andrews"
-                },
-                "password":{
-                    "S": "4c9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3"
                 },
                 "jurisdiction":{
                     "S": "Canada"
@@ -107,9 +101,6 @@
                 "lastName": {
                     "S": "Banks"
                 },
-                "password":{
-                    "S": "9h9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3"
-                },
                 "jurisdiction":{
                     "S": "Canada"
                 },
@@ -133,7 +124,7 @@
         "PutRequest": {
             "Item": {
                 "rightHolderId": {
-                    "S": "789d8f48-d212-4de8-9e64-458f2ace6a86"
+                    "S": "94fbf235-f7ea-44c9-97e2-c08107d380a4"
                 },
                 "ipi": {
                     "N": "40000444"
@@ -145,13 +136,10 @@
                     "S": "Hayley"
                 },
                 "email": {
-                    "S": "HayleySkellon@example.com"
+                    "S": "vincent@iptoki.com"
                 },
                 "lastName": {
                     "S": "Skellon"
-                },
-                "password":{
-                    "S": "ff4c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3d4"
                 },
                 "jurisdiction":{
                     "S": "Canada"
@@ -176,7 +164,7 @@
         "PutRequest": {
             "Item": {
                 "rightHolderId": {
-                    "S": "7ed1975c-a84c-482d-aaf9-60b62fbb7c24"
+                    "S": "523bac7a-b14c-4a33-87ad-6aa3e848f2f6"
                 },
                 "ipi": {
                     "N": "22223333"
@@ -188,13 +176,10 @@
                     "S": "Sibley"
                 },
                 "email": {
-                    "S": "sibley.tersay@example.com"
+                    "S": "david@iptoki.com"
                 },
                 "lastName": {
                     "S": "Tersay"
-                },
-                "password":{
-                    "S": "9h9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3"
                 },
                 "jurisdiction":{
                     "S": "Canada"
@@ -231,13 +216,10 @@
                     "S": "Michaella"
                 },
                 "email": {
-                    "S": "mper@gmail.com"
+                    "S": "mario@iptoki.com"
                 },
                 "lastName": {
                     "S": "Pering"
-                },
-                "password":{
-                    "S": "9h9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3"
                 },
                 "jurisdiction":{
                     "S": "Canada"
@@ -262,93 +244,7 @@
         "PutRequest": {
             "Item": {
                 "rightHolderId": {
-                    "S": "8ad5b162-d407-4baf-822a-d7d20584784c"
-                },
-                "ipi": {
-                    "N": "44443333"
-                },
-                "wallet": {
-                    "S": "0xdd87ae15f4be97e2739c9069ddef674f907d27a8"
-                },
-                "firstName": {
-                    "S": "Kip"
-                },
-                "email": {
-                    "S": "kipj@example.com"
-                },
-                "lastName": {
-                    "S": "Jaskolski"
-                },
-                "password":{
-                    "S": "9h9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3"
-                },
-                "jurisdiction":{
-                    "S": "Canada"
-                },
-                "avatarS3Etag":{
-                    "S": "2d2a20baeb57721d588ef8e3cfe7aacf"
-                },
-                "artistName":{
-                    "S": "judy"
-                },
-                "socialMediaLinks": {
-                    "M": {
-                        "facebook": {"S": "https://facebook.com/judy"}, 
-                        "instagram": {"S": "https://instagram.com/judy"}, 
-                        "twitter": {"S": "https://twitter.com/judy"}
-                    }
-                }
-            }
-        }
-      },
-      {
-        "PutRequest": {
-            "Item": {
-                "rightHolderId": {
-                    "S": "914f2291-3f1e-49ae-a4a6-001352d5a781"
-                },
-                "ipi": {
-                    "N": "55553333"
-                },
-                "wallet": {
-                    "S": "0xff37ae15f4be97e2739c9069ddef674f907d27a8"
-                },
-                "firstName": {
-                    "S": "Dillan"
-                },
-                "email": {
-                    "S": "vincent@iptoki.com"
-                },
-                "lastName": {
-                    "S": "Luettgen"
-                },
-                "password":{
-                    "S": "9h9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3"
-                },
-                "jurisdiction":{
-                    "S": "Canada"
-                },
-                "avatarS3Etag":{
-                    "S": "5edb7e60e430369c88aa91dd2fe4add6"
-                },
-                "artistName":{
-                    "S": "Dillan"
-                },
-                "socialMediaLinks": {
-                    "M": {
-                        "facebook": {"S": "https://facebook.com/dillan"}, 
-                        "instagram": {"S": "https://instagram.com/dillan"}, 
-                        "twitter": {"S": "https://twitter.com/dillan"}
-                    }
-                }
-            }
-        }
-      },
-      {
-        "PutRequest": {
-            "Item": {
-                "rightHolderId": {
-                    "S": "e8595ee5-371f-4f09-a0b7-4f710e73c156"
+                    "S": "8c9a463d-4803-4221-9e96-f940f250e87d"
                 },
                 "ipi": {
                     "N": "66663333"
@@ -360,13 +256,10 @@
                     "S": "Issac"
                 },
                 "email": {
-                    "S": "guillaume@iptoki.com"
+                    "S": "wawrykod@gmail.com"
                 },
                 "lastName": {
                     "S": "Kub"
-                },
-                "password":{
-                    "S": "9h9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3"
                 },
                 "jurisdiction":{
                     "S": "Canada"
@@ -391,7 +284,7 @@
         "PutRequest": {
             "Item": {
                 "rightHolderId": {
-                    "S": "33345c60-7b1a-11e8-9c9c-2d42b21b1a4g"
+                    "S": "40e5ad76-d2c6-4f1e-9eb4-98213e29e36f"
                 },
                 "ipi": {
                     "N": "77773333"
@@ -403,13 +296,10 @@
                     "S": "Tremaine"
                 },
                 "email": {
-                    "S": "hickle.tremaine@example.com"
+                    "S": "dwawryko@gmail.com"
                 },
                 "lastName": {
                     "S": "Hickle"
-                },
-                "password":{
-                    "S": "9h9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3"
                 },
                 "jurisdiction":{
                     "S": "Canada"
@@ -446,13 +336,10 @@
                     "S": "Rosemary"
                 },
                 "email": {
-                    "S": "strosin@gmail.com"
+                    "S": "wawrykod@gmail.com"
                 },
                 "lastName": {
                     "S": "Strosin"
-                },
-                "password":{
-                    "S": "9h9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3"
                 },
                 "jurisdiction":{
                     "S": "Canada"
@@ -468,49 +355,6 @@
                         "facebook": {"S": "https://facebook.com/Ahmad"}, 
                         "instagram": {"S": "https://instagram.com/Ahmad"}, 
                         "twitter": {"S": "https://twitter.com/Ahmad"}
-                    }
-                }
-            }
-        }
-      },
-      {
-        "PutRequest": {
-            "Item": {
-                "rightHolderId": {
-                    "S": "11145c60-7b1a-11e8-9c9c-2d42b21b1a4a"
-                },
-                "ipi": {
-                    "N": "99993333"
-                },
-                "wallet": {
-                    "S": "0x1087ae15f4be97e2739c9069ddef674f907d27a8"
-                },
-                "firstName": {
-                    "S": "Peter"
-                },
-                "email": {
-                    "S": "peter.connelly@gmail.com"
-                },
-                "lastName": {
-                    "S": "Connelly"
-                },
-                "password":{
-                    "S": "9h9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3"
-                },
-                "jurisdiction":{
-                    "S": "Canada"
-                },
-                "avatarS3Etag":{
-                    "S": "5edb7e60e430369c88aa91dd2fe4add6"
-                },
-                "artistName":{
-                    "S": "Connie"
-                },
-                "socialMediaLinks": {
-                    "M": {
-                        "facebook": {"S": "https://facebook.com/connie"}, 
-                        "instagram": {"S": "https://instagram.com/connie"}, 
-                        "twitter": {"S": "https://twitter.com/connie"}
                     }
                 }
             }
