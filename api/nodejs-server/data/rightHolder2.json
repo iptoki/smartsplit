@@ -1,0 +1,364 @@
+{
+    "rightHolder": [
+      {
+        "PutRequest": {
+            "Item": {
+                "rightHolderId": {
+                    "S": "bac72434-fc88-4d75-9261-41e892cbb939"
+                },
+                "ipi": {
+                    "N": "11114576"
+                },
+                "wallet": {
+                    "S": "0xaa87ae15f4be97e2739c9069ddef674f907d27a8"
+                },
+                "firstName": {
+                    "S": "Johnny"
+                },
+                "email": {
+                    "S": "natalya@iptoki.com"
+                },
+                "lastName": {
+                    "S": "Smithy"
+                },
+                "jurisdiction":{
+                    "S": "Canada"
+                },
+                "avatarS3Etag":{
+                    "S": "b571877904c154125bd4bc05e3cb3f57"
+                },
+                "artistName":{
+                    "S": "Questlove"
+                },
+                "socialMediaLinks": {
+                    "M": {
+                        "facebook": {"S": "https://facebook.com/johnnyjohnny"}, 
+                        "instagram": {"S": "https://instagram.com/johnnyjohnny"}, 
+                        "twitter": {"S": "https://twitter.com/johnnyjohnny"}
+                    }
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "rightHolderId": {
+                    "S": "50e5ad76-d2c6-4f1e-9eb4-98213e29e36f"
+                },
+                "ipi": {
+                    "N": "00004577"
+                },
+                "wallet": {
+                    "S": "0xff87ae15f4be97e2739c9069ddef674f907d27a8"
+                },
+                "firstName": {
+                    "S": "Bob"
+                },
+                "email": {
+                    "S": "guillaume@iptoki.com"
+                },
+                "lastName": {
+                    "S": "Andrews"
+                },
+                "jurisdiction":{
+                    "S": "Canada"
+                },
+                "avatarS3Etag":{
+                    "S": "6416c06a3efe5cdaeead37fa09a910e2"
+                },
+                "artistName":{
+                    "S": "Testlove"
+                },
+                "socialMediaLinks": {
+                    "M": {
+                        "facebook": {"S": "https://facebook.com/bobbya"}, 
+                        "instagram": {"S": "https://instagram.com/bobbya"}, 
+                        "twitter": {"S": "https://twitter.com/bobbya"}
+                    }
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "rightHolderId": {
+                    "S": "5c35a46b-11f8-4366-a7cb-0a614c660af0"
+                },
+                "ipi": {
+                    "N": "00003333"
+                },
+                "wallet": {
+                    "S": "0x3387ae15f4be97e2739c9069ddef674f907d27a8"
+                },
+                "firstName": {
+                    "S": "John"
+                },
+                "email": {
+                    "S": "georges@iptoki.com"
+                },
+                "lastName": {
+                    "S": "Banks"
+                },
+                "jurisdiction":{
+                    "S": "Canada"
+                },
+                "avatarS3Etag":{
+                    "S": "2d2a20baeb57721d588ef8e3cfe7aacf"
+                },
+                "artistName":{
+                    "S": "Bestlove"
+                },
+                "socialMediaLinks": {
+                    "M": {
+                        "facebook": {"S": "https://facebook.com/banks"}, 
+                        "instagram": {"S": "https://instagram.com/banks"}, 
+                        "twitter": {"S": "https://twitter.com/banks2"}
+                    }
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "rightHolderId": {
+                    "S": "94fbf235-f7ea-44c9-97e2-c08107d380a4"
+                },
+                "ipi": {
+                    "N": "40000444"
+                },
+                "wallet": {
+                    "S": "0x4487ae15f4be97e2739c9069ddef674f907d27b4"
+                },
+                "firstName": {
+                    "S": "Hayley"
+                },
+                "email": {
+                    "S": "vincent@iptoki.com"
+                },
+                "lastName": {
+                    "S": "Skellon"
+                },
+                "jurisdiction":{
+                    "S": "Canada"
+                },
+                "avatarS3Etag":{
+                    "S": "5edb7e60e430369c88aa91dd2fe4add6"
+                },
+                "artistName":{
+                    "S": "Rey"
+                },
+                "socialMediaLinks": {
+                    "M": {
+                        "facebook": {"S": "https://facebook.com/rey"}, 
+                        "instagram": {"S": "https://instagram.com/rey"}, 
+                        "twitter": {"S": "https://twitter.com/rey"}
+                    }
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "rightHolderId": {
+                    "S": "523bac7a-b14c-4a33-87ad-6aa3e848f2f6"
+                },
+                "ipi": {
+                    "N": "22223333"
+                },
+                "wallet": {
+                    "S": "0xbb87ae15f4be97e2739c9069ddef674f907d27a8"
+                },
+                "firstName": {
+                    "S": "Sibley"
+                },
+                "email": {
+                    "S": "david@iptoki.com"
+                },
+                "lastName": {
+                    "S": "Tersay"
+                },
+                "jurisdiction":{
+                    "S": "Canada"
+                },
+                "avatarS3Etag":{
+                    "S": "b571877904c154125bd4bc05e3cb3f57"
+                },
+                "artistName":{
+                    "S": "Price"
+                },
+                "socialMediaLinks": {
+                    "M": {
+                        "facebook": {"S": "https://facebook.com/price"}, 
+                        "instagram": {"S": "https://instagram.com/price"}, 
+                        "twitter": {"S": "https://twitter.com/price"}
+                    }
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "rightHolderId": {
+                    "S": "81a71410-ce64-4396-9308-b5216a9cb1bd"
+                },
+                "ipi": {
+                    "N": "33344333"
+                },
+                "wallet": {
+                    "S": "0xcc87ae15f4be97e2739c9069ddef674f907d27a8"
+                },
+                "firstName": {
+                    "S": "Michaella"
+                },
+                "email": {
+                    "S": "mario@iptoki.com"
+                },
+                "lastName": {
+                    "S": "Pering"
+                },
+                "jurisdiction":{
+                    "S": "Canada"
+                },
+                "avatarS3Etag":{
+                    "S": "6416c06a3efe5cdaeead37fa09a910e2"
+                },
+                "artistName":{
+                    "S": "MP"
+                },
+                "socialMediaLinks": {
+                    "M": {
+                        "facebook": {"S": "https://facebook.com/mp"}, 
+                        "instagram": {"S": "https://instagram.com/mp"}, 
+                        "twitter": {"S": "https://twitter.com/mp"}
+                    }
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "rightHolderId": {
+                    "S": "8c9a463d-4803-4221-9e96-f940f250e87d"
+                },
+                "ipi": {
+                    "N": "66663333"
+                },
+                "wallet": {
+                    "S": "0x7777ae15f4be97e2739c9069ddef674f907d27a8"
+                },
+                "firstName": {
+                    "S": "Issac"
+                },
+                "email": {
+                    "S": "wawrykod@gmail.com"
+                },
+                "lastName": {
+                    "S": "Kub"
+                },
+                "jurisdiction":{
+                    "S": "Canada"
+                },
+                "avatarS3Etag":{
+                    "S": "b571877904c154125bd4bc05e3cb3f57"
+                },
+                "artistName":{
+                    "S": "kub"
+                },
+                "socialMediaLinks": {
+                    "M": {
+                        "facebook": {"S": "https://facebook.com/kub"}, 
+                        "instagram": {"S": "https://instagram.com/kub"}, 
+                        "twitter": {"S": "https://twitter.com/kub"}
+                    }
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "rightHolderId": {
+                    "S": "40e5ad76-d2c6-4f1e-9eb4-98213e29e36f"
+                },
+                "ipi": {
+                    "N": "77773333"
+                },
+                "wallet": {
+                    "S": "0x2237ae15f4be97e2739c9069ddef674f907d27a8"
+                },
+                "firstName": {
+                    "S": "Tremaine"
+                },
+                "email": {
+                    "S": "dwawryko@gmail.com"
+                },
+                "lastName": {
+                    "S": "Hickle"
+                },
+                "jurisdiction":{
+                    "S": "Canada"
+                },
+                "avatarS3Etag":{
+                    "S": "6416c06a3efe5cdaeead37fa09a910e2"
+                },
+                "artistName":{
+                    "S": "Hickle"
+                },
+                "socialMediaLinks": {
+                    "M": {
+                        "facebook": {"S": "https://facebook.com/hickle"}, 
+                        "instagram": {"S": "https://instagram.com/hickle"}, 
+                        "twitter": {"S": "https://twitter.com/hickle"}
+                    }
+                }
+            }
+        }
+      },
+      {
+        "PutRequest": {
+            "Item": {
+                "rightHolderId": {
+                    "S": "22245c60-7b1a-11e8-9c9c-2d42b21b1a3a"
+                },
+                "ipi": {
+                    "N": "88883333"
+                },
+                "wallet": {
+                    "S": "0x5585ae15f4be97e2739c9069ddef674f907d27a8"
+                },
+                "firstName": {
+                    "S": "Rosemary"
+                },
+                "email": {
+                    "S": "wawrykod@gmail.com"
+                },
+                "lastName": {
+                    "S": "Strosin"
+                },
+                "jurisdiction":{
+                    "S": "Canada"
+                },
+                "avatarS3Etag":{
+                    "S": "2d2a20baeb57721d588ef8e3cfe7aacf"
+                },
+                "artistName":{
+                    "S": "Ahmad"
+                },
+                "socialMediaLinks": {
+                    "M": {
+                        "facebook": {"S": "https://facebook.com/Ahmad"}, 
+                        "instagram": {"S": "https://instagram.com/Ahmad"}, 
+                        "twitter": {"S": "https://twitter.com/Ahmad"}
+                    }
+                }
+            }
+        }
+      }
+    ]
+}

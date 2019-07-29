@@ -59,18 +59,6 @@ module.exports.patchRightHolderAvatarS3Etag = function patchRightHolderAvatarS3E
     });
 };
 
-module.exports.patchRightHolderCognitoId = function patchRightHolderCognitoId (req, res, next) {
-  var rightHolderId = req.swagger.params['rightHolderId'].value;
-  var cognitoId = req.swagger.params['cognitoId'].value;
-  RightHolders.patchRightHolderCognitoId(rightHolderId,cognitoId)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
 module.exports.patchRightHolderEmail = function patchRightHolderEmail (req, res, next) {
   var rightHolderId = req.swagger.params['rightHolderId'].value;
   var email = req.swagger.params['email'].value;
@@ -123,18 +111,6 @@ module.exports.patchRightHolderLastName = function patchRightHolderLastName (req
   var rightHolderId = req.swagger.params['rightHolderId'].value;
   var lastName = req.swagger.params['lastName'].value;
   RightHolders.patchRightHolderLastName(rightHolderId,lastName)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.patchRightHolderPassword = function patchRightHolderPassword (req, res, next) {
-  var rightHolderId = req.swagger.params['rightHolderId'].value;
-  var password = req.swagger.params['password'].value;
-  RightHolders.patchRightHolderPassword(rightHolderId,password)
     .then(function (response) {
       utils.writeJson(res, response);
     })

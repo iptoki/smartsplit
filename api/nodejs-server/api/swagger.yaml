@@ -577,7 +577,7 @@ paths:
         in: "path"
         description: "The rights holder's unique profile ID"
         required: true
-        type: "integer"
+        type: "string"
       responses:
         200:
           description: "OK"
@@ -602,7 +602,7 @@ paths:
         in: "path"
         description: "The rights holder's unique profile ID"
         required: true
-        type: "integer"
+        type: "string"
       - in: "body"
         name: "body"
         description: "request"
@@ -635,7 +635,7 @@ paths:
         in: "path"
         description: "The rights holder's unique profile ID"
         required: true
-        type: "integer"
+        type: "string"
       responses:
         200:
           description: "OK. Right holder profile deleted."
@@ -661,7 +661,7 @@ paths:
         in: "path"
         description: "The rights holder's unique profile ID"
         required: true
-        type: "integer"
+        type: "string"
       - in: "body"
         name: "firstName"
         description: "The rights holder's first name"
@@ -697,7 +697,7 @@ paths:
         in: "path"
         description: "The rights holder's unique profile ID"
         required: true
-        type: "integer"
+        type: "string"
       - in: "body"
         name: "lastName"
         description: "The rights holder's last name"
@@ -733,7 +733,7 @@ paths:
         in: "path"
         description: "The right holder's unique profile ID"
         required: true
-        type: "integer"
+        type: "string"
       - in: "body"
         name: "email"
         description: "The rights holder's email address"
@@ -760,38 +760,6 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "RightHolders"
-  /rightHolders/{rightHolderId}/password:
-    patch:
-      tags:
-      - "RightHolders"
-      description: "Update right holder's password with given ID"
-      operationId: "patchRightHolderPassword"
-      parameters:
-      - name: "rightHolderId"
-        in: "path"
-        description: "The right holder's unique profile ID"
-        required: true
-        type: "integer"
-      - in: "body"
-        name: "password"
-        description: "The rights holder's password"
-        required: true
-        schema:
-          $ref: "#/definitions/rightHolder/properties/password"
-      responses:
-        200:
-          description: "OK. Password updated"
-        400:
-          description: "Bad request"
-        403:
-          description: "Permission denied"
-        404:
-          description: "Endpoint not found"
-        500:
-          description: "An unknown error occured"
-      security:
-      - jwt: []
-      x-swagger-router-controller: "RightHolders"
   /rightHolders/{rightHolderId}/ipi:
     patch:
       tags:
@@ -803,7 +771,7 @@ paths:
         in: "path"
         description: "The right holder's unique profile ID"
         required: true
-        type: "integer"
+        type: "string"
       - in: "body"
         name: "ipi"
         description: "The right holder's IPI number"
@@ -839,7 +807,7 @@ paths:
         in: "path"
         description: "The artwork agreement's unique ID"
         required: true
-        type: "integer"
+        type: "string"
       - in: "body"
         name: "jurisdiction"
         description: "The jurisdiction of the given right holder"
@@ -876,7 +844,7 @@ paths:
         in: "path"
         description: "The right holder's unique profile ID"
         required: true
-        type: "integer"
+        type: "string"
       - in: "body"
         name: "wallet"
         description: "The right holder's wallet address"
@@ -912,7 +880,7 @@ paths:
         in: "path"
         description: "The right holder's unique profile ID"
         required: true
-        type: "integer"
+        type: "string"
       - in: "body"
         name: "artistName"
         description: "The right holder's artist name"
@@ -948,7 +916,7 @@ paths:
         in: "path"
         description: "The right holder's unique profile ID"
         required: true
-        type: "integer"
+        type: "string"
       - in: "body"
         name: "avatarS3Etag"
         description: "The right holder's S3 Etag for the profile avatar image"
@@ -969,38 +937,6 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "RightHolders"
-  /rightHolders/{rightHolderId}/cognitoId:
-    patch:
-      tags:
-      - "RightHolders"
-      description: "Update the cognito user pool Id of a right holder"
-      operationId: "patchRightHolderCognitoId"
-      parameters:
-      - name: "rightHolderId"
-        in: "path"
-        description: "The right holder's unique profile ID"
-        required: true
-        type: "integer"
-      - in: "body"
-        name: "cognitoId"
-        description: "The right holder's cognito Id in AWS user pools"
-        required: true
-        schema:
-          $ref: "#/definitions/rightHolder/properties/cognitoId"
-      responses:
-        200:
-          description: "OK"
-          schema:
-            $ref: "#/definitions/rightHolder/properties/cognitoId"
-        400:
-          description: "Bad request"
-        403:
-          description: "Permission denied"
-        404:
-          description: "Endpoint not found"
-        500:
-          description: "An unknown error occured"
-      x-swagger-router-controller: "RightHolders"
   /rightHolders/{rightHolderId}/socialMediaLinks:
     patch:
       tags:
@@ -1012,7 +948,7 @@ paths:
         in: "path"
         description: "The right holder's unique profile ID"
         required: true
-        type: "integer"
+        type: "string"
       - in: "body"
         name: "socialMediaLinks"
         description: "The object containing the given right holder profile's social media links"
@@ -2025,9 +1961,9 @@ definitions:
     type: "object"
     properties:
       rightHolderId:
-        type: "integer"
-        example: 1
-        description: "The unique ID of the given right holder profile"
+        type: "string"
+        description: "The unique Id for the right holder shared with AWS cognito user pools"
+        example: "12345c60-7b1a-11e8-9c9c-2d42b21b1a4g"
       firstName:
         type: "string"
         example: "John"
@@ -2040,10 +1976,6 @@ definitions:
         type: "string"
         example: "john.smith@example.com"
         description: "The email address for this right holder profile"
-      password:
-        type: "string"
-        example: "3c9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3"
-        description: "The hash of the password of the given right holder's profile"
       jurisdiction:
         type: "string"
         example: "Canada"
@@ -2064,10 +1996,6 @@ definitions:
         type: "string"
         description: "The artist name for the given right Holder"
         example: "Questlove"
-      cognitoId:
-        type: "string"
-        description: "The unique Id for the right holder from AWS cognito user pools"
-        example: "12345c60-7b1a-11e8-9c9c-2d42b21b1a4g"
       socialMediaLinks:
         type: "object"
         description: "The urls for the social media profiles for the given right holder, like Facebook, Instagram, Youtube, Twitter"
@@ -2075,16 +2003,15 @@ definitions:
           type: "string"
           description: "social media links for the given right holder profile"
     example:
+      rightHolderId: "12345c60-7b1a-11e8-9c9c-2d42b21b1a4g"
       firstName: "John"
       lastName: "Smith"
       email: "john.smith@example.com"
-      password: "3c9c93e0f8eb2161e5787f7cd3e4b67f8d98fbd80b7d237cc757583b06daa3e3"
       jurisdiction: "Cansada"
       ipi: "00004576"
       wallet: "0xdd87ae15f4be97e2739c9069ddef674f907d27a8"
       avatarS3Etag: "2f03d99fbf37d8d585285fd4cce27fea"
       artistName: "Questlove"
-      cognitoId: "12345c60-7b1a-11e8-9c9c-2d42b21b1a4g"
       socialMediaLinks: 
         facebook: "https://facebook.com/ex"
         twitter: "https://twitter.com/ex"
@@ -2347,7 +2274,7 @@ definitions:
       {
         "uuid": "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e",
         "mediaId": "1",
-        "initiator": {"id": "1", "name": "Jim Smith"},
+        "initiator": {"id": "40e5ad76-d2c6-4f1e-9eb4-98213e29e36f", "name": "Jim Smith"},
         "rightsSplits": {
           "workCopyrightSplit": {                                       
             "music": [
@@ -2357,7 +2284,7 @@ definitions:
                 "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "composer"
               },
               "rightHolder": {
-                "rightHolderId": "1",
+                "rightHolderId": "40e5ad76-d2c6-4f1e-9eb4-98213e29e36f",
                 "name": "Joe Smith"
               },
               "splitPct": "50",
@@ -2370,7 +2297,7 @@ definitions:
                 "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "composer"
               },
               "rightHolder": {
-                "rightHolderId": "2",
+                "rightHolderId": "523bac7a-b14c-4a33-87ad-6aa3e848f2f6",
                 "name": "Bob Andrews"
               },
               "splitPct": "25",
@@ -2384,7 +2311,7 @@ definitions:
                   "12345c60-7b1a-11e8-9c9c-2d42b21b1a4g": "arranger"
                 },
                 "rightHolder": {
-                  "rightHolderId": "3",
+                  "rightHolderId": "8c9a463d-4803-4221-9e96-f940f250e87d",
                   "name": "Joe Duchane"
                 },    
                 "splitPct": "25",
@@ -2401,7 +2328,7 @@ definitions:
                 "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "writer"
               },
               "rightHolder": {
-                "rightHolerId": "1",
+                "rightHolerId": "40e5ad76-d2c6-4f1e-9eb4-98213e29e36f",
                 "name": "Joe Smith"
               },
               "splitPct": "80",
@@ -2416,7 +2343,7 @@ definitions:
                 "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "writer"
               },
               "rightHolder": {
-                "rightHolderId": "2",
+                "rightHolderId": "523bac7a-b14c-4a33-87ad-6aa3e848f2f6",
                 "name": "Bob Andrews"
               },
               "splitPct": "20",
@@ -2432,7 +2359,7 @@ definitions:
                 "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "writer"
               },
               "rightHolder": {
-                "rightHolderId": "1",
+                "rightHolderId": "40e5ad76-d2c6-4f1e-9eb4-98213e29e36f",
                 "name": "Joe Smith"
               },
               "splitPct": "50",
@@ -2445,7 +2372,7 @@ definitions:
                 "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "writer"
               },
               "rightHolder": {
-                "rightHolderId": "2",
+                "rightHolderId": "523bac7a-b14c-4a33-87ad-6aa3e848f2f6",
                 "name": "Bob Andrews"
               },
               "splitPct": "25",
@@ -2456,9 +2383,8 @@ definitions:
               "contributorRole": {
                 "12345c60-7b1a-11e8-9c9c-2d42b21b1a4g": "composer"
               },
-              "id": "3",
               "rightHolder": {
-                "rightHolderId": "3",
+                "rightHolderId": "8c9a463d-4803-4221-9e96-f940f250e87d",
                 "name": "Joe Duchane"
               },
               "splitPct": "25",
@@ -2468,11 +2394,11 @@ definitions:
           ]
         },
         "comments": [{
-          "rightHolderId": 1,
+          "rightHolderId": "40e5ad76-d2c6-4f1e-9eb4-98213e29e36f",
           "comment": "Ok"
         },
         {
-          "rightHolderId": 2,
+          "rightHolderId": "523bac7a-b14c-4a33-87ad-6aa3e848f2f6",
           "comment": "Not enough, more split"
         }
         ]
