@@ -117,7 +117,7 @@ function finDuVote(proposalId) {
         let params = {
           TableName: 'rightHolder',
           Key: {
-            'rightHolderId': parseInt(_d.rightHolderId)
+            'rightHolderId': _d.rightHolderId
           }
         }
         ddb.get(params, function(err, _rH) {
@@ -434,7 +434,7 @@ exports.voteProposal = function(userId, jeton, droits) {
             let params = {
               TableName: 'rightHolder',
               Key: {
-                'rightHolderId': parseInt(userId)
+                'rightHolderId': userId
               }
             }
             ddb.get(params, function(err, _rH) {
@@ -836,6 +836,7 @@ exports.postProposal = function(body) {
         'mediaId': body.mediaId,
         'initiator': body.initiator,
         'rightsSplits': body.rightsSplits,
+        'comments': body.comments
       }
     };
     ddb.put(params, function(err, data) {
@@ -843,7 +844,7 @@ exports.postProposal = function(body) {
         console.log("Error", err);
         resolve();
       } else {
-        resolve("Success. Item Added");
+        resolve(SPLIT_UUID);
       }
     });
   });
