@@ -105,12 +105,12 @@ exports.getRightHolder = function(rightHolderId) {
  **/
 exports.patchRightHolderArtistName = function(rightHolderId,artistName) {
   return new Promise(function(resolve, reject) {
-    let params = {
+    let params = {  
       TableName: TABLE,
       Key: {
         'rightHolderId': rightHolderId
       },
-      UpdateExpression: 'set artistNsme = :a',
+      UpdateExpression: 'set artistName = :a',
       ExpressionAttributeValues: {
         ':a' : artistName.artistName
       },

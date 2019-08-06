@@ -1888,7 +1888,7 @@ definitions:
       firstName: "John"
       lastName: "Smith"
       email: "john.smith@example.com"
-      jurisdiction: "Cansada"
+      jurisdiction: "Canada"
       ipi: "00004576"
       wallet: "0xdd87ae15f4be97e2739c9069ddef674f907d27a8"
       avatarS3Etag: "2f03d99fbf37d8d585285fd4cce27fea"
