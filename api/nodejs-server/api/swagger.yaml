@@ -765,7 +765,7 @@ paths:
       tags:
       - "RightHolders"
       description: "Update the artist name of a right holder"
-      operationId: "patchRightHolderAvatarS3ETag"
+      operationId: "patchRightHolderAvatarS3Etag"
       parameters:
       - name: "rightHolderId"
         in: "path"
