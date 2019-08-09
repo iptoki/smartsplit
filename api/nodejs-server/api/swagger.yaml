@@ -18,6 +18,8 @@ tags:
   description: "Viewing and creating right holder profiles"
 - name: "Proposals"
   description: "Viewing and creating rights splits for a given media"
+- name: "Splitshares"
+  description: "Viewing and creating split shares for a given proposal, rightholder and sharee"
 - name: "Media"
   description: "Viewing and creating media"
 - name: "Payments"
@@ -69,6 +71,35 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "AuthenticationDetails"
+  /editorsplitshare:
+    post:
+      tags:
+      - "Splitshares"
+      description: "This method creates a new splitshare between a rightholder and a sharee on a given proposal"
+      operationId: "addEditorSplitShare"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/splitshare"
+      responses:
+        200:
+          description: "OK. The split was created."
+          schema:
+            $ref: "#/definitions/splitshare"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "SplitShare"
   /proposal:
     get:
       tags:
@@ -2403,6 +2434,24 @@ definitions:
         }
         ]
     }
+  splitshare:
+    type: "object"
+    properties:
+      uuid:
+        type: "string"
+        description: "UUID of split share"
+      rightHolderId:
+        type: "string"
+        description: "UUID of rightHolder who is share his percentage"
+      shareeId:
+        type: "string"
+        description: "UUID of rightHolder who is share his percentage"
+      rightHolderPct:
+        type: "string"
+        description: "Right holder percentage"
+      shareePct:
+        type: "string"
+        description: "Sharee percentage"
   payments:
     type: "array"
     description: "An array of information about payments"
