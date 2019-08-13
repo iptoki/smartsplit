@@ -836,7 +836,8 @@ exports.postProposal = function(body) {
         'mediaId': body.mediaId,
         'initiator': body.initiator,
         'rightsSplits': body.rightsSplits,
-        'comments': body.comments
+        'comments': body.comments,
+        'state': body.state
       }
     };
     ddb.put(params, function(err, data) {
