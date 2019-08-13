@@ -14,6 +14,17 @@ module.exports.deleteProposal = function deleteProposal (req, res, next) {
     });
 };
 
+module.exports.getMediaProposals = function getMediaProposals (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  Proposals.getMediaProposals(mediaId)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
 module.exports.getAllProposals = function getAllProposals (req, res, next) {
   Proposals.getAllProposals()
     .then(function (response) {

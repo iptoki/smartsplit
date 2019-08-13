@@ -567,6 +567,33 @@ exports.getAllProposals = function() {
   });
 }
 
+/**
+ * Get a list of all split proposals for a given media
+ * 
+ * returns listProposals
+ */
+exports.getMediaProposals = function(mediaId) {
+  return new Promise(function(resolve, reject) {  
+    let params = {
+      "TableName": TABLE,
+    }
+    ddb.scan(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve()
+      } else {
+        console.log("Success", data);        
+        let _items = []
+        data.Items.forEach(elem=>{
+          if(elem.mediaId === parseInt(mediaId)) {
+            _items.push(elem)
+          }
+        })
+        resolve(_items)
+      }
+    })    
+  })
+}
 
 /**
  * Get a split proposal with the given ID
@@ -617,36 +644,7 @@ exports.getProposalsRightHolder = function(rightHolderId) {
         resolve(data.Items);
       }
     });
-  });
-  // return new Promise(function(resolve, reject) {
-  //   let params = {
-  //     TableName: TABLE,
-  //     ExpressionAttributeValues: {
-  //       ':rightHolderId' : {N: rightHolderId}
-  //     },
-  //     ProjectionExpression: "uuid, rightsSplits, initiator, mediaId, comments",
-  //     FilterExpression: "contains (rightsSplits, :rightHolderId)"
-  //   };
-  //   ddb.get(params, function(err, data) {
-  //     if (err) {
-  //       console.log("Error", err);
-  //       resolve();
-  //     } else {
-  //       console.log("Success", data);
-  //       resolve(data);
-  //     }
-  //   });
-  //   ddb.query(params, function(err, data) {
-  //     if (err) {
-  //       console.log("Error", err);
-  //     } else {
-  //       //console.log("Success", data.Items);
-  //       data.Items.forEach(function(element, index, array) {
-  //         console.log(element.uuid.N);
-  //       });
-  //     }
-  //   });
-  // });
+  }); 
 }
 
 
@@ -837,7 +835,8 @@ exports.postProposal = function(body) {
         'initiator': body.initiator,
         'rightsSplits': body.rightsSplits,
         'comments': body.comments,
-        'state': body.state
+        'state': body.state,
+        '_d': new Date().getTime()
       }
     };
     ddb.put(params, function(err, data) {

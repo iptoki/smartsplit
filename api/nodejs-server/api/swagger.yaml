@@ -149,6 +149,32 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "Proposals"
+  /proposal/media/{mediaId}:
+    get:
+      tags:
+      - "Proposals"
+      description: "Get a list of all split proposals for a given mediaId"
+      operationId: "getMediaProposals"
+      parameters:
+      - name: "mediaId"
+        in: "path"
+        description: "The media unique ID"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/listProposals"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Proposals"
   /proposal/invite:
     post:
       tags:
