@@ -1,5 +1,5 @@
 'use strict';
-const uuidv4 = require('uuid/v4');
+const uuidv1 = require('uuid/v1');
 const TABLE = 'rightHolder';
 const utils = require('../utils/utils.js');
 
@@ -425,7 +425,7 @@ exports.patchRightHolderWallet = function(rightHolderId,wallet) {
  **/
 exports.postRightHolder = function(body) {
   return new Promise(function(resolve, reject) {
-      let RIGHT_HOLDER_ID = uuidv4();
+      let RIGHT_HOLDER_ID = uuidv1();
       let params = {
         TableName: TABLE,
         Item: {
