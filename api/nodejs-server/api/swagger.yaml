@@ -18,6 +18,8 @@ tags:
   description: "Viewing and creating right holder profiles"
 - name: "Proposals"
   description: "Viewing and creating rights splits for a given media"
+- name: "Splitshares"
+  description: "Viewing and creating split shares for a given proposal, rightholder and sharee"
 - name: "Media"
   description: "Viewing and creating media"
 - name: "Payments"
@@ -69,6 +71,35 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "AuthenticationDetails"
+  /editorsplitshare:
+    post:
+      tags:
+      - "Splitshares"
+      description: "This method creates a new splitshare between a rightholder and a sharee on a given proposal"
+      operationId: "addEditorSplitShare"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/splitshare"
+      responses:
+        200:
+          description: "OK. The split was created."
+          schema:
+            $ref: "#/definitions/splitshare"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "SplitShare"
   /proposal:
     get:
       tags:
@@ -107,6 +138,177 @@ paths:
           description: "OK. The split was created."
           schema:
             $ref: "#/definitions/proposal"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Proposals"
+  /proposal/media/{mediaId}:
+    get:
+      tags:
+      - "Proposals"
+      description: "Get a list of all split proposals for a given mediaId"
+      operationId: "getMediaProposals"
+      parameters:
+      - name: "mediaId"
+        in: "path"
+        description: "The media unique ID"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/listProposals"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Proposals"
+  /proposal/invite:
+    post:
+      tags:
+      - Proposals
+      description: "This method invite a right holder to a proposal"
+      operationId: "inviteProposal"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/inviteProposal"
+      responses:
+        200:
+          description: "OK."
+          schema:
+            $ref: "#/definitions/inviteProposal"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Proposals"
+  /proposal/justifier-refus:
+    post:
+      tags:
+      - Proposals
+      description: "This method justify a split decline"
+      operationId: "justifierRefus"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/justifierRefus"
+      responses:
+        200:
+          description: "OK."
+          schema:
+            $ref: "#/definitions/justifierRefus"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Proposals"
+  /proposal/liste-votes:    
+    post:
+      tags:
+      - Proposals
+      description: "This method returns the votation state for a proposal"
+      operationId: "listeVotes"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/listeVote"
+      responses:
+        200:
+          description: "OK."
+          schema:
+            $ref: "#/definitions/listeVote"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Proposals"
+  /proposal/decode:    
+    post:
+      tags:
+      - Proposals
+      description: "This method decode a vote token for a proposal"
+      operationId: "decodeProposal"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/decodeProposal"
+      responses:
+        200:
+          description: "OK."
+          schema:
+            $ref: "#/definitions/decodeProposal"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Proposals"  
+  /proposal/voter:    
+    post:
+      tags:
+      - "Splits"
+      description: "This method accepts a vote for a proposal"
+      operationId: "voteProposal"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/voteProposal"
+      responses:
+        200:
+          description: "OK."
+          schema:
+            $ref: "#/definitions/voteProposal"
         400:
           description: "Bad request"
         403:
@@ -955,32 +1157,6 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "Media"
-  # /media/{mediaId}/split:
-  #   get:
-  #     tags:
-  #     - "Media"
-  #     description: "Get split info for media with the given ID"
-  #     operationId: "getMediaSplit"
-  #     parameters:
-  #     - name: "mediaId"
-  #       in: "path"
-  #       description: "The artwork agreement's unique ID"
-  #       required: true
-  #       type: "integer"
-  #     responses:
-  #       200:
-  #         description: "OK"
-  #         schema:
-  #           $ref: "#/definitions/mediaSplits"
-  #       400:
-  #         description: "Bad request"
-  #       403:
-  #         description: "Permission denied"
-  #       404:
-  #         description: "Endpoint not found"
-  #       500:
-  #         description: "An unknown error occured"
-  #     x-swagger-router-controller: "Media"
   /media/{mediaId}/title:
     patch:
       tags:
@@ -2038,6 +2214,93 @@ definitions:
     description: "An array of information about splits"
     items:
       $ref: "#/definitions/proposal"
+  justifierRefus:
+    type: "object"
+    properties:
+      userId:
+        type: "string"
+        example: "1"
+        description: "UUID utilisateur"      
+      jeton:
+        type: "string"
+        example: "JWT Token"
+        description: "Le jeton JWT à décoder"
+      raison:
+        type: "string"
+        example: "Je ne suis pas d'accord"
+        description: "Raison du refus"
+  rightHolderShort:
+    type: "object"
+    description: "Structure courte d'un ayant-droit (nom, id, courriel)"
+    properties:
+      name:
+        type: "string"
+      rightHolderId:
+        type: "string"
+      email:
+        type: "string"
+  inviteProposal:
+    type: "object"
+    properties: 
+      proposalId:
+        type: "string"
+        example: "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e"
+        description: "The unique ID for the given split"
+      rightHolders:
+        type: "object"
+        example: "{{rightHolderId: '2', name: 'Vincent', email: 'vincent@smartsplit.org'}, ... }"
+        description: "Un tableau de colaborateurs (nom, id et courriel)"
+        items:
+          $ref: "#/definitions/rightHolderShort"
+    example:
+      {
+        "proposalId": "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e"        
+      }
+  listeVote:
+    type: "object"
+    properties: 
+      proposalId:
+        type: "string"
+        example: "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e"
+        description: "UUID de la propositino"
+    example:
+      {
+        "splitId": "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e.xyz.xzdv"
+      }
+  decodeProposal:
+    type: "object"
+    properties: 
+      jeton:
+        type: "string"
+        example: "JWT Token"
+        description: "Le jeton JWT à décoder"      
+    example:
+      {
+        "JWT": "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e.xyz.xzdv"
+      }
+  voteProposal:
+    type: "object"
+    properties:
+      userId:
+        type: "string"
+        example: "1"
+        description: "UUID utilisateur"
+      jeton:
+        type: "string"
+        example: "JWT Token"
+        description: "Le jeton JWT à décoder"
+      droits:
+        type: "object"
+        additionalProperties:
+          type: "object"
+        example: "{workCopyrightSplit: 'ACCEPTE', ...}"
+        description: "Objet décrivant les splits et les états"
+    example:
+      {
+        "jeton": "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e.xyz.xzdv",
+        "userId": "1",
+        "droit": "workCopyrightSplit"
+      }
   proposal:
     type: "object"
     properties: 
@@ -2064,6 +2327,9 @@ definitions:
         items:
           type: "object"
           description: "the comment and rightHolderId for the given proposal"
+      state:
+        type: "string"
+        description: "define the state of the proposal (BROUILLON, PRET, VOTATION, ACCEPTE, REFUSE"
     example:
       {
         "uuid": "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e",
@@ -2197,6 +2463,24 @@ definitions:
         }
         ]
     }
+  splitshare:
+    type: "object"
+    properties:
+      uuid:
+        type: "string"
+        description: "UUID of split share"
+      rightHolderId:
+        type: "string"
+        description: "UUID of rightHolder who is share his percentage"
+      shareeId:
+        type: "string"
+        description: "UUID of rightHolder who is share his percentage"
+      rightHolderPct:
+        type: "string"
+        description: "Right holder percentage"
+      shareePct:
+        type: "string"
+        description: "Sharee percentage"
   payments:
     type: "array"
     description: "An array of information about payments"

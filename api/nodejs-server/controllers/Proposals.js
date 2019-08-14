@@ -14,6 +14,17 @@ module.exports.deleteProposal = function deleteProposal (req, res, next) {
     });
 };
 
+module.exports.getMediaProposals = function getMediaProposals (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  Proposals.getMediaProposals(mediaId)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
 module.exports.getAllProposals = function getAllProposals (req, res, next) {
   Proposals.getAllProposals()
     .then(function (response) {
@@ -115,4 +126,81 @@ module.exports.updateProposal = function updateProposal (req, res, next) {
     .catch(function (response) {
       utils.writeJson(res, response);
     });
+};
+
+module.exports.decodeProposal = function decodeProposal (req, res, next) {
+  let _body = req.swagger.params['body'].value
+  let jeton = _body.jeton
+
+  Proposals.decode(jeton)
+  .then(function (response) {
+    utils.writeJson(res, response)
+  })
+  .catch(function (response) {
+    utils.writeJson(res, response)
+  });  
+
+};
+
+module.exports.justifierRefus = function justifierRefus (req, res, next) {
+  let _body = req.swagger.params['body'].value
+  let jeton = _body.jeton, 
+      userId = _body.userId,
+      raison = _body.raison
+
+  Proposals.justifierRefus(userId,  jeton, raison)  
+  .then(function (response) {
+    utils.writeJson(res, response)
+  })
+  .catch(function (response) {
+    utils.writeJson(res, response)
+  });  
+
+};
+
+module.exports.voteProposal = function voteProposal (req, res, next) {
+  let _body = req.swagger.params['body'].value
+  let jeton = _body.jeton, 
+      droits = _body.droits, 
+      userId = _body.userId
+
+  Proposals.voteProposal(userId, jeton, droits)
+
+  .then(function (response) {
+    utils.writeJson(res, response)
+  })
+  .catch(function (response) {
+    utils.writeJson(res, response)
+  });  
+
+};
+
+module.exports.listeVotes = function listeVotes (req, res, next) {
+  let _body = req.swagger.params['body'].value
+  let proposalId = _body.proposalId
+
+  Proposals.listeVotes(proposalId)
+  .then(function (response) {
+    utils.writeJson(res, response)
+  })
+  .catch(function (response) {
+    utils.writeJson(res, response)
+  });  
+
+};
+
+module.exports.inviteProposal = function inviteProposal (req, res, next) {  
+
+  let _body = req.swagger.params['body'].value
+  let proposalId = _body.proposalId
+  let rightHolders = _body.rightHolders
+
+  Proposals.invite(proposalId, rightHolders)
+  .then(function (response) {
+    utils.writeJson(res, response)
+  })
+  .catch(function (response) {
+    utils.writeJson(res, response)
+  });  
+
 };
