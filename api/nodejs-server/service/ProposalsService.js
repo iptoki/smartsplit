@@ -826,6 +826,8 @@ exports.patchProposalComments = function(uuid, comments) {
 exports.postProposal = function(body) {
   return new Promise(function(resolve, reject) {
     let SPLIT_UUID = uuidv1();
+    let d = Date(Date.now());   
+    let DATE_CREATED = d.toString();
     console.log('SPLIT UUID', SPLIT_UUID, SPLIT_UUID.type)
     let params = {
       TableName: TABLE,
@@ -833,10 +835,10 @@ exports.postProposal = function(body) {
         'uuid': SPLIT_UUID,
         'mediaId': body.mediaId,
         'initiator': body.initiator,
+        'creationDate': DATE_CREATED,
         'rightsSplits': body.rightsSplits,
         'comments': body.comments,
-        'state': body.state,
-        '_d': new Date().getTime()
+        'state': body.state
       }
     };
     ddb.put(params, function(err, data) {
@@ -881,11 +883,12 @@ exports.updateProposal = function(uuid,body) {
           'uuid': uuid
         },
         // TODO ADD LOGIC TO UPDATE RIGHTS SPLITS OBJECT INTELLIGENTLY
-        UpdateExpression: 'set rightsSplits  = :r, mediaId = :m, initiator = :i',
+        UpdateExpression: 'set rightsSplits  = :r, mediaId = :m, initiator = :i, creationDate = :d',
         ExpressionAttributeValues: {
           ':r' : body.rightsSplits,
           ':m' : body.mediaId,
-          ':i' : body.initiator
+          ':i' : body.initiator,
+          ':d' : body.creationDate
         },
         ReturnValues: 'UPDATED_NEW'
       };

@@ -2322,6 +2322,11 @@ definitions:
         additionalProperties:
           type: "string"
           description: "the initiator object for the given right split"
+      creationDate:
+        type: "string"
+        format: "iso8601-date-time"
+        example: "2019-01-01T15:53:00"
+        description: "the creation date generated at time of split proposal creation"
       comments: 
         type: "array"
         items:
@@ -2335,6 +2340,7 @@ definitions:
         "uuid": "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e",
         "mediaId": "1",
         "initiator": {"id": "40e5ad76-d2c6-4f1e-9eb4-98213e29e36f", "name": "Jim Smith"},
+        "creationDate": "2019-01-01T15:53:00",
         "rightsSplits": {
           "workCopyrightSplit": {                                       
             "music": [
