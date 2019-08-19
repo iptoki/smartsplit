@@ -2327,6 +2327,10 @@ definitions:
         format: "iso8601-date-time"
         example: "2019-01-01T15:53:00"
         description: "the creation date generated at time of split proposal creation"
+      _d:
+        type: "string"
+        example: "1566229239"
+        description: "the creation date of split stored as a Unix timestamp (in seconds)"
       comments: 
         type: "array"
         items:
@@ -2341,6 +2345,7 @@ definitions:
         "mediaId": "1",
         "initiator": {"id": "40e5ad76-d2c6-4f1e-9eb4-98213e29e36f", "name": "Jim Smith"},
         "creationDate": "2019-01-01T15:53:00",
+        "_d": "1566229239",
         "rightsSplits": {
           "workCopyrightSplit": {                                       
             "music": [
@@ -2351,7 +2356,8 @@ definitions:
               },
               "rightHolder": {
                 "rightHolderId": "40e5ad76-d2c6-4f1e-9eb4-98213e29e36f",
-                "name": "Joe Smith"
+                "name": "Joe Smith",
+                "color": "#FFFFFFF"
               },
               "splitPct": "50",
               "voteStatus": "active",
@@ -2364,7 +2370,8 @@ definitions:
               },
               "rightHolder": {
                 "rightHolderId": "523bac7a-b14c-4a33-87ad-6aa3e848f2f6",
-                "name": "Bob Andrews"
+                "name": "Bob Andrews",
+                "color": "#FFFFFFF"
               },
               "splitPct": "25",
               "voteStatus": "active",
@@ -2378,7 +2385,8 @@ definitions:
                 },
                 "rightHolder": {
                   "rightHolderId": "8c9a463d-4803-4221-9e96-f940f250e87d",
-                  "name": "Joe Duchane"
+                  "name": "Joe Duchane",
+                  "color": "#000000"
                 },    
                 "splitPct": "25",
                 "voteStatus": "active",
@@ -2395,7 +2403,8 @@ definitions:
               },
               "rightHolder": {
                 "rightHolerId": "40e5ad76-d2c6-4f1e-9eb4-98213e29e36f",
-                "name": "Joe Smith"
+                "name": "Joe Smith",
+                "color": "#111111"
               },
               "splitPct": "80",
               "voteStatus": "active",
@@ -2410,7 +2419,8 @@ definitions:
               },
               "rightHolder": {
                 "rightHolderId": "523bac7a-b14c-4a33-87ad-6aa3e848f2f6",
-                "name": "Bob Andrews"
+                "name": "Bob Andrews",
+                "color": "#222222"
               },
               "splitPct": "20",
               "voteStatus": "active",
@@ -2426,7 +2436,8 @@ definitions:
               },
               "rightHolder": {
                 "rightHolderId": "40e5ad76-d2c6-4f1e-9eb4-98213e29e36f",
-                "name": "Joe Smith"
+                "name": "Joe Smith",
+                "color": "#222222"
               },
               "splitPct": "50",
               "voteStatus": "active",
@@ -2439,7 +2450,8 @@ definitions:
               },
               "rightHolder": {
                 "rightHolderId": "523bac7a-b14c-4a33-87ad-6aa3e848f2f6",
-                "name": "Bob Andrews"
+                "name": "Bob Andrews",
+                "color": "#555555"
               },
               "splitPct": "25",
               "voteStatus": "active",
@@ -2451,7 +2463,8 @@ definitions:
               },
               "rightHolder": {
                 "rightHolderId": "8c9a463d-4803-4221-9e96-f940f250e87d",
-                "name": "Joe Duchane"
+                "name": "Joe Duchane",
+                "color": "#FFFFFF"
               },
               "splitPct": "25",
               "voteStatus": "active",
