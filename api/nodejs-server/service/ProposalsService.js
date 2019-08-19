@@ -343,22 +343,38 @@ exports.invite = function(proposalId, rightHolders) {
               body[0].splitInitiator = initiateur
               body[0].template = "splitCreated"
             }
-
             axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)
           })
 
-          // 4. Résoudre ce qui doit se produire dans le futur avec le jeton de l'initiateur
+          // 4. Modifier l'état de la proposition
+          let params = {
+            TableName: TABLE,
+            Key: {
+              'uuid': proposalId
+            },
+            UpdateExpression: 'set etat = :s',
+            ExpressionAttributeValues: {
+              ':s' : "VOTATION"
+            },
+            ReturnValues: 'UPDATED_NEW'
+          };
+          ddb.update(params, function(err, data) {
+            if (err) {
+              console.log("Error", err)
+            } else {
+              console.log("Success", data.Attributes)
+              // 5. Résoudre ce qui doit se produire dans le futur avec le jeton de l'initiateur          
+              // Test la fin du vote              
+              finDuVote(proposalId)
+              resolve(initiateurId)
+            }
+          })
           
-          // Test la fin du vote
-          finDuVote(proposalId, rightHolders[initiateurId].jeton)
-          resolve(rightHolders[initiateurId].jeton)    
         })
         .catch(err=>{
           console.log(err)
-        })
-        
+        })        
       })
-
     })  
   })
 }
@@ -828,8 +844,7 @@ exports.postProposal = function(body) {
     let SPLIT_UUID = uuidv1();
     let d = Date(Date.now());   
     let DATE_CREATED = d.toString();
-    let UNIX_TIMESTAMP = Math.round(+new Date()/1000);
-    console.log('SPLIT UUID', SPLIT_UUID, SPLIT_UUID.type)
+    let UNIX_TIMESTAMP = new Date().getTime()
     let params = {
       TableName: TABLE,
       Item: {
@@ -839,7 +854,7 @@ exports.postProposal = function(body) {
         'creationDate': DATE_CREATED,
         'rightsSplits': body.rightsSplits,
         'comments': body.comments,
-        'state': body.state,
+        'etat': body.etat,
         '_d': UNIX_TIMESTAMP
       }
     };
