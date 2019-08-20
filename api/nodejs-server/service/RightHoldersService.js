@@ -134,19 +134,19 @@ exports.patchRightHolderArtistName = function(rightHolderId,artistName) {
  * Update the artist name of a right holder
  *
  * rightHolderId Integer The right holder's unique profile ID
- * avatarS3Etag AvatarS3Etag The right holder's S3 Etag for the profile avatar image
+ * avatarImage  The right holder's image file name key on S3 for the profile avatar image
  * returns rightHolder/properties/avatarS3Etag
  **/
-exports.patchRightHolderAvatarS3Etag = function(rightHolderId,avatarS3Etag) {
+exports.patchRightHolderAvatarImage = function(rightHolderId,avatarImage) {
   return new Promise(function(resolve, reject) {
     let params = {
       TableName: TABLE,
       Key: {
         'rightHolderId': rightHolderId
       },
-      UpdateExpression: 'set avatarS3Etag = :a',
+      UpdateExpression: 'set avatarImage = :a',
       ExpressionAttributeValues: {
-        ':a' : avatarS3Etag.avatarS3Etag
+        ':a' : avatarImage.avatarImage
       },
       ReturnValues: 'UPDATED_NEW'
     };

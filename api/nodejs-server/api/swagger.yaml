@@ -962,12 +962,12 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "RightHolders"
-  /rightHolders/{rightHolderId}/avatarS3Etag:
+  /rightHolders/{rightHolderId}/avatarImage:
     patch:
       tags:
       - "RightHolders"
       description: "Update the artist name of a right holder"
-      operationId: "patchRightHolderAvatarS3Etag"
+      operationId: "patchRightHolderAvatarImage"
       parameters:
       - name: "rightHolderId"
         in: "path"
@@ -975,16 +975,16 @@ paths:
         required: true
         type: "string"
       - in: "body"
-        name: "avatarS3Etag"
+        name: "avatarImage"
         description: "The right holder's S3 Etag for the profile avatar image"
         required: true
         schema:
-          $ref: "#/definitions/rightHolder/properties/avatarS3Etag"
+          $ref: "#/definitions/rightHolder/properties/avatarImage"
       responses:
         200:
           description: "OK"
           schema:
-            $ref: "#/definitions/rightHolder/properties/avatarS3Etag"
+            $ref: "#/definitions/rightHolder/properties/avatarImage"
         400:
           description: "Bad request"
         403:
@@ -2045,10 +2045,10 @@ definitions:
         type: "string"
         example: "0xdd87ae15f4be97e2739c9069ddef674f907d27a8"
         description: "The blockchain wallet address for this right holder profile"
-      avatarS3Etag:
+      avatarImage:
         type: "string"
-        description: "The ETag in AWS S3 for the given right holder avatar"
-        example: "2f03d99fbf37d8d585285fd4cce27feb"
+        description: "The file name key in AWS S3 for the given right holder avatar image"
+        example: "image.jpg"
       artistName:
         type: "string"
         description: "The artist name for the given right Holder"
@@ -2067,7 +2067,7 @@ definitions:
       jurisdiction: "Canada"
       ipi: "00004576"
       wallet: "0xdd87ae15f4be97e2739c9069ddef674f907d27a8"
-      avatarS3Etag: "2f03d99fbf37d8d585285fd4cce27fea"
+      avatarImage: "image.jpg"
       artistName: "Questlove"
       socialMediaLinks: 
         facebook: "https://facebook.com/ex"
