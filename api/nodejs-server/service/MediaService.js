@@ -797,7 +797,8 @@ exports.postMedia = function(body) {
             'cover': body[0].cover,
             'creationDate': DATE_CREATED,
             'modificationDate': body[0].modificationDate,
-            's3Etag': body[0].s3Etag,
+            'audioFileName': body[0].audioFileName,
+            'imageFileName': body[0].imageFileName,
             'publishDate': body[0].publishDate,
             'publisher': body[0].publisher,
             'title': body[0].title,
@@ -806,12 +807,14 @@ exports.postMedia = function(body) {
             'lyrics': body[0].lyrics,
             'inLanguages': body[0].inLanguages,
             'isrc': body[0].isrc,
+            'iswc': body[0].iswc,
             'upc': body[0].upc,
             'msDuration': body[0].msDuration,       
             'socialMediaLinks': body[0].socialMediaLinks,
             'streamingServiceLinks': body[0].streamingServiceLinks,
             'pressArticleLinks': body[0].pressArticleLinks,
-            'playlistLinks': body[0].playlistLinks
+            'playlistLinks': body[0].playlistLinks,
+            'rightHolders': body[0].rightHolders
           }
         };
         // Check Types, and Split Calculation

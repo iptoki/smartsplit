@@ -2152,6 +2152,10 @@ definitions:
         type: "string"
         description: "The ISRC of the given media"
         example: "abcde1234567"
+      iswc:
+        type: "string"
+        description: "The ISRC of the given media"
+        example: "abcde1234567"
       upc:
         type: "string"
         description: "The UPC of the given media"
@@ -2180,10 +2184,20 @@ definitions:
         additionalProperties:
           type: "string"
           description: "playlist links for the given media" 
-      s3Etag:
+      audioFileName:
         type: "string"
-        description: "The ETag in AWS S3 for the given media"
-        example: "2f03d99fbf37d8d585285fd4cce27feb"
+        description: "The audio file name"
+        example: "audio.mp3"
+      imageFileName:
+        type: "string"
+        description: "The image file name"
+        example: "coverimage.png"
+      rightHolders:
+        type: "object"
+        description: "The rightholders and roles associated to this media"
+        additionalProperties:
+          type: "array"
+          description: "roles uuid in a string array" 
     example:
       [
         {
