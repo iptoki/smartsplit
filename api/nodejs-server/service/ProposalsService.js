@@ -605,6 +605,12 @@ exports.getMediaProposals = function(mediaId) {
             _items.push(elem)
           }
         })
+
+        // Ordonner par _d (horodatage)
+        _items.sort((a,b)=>{
+          return a._d - b._d
+        })
+
         resolve(_items)
       }
     })    
@@ -878,47 +884,28 @@ exports.postProposal = function(body) {
  * returns proposal
  * WIP - overrights existing splits
  **/
-exports.updateProposal = function(uuid,body) {
-  let params = {
-    TableName: TABLE,
-    Key: {
-      'uuid': uuid
-    },
-
-  };
-  ddb.get(params, function(err, data) {
-    if (err) {
-      console.log("Error", err);
-      resolve();
-    } else {
-      // let oldProposal = data.Item; 
-      // TODO ADD LOGIC TO UPDATE RIGHTS SPLITS OBJECT INTELLIGENTLY
-      // let proposal = Object.assign({}, oldProposal, data.Item);
-      let params = {
-        TableName: TABLE,
-        Key: {
-          'uuid': uuid
-        },
-        // TODO ADD LOGIC TO UPDATE RIGHTS SPLITS OBJECT INTELLIGENTLY
-        UpdateExpression: 'set rightsSplits  = :r, mediaId = :m, initiator = :i, creationDate = :d, _d: = :u',
-        ExpressionAttributeValues: {
-          ':r' : body.rightsSplits,
-          ':m' : body.mediaId,
-          ':i' : body.initiator,
-          ':d' : body.creationDate,
-          ':u' : body._d
-        },
-        ReturnValues: 'UPDATED_NEW'
-      };
-      ddb.update(params, function(err, data) {
-        if (err) {
-          console.log("Error", err);
-          resolve();
-        } else {
-          console.log("Success", data.Attributes);
-          resolve(data.Attributes);
-        }
-      });
-    }
-  });
+exports.updateProposal = function(uuid, body) {    
+  return new Promise(function(resolve, reject) {
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'uuid': uuid
+      },
+      UpdateExpression: 'set rightsSplits  = :r, etat = :e',
+      ExpressionAttributeValues: {
+        ':r' : body.rightsSplits,
+        ':e' : body.etat
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        console.log("Success", data.Attributes);
+        resolve(uuid);
+      }
+    })  
+  })
 }
