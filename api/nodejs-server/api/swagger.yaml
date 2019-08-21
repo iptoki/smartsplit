@@ -1026,6 +1026,70 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "RightHolders"
+  /rightHolders/{rightHolderId}/groups:
+    patch:
+      tags:
+      - "RightHolders"
+      description: "Update the string set of groups for the given right holder"
+      operationId: "patchRightHolderGroups"
+      parameters:
+      - name: "rightHolderId"
+        in: "path"
+        description: "The right holder's unique profile ID"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "groups"
+        description: "The array containing the given right holder profile's groups"
+        required: true
+        schema:
+          $ref: "#/definitions/rightHolder/properties/groups"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/rightHolder"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "RightHolders"
+  /rightHolders/{rightHolderId}/defaultRoles:
+    patch:
+      tags:
+      - "RightHolders"
+      description: "Update default Roles for the given right holder"
+      operationId: "patchRightHolderDefaultRoles"
+      parameters:
+      - name: "rightHolderId"
+        in: "path"
+        description: "The right holder's unique profile ID"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "defaultRoles"
+        description: "The array containing the given right holder profile's default Roles"
+        required: true
+        schema:
+          $ref: "#/definitions/rightHolder/properties/defaultRoles"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/rightHolder"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "RightHolders"
   /media:
     get:
       tags:
@@ -1234,7 +1298,7 @@ paths:
       tags:
       - "Media"
       description: "Update the AWS s3 image file name for given media"
-      operationId: "patchMediaS3Etag"
+      operationId: "patchMediaAudioFileName"
       parameters:
       - name: "mediaId"
         in: "path"
@@ -1266,7 +1330,7 @@ paths:
       tags:
       - "Media"
       description: "Update the AWS s3 image file name for given media"
-      operationId: "patchMediaS3Etag"
+      operationId: "patchMediaImageFileName"
       parameters:
       - name: "mediaId"
         in: "path"
@@ -2081,10 +2145,24 @@ definitions:
         type: "string"
         description: "The file name key in AWS S3 for the given right holder avatar image"
         example: "image.jpg"
+      defaultRoles:
+        type: "array"
+        description: "The array of the default roles for the given right holder profile" 
+        items:
+          $ref: "#/definitions/rightHolder/properties/defaultRoles"
+      groups:
+        type: "array"
+        description: "The array of the groups for the given right holder profile" 
+        items:
+          $ref: "#/definitions/rightHolder/properties/groups"
       artistName:
         type: "string"
         description: "The artist name for the given right Holder"
         example: "Questlove"
+      newUser: 
+        type: "boolean"
+        description: "The boolean value set if user was created/modified from client and needs to sync with Cognito"
+        example: "true"
       socialMediaLinks:
         type: "object"
         description: "The urls for the social media profiles for the given right holder, like Facebook, Instagram, Youtube, Twitter"
@@ -2101,6 +2179,9 @@ definitions:
       wallet: "0xdd87ae15f4be97e2739c9069ddef674f907d27a8"
       avatarImage: "image.jpg"
       artistName: "Questlove"
+      groups: "[Group1, Group2]"
+      defaultRoles: "[Songwriter, Producer]"
+      newUser: "true"
       socialMediaLinks: 
         facebook: "https://facebook.com/ex"
         twitter: "https://twitter.com/ex"
@@ -2227,9 +2308,9 @@ definitions:
       rightHolders:
         type: "object"
         description: "The rightholders and roles associated to this media"
-        additionalProperties:
+        items: 
           type: "array"
-          description: "roles uuid in a string array" 
+          description: "roles uuid in a string array"
     example:
       [
         {

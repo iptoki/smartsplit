@@ -131,6 +131,30 @@ module.exports.patchRightHolderSocialMediaLinks = function patchRightHolderSocia
     });
 };
 
+module.exports.patchRightHolderDefaultRoles = function patchRightHolderDefaultRoles (req, res, next) {
+  var rightHolderId = req.swagger.params['rightHolderId'].value;
+  var defaultRoles = req.swagger.params['defaultRoles'].value;
+  RightHolders.patchRightHolderDefaultRoles(rightHolderId,defaultRoles)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.patchRightHolderGroups = function patchRightHolderGroups (req, res, next) {
+  var rightHolderId = req.swagger.params['rightHolderId'].value;
+  var groups = req.swagger.params['groups'].value;
+  RightHolders.patchRightHolderGroups(rightHolderId,groups)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
 module.exports.patchRightHolderWallet = function patchRightHolderWallet (req, res, next) {
   var rightHolderId = req.swagger.params['rightHolderId'].value;
   var wallet = req.swagger.params['wallet'].value;
