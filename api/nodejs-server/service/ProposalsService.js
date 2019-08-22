@@ -436,7 +436,8 @@ exports.voteProposal = function(userId, jeton, droits) {
                 rightsSplits[famille][type].forEach((droit, idx)=>{
                   if(droit.rightHolder.rightHolderId === userId) {
                     // Trouver le bon droit qui a été envoyé
-                    droit.voteStatus = droits[famille][type]
+                    droit.voteStatus = droits[famille].vote
+                    droit.comment = droits[famille].raison
                     rightsSplits[famille][type][idx] = droit
                   }
                 })
