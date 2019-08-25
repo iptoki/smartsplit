@@ -148,15 +148,40 @@ function finDuVote(proposalId) {
               }
             ]
     
+            let etat
             if(voteUnanime) {
               // Enoi du courriel d'unanimité
-              body[0].template = "unanimousVote"          
+              body[0].template = "unanimousVote"
+              // Modifier l'état de la proposition pour ACCEPTE
+              etat = "ACCEPTE"
             } else {
               // Envoi du courriel de non accord
               body[0].template = "nonUnanimousVote"
+              // Modifier l'état de la proposition pour REFUSE
+              etat = "REFUSE"
             }
-    
+                
             axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)
+
+            // Modifier l'état de la proposition
+            let params = {
+              TableName: TABLE,
+              Key: {
+                'uuid': proposalId
+              },
+              UpdateExpression: 'set etat  = :e',
+              ExpressionAttributeValues: {
+                ':e': etat
+              },
+              ReturnValues: 'UPDATED_NEW'
+            }
+            ddb.update(params, function(err, data) {
+              if (err) {
+                console.log("Error", err)
+              } else {
+                console.log("Success", data.Attributes)
+              }
+            })
 
           })
         })
