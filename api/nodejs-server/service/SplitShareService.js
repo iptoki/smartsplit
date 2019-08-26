@@ -28,6 +28,7 @@ exports.addSplitShare = function(body, type) {
         'proposalId': body.proposalId,
         'rightHolderPct': body.rightHolderPct,
         'shareePct': body.shareePct,
+        'etat': 'ATTENTE',
         'type': type
       }
     };
