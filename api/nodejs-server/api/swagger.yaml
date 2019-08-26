@@ -71,11 +71,40 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "AuthenticationDetails"
+  /editorsplitshare/invite:
+    post:
+      tags:
+      - Proposals
+      description: "invitation d'un bénéficiaire à un vote sur un partage avec un tier"
+      operationId: "inviteEditeur"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/splitshareinvite"
+      responses:
+        200:
+          description: "OK."
+          schema:
+            $ref: "#/definitions/splitshareinvite"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "SplitShare"
   /editorsplitshare:
     post:
       tags:
       - "Splitshares"
-      description: "This method creates a new splitshare between a rightholder and a sharee on a given proposal"
+      description: "Création d'un partage de droit avec un tier tel qu'un éditeur"
       operationId: "addEditorSplitShare"
       parameters:
       - in: "body"
@@ -149,6 +178,34 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "Proposals"
+  /splitshare/{proposalId}/{rightHolderId}:
+    get:
+      tags:
+      - "SplitShare"
+      operationId: "getSplitShare"
+      parameters:
+      - name: "proposalId"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "rightHolderId"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/listProposals"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "SplitShare"
   /proposal/media/{mediaId}:
     get:
       tags:
@@ -2380,7 +2437,7 @@ definitions:
           $ref: "#/definitions/rightHolderShort"
     example:
       {
-        "proposalId": "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e"        
+        "proposalId": "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e"
       }
   listeVote:
     type: "object"
@@ -2607,25 +2664,44 @@ definitions:
           "comment": "Not enough, more split"
         }
         ]
-    }
+    }  
+  splitshareinvite:
+    type: "object"
+    properties:
+      proposalId:
+        type: "string"
+        description: "Identifiant de la proposition"
+      rightHolder:
+        type: "object"
+        description: "Ayant-droit qui partage"
+        properties:
+          nom:
+            type: "string"
+          uuid:
+            type: "string"
+      shareeId:
+        type: "string"
+        description: "Identifiant de l'ayant-droit qui bénéficie"
+      mediaId:
+        type: "integer"
   splitshare:
     type: "object"
     properties:
       uuid:
         type: "string"
-        description: "UUID of split share"
+        description: "Identifiant de la proposition"
       rightHolderId:
         type: "string"
-        description: "UUID of rightHolder who is share his percentage"
+        description: "Identifiant unique de l'ayant-droit qui partage"
       shareeId:
         type: "string"
-        description: "UUID of rightHolder who is share his percentage"
+        description: "Identifiant unique de l'ayant-droit qui bénificie (p.ex., l'éditeur)"
       rightHolderPct:
         type: "string"
-        description: "Right holder percentage"
+        description: "% de l'ayant-droit"
       shareePct:
         type: "string"
-        description: "Sharee percentage"
+        description: "% de l'ayant-droit qui bénéficie"
   payments:
     type: "array"
     description: "An array of information about payments"
