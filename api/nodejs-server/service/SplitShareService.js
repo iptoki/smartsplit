@@ -51,10 +51,10 @@ exports.inviteEditeur = function(body, type) {
       utils.getParameter('SECRET_JWS_INVITE', (secret)=>{
 
         // 1.1 --> Génère un jeton JWT pour chaque ayant-droit
-        const EXPIRATION = "7 days"      
-        let jeton = jwt.sign(          
+        const EXPIRATION = "7 days"
+        let jeton = jwt.sign(
           {
-              data: {proposalId: proposalId, beneficiaire: _beneficiaire}
+              data: {proposalId: proposalId, donateur: _ayantDroit.uuid, beneficiaire: _beneficiaire}
           },
           secret,
           {expiresIn: EXPIRATION}
@@ -131,8 +131,6 @@ exports.inviteEditeur = function(body, type) {
             if (err) {
               console.log("Error", err)
             }        
-            
-            console.log('propositions...', data)
             data.Items.forEach(p => {
               if(p.proposalId === proposalId && p.rightHolderId === _ayantDroit.uuid && p.shareeId === _beneficiaire) {
                 // 5. Modifier l'état de la proposition
@@ -165,6 +163,153 @@ exports.inviteEditeur = function(body, type) {
       console.log(err)
       reject(err)
     } 
+  })
+}
+
+exports.splitShareVote = function(body) {
+  return new Promise(function(resolve, reject) {
+    try{
+      // Décoder le jeton
+      let jeton = body.jeton
+      let rightHolderId = body.userId
+      let choix = body.choix
+      utils.getParameter('SECRET_JWS_INVITE', (secret)=>{
+        try {
+          let contenu = jwt.verify(jeton, secret).data
+
+            // 4. Récupère la proposition de part à un tier
+          let params = {
+            TableName: "splitShare"           
+          }
+          ddb.scan(params, function(err, data) {
+            if (err) {
+              console.log("Error", err)
+            }        
+            data.Items.forEach(p => {
+              if(p.proposalId === contenu.proposalId && 
+                p.rightHolderId === contenu.donateur && 
+                p.shareeId === contenu.beneficiaire &&
+                rightHolderId === contenu.beneficiaire) {
+                // 5. Modifier l'état de la proposition
+                let params = {
+                  TableName: TABLE,
+                  Key: {
+                    'uuid': p.uuid
+                  },
+                  UpdateExpression: 'set etat = :s',
+                  ExpressionAttributeValues: {
+                    ':s' : choix === 'accept' ? 'ACCEPTE' : 'REFUSE'
+                  },
+                  ReturnValues: 'UPDATED_NEW'
+                };
+                ddb.update(params, function(err, data) {
+                  if (err) {
+                    console.log("Error", err)
+                  } else {
+                    console.log("Success", data.Attributes)
+                    
+                    let params = {
+                      TableName: "proposal",
+                      Key: {
+                        'uuid': contenu.proposalId
+                      }
+                    };
+                    ddb.get(params, function(err, data) {
+                      if (err) {
+                        console.log("Error", err)
+                      }                
+                      let _proposition = data.Item
+
+                      // 2. Récupère le titre du média
+                      let params = {
+                        TableName: "media",
+                        Key: {
+                          'mediaId': _proposition.mediaId
+                        }
+                      };
+                      ddb.get(params, function(err, data) {
+                        if (err) {
+                          console.log("Error", err)
+                        }                
+                        let titre = data.Item.title
+
+                        // Envoi des courriels ici
+                        // 3. Récupère le bénéficiaire
+                        let params = {
+                          TableName: "rightHolder",
+                          Key: {
+                            'rightHolderId': contenu.beneficiaire
+                          }
+                        };
+                        ddb.get(params, function(err, data) {
+                          if (err) {
+                            console.log("Error", err)
+                          }        
+                          let destinataire = data.Item
+                          // 3.1 Envoyer un courriel au bénéficiaire
+                          let body = [
+                            {
+                                "toEmail": destinataire.email,
+                                "firstName": destinataire.firstName,
+                                "workTitle": titre,
+                                "callbackURL": `http://proto.smartsplit.org:3000/partage/editeur/vote/${jeton}`
+                            }
+                          ]
+
+                          if(choix === 'accept') {
+                            body[0].template = "partageEditeurAccepte"
+                          } else {
+                            body[0].template = "partageEditeurRefuse"
+                          }
+
+                          axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)          
+                        })
+
+                        // 4. Envoi de la confirmation d'envoi à l'ayant-droit qui a partagé
+                        params = {
+                          TableName: "rightHolder",
+                          Key: {
+                            'rightHolderId': contenu.donateur
+                          }
+                        };
+                        ddb.get(params, function(err, data) {
+                          if (err) {
+                            console.log("Error", err)
+                          }        
+                          let ayantDroit = data.Item
+                          let body = [
+                            {
+                                "toEmail": ayantDroit.email,
+                                "firstName": ayantDroit.firstName,
+                                "workTitle": titre,
+                                "callbackURL": `http://proto.smartsplit.org:3000/partage/editeur/vote/${jeton}`
+                            }
+                          ]
+
+                          if(choix === 'accept') {
+                            body[0].template = "partageEditeurAccepte"
+                          } else {
+                            body[0].template = "partageEditeurRefuse"
+                          }
+
+                          axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)
+                        })
+                        resolve(choix)
+                      })
+                    })
+                  }
+                })
+              }
+            })          
+          })
+        } catch(err) {
+            console.log(err)
+        }
+      })
+    } catch(err) {
+      console.log(err)
+      reject(err)
+    }
   })
 }
 

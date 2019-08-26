@@ -144,7 +144,7 @@ function finDuVote(proposalId) {
                   "toEmail": _rH.email,
                   "firstName": _rH.firstName,
                   "workTitle": titre,
-                  "callbackURL": `http://proto.smartsplit.org:3000/partage/${proposalId}`
+                  "callbackURL": `http://proto.smartsplit.org:3000/partager/${proposition.mediaId}`
               }
             ]
     
