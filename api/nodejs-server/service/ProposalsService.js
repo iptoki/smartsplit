@@ -254,6 +254,34 @@ function ajouterCommentaire(propositionId, userId, commentaire) {
   })    
 }
 
+exports.getDernierePropositionPourMedia = function(mediaId){
+  return new Promise(function(resolve, reject){
+    let params = {
+      "TableName": TABLE
+    }
+    ddb.scan(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        reject();
+      } else {
+        let p
+        if(data.Items) {
+          let _ts = 0          
+          data.Items.forEach(_p=>{
+            if(_p.mediaId === parseInt(mediaId)) {
+              if(_p._d > _ts) {
+                p = _p
+                _ts = p._d
+              }
+            }            
+          })
+        }
+        resolve(p)
+      }
+    });
+  })
+}
+
 exports.invite = function(proposalId, rightHolders) {   
 
   return new Promise(function(resolve, reject) {

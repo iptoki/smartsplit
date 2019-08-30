@@ -235,6 +235,31 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "SplitShare"
+  /proposal/derniere-proposition/{mediaId}:
+    get:
+      tags:
+      - "Proposals"
+      description: "La dernière proposition pour un média"
+      operationId: "getDernierePropositionPourMedia"
+      parameters:
+      - name: "mediaId"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/proposal"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Proposals"
   /proposal/media/{mediaId}:
     get:
       tags:
