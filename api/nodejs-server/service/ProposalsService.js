@@ -144,19 +144,44 @@ function finDuVote(proposalId) {
                   "toEmail": _rH.email,
                   "firstName": _rH.firstName,
                   "workTitle": titre,
-                  "callbackURL": `http://proto.smartsplit.org:3000/partage/${proposalId}`
+                  "callbackURL": `http://proto.smartsplit.org:3000/partager/${proposition.mediaId}`
               }
             ]
     
+            let etat
             if(voteUnanime) {
               // Enoi du courriel d'unanimité
-              body[0].template = "unanimousVote"          
+              body[0].template = "unanimousVote"
+              // Modifier l'état de la proposition pour ACCEPTE
+              etat = "ACCEPTE"
             } else {
               // Envoi du courriel de non accord
               body[0].template = "nonUnanimousVote"
+              // Modifier l'état de la proposition pour REFUSE
+              etat = "REFUSE"
             }
-    
+                
             axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)
+
+            // Modifier l'état de la proposition
+            let params = {
+              TableName: TABLE,
+              Key: {
+                'uuid': proposalId
+              },
+              UpdateExpression: 'set etat  = :e',
+              ExpressionAttributeValues: {
+                ':e': etat
+              },
+              ReturnValues: 'UPDATED_NEW'
+            }
+            ddb.update(params, function(err, data) {
+              if (err) {
+                console.log("Error", err)
+              } else {
+                console.log("Success", data.Attributes)
+              }
+            })
 
           })
         })
@@ -227,6 +252,34 @@ function ajouterCommentaire(propositionId, userId, commentaire) {
     })
 
   })    
+}
+
+exports.getDernierePropositionPourMedia = function(mediaId){
+  return new Promise(function(resolve, reject){
+    let params = {
+      "TableName": TABLE
+    }
+    ddb.scan(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        reject();
+      } else {
+        let p
+        if(data.Items) {
+          let _ts = 0          
+          data.Items.forEach(_p=>{
+            if(_p.mediaId === parseInt(mediaId)) {
+              if(_p._d > _ts) {
+                p = _p
+                _ts = p._d
+              }
+            }            
+          })
+        }
+        resolve(p)
+      }
+    });
+  })
 }
 
 exports.invite = function(proposalId, rightHolders) {   
@@ -436,7 +489,8 @@ exports.voteProposal = function(userId, jeton, droits) {
                 rightsSplits[famille][type].forEach((droit, idx)=>{
                   if(droit.rightHolder.rightHolderId === userId) {
                     // Trouver le bon droit qui a été envoyé
-                    droit.voteStatus = droits[famille][type]
+                    droit.voteStatus = droits[famille].vote
+                    droit.comment = droits[famille].raison
                     rightsSplits[famille][type][idx] = droit
                   }
                 })
