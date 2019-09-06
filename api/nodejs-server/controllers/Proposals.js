@@ -116,6 +116,19 @@ module.exports.postProposal = function postProposal (req, res, next) {
     });
 };
 
+module.exports.postProposalRightsSplits = function postProposalRightsSplits (req, res, next) {
+  // var uuid = req.swagger.params['uuid'].value;
+  var body = req.swagger.params['body'].value; // uuid included in the body
+  // var rightsSplits = req.swagger.params['rightsSplits'].value;
+  Proposals.postProposalRightsSplits(body)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
 module.exports.updateProposal = function updateProposal (req, res, next) {
   var uuid = req.swagger.params['uuid'].value;
   var body = req.swagger.params['body'].value;

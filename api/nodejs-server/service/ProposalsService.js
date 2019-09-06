@@ -876,6 +876,57 @@ exports.postProposal = function(body) {
 }
 
 
+
+/**
+ * Post proposal rights split contract to blockchain
+ *
+ * body object containing the rights split proposal's unique ID and rightsSplits object
+ * returns success message (+etherscan tx)
+ **/
+exports.postProposalRightsSplits = function (body) {
+  return new Promise(function(resolve, reject) {
+    // let params = {
+    //   "TableName": TABLE,
+    //   Key: {
+    //     'uuid': body.uuid
+    //   }
+    // }
+    // // Get old proposals
+    // ddb.get(params, function(err, data) {
+    //   if (err) {
+    //     console.log("Error", err);
+    //     resolve();
+    //   } else {
+    //     let oldRightsSplits = data.Item.rightsSplits; 
+    //     // if (workCopyrightSplit,performanceNeighboringRightSplit,masterNeighboringRightSplit) 
+    //     // TODO ADD LOGIC TO UPDATE RIGHTS SPLITS OBJECT INTELLIGENTLY
+    //     let rightsSplitsJoined = Object.assign({}, oldRightsSplits, rightsSplits);
+    //     let params = {
+    //       TableName: TABLE,
+    //       Key: {
+    //         'uuid': uuid
+    //       },
+    //       UpdateExpression: 'set rightsSplits  = :r',
+    //       ExpressionAttributeValues: {
+    //         ':r' : rightsSplitsJoined
+    //       },
+    //       ReturnValues: 'UPDATED_NEW'
+    //     };
+    //     ddb.update(params, function(err, data) {
+    //       if (err) {
+    //         console.log("Error", err);
+    //         resolve();
+    //       } else {
+    //         console.log("Success", data.Attributes);
+    //         resolve(data.Attributes);
+    //       }
+    //     });
+    //   }
+    // });
+  });
+}
+
+
 /**
  * This method updates a split proposal
  *

@@ -540,6 +540,216 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "Proposals"
+    post:
+      tags:
+      - "Proposals"
+      description: "Create rights split smart contracts for given split proposal"
+      operationId: "postProposalRightsSplits"
+      parameters:
+      - name: "uuid"
+        in: "path"
+        description: "The split proposal's unique ID"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "The split proposal's rights splits object"
+        required: true
+        schema:
+          type: "object"
+          properties: 
+            uuid:
+              type: "string"
+              example: "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e"
+              description: "The unique ID for the given split proposal"
+            mediaId:
+              type: "integer"
+              example: 1
+              description: "The Id for the given media which corresponds to the right split"
+            rightsSplits:
+              type: "object"
+              additionalProperties:
+                type: "object"
+                description: "the copyright object for the given right split"
+            initiator: 
+              type: "object"
+              additionalProperties:
+                type: "string"
+                description: "the initiator object for the given right split"
+            creationDate:
+              type: "string"
+              format: "iso8601-date-time"
+              example: "2019-01-01T15:53:00"
+              description: "the creation date generated at time of split proposal creation"
+            _d:
+              type: "string"
+              example: "1566229239"
+              description: "the creation date of split stored as a Unix timestamp (in seconds)"
+            comments: 
+              type: "array"
+              items:
+                type: "object"
+                description: "the comment and rightHolderId for the given proposal"
+            state:
+              type: "string"
+              description: "define the state of the proposal (BROUILLON, PRET, VOTATION, ACCEPTE, REFUSE"
+          example:
+            {
+              "uuid": "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e",
+              "mediaId": "1",
+              "initiator": {"id": "40e5ad76-d2c6-4f1e-9eb4-98213e29e36f", "name": "Jim Smith"},
+              "creationDate": "2019-01-01T15:53:00",
+              "_d": "1566229239",
+              "rightsSplits": {
+                "workCopyrightSplit": {                                       
+                  "music": [
+                  {
+                    "contributorRole": {
+                      "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e": "songwriter",
+                      "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "composer"
+                    },
+                    "rightHolder": {
+                      "rightHolderId": "40e5ad76-d2c6-4f1e-9eb4-98213e29e36f",
+                      "name": "Joe Smith",
+                      "color": "#FFFFFFF"
+                    },
+                    "splitPct": "50",
+                    "voteStatus": "active",
+                    "_t": "2019-07-08T16:45:51Z"
+                  },
+                  {
+                    "contributorRole": {
+                      "12345c60-7b1a-11e8-9c9c-2d42b21b1a3f": "songwriter",
+                      "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "composer"
+                    },
+                    "rightHolder": {
+                      "rightHolderId": "523bac7a-b14c-4a33-87ad-6aa3e848f2f6",
+                      "name": "Bob Andrews",
+                      "color": "#FFFFFFF"
+                    },
+                    "splitPct": "25",
+                    "voteStatus": "active",
+                    "_t": "2019-07-08T16:46:51Z"
+                  }
+                  ],
+                  "lyrics": [
+                    {
+                      "contributorRole": {
+                        "12345c60-7b1a-11e8-9c9c-2d42b21b1a4g": "arranger"
+                      },
+                      "rightHolder": {
+                        "rightHolderId": "8c9a463d-4803-4221-9e96-f940f250e87d",
+                        "name": "Joe Duchane",
+                        "color": "#000000"
+                      },    
+                      "splitPct": "25",
+                      "voteStatus": "active",
+                      "_t": "2019-07-08T16:47:51Z"
+                    }
+                  ]
+                },
+                "performanceNeighboringRightSplit": {
+                "principal": [
+                  {
+                    "contributorRole": {
+                      "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e": "guitarist",
+                      "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "writer"
+                    },
+                    "rightHolder": {
+                      "rightHolerId": "40e5ad76-d2c6-4f1e-9eb4-98213e29e36f",
+                      "name": "Joe Smith",
+                      "color": "#111111"
+                    },
+                    "splitPct": "80",
+                    "voteStatus": "active",
+                    "_t": "2019-07-08T16:40:51Z"
+                  }
+                ],
+                "accompaniment": [
+                  {
+                    "contributorRole": {
+                      "12345c60-7b1a-11e8-9c9c-2d42b21b1a3f": "flutist",
+                      "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "writer"
+                    },
+                    "rightHolder": {
+                      "rightHolderId": "523bac7a-b14c-4a33-87ad-6aa3e848f2f6",
+                      "name": "Bob Andrews",
+                      "color": "#222222"
+                    },
+                    "splitPct": "20",
+                    "voteStatus": "active",
+                    "_t": "2019-07-08T16:39:51Z"
+                  }
+                ]
+                },
+                "masterNeighboringRightSplit": [
+                  {
+                    "contributorRole": {
+                      "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e": "guitarist",
+                      "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "writer"
+                    },
+                    "rightHolder": {
+                      "rightHolderId": "40e5ad76-d2c6-4f1e-9eb4-98213e29e36f",
+                      "name": "Joe Smith",
+                      "color": "#222222"
+                    },
+                    "splitPct": "50",
+                    "voteStatus": "active",
+                    "_t": "2019-07-08T16:45:51Z"
+                  },
+                  {
+                    "contributorRole": {
+                      "12345c60-7b1a-11e8-9c9c-2d42b21b1a3f": "flutist",
+                      "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "writer"
+                    },
+                    "rightHolder": {
+                      "rightHolderId": "523bac7a-b14c-4a33-87ad-6aa3e848f2f6",
+                      "name": "Bob Andrews",
+                      "color": "#555555"
+                    },
+                    "splitPct": "25",
+                    "voteStatus": "active",
+                    "_t": "2019-07-08T16:46:51Z"
+                  },
+                  {
+                    "contributorRole": {
+                      "12345c60-7b1a-11e8-9c9c-2d42b21b1a4g": "composer"
+                    },
+                    "rightHolder": {
+                      "rightHolderId": "8c9a463d-4803-4221-9e96-f940f250e87d",
+                      "name": "Joe Duchane",
+                      "color": "#FFFFFF"
+                    },
+                    "splitPct": "25",
+                    "voteStatus": "active",
+                    "_t": "2019-07-08T16:47:51Z"
+                  }
+                ]
+              },
+              "comments": [{
+                "rightHolderId": "40e5ad76-d2c6-4f1e-9eb4-98213e29e36f",
+                "comment": "Ok"
+              },
+              {
+                "rightHolderId": "523bac7a-b14c-4a33-87ad-6aa3e848f2f6",
+                "comment": "Not enough, more split"
+              }
+              ]
+          }
+      responses:
+        200:
+          description: "Smart contracts created"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Proposals"
   /proposal/{uuid}/comments:
     patch:
       tags:
