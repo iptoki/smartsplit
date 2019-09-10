@@ -24,6 +24,8 @@ tags:
   description: "Viewing and creating media"
 - name: "Payments"
   description: "Viewing and updating payment details"
+- name: "Socan"
+  description: "Applying to join Socan"
 schemes:
 - "https"
 consumes:
@@ -2399,6 +2401,31 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "Payments"
+  /socan/join:
+    post:
+      tags:
+      - "Socan"
+      description: "join Socan as a writer member"
+      operationId: "postSocan"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "The socan member details"
+        required: true
+        schema:
+          $ref: "#/definitions/socan"
+      responses:
+        200:
+          description: "OK. Member application recieved"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Socan"
 securityDefinitions:
   basicAuth:
     description: "HTTP Basic Authentication"
@@ -2869,3 +2896,82 @@ definitions:
       amount: 20
       payee: 1
       transactionHash: "0x58a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c"
+  socan:
+    type: "object"
+    properties:
+      GIVEN_NAMES: 
+        type: "string"
+        example: "Bob"
+        description: "Legal first name"
+      MIDDLE_NAME: 
+        type: "string"
+        example: "Bobby"
+        description: "Legal first name"
+      LAST_NAME:
+        type: "string"
+        example: "Smith"
+        description: "Legal last name"
+      DATE_OF_BIRTH: 
+        type: "string"
+        example: "01/01/1984"
+      STREET1: 
+        type: "string"
+        example: "6750 Avenue de L'Esplanade, 102"
+      CITY: 
+        type: "string"
+        example: "Montreal"
+      PROVINCE: 
+        type: "string"
+        example: "QC"
+      COUNTRY: 
+        type: "string"
+        example: "CAN"
+      POSTAL_CODE: 
+        type: "string"
+        example: "H2V4M1"
+      PHONE_NO1: 
+        type: "string"
+        example: "514 100 1000"
+      EMAIL_ADDRESS: 
+        type: "string"
+        example: "socan@iptoki.com"
+      EMAIL_ADDRESS_VERIFY: 
+        type: "string"
+        example: "socan@iptoki.com"
+      USER_ID: 
+        type: "string"
+        example: "iptoki"
+      PASSWORD: 
+        type: "string"
+        example: "12345678"
+      PASSWORD_VERIFY:
+        type: "string"
+        example: "12345678"
+      HEAR_OF_SOCAN: 
+        type: "string"
+        example: "OTHER"
+      LANGUAGE_PREFERENCE:
+        type: "string" 
+        example: "E"
+      TERMS: 
+        type: "string"
+        example: "Y"
+    example:
+      GIVEN_NAMES: "IPtoki"
+      MIDDLE_NAME: "Socan"
+      LAST_NAME: "Test"
+      DATE_OF_BIRTH: "01/01/1984"
+      STREET1: "6750 Avenue de L'Esplanade, 102"
+      CITY: "Montreal"
+      PROVINCE: "QC"
+      COUNTRY: "CAN"
+      POSTAL_CODE: "H2V4M1"
+      PHONE_NO1: "514 100 1000"
+      EMAIL_ADDRESS: "socan@iptoki.com"
+      EMAIL_ADDRESS_VERIFY: "socan@iptoki.com"
+      USER_ID: "iptoki"
+      PASSWORD: "12345678"
+      PASSWORD_VERIFY: "12345678"
+      HEAR_OF_SOCAN: "OTHER"
+      LANGUAGE_PREFERENCE: "E"
+      TERMS: "Y"
