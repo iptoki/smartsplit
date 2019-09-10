@@ -1,7 +1,7 @@
 'use strict';
 // const TABLE = 'socan';
 const utils = require('../utils/utils.js');
-const axios = require(axios);
+const axios = require('axios');
 // const uuidv1 = require('uuid/v1');
 
 // AWS 
