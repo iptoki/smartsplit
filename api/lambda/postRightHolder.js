@@ -19,15 +19,17 @@ exports.handler = function(event, context, callback) {
           TableName: TABLE,
           Item: {
             'rightHolderId': event.request.userAttributes.sub,
-            'firstName': event.request.userAttributes.name,
+            'firstName': event.request.userAttributes.given_name,
             'lastName': event.request.userAttributes.family_name,
             'email': event.request.userAttributes.email,
             'ipi': getData.Item.ipi,
             'wallet': getData.Item.wallet,
             'jurisdiction': getData.Item.jurisdiction,
-            'avatarS3Etag': getData.Item.avatarS3Etag,
+            'avatarImage': getData.Item.avatarImage,
             'artistName': getData.Item.artistName,
-            'socialMediaLinks': getData.Item.socialMediaLinks
+            'socialMediaLinks': getData.Item.socialMediaLinks,
+            'defaultRoles': getData.Item.defaultRoles,
+            'groups': getData.Item.groups
           }
         }
         ddb.put(params, function(err, data) {
@@ -53,9 +55,9 @@ exports.handler = function(event, context, callback) {
         let params = {
         TableName: TABLE,
         Item: {
-          'rightHolderId': event.request.userAttributes.sub, // event.userName
-          'firstName': event.request.userAttributes.name,
-          'lastName': event.request.userAttributes.family_name,
+          'rightHolderId': event.request.userAttributes.sub,
+          // 'firstName': event.request.userAttributes.given_name,
+          // 'lastName': event.request.userAttributes.family_name,
           'email': event.request.userAttributes.email
           }
         };
