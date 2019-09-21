@@ -749,7 +749,7 @@ exports.patchProposalInitiator = function(uuid,initiator) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -782,7 +782,7 @@ exports.patchProposalMediaId = function(uuid,mediaId) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -831,7 +831,7 @@ exports.patchProposalRightsSplits = function (uuid,rightsSplits) {
             console.log("Error", err);
             resolve();
           } else {
-            console.log("Success", data.Attributes);
+            
             resolve(data.Attributes);
           }
         });
@@ -883,7 +883,7 @@ exports.patchProposalComments = function(uuid, comments) {
             console.log("Error", err);
             resolve();
           } else {
-            console.log("Success", data.Attributes);
+            
             resolve(data.Attributes);
           }
         });
@@ -971,7 +971,7 @@ exports.postProposalRightsSplits = function (body) {
     //         console.log("Error", err);
     //         resolve();
     //       } else {
-    //         console.log("Success", data.Attributes);
+    //         
     //         resolve(data.Attributes);
     //       }
     //     });
@@ -1008,7 +1008,7 @@ exports.updateProposal = function(uuid, body) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(uuid);
       }
     })  

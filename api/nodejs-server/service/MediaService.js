@@ -34,8 +34,7 @@ exports.deleteMedia = function(mediaId) {
       if (err) {
         console.log("Error", err);
         resolve();
-      } else {
-        console.log("Success", data);
+      } else {        
         resolve('Media record removed');
       }
     });
@@ -60,7 +59,6 @@ exports.getAllMedia = function() {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success, length of data: ", data.length);
         resolve(data.Items);
       }
     });
@@ -88,7 +86,6 @@ exports.getMedia = function(mediaId) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data);
         resolve(data);
       }
     });
@@ -122,7 +119,6 @@ exports.patchMediaArtist = function(mediaId,artist) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
         resolve(data.Attributes);
       }
     });
@@ -156,7 +152,6 @@ exports.patchMediaDuration = function(mediaId,msDuration) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
         resolve(data.Attributes);
       }
     });
@@ -190,7 +185,6 @@ exports.patchMediaGenre = function(mediaId,genre) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
         resolve(data.Attributes);
       }
     });
@@ -224,7 +218,6 @@ exports.patchMediaSecondaryGenre = function(mediaId,secondaryGenre) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
         resolve(data.Attributes);
       }
     });
@@ -258,7 +251,6 @@ exports.patchMediaISRC = function(mediaId,isrc) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
         resolve(data.Attributes);
       }
     });
@@ -292,7 +284,7 @@ exports.patchMediaUPC = function(mediaId,upc) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -326,7 +318,7 @@ exports.patchModificationDate = function(mediaId,modificationDate) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -360,7 +352,7 @@ exports.patchPublishDate = function(mediaId,publishDate) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -394,7 +386,7 @@ exports.patchMediaPublisher = function(mediaId,publisher) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -428,7 +420,7 @@ exports.patchMediaTitle = function(mediaId,title) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -462,7 +454,7 @@ exports.patchMediaAlbum = function(mediaId,album) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -495,7 +487,7 @@ exports.patchMediaS3Etag = function(mediaId,s3Etag) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -528,7 +520,7 @@ exports.patchMediaLyrics = function(mediaId,lyrics) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -563,7 +555,7 @@ exports.patchMediaInLanguages = function(mediaId,inLanguages) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -610,7 +602,7 @@ exports.patchMediaPlaylistLinks = function(mediaId,playlistLinks) {
             console.log("Error", err);
             resolve();
           } else {
-            console.log("Success", data.Attributes);
+            
             resolve(data.Attributes);
           }
         });
@@ -659,7 +651,7 @@ exports.patchMediaPressArticleLinks = function(mediaId,pressArticleLinks) {
             console.log("Error", err);
             resolve();
           } else {
-            console.log("Success", data.Attributes);
+            
             resolve(data.Attributes);
           }
         });
@@ -708,7 +700,7 @@ exports.patchMediaSocialMediaLinks = function(mediaId,socialMediaLinks) {
             console.log("Error", err);
             resolve();
           } else {
-            console.log("Success", data.Attributes);
+            
             resolve(data.Attributes);
           }
         });
@@ -757,7 +749,7 @@ exports.patchMediaStreamingServiceLinks = function(mediaId,streamingServiceLinks
             console.log("Error", err);
             resolve();
           } else {
-            console.log("Success", data.Attributes);
+            
             resolve(data.Attributes);
           }
         });
@@ -885,7 +877,7 @@ exports.updateMedia = function(mediaId,body) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });

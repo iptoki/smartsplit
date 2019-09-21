@@ -126,7 +126,7 @@ exports.patchPaymentTransactionHash = function(id,transactionHash) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -160,7 +160,7 @@ exports.patchPaymentTransactionID = function(id,transactionId) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -245,7 +245,7 @@ exports.updatePayment = function(id,body) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });

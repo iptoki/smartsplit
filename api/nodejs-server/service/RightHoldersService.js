@@ -122,7 +122,7 @@ exports.patchRightHolderArtistName = function(rightHolderId,artistName) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -156,7 +156,7 @@ exports.patchRightHolderAvatarImage = function(rightHolderId,avatarImage) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -190,7 +190,7 @@ exports.patchRightHolderEmail = function(rightHolderId,email) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -224,7 +224,7 @@ exports.patchRightHolderFirstName = function(rightHolderId,firstName) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -258,7 +258,7 @@ exports.patchRightHolderIPI = function(rightHolderId,ipi) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -292,7 +292,7 @@ exports.patchRightHolderJurisdiction = function(rightHolderId,jurisdiction) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -326,7 +326,7 @@ exports.patchRightHolderLastName = function(rightHolderId,lastName) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -373,7 +373,7 @@ exports.patchRightHolderSocialMediaLinks = function(rightHolderId,socialMediaLin
             console.log("Error", err);
             resolve();
           } else {
-            console.log("Success", data.Attributes);
+            
             resolve(data.Attributes);
           }
         });
@@ -421,7 +421,7 @@ exports.patchRightHolderGroups = function(rightHolderId,groups) {
             console.log("Error", err);
             resolve();
           } else {
-            console.log("Success", data.Attributes);
+            
             resolve(data.Attributes);
           }
         });
@@ -469,7 +469,7 @@ exports.patchRightHolderDefaultRoles = function(rightHolderId,defaultRoles) {
             console.log("Error", err);
             resolve();
           } else {
-            console.log("Success", data.Attributes);
+            
             resolve(data.Attributes);
           }
         });
@@ -505,7 +505,7 @@ exports.patchRightHolderWallet = function(rightHolderId,wallet) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -594,7 +594,7 @@ exports.updateRightHolder = function(rightHolderId,body) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
