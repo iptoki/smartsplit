@@ -284,6 +284,8 @@ exports.getDernierePropositionPourMedia = function(mediaId){
 
 exports.invite = function(proposalId, rightHolders) {   
 
+  console.log('Invitation à la proposition', proposalId, rightHolders)
+
   return new Promise(function(resolve, reject) {
 
     // Récupère la proposition
