@@ -179,7 +179,7 @@ function finDuVote(proposalId) {
               if (err) {
                 console.log("Error", err)
               } else {
-                console.log("Success", data.Attributes)
+                
               }
             })
 
@@ -207,7 +207,7 @@ function overwriteRightSplits(uuid, rightsSplits) {
     if (err) {
       console.log("Error", err)
     } else {
-      console.log("Success", data.Attributes)
+      
     }
   })
 }
@@ -247,7 +247,7 @@ function ajouterCommentaire(propositionId, userId, commentaire) {
       if (err) {
         console.log("Error", err)
       } else {
-        console.log("Success", data.Attributes)
+        
       }
     })
 
@@ -415,7 +415,7 @@ exports.invite = function(proposalId, rightHolders) {
             if (err) {
               console.log("Error", err)
             } else {
-              console.log("Success", data.Attributes)
+              
               // 5. Résoudre ce qui doit se produire dans le futur avec le jeton de l'initiateur          
               // Test la fin du vote              
               finDuVote(proposalId)
@@ -607,7 +607,7 @@ exports.deleteProposal = function(uuid) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data);
+        
         resolve('split proposal removed');
       }
     });
@@ -630,7 +630,7 @@ exports.getAllProposals = function() {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data);
+        
         resolve(data.Items);
       }
     });
@@ -652,7 +652,7 @@ exports.getMediaProposals = function(mediaId) {
         console.log("Error", err);
         resolve()
       } else {
-        console.log("Success", data);        
+                
         let _items = []
         data.Items.forEach(elem=>{
           if(elem.mediaId === parseInt(mediaId)) {
@@ -690,7 +690,7 @@ exports.getProposal = function(uuid) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data);
+        
         resolve(data);
       }
     });
@@ -716,7 +716,7 @@ exports.getProposalsRightHolder = function(rightHolderId) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data);
+        
         resolve(data.Items);
       }
     });

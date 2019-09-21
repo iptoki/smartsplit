@@ -36,7 +36,7 @@ exports.deleteRightHolder = function(rightHolderId) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data);
+        
         resolve('Right holder removed');
       }
     });
@@ -59,7 +59,7 @@ exports.getAllRightHolders = function() {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data);
+        
         resolve(data.Items);
       }
     });
@@ -88,7 +88,7 @@ exports.getRightHolder = function(rightHolderId) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data);
+        
         resolve(data);
       }
     });

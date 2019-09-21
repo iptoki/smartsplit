@@ -149,7 +149,7 @@ exports.inviteEditeur = function(body, type) {
                   if (err) {
                     console.log("Error", err)
                   } else {
-                    console.log("Success", data.Attributes)
+                    
                     // Test la fin du vote
                     resolve(p.uuid)
                   }
@@ -206,7 +206,7 @@ exports.splitShareVote = function(body) {
                   if (err) {
                     console.log("Error", err)
                   } else {
-                    console.log("Success", data.Attributes)
+                    
                     
                     let params = {
                       TableName: "proposal",

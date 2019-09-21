@@ -37,8 +37,7 @@ exports.deletePayment = function(id) {
       if (err) {
         console.log("Error", err);
         resolve();
-      } else {
-        console.log("Success", data);
+      } else {        
         resolve('Payment record removed');
       }
     });
@@ -64,7 +63,7 @@ exports.getAllPayments = function() {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data);
+        
         resolve(data);
       }
     });
@@ -92,7 +91,7 @@ exports.getPayment = function(id) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data);
+        
         resolve(data);
       }
     });
@@ -187,7 +186,6 @@ exports.postPayment = function(body) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Count);
         // Create unique ID value
         let ID_VALUE = data.Count + 1;
 
