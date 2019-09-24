@@ -786,7 +786,7 @@ exports.postMedia = function(body) {
             'mediaId': ID_VALUE,
             'artist': body[0].artist,
             'album': body[0].album,
-            'cover': body[0].cover,
+            'type': body[0].type,
             'creationDate': DATE_CREATED,
             'modificationDate': body[0].modificationDate,
             'audioFileName': body[0].audioFileName,
@@ -844,7 +844,7 @@ exports.updateMedia = function(mediaId,body) {
         'mediaId': mediaId
       },
       UpdateExpression: 'set title  = :t, genre = :g, secondaryGenre = :y, album = :a, s3Etag = :s\
-        \ artist = :y, creationDate = :c, modificationDate = :f, publishDate = :i, cover = :v, publisher = :p, \
+        \ artist = :y, creationDate = :c, modificationDate = :f, publishDate = :i, type = :v, publisher = :p, \
         \ lyrics = :l, inLanguages = :u, isrc = :z, upc = :b, msDuration = :d, socialMediaLinks = :e, streamingServiceLinks = :k, pressArticleLinks = :x, playlistLinks = :q', 
 
       ExpressionAttributeValues: {
@@ -856,7 +856,7 @@ exports.updateMedia = function(mediaId,body) {
         ':c' : body[0].creationDate,
         ':f' : DATE_MODIFIED,
         ':i' : body[0].publishDate,
-        ':v' : body[0].cover,
+        ':v' : body[0].type,
         ':p' : body[0].publisher,
         ':l' : body[0].lyrics,
         ':u' : body[0].inLanguages,

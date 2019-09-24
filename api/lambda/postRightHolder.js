@@ -1,6 +1,6 @@
 const AWS = require('aws-sdk');
 const TABLE = 'rightHolder';
-const REGION = 'us-east-2';
+const REGION = 'us-east-1';
 
 const ddb = new AWS.DynamoDB.DocumentClient({region: REGION});
 
@@ -29,7 +29,8 @@ exports.handler = function(event, context, callback) {
             'artistName': getData.Item.artistName,
             'socialMediaLinks': getData.Item.socialMediaLinks,
             'defaultRoles': getData.Item.defaultRoles,
-            'groups': getData.Item.groups
+            'groups': getData.Item.groups,
+            'instruments': getData.Item.instruments
           }
         }
         ddb.put(params, function(err, data) {

@@ -2567,10 +2567,10 @@ definitions:
         type: "string"
         example: "120000"
         description: "The duration in milliseconds for the given media"
-      cover:
-        type: "boolean"
-        example: false
-        description: "Whether or not this piece of media is a cover"
+      type:
+        type: "string"
+        example: "remix"
+        description: "Whether or not this piece of media is a cover, remix, or original song"
       genre:
         type: "string"
         example: "Rock"
@@ -2669,7 +2669,7 @@ definitions:
           creationDate: "2019-01-01T15:53:00",
           modificationDate: "2019-01-01T15:53:01",
           publishDate: "2019-01-01T15:53:02",
-          cover: false,
+          type: "original",
           isrc: "abcde1234567",
           upc: "123456789111",
           publisher: "sync publishing",
