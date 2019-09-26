@@ -5,7 +5,7 @@ const uuidv1 = require('uuid/v1');
 
 // AWS
 const AWS = require('aws-sdk');
-const REGION = 'us-east-2';
+const REGION = 'us-east-1';
 
 AWS.config.update({
   region: REGION, 
@@ -463,22 +463,55 @@ exports.patchMediaAlbum = function(mediaId,album) {
 
 
 /**
- * Update the AWS s3 Etag for given media
+ * Update the AWS audio file for given media
  *
  * mediaId Integer The artwork agreement's unique ID
- * s3Etag S3Etag The AWS s3 Etag string for the given media
+ * audioFile  The AWS s3 filename string for the given media
  * returns media
  **/
-exports.patchMediaS3Etag = function(mediaId,s3Etag) {
+exports.patchMediaAudioFile = function(mediaId,audioFile) {
   return new Promise(function(resolve, reject) {
     let params = {
       TableName: TABLE,
       Key: {
         'mediaId': mediaId
       },
-      UpdateExpression: 'set s3Etag  = :s',
+      UpdateExpression: 'set audioFile  = :s',
       ExpressionAttributeValues: {
-        ':s' : s3Etag.s3Etag
+        ':s' : audioFile.audioFile
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        
+        resolve(data.Attributes);
+      }
+    });
+  });
+}
+
+
+/**
+ * Update the AWS audio file for given media
+ *
+ * mediaId Integer The artwork agreement's unique ID
+ * audioFile  The AWS s3 filename string for the given media
+ * returns media
+ **/
+exports.patchMediaImageFile = function(mediaId,imageFile) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'mediaId': mediaId
+      },
+      UpdateExpression: 'set imageFile  = :s',
+      ExpressionAttributeValues: {
+        ':s' : imageFile.imageFile
       },
       ReturnValues: 'UPDATED_NEW'
     };
@@ -789,8 +822,8 @@ exports.postMedia = function(body) {
             'type': body[0].type,
             'creationDate': DATE_CREATED,
             'modificationDate': body[0].modificationDate,
-            'audioFileName': body[0].audioFileName,
-            'imageFileName': body[0].imageFileName,
+            'audioFile': body[0].audioFile,
+            'imageFile': body[0].imageFile,
             'publishDate': body[0].publishDate,
             'publisher': body[0].publisher,
             'title': body[0].title,

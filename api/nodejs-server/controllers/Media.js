@@ -155,10 +155,22 @@ module.exports.patchMediaPublisher = function patchMediaPublisher (req, res, nex
     });
 };
 
-module.exports.patchMediaS3Etag = function patchMediaS3Etag (req, res, next) {
+module.exports.patchMediaAudioFile = function patchMediaS3Etag (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
-  var s3Etag = req.swagger.params['s3Etag'].value;
-  Media.patchMediaS3Etag(mediaId,s3Etag)
+  var audioFile = req.swagger.params['audioFile'].value;
+  Media.patchMediaAudioFile(mediaId,audioFile)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.patchMediaImageFile = function patchMediaImageFile (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value;
+  var imageFile = req.swagger.params['imageFile'].value;
+  Media.patchMediaImageFile(mediaId,imageFile)
     .then(function (response) {
       utils.writeJson(res, response);
     })

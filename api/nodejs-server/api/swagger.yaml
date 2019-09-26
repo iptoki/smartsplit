@@ -2645,14 +2645,14 @@ definitions:
         additionalProperties:
           type: "string"
           description: "playlist links for the given media" 
-      audioFileName:
+      audioFile:
         type: "string"
         description: "The audio file name"
         example: "audio.mp3"
-      imageFileName:
+      imageFile:
         type: "string"
         description: "The image file name"
-        example: "coverimage.png"
+        example: "cover.jpg"
       rightHolders:
         type: "object"
         description: "The rightholders and roles associated to this media"
@@ -2677,6 +2677,8 @@ definitions:
           lyrics: "Love you Baby. Love you Baby. Love you Baby. Love you Baby.
           Love you Baby. Baby. Wooo. Love You Baby.",
           inLanguages: ["english"],
+          audioFile: "track.mp3",
+          imageFile: "cover.jpg",
           socialMediaLinks: {facebook: "https://facebook.com/ex", twitter: "https://twitter.com/ex", youtube: "https://youtube.com/ex"},
           streamingServiceLinks: {spotify: "https://open.spotify.com/track/asdgj4qhfasd", apple: "https://twitter.com/ex"},
           pressArticleLinks: {medium: "https://medium.com/ex", metro: "https://metro.ca/ex"},
