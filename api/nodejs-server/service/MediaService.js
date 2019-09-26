@@ -791,6 +791,55 @@ exports.patchMediaStreamingServiceLinks = function(mediaId,streamingServiceLinks
   });
 }
 
+exports.putMedia = function(title, type) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      "TableName": TABLE,
+    }
+    ddb.scan(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        // Create unique ID value
+        let ID_VALUE = 0
+
+        // Récupère le dernier identifiant
+        data.Items.forEach(elem=>{
+          if(ID_VALUE < elem.mediaId) {
+            ID_VALUE = elem.mediaId
+          }
+        })
+        ID_VALUE += 1 // Ajout 1
+
+        // Assign creationDate to current date time
+        let d = Date(Date.now());   
+        let DATE_CREATED = d.toString();
+        let params = {
+          TableName: TABLE,
+          Item: {
+            'mediaId': ID_VALUE,            
+            'title': title,
+            'type': type,
+            'creationDate': DATE_CREATED      
+          }
+        };        
+
+        console.log('Ajout média court', params)
+
+        ddb.put(params, function(err, data) {
+          if (err) {
+            console.log("Error", err);
+            resolve();
+          } else {            
+            resolve({id: ID_VALUE});
+          }
+        });
+      }
+
+    });
+  });
+}
 
 /**
  * This method creates a new media item

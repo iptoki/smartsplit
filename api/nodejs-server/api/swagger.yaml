@@ -1434,6 +1434,33 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
+    put:
+      tags: 
+      - "Media"
+      description: "This method create a new media item from title and type only"
+      operationId: "putMedia"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/mediaShort"
+      responses:
+        200:
+          description: "OK. The media was created."
+          schema:
+            $ref: "#/definitions/media"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Media"
     post:
       tags:
       - "Media"
@@ -2545,6 +2572,12 @@ definitions:
     items:
       type: "integer"
       example: 1
+  mediaShort:
+    properties:
+      titre:
+        type: "string"
+      type:
+        type: "string"
   media:
     properties:
       mediaId:

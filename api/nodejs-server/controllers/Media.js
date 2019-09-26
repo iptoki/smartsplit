@@ -3,6 +3,18 @@
 var utils = require('../utils/writer.js');
 var Media = require('../service/MediaService');
 
+module.exports.putMedia = function putMedia(req, res, next) {
+  var body = req.swagger.params['body'].value
+  let title = body.title, type = body.type
+  Media.putMedia(title, type)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+}
+
 module.exports.deleteMedia = function deleteMedia (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
   Media.deleteMedia(mediaId)
