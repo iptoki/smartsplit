@@ -79,13 +79,14 @@ exports.getMedia = function(mediaId) {
       Key: {
         'mediaId': mediaId
       }
-    };
-    // Call DynamoDB to delete the item from the table
+    };    
+    console.log(params)
     ddb.get(params, function(err, data) {
       if (err) {
         console.log("Error", err);
         resolve();
       } else {
+        console.log(data)
         resolve(data);
       }
     });

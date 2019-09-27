@@ -1449,7 +1449,7 @@ paths:
         200:
           description: "OK. The media was created."
           schema:
-            $ref: "#/definitions/media"
+            $ref: "#/definitions/mediaShort"
         400:
           description: "Bad request"
         403:
@@ -1660,7 +1660,7 @@ paths:
         description: "The AWS audio file name string for the given media"
         required: true
         schema:
-          $ref: "#/definitions/media/properties/audioFileName"
+          $ref: "#/definitions/media/properties/audioFile"
       responses:
         200:
           description: "OK"
@@ -1692,7 +1692,7 @@ paths:
         description: "The AWS audio file name string for the given media"
         required: true
         schema:
-          $ref: "#/definitions/media/properties/imageFileName"
+          $ref: "#/definitions/media/properties/imageFile"
       responses:
         200:
           description: "OK"
@@ -2634,8 +2634,7 @@ definitions:
       lyrics:
         type: "string"
         description: "The lyrics of the given media"
-        example: "Love you Baby. Love you Baby. Love you Baby. Love you Baby.
-        Love you Baby. Baby. Wooo. Love You Baby."
+        example: "Love you Baby. Love you Baby. Love you Baby. Love you Baby. Love you Baby. Baby. Wooo. Love You Baby."
       inLanguages:
         type: "array"
         description: "An array of languages of the lyrics for the given media"
@@ -2707,8 +2706,7 @@ definitions:
           upc: "123456789111",
           publisher: "sync publishing",
           msDuration: "288000",
-          lyrics: "Love you Baby. Love you Baby. Love you Baby. Love you Baby.
-          Love you Baby. Baby. Wooo. Love You Baby.",
+          lyrics: "Love you Baby. Love you Baby. Love you Baby. Love you Baby. Love you Baby. Baby. Wooo. Love You Baby.",
           inLanguages: ["english"],
           audioFile: "track.mp3",
           imageFile: "cover.jpg",
