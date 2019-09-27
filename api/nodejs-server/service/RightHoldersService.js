@@ -5,7 +5,7 @@ const utils = require('../utils/utils.js');
 
 // AWS
 const AWS = require('aws-sdk');
-const REGION = 'us-east-2';
+const REGION = 'us-east-1';
 
 AWS.config.update({
   region: REGION,
@@ -36,7 +36,7 @@ exports.deleteRightHolder = function(rightHolderId) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data);
+        
         resolve('Right holder removed');
       }
     });
@@ -59,7 +59,7 @@ exports.getAllRightHolders = function() {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data);
+        
         resolve(data.Items);
       }
     });
@@ -88,7 +88,7 @@ exports.getRightHolder = function(rightHolderId) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data);
+        
         resolve(data);
       }
     });
@@ -122,7 +122,7 @@ exports.patchRightHolderArtistName = function(rightHolderId,artistName) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -134,19 +134,19 @@ exports.patchRightHolderArtistName = function(rightHolderId,artistName) {
  * Update the artist name of a right holder
  *
  * rightHolderId Integer The right holder's unique profile ID
- * avatarS3Etag AvatarS3Etag The right holder's S3 Etag for the profile avatar image
- * returns rightHolder/properties/avatarS3Etag
+ * avatarImage  The right holder's image file name key on S3 for the profile avatar image
+ * returns rightHolder/properties/avatarImage
  **/
-exports.patchRightHolderAvatarS3Etag = function(rightHolderId,avatarS3Etag) {
+exports.patchRightHolderAvatarImage = function(rightHolderId,avatarImage) {
   return new Promise(function(resolve, reject) {
     let params = {
       TableName: TABLE,
       Key: {
         'rightHolderId': rightHolderId
       },
-      UpdateExpression: 'set avatarS3Etag = :a',
+      UpdateExpression: 'set avatarImage = :a',
       ExpressionAttributeValues: {
-        ':a' : avatarS3Etag.avatarS3Etag
+        ':a' : avatarImage.avatarImage
       },
       ReturnValues: 'UPDATED_NEW'
     };
@@ -156,7 +156,7 @@ exports.patchRightHolderAvatarS3Etag = function(rightHolderId,avatarS3Etag) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -190,7 +190,7 @@ exports.patchRightHolderEmail = function(rightHolderId,email) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -224,7 +224,7 @@ exports.patchRightHolderFirstName = function(rightHolderId,firstName) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -258,7 +258,7 @@ exports.patchRightHolderIPI = function(rightHolderId,ipi) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -292,7 +292,7 @@ exports.patchRightHolderJurisdiction = function(rightHolderId,jurisdiction) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -326,7 +326,7 @@ exports.patchRightHolderLastName = function(rightHolderId,lastName) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -373,7 +373,103 @@ exports.patchRightHolderSocialMediaLinks = function(rightHolderId,socialMediaLin
             console.log("Error", err);
             resolve();
           } else {
-            console.log("Success", data.Attributes);
+            
+            resolve(data.Attributes);
+          }
+        });
+      }
+    });
+  });
+}
+
+
+/**
+ * Update string set list of groups for the given right holder
+ *
+ * rightHolderId Integer The right holder's unique profile ID
+ * groups:  The array (string set) containing the given right holder profile's groups
+ **/
+exports.patchRightHolderGroups = function(rightHolderId,groups) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      "TableName": TABLE,
+      Key: {
+        'rightHolderId': rightHolderId
+      }
+    }
+    // Get old social media links
+    ddb.get(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        let oldGroups = data.Item.groups;
+        let groupsJoined = oldGroups.concat(groups);
+        let params = {
+          TableName: TABLE,
+          Key: {
+            'rightHolderId': rightHolderId
+          },
+          UpdateExpression: 'set groups  = :g',
+          ExpressionAttributeValues: {
+            ':g' : groupsJoined
+          },
+          ReturnValues: 'UPDATED_NEW'
+        };
+        ddb.update(params, function(err, data) {
+          if (err) {
+            console.log("Error", err);
+            resolve();
+          } else {
+            
+            resolve(data.Attributes);
+          }
+        });
+      }
+    });
+  });
+}
+
+
+/**
+ * Update string set list of groups for the given right holder
+ *
+ * rightHolderId Integer The right holder's unique profile ID
+ * defaultRoles:  The array containing the given right holder profile's default roles
+ **/
+exports.patchRightHolderDefaultRoles = function(rightHolderId,defaultRoles) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      "TableName": TABLE,
+      Key: {
+        'rightHolderId': rightHolderId
+      }
+    }
+    // Get old social media links
+    ddb.get(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        let oldRoles = data.Item.defaultRoles;
+        let rolesJoined = oldRoles.concat(defaultRoles);
+        let params = {
+          TableName: TABLE,
+          Key: {
+            'rightHolderId': rightHolderId
+          },
+          UpdateExpression: 'set defaultRoles  = :r',
+          ExpressionAttributeValues: {
+            ':r' : rolesJoined
+          },
+          ReturnValues: 'UPDATED_NEW'
+        };
+        ddb.update(params, function(err, data) {
+          if (err) {
+            console.log("Error", err);
+            resolve();
+          } else {
+            
             resolve(data.Attributes);
           }
         });
@@ -409,7 +505,7 @@ exports.patchRightHolderWallet = function(rightHolderId,wallet) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -439,8 +535,11 @@ exports.postRightHolder = function(body) {
           'password': body.password,
           'jurisdiction' : body.jurisdiction,
           'artistName' : body.artistName,
-          'avatarS3Etag' : body.avatarS3Etag,
-          'socialMediaLinks': body.socialMediaLinks
+          'avatarImage' : body.avatarImage,
+          'socialMediaLinks': body.socialMediaLinks,
+          'defaultRoles': body.defaultRoles,
+          'groups': body.groups,
+          'newUser': body.newUser
         }
       };
       ddb.put(params, function(err, data) {
@@ -469,7 +568,9 @@ exports.updateRightHolder = function(rightHolderId,body) {
       Key: {
         'rightHolderId': rightHolderId
       },
-      UpdateExpression: 'set ipi  = :i, wallet = :w, media = :m, firstName = :f, email = :e, lastName = :l, socialMediaLinks = :s, jurisdiction = :j, artistName = :n, avatarS3Etag = :t',
+      UpdateExpression: 'set ipi  = :i, wallet = :w, media = :m, firstName = :f, email = :e, lastName = :l, \
+                             socialMediaLinks = :s, jurisdiction = :j, artistName = :n, avatarImage = :t, \
+                             defaultRoles = :r, groups = :g, newUser = :u',
       ExpressionAttributeValues: {
         ':i' : body.ipi,
         ':w' : body.wallet,
@@ -479,8 +580,11 @@ exports.updateRightHolder = function(rightHolderId,body) {
         ':l' : body.lastName,
         ':j' : body.jurisdiction,
         ':n' : body.artistName,
-        ':t' : body.avatarS3Etag,
-        ':s' : body.socialMediaLinks
+        ':t' : body.avatarImage,
+        ':s' : body.socialMediaLinks,
+        ':r' : body.defaultRoles,
+        ':g' : body.groups,
+        ':u' : body.newUser
       },
       ReturnValues: 'UPDATED_NEW'
     };
@@ -490,7 +594,7 @@ exports.updateRightHolder = function(rightHolderId,body) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });

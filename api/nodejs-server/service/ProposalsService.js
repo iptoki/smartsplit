@@ -7,7 +7,7 @@ const axios = require('axios');
 
 // AWS
 const AWS = require('aws-sdk');
-const REGION = 'us-east-2';
+const REGION = 'us-east-1';
 
 AWS.config.update({
   region: REGION,
@@ -144,19 +144,44 @@ function finDuVote(proposalId) {
                   "toEmail": _rH.email,
                   "firstName": _rH.firstName,
                   "workTitle": titre,
-                  "callbackURL": `http://proto.smartsplit.org:3000/partage/${proposalId}`
+                  "callbackURL": `http://proto.smartsplit.org:3000/partager/${proposition.mediaId}`
               }
             ]
     
+            let etat
             if(voteUnanime) {
               // Enoi du courriel d'unanimité
-              body[0].template = "unanimousVote"          
+              body[0].template = "unanimousVote"
+              // Modifier l'état de la proposition pour ACCEPTE
+              etat = "ACCEPTE"
             } else {
               // Envoi du courriel de non accord
               body[0].template = "nonUnanimousVote"
+              // Modifier l'état de la proposition pour REFUSE
+              etat = "REFUSE"
             }
-    
+                
             axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)
+
+            // Modifier l'état de la proposition
+            let params = {
+              TableName: TABLE,
+              Key: {
+                'uuid': proposalId
+              },
+              UpdateExpression: 'set etat  = :e',
+              ExpressionAttributeValues: {
+                ':e': etat
+              },
+              ReturnValues: 'UPDATED_NEW'
+            }
+            ddb.update(params, function(err, data) {
+              if (err) {
+                console.log("Error", err)
+              } else {
+                
+              }
+            })
 
           })
         })
@@ -182,7 +207,7 @@ function overwriteRightSplits(uuid, rightsSplits) {
     if (err) {
       console.log("Error", err)
     } else {
-      console.log("Success", data.Attributes)
+      
     }
   })
 }
@@ -222,11 +247,39 @@ function ajouterCommentaire(propositionId, userId, commentaire) {
       if (err) {
         console.log("Error", err)
       } else {
-        console.log("Success", data.Attributes)
+        
       }
     })
 
   })    
+}
+
+exports.getDernierePropositionPourMedia = function(mediaId){
+  return new Promise(function(resolve, reject){
+    let params = {
+      "TableName": TABLE
+    }
+    ddb.scan(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        reject();
+      } else {
+        let p
+        if(data.Items) {
+          let _ts = 0          
+          data.Items.forEach(_p=>{
+            if(_p.mediaId === parseInt(mediaId)) {
+              if(_p._d > _ts) {
+                p = _p
+                _ts = p._d
+              }
+            }            
+          })
+        }
+        resolve(p)
+      }
+    });
+  })
 }
 
 exports.invite = function(proposalId, rightHolders) {   
@@ -343,22 +396,38 @@ exports.invite = function(proposalId, rightHolders) {
               body[0].splitInitiator = initiateur
               body[0].template = "splitCreated"
             }
-
             axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)
           })
 
-          // 4. Résoudre ce qui doit se produire dans le futur avec le jeton de l'initiateur
+          // 4. Modifier l'état de la proposition
+          let params = {
+            TableName: TABLE,
+            Key: {
+              'uuid': proposalId
+            },
+            UpdateExpression: 'set etat = :s',
+            ExpressionAttributeValues: {
+              ':s' : "VOTATION"
+            },
+            ReturnValues: 'UPDATED_NEW'
+          };
+          ddb.update(params, function(err, data) {
+            if (err) {
+              console.log("Error", err)
+            } else {
+              
+              // 5. Résoudre ce qui doit se produire dans le futur avec le jeton de l'initiateur          
+              // Test la fin du vote              
+              finDuVote(proposalId)
+              resolve(initiateurId)
+            }
+          })
           
-          // Test la fin du vote
-          finDuVote(proposalId, rightHolders[initiateurId].jeton)
-          resolve(rightHolders[initiateurId].jeton)    
         })
         .catch(err=>{
           console.log(err)
-        })
-        
+        })        
       })
-
     })  
   })
 }
@@ -420,7 +489,8 @@ exports.voteProposal = function(userId, jeton, droits) {
                 rightsSplits[famille][type].forEach((droit, idx)=>{
                   if(droit.rightHolder.rightHolderId === userId) {
                     // Trouver le bon droit qui a été envoyé
-                    droit.voteStatus = droits[famille][type]
+                    droit.voteStatus = droits[famille].vote
+                    droit.comment = droits[famille].raison
                     rightsSplits[famille][type][idx] = droit
                   }
                 })
@@ -537,7 +607,7 @@ exports.deleteProposal = function(uuid) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data);
+        
         resolve('split proposal removed');
       }
     });
@@ -560,7 +630,7 @@ exports.getAllProposals = function() {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data);
+        
         resolve(data.Items);
       }
     });
@@ -582,13 +652,19 @@ exports.getMediaProposals = function(mediaId) {
         console.log("Error", err);
         resolve()
       } else {
-        console.log("Success", data);        
+                
         let _items = []
         data.Items.forEach(elem=>{
           if(elem.mediaId === parseInt(mediaId)) {
             _items.push(elem)
           }
         })
+
+        // Ordonner par _d (horodatage)
+        _items.sort((a,b)=>{
+          return a._d - b._d
+        })
+
         resolve(_items)
       }
     })    
@@ -614,7 +690,7 @@ exports.getProposal = function(uuid) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data);
+        
         resolve(data);
       }
     });
@@ -640,7 +716,7 @@ exports.getProposalsRightHolder = function(rightHolderId) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data);
+        
         resolve(data.Items);
       }
     });
@@ -673,7 +749,7 @@ exports.patchProposalInitiator = function(uuid,initiator) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -706,7 +782,7 @@ exports.patchProposalMediaId = function(uuid,mediaId) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -755,7 +831,7 @@ exports.patchProposalRightsSplits = function (uuid,rightsSplits) {
             console.log("Error", err);
             resolve();
           } else {
-            console.log("Success", data.Attributes);
+            
             resolve(data.Attributes);
           }
         });
@@ -807,7 +883,7 @@ exports.patchProposalComments = function(uuid, comments) {
             console.log("Error", err);
             resolve();
           } else {
-            console.log("Success", data.Attributes);
+            
             resolve(data.Attributes);
           }
         });
@@ -826,17 +902,20 @@ exports.patchProposalComments = function(uuid, comments) {
 exports.postProposal = function(body) {
   return new Promise(function(resolve, reject) {
     let SPLIT_UUID = uuidv1();
-    console.log('SPLIT UUID', SPLIT_UUID, SPLIT_UUID.type)
+    let d = Date(Date.now());   
+    let DATE_CREATED = d.toString();
+    let UNIX_TIMESTAMP = new Date().getTime()
     let params = {
       TableName: TABLE,
       Item: {
         'uuid': SPLIT_UUID,
         'mediaId': body.mediaId,
         'initiator': body.initiator,
+        'creationDate': DATE_CREATED,
         'rightsSplits': body.rightsSplits,
         'comments': body.comments,
-        'state': body.state,
-        '_d': new Date().getTime()
+        'etat': body.etat,
+        '_d': UNIX_TIMESTAMP
       }
     };
     ddb.put(params, function(err, data) {
@@ -851,6 +930,57 @@ exports.postProposal = function(body) {
 }
 
 
+
+/**
+ * Post proposal rights split contract to blockchain
+ *
+ * body object containing the rights split proposal's unique ID and rightsSplits object
+ * returns success message (+etherscan tx)
+ **/
+exports.postProposalRightsSplits = function (body) {
+  return new Promise(function(resolve, reject) {
+    // let params = {
+    //   "TableName": TABLE,
+    //   Key: {
+    //     'uuid': body.uuid
+    //   }
+    // }
+    // // Get old proposals
+    // ddb.get(params, function(err, data) {
+    //   if (err) {
+    //     console.log("Error", err);
+    //     resolve();
+    //   } else {
+    //     let oldRightsSplits = data.Item.rightsSplits; 
+    //     // if (workCopyrightSplit,performanceNeighboringRightSplit,masterNeighboringRightSplit) 
+    //     // TODO ADD LOGIC TO UPDATE RIGHTS SPLITS OBJECT INTELLIGENTLY
+    //     let rightsSplitsJoined = Object.assign({}, oldRightsSplits, rightsSplits);
+    //     let params = {
+    //       TableName: TABLE,
+    //       Key: {
+    //         'uuid': uuid
+    //       },
+    //       UpdateExpression: 'set rightsSplits  = :r',
+    //       ExpressionAttributeValues: {
+    //         ':r' : rightsSplitsJoined
+    //       },
+    //       ReturnValues: 'UPDATED_NEW'
+    //     };
+    //     ddb.update(params, function(err, data) {
+    //       if (err) {
+    //         console.log("Error", err);
+    //         resolve();
+    //       } else {
+    //         
+    //         resolve(data.Attributes);
+    //       }
+    //     });
+    //   }
+    // });
+  });
+}
+
+
 /**
  * This method updates a split proposal
  *
@@ -859,45 +989,28 @@ exports.postProposal = function(body) {
  * returns proposal
  * WIP - overrights existing splits
  **/
-exports.updateProposal = function(uuid,body) {
-  let params = {
-    TableName: TABLE,
-    Key: {
-      'uuid': uuid
-    },
-
-  };
-  ddb.get(params, function(err, data) {
-    if (err) {
-      console.log("Error", err);
-      resolve();
-    } else {
-      // let oldProposal = data.Item; 
-      // TODO ADD LOGIC TO UPDATE RIGHTS SPLITS OBJECT INTELLIGENTLY
-      // let proposal = Object.assign({}, oldProposal, data.Item);
-      let params = {
-        TableName: TABLE,
-        Key: {
-          'uuid': uuid
-        },
-        // TODO ADD LOGIC TO UPDATE RIGHTS SPLITS OBJECT INTELLIGENTLY
-        UpdateExpression: 'set rightsSplits  = :r, mediaId = :m, initiator = :i',
-        ExpressionAttributeValues: {
-          ':r' : body.rightsSplits,
-          ':m' : body.mediaId,
-          ':i' : body.initiator
-        },
-        ReturnValues: 'UPDATED_NEW'
-      };
-      ddb.update(params, function(err, data) {
-        if (err) {
-          console.log("Error", err);
-          resolve();
-        } else {
-          console.log("Success", data.Attributes);
-          resolve(data.Attributes);
-        }
-      });
-    }
-  });
+exports.updateProposal = function(uuid, body) {    
+  return new Promise(function(resolve, reject) {
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'uuid': uuid
+      },
+      UpdateExpression: 'set rightsSplits  = :r, etat = :e',
+      ExpressionAttributeValues: {
+        ':r' : body.rightsSplits,
+        ':e' : body.etat
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        
+        resolve(uuid);
+      }
+    })  
+  })
 }

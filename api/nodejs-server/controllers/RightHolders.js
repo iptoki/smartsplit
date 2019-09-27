@@ -47,10 +47,10 @@ module.exports.patchRightHolderArtistName = function patchRightHolderArtistName 
     });
 };
 
-module.exports.patchRightHolderAvatarS3Etag = function patchRightHolderAvatarS3Etag (req, res, next) {
+module.exports.patchRightHolderAvatarImage = function patchRightHolderAvatarImage (req, res, next) {
   var rightHolderId = req.swagger.params['rightHolderId'].value;
-  var avatarS3Etag = req.swagger.params['avatarS3Etag'].value;
-  RightHolders.patchRightHolderAvatarS3Etag(rightHolderId,avatarS3Etag)
+  var avatarImage = req.swagger.params['avatarImage'].value;
+  RightHolders.patchRightHolderAvatarImage(rightHolderId,avatarImage)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -123,6 +123,30 @@ module.exports.patchRightHolderSocialMediaLinks = function patchRightHolderSocia
   var rightHolderId = req.swagger.params['rightHolderId'].value;
   var socialMediaLinks = req.swagger.params['socialMediaLinks'].value;
   RightHolders.patchRightHolderSocialMediaLinks(rightHolderId,socialMediaLinks)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.patchRightHolderDefaultRoles = function patchRightHolderDefaultRoles (req, res, next) {
+  var rightHolderId = req.swagger.params['rightHolderId'].value;
+  var defaultRoles = req.swagger.params['defaultRoles'].value;
+  RightHolders.patchRightHolderDefaultRoles(rightHolderId,defaultRoles)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.patchRightHolderGroups = function patchRightHolderGroups (req, res, next) {
+  var rightHolderId = req.swagger.params['rightHolderId'].value;
+  var groups = req.swagger.params['groups'].value;
+  RightHolders.patchRightHolderGroups(rightHolderId,groups)
     .then(function (response) {
       utils.writeJson(res, response);
     })

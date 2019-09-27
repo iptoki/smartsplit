@@ -14,6 +14,17 @@ module.exports.deleteProposal = function deleteProposal (req, res, next) {
     });
 };
 
+module.exports.getDernierePropositionPourMedia = function getDernierePropositionPourMedia (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value
+  Proposals.getDernierePropositionPourMedia(mediaId)
+    .then(function (response) {
+      utils.writeJson(res, response)
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response)
+    })
+}
+
 module.exports.getMediaProposals = function getMediaProposals (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
   Proposals.getMediaProposals(mediaId)
@@ -108,6 +119,19 @@ module.exports.patchProposalComments = function patchProposalComments (req, res,
 module.exports.postProposal = function postProposal (req, res, next) {
   var body = req.swagger.params['body'].value;
   Proposals.postProposal(body)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.postProposalRightsSplits = function postProposalRightsSplits (req, res, next) {
+  // var uuid = req.swagger.params['uuid'].value;
+  var body = req.swagger.params['body'].value; // uuid included in the body
+  // var rightsSplits = req.swagger.params['rightsSplits'].value;
+  Proposals.postProposalRightsSplits(body)
     .then(function (response) {
       utils.writeJson(res, response);
     })

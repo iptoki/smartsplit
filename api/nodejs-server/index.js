@@ -77,6 +77,9 @@ app.post('v1/payments/', cors(), function (req, res, next) {
 app.put('v1/payments/:id', cors(), function (req, res, next) {
   res.json({msg: 'This is CORS-enabled for all origins!'})
 })
+app.post('v1/socan/join', cors(), function (req, res, next) {
+  res.json({msg: 'This is CORS-enabled for all origins!'})
+})
 
 
 // Initialize the Swagger middleware

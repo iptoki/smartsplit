@@ -5,7 +5,7 @@ const uuidv1 = require('uuid/v1');
 
 // AWS
 const AWS = require('aws-sdk');
-const REGION = 'us-east-2';
+const REGION = 'us-east-1';
 
 AWS.config.update({
   region: REGION, 
@@ -34,8 +34,7 @@ exports.deleteMedia = function(mediaId) {
       if (err) {
         console.log("Error", err);
         resolve();
-      } else {
-        console.log("Success", data);
+      } else {        
         resolve('Media record removed');
       }
     });
@@ -60,7 +59,6 @@ exports.getAllMedia = function() {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success, length of data: ", data.length);
         resolve(data.Items);
       }
     });
@@ -81,14 +79,14 @@ exports.getMedia = function(mediaId) {
       Key: {
         'mediaId': mediaId
       }
-    };
-    // Call DynamoDB to delete the item from the table
+    };    
+    console.log(params)
     ddb.get(params, function(err, data) {
       if (err) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data);
+        console.log(data)
         resolve(data);
       }
     });
@@ -122,7 +120,6 @@ exports.patchMediaArtist = function(mediaId,artist) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
         resolve(data.Attributes);
       }
     });
@@ -156,7 +153,6 @@ exports.patchMediaDuration = function(mediaId,msDuration) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
         resolve(data.Attributes);
       }
     });
@@ -190,7 +186,6 @@ exports.patchMediaGenre = function(mediaId,genre) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
         resolve(data.Attributes);
       }
     });
@@ -224,7 +219,6 @@ exports.patchMediaSecondaryGenre = function(mediaId,secondaryGenre) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
         resolve(data.Attributes);
       }
     });
@@ -258,7 +252,6 @@ exports.patchMediaISRC = function(mediaId,isrc) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
         resolve(data.Attributes);
       }
     });
@@ -292,7 +285,7 @@ exports.patchMediaUPC = function(mediaId,upc) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -326,7 +319,7 @@ exports.patchModificationDate = function(mediaId,modificationDate) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -360,7 +353,7 @@ exports.patchPublishDate = function(mediaId,publishDate) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -394,7 +387,7 @@ exports.patchMediaPublisher = function(mediaId,publisher) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -428,7 +421,7 @@ exports.patchMediaTitle = function(mediaId,title) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -462,7 +455,7 @@ exports.patchMediaAlbum = function(mediaId,album) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -471,22 +464,22 @@ exports.patchMediaAlbum = function(mediaId,album) {
 
 
 /**
- * Update the AWS s3 Etag for given media
+ * Update the AWS audio file for given media
  *
  * mediaId Integer The artwork agreement's unique ID
- * s3Etag S3Etag The AWS s3 Etag string for the given media
+ * audioFile  The AWS s3 filename string for the given media
  * returns media
  **/
-exports.patchMediaS3Etag = function(mediaId,s3Etag) {
+exports.patchMediaAudioFile = function(mediaId,audioFile) {
   return new Promise(function(resolve, reject) {
     let params = {
       TableName: TABLE,
       Key: {
         'mediaId': mediaId
       },
-      UpdateExpression: 'set s3Etag  = :s',
+      UpdateExpression: 'set audioFile  = :s',
       ExpressionAttributeValues: {
-        ':s' : s3Etag.s3Etag
+        ':s' : audioFile.audioFile
       },
       ReturnValues: 'UPDATED_NEW'
     };
@@ -495,7 +488,40 @@ exports.patchMediaS3Etag = function(mediaId,s3Etag) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
+        resolve(data.Attributes);
+      }
+    });
+  });
+}
+
+
+/**
+ * Update the AWS audio file for given media
+ *
+ * mediaId Integer The artwork agreement's unique ID
+ * audioFile  The AWS s3 filename string for the given media
+ * returns media
+ **/
+exports.patchMediaImageFile = function(mediaId,imageFile) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'mediaId': mediaId
+      },
+      UpdateExpression: 'set imageFile  = :s',
+      ExpressionAttributeValues: {
+        ':s' : imageFile.imageFile
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        
         resolve(data.Attributes);
       }
     });
@@ -528,7 +554,7 @@ exports.patchMediaLyrics = function(mediaId,lyrics) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -563,7 +589,7 @@ exports.patchMediaInLanguages = function(mediaId,inLanguages) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -610,7 +636,7 @@ exports.patchMediaPlaylistLinks = function(mediaId,playlistLinks) {
             console.log("Error", err);
             resolve();
           } else {
-            console.log("Success", data.Attributes);
+            
             resolve(data.Attributes);
           }
         });
@@ -659,7 +685,7 @@ exports.patchMediaPressArticleLinks = function(mediaId,pressArticleLinks) {
             console.log("Error", err);
             resolve();
           } else {
-            console.log("Success", data.Attributes);
+            
             resolve(data.Attributes);
           }
         });
@@ -708,7 +734,7 @@ exports.patchMediaSocialMediaLinks = function(mediaId,socialMediaLinks) {
             console.log("Error", err);
             resolve();
           } else {
-            console.log("Success", data.Attributes);
+            
             resolve(data.Attributes);
           }
         });
@@ -757,7 +783,7 @@ exports.patchMediaStreamingServiceLinks = function(mediaId,streamingServiceLinks
             console.log("Error", err);
             resolve();
           } else {
-            console.log("Success", data.Attributes);
+            
             resolve(data.Attributes);
           }
         });
@@ -766,6 +792,55 @@ exports.patchMediaStreamingServiceLinks = function(mediaId,streamingServiceLinks
   });
 }
 
+exports.putMedia = function(title, type) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      "TableName": TABLE,
+    }
+    ddb.scan(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        // Create unique ID value
+        let ID_VALUE = 0
+
+        // Récupère le dernier identifiant
+        data.Items.forEach(elem=>{
+          if(ID_VALUE < elem.mediaId) {
+            ID_VALUE = elem.mediaId
+          }
+        })
+        ID_VALUE += 1 // Ajout 1
+
+        // Assign creationDate to current date time
+        let d = Date(Date.now());   
+        let DATE_CREATED = d.toString();
+        let params = {
+          TableName: TABLE,
+          Item: {
+            'mediaId': ID_VALUE,            
+            'title': title,
+            'type': type,
+            'creationDate': DATE_CREATED      
+          }
+        };        
+
+        console.log('Ajout média court', params)
+
+        ddb.put(params, function(err, data) {
+          if (err) {
+            console.log("Error", err);
+            resolve();
+          } else {            
+            resolve({id: ID_VALUE});
+          }
+        });
+      }
+
+    });
+  });
+}
 
 /**
  * This method creates a new media item
@@ -794,10 +869,11 @@ exports.postMedia = function(body) {
             'mediaId': ID_VALUE,
             'artist': body[0].artist,
             'album': body[0].album,
-            'cover': body[0].cover,
+            'type': body[0].type,
             'creationDate': DATE_CREATED,
             'modificationDate': body[0].modificationDate,
-            's3Etag': body[0].s3Etag,
+            'audioFile': body[0].audioFile,
+            'imageFile': body[0].imageFile,
             'publishDate': body[0].publishDate,
             'publisher': body[0].publisher,
             'title': body[0].title,
@@ -806,12 +882,14 @@ exports.postMedia = function(body) {
             'lyrics': body[0].lyrics,
             'inLanguages': body[0].inLanguages,
             'isrc': body[0].isrc,
+            'iswc': body[0].iswc,
             'upc': body[0].upc,
             'msDuration': body[0].msDuration,       
             'socialMediaLinks': body[0].socialMediaLinks,
             'streamingServiceLinks': body[0].streamingServiceLinks,
             'pressArticleLinks': body[0].pressArticleLinks,
-            'playlistLinks': body[0].playlistLinks
+            'playlistLinks': body[0].playlistLinks,
+            'rightHolders': body[0].rightHolders
           }
         };
         // Check Types, and Split Calculation
@@ -849,7 +927,7 @@ exports.updateMedia = function(mediaId,body) {
         'mediaId': mediaId
       },
       UpdateExpression: 'set title  = :t, genre = :g, secondaryGenre = :y, album = :a, s3Etag = :s\
-        \ artist = :y, creationDate = :c, modificationDate = :f, publishDate = :i, cover = :v, publisher = :p, \
+        \ artist = :y, creationDate = :c, modificationDate = :f, publishDate = :i, type = :v, publisher = :p, \
         \ lyrics = :l, inLanguages = :u, isrc = :z, upc = :b, msDuration = :d, socialMediaLinks = :e, streamingServiceLinks = :k, pressArticleLinks = :x, playlistLinks = :q', 
 
       ExpressionAttributeValues: {
@@ -861,7 +939,7 @@ exports.updateMedia = function(mediaId,body) {
         ':c' : body[0].creationDate,
         ':f' : DATE_MODIFIED,
         ':i' : body[0].publishDate,
-        ':v' : body[0].cover,
+        ':v' : body[0].type,
         ':p' : body[0].publisher,
         ':l' : body[0].lyrics,
         ':u' : body[0].inLanguages,
@@ -882,7 +960,7 @@ exports.updateMedia = function(mediaId,body) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });

@@ -24,6 +24,8 @@ tags:
   description: "Viewing and creating media"
 - name: "Payments"
   description: "Viewing and updating payment details"
+- name: "Socan"
+  description: "Applying to join Socan"
 schemes:
 - "https"
 consumes:
@@ -71,11 +73,40 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "AuthenticationDetails"
+  /editorsplitshare/invite:
+    post:
+      tags:
+      - Proposals
+      description: "invitation d'un bénéficiaire à un vote sur un partage avec un tier"
+      operationId: "inviteEditeur"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/splitshareinvite"
+      responses:
+        200:
+          description: "OK."
+          schema:
+            $ref: "#/definitions/splitshareinvite"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "SplitShare"
   /editorsplitshare:
     post:
       tags:
       - "Splitshares"
-      description: "This method creates a new splitshare between a rightholder and a sharee on a given proposal"
+      description: "Création d'un partage de droit avec un tier tel qu'un éditeur"
       operationId: "addEditorSplitShare"
       parameters:
       - in: "body"
@@ -148,6 +179,88 @@ paths:
           description: "An unknown error occured"
       security:
       - jwt: []
+      x-swagger-router-controller: "Proposals"
+  /splitshare/{proposalId}/{rightHolderId}:
+    get:
+      tags:
+      - "SplitShare"
+      operationId: "getSplitShare"
+      parameters:
+      - name: "proposalId"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "rightHolderId"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/listProposals"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "SplitShare"
+  /splitShare/tiers/voter:
+    post:
+      tags:
+      - SplitShare
+      description: "Accepter le vote d'une proposition de part au bénéficiaire"
+      operationId: "splitShareVote"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/splitsharevote"
+      responses:
+        200:
+          description: "OK."
+          schema:
+            $ref: "#/definitions/splitsharevote"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "SplitShare"
+  /proposal/derniere-proposition/{mediaId}:
+    get:
+      tags:
+      - "Proposals"
+      description: "La dernière proposition pour un média"
+      operationId: "getDernierePropositionPourMedia"
+      parameters:
+      - name: "mediaId"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/proposal"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
       x-swagger-router-controller: "Proposals"
   /proposal/media/{mediaId}:
     get:
@@ -529,6 +642,216 @@ paths:
           description: "OK"
           schema:
             $ref: "#/definitions/proposal/properties/rightsSplits"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Proposals"
+    post:
+      tags:
+      - "Proposals"
+      description: "Create rights split smart contracts for given split proposal"
+      operationId: "postProposalRightsSplits"
+      parameters:
+      - name: "uuid"
+        in: "path"
+        description: "The split proposal's unique ID"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "The split proposal's rights splits object"
+        required: true
+        schema:
+          type: "object"
+          properties: 
+            uuid:
+              type: "string"
+              example: "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e"
+              description: "The unique ID for the given split proposal"
+            mediaId:
+              type: "integer"
+              example: 1
+              description: "The Id for the given media which corresponds to the right split"
+            rightsSplits:
+              type: "object"
+              additionalProperties:
+                type: "object"
+                description: "the copyright object for the given right split"
+            initiator: 
+              type: "object"
+              additionalProperties:
+                type: "string"
+                description: "the initiator object for the given right split"
+            creationDate:
+              type: "string"
+              format: "iso8601-date-time"
+              example: "2019-01-01T15:53:00"
+              description: "the creation date generated at time of split proposal creation"
+            _d:
+              type: "string"
+              example: "1566229239"
+              description: "the creation date of split stored as a Unix timestamp (in seconds)"
+            comments: 
+              type: "array"
+              items:
+                type: "object"
+                description: "the comment and rightHolderId for the given proposal"
+            state:
+              type: "string"
+              description: "define the state of the proposal (BROUILLON, PRET, VOTATION, ACCEPTE, REFUSE"
+          example:
+            {
+              "uuid": "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e",
+              "mediaId": "1",
+              "initiator": {"id": "40e5ad76-d2c6-4f1e-9eb4-98213e29e36f", "name": "Jim Smith"},
+              "creationDate": "2019-01-01T15:53:00",
+              "_d": "1566229239",
+              "rightsSplits": {
+                "workCopyrightSplit": {                                       
+                  "music": [
+                  {
+                    "contributorRole": {
+                      "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e": "songwriter",
+                      "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "composer"
+                    },
+                    "rightHolder": {
+                      "rightHolderId": "40e5ad76-d2c6-4f1e-9eb4-98213e29e36f",
+                      "name": "Joe Smith",
+                      "color": "#FFFFFFF"
+                    },
+                    "splitPct": "50",
+                    "voteStatus": "active",
+                    "_t": "2019-07-08T16:45:51Z"
+                  },
+                  {
+                    "contributorRole": {
+                      "12345c60-7b1a-11e8-9c9c-2d42b21b1a3f": "songwriter",
+                      "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "composer"
+                    },
+                    "rightHolder": {
+                      "rightHolderId": "523bac7a-b14c-4a33-87ad-6aa3e848f2f6",
+                      "name": "Bob Andrews",
+                      "color": "#FFFFFFF"
+                    },
+                    "splitPct": "25",
+                    "voteStatus": "active",
+                    "_t": "2019-07-08T16:46:51Z"
+                  }
+                  ],
+                  "lyrics": [
+                    {
+                      "contributorRole": {
+                        "12345c60-7b1a-11e8-9c9c-2d42b21b1a4g": "arranger"
+                      },
+                      "rightHolder": {
+                        "rightHolderId": "8c9a463d-4803-4221-9e96-f940f250e87d",
+                        "name": "Joe Duchane",
+                        "color": "#000000"
+                      },    
+                      "splitPct": "25",
+                      "voteStatus": "active",
+                      "_t": "2019-07-08T16:47:51Z"
+                    }
+                  ]
+                },
+                "performanceNeighboringRightSplit": {
+                "principal": [
+                  {
+                    "contributorRole": {
+                      "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e": "guitarist",
+                      "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "writer"
+                    },
+                    "rightHolder": {
+                      "rightHolerId": "40e5ad76-d2c6-4f1e-9eb4-98213e29e36f",
+                      "name": "Joe Smith",
+                      "color": "#111111"
+                    },
+                    "splitPct": "80",
+                    "voteStatus": "active",
+                    "_t": "2019-07-08T16:40:51Z"
+                  }
+                ],
+                "accompaniment": [
+                  {
+                    "contributorRole": {
+                      "12345c60-7b1a-11e8-9c9c-2d42b21b1a3f": "flutist",
+                      "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "writer"
+                    },
+                    "rightHolder": {
+                      "rightHolderId": "523bac7a-b14c-4a33-87ad-6aa3e848f2f6",
+                      "name": "Bob Andrews",
+                      "color": "#222222"
+                    },
+                    "splitPct": "20",
+                    "voteStatus": "active",
+                    "_t": "2019-07-08T16:39:51Z"
+                  }
+                ]
+                },
+                "masterNeighboringRightSplit": [
+                  {
+                    "contributorRole": {
+                      "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e": "guitarist",
+                      "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "writer"
+                    },
+                    "rightHolder": {
+                      "rightHolderId": "40e5ad76-d2c6-4f1e-9eb4-98213e29e36f",
+                      "name": "Joe Smith",
+                      "color": "#222222"
+                    },
+                    "splitPct": "50",
+                    "voteStatus": "active",
+                    "_t": "2019-07-08T16:45:51Z"
+                  },
+                  {
+                    "contributorRole": {
+                      "12345c60-7b1a-11e8-9c9c-2d42b21b1a3f": "flutist",
+                      "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "writer"
+                    },
+                    "rightHolder": {
+                      "rightHolderId": "523bac7a-b14c-4a33-87ad-6aa3e848f2f6",
+                      "name": "Bob Andrews",
+                      "color": "#555555"
+                    },
+                    "splitPct": "25",
+                    "voteStatus": "active",
+                    "_t": "2019-07-08T16:46:51Z"
+                  },
+                  {
+                    "contributorRole": {
+                      "12345c60-7b1a-11e8-9c9c-2d42b21b1a4g": "composer"
+                    },
+                    "rightHolder": {
+                      "rightHolderId": "8c9a463d-4803-4221-9e96-f940f250e87d",
+                      "name": "Joe Duchane",
+                      "color": "#FFFFFF"
+                    },
+                    "splitPct": "25",
+                    "voteStatus": "active",
+                    "_t": "2019-07-08T16:47:51Z"
+                  }
+                ]
+              },
+              "comments": [{
+                "rightHolderId": "40e5ad76-d2c6-4f1e-9eb4-98213e29e36f",
+                "comment": "Ok"
+              },
+              {
+                "rightHolderId": "523bac7a-b14c-4a33-87ad-6aa3e848f2f6",
+                "comment": "Not enough, more split"
+              }
+              ]
+          }
+      responses:
+        200:
+          description: "Smart contracts created"
         400:
           description: "Bad request"
         403:
@@ -962,12 +1285,12 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "RightHolders"
-  /rightHolders/{rightHolderId}/avatarS3Etag:
+  /rightHolders/{rightHolderId}/avatarImage:
     patch:
       tags:
       - "RightHolders"
       description: "Update the artist name of a right holder"
-      operationId: "patchRightHolderAvatarS3Etag"
+      operationId: "patchRightHolderAvatarImage"
       parameters:
       - name: "rightHolderId"
         in: "path"
@@ -975,16 +1298,16 @@ paths:
         required: true
         type: "string"
       - in: "body"
-        name: "avatarS3Etag"
+        name: "avatarImage"
         description: "The right holder's S3 Etag for the profile avatar image"
         required: true
         schema:
-          $ref: "#/definitions/rightHolder/properties/avatarS3Etag"
+          $ref: "#/definitions/rightHolder/properties/avatarImage"
       responses:
         200:
           description: "OK"
           schema:
-            $ref: "#/definitions/rightHolder/properties/avatarS3Etag"
+            $ref: "#/definitions/rightHolder/properties/avatarImage"
         400:
           description: "Bad request"
         403:
@@ -1026,6 +1349,70 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "RightHolders"
+  /rightHolders/{rightHolderId}/groups:
+    patch:
+      tags:
+      - "RightHolders"
+      description: "Update the string set of groups for the given right holder"
+      operationId: "patchRightHolderGroups"
+      parameters:
+      - name: "rightHolderId"
+        in: "path"
+        description: "The right holder's unique profile ID"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "groups"
+        description: "The array containing the given right holder profile's groups"
+        required: true
+        schema:
+          $ref: "#/definitions/rightHolder/properties/groups"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/rightHolder"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "RightHolders"
+  /rightHolders/{rightHolderId}/defaultRoles:
+    patch:
+      tags:
+      - "RightHolders"
+      description: "Update default Roles for the given right holder"
+      operationId: "patchRightHolderDefaultRoles"
+      parameters:
+      - name: "rightHolderId"
+        in: "path"
+        description: "The right holder's unique profile ID"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "defaultRoles"
+        description: "The array containing the given right holder profile's default Roles"
+        required: true
+        schema:
+          $ref: "#/definitions/rightHolder/properties/defaultRoles"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/rightHolder"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "RightHolders"
   /media:
     get:
       tags:
@@ -1046,6 +1433,33 @@ paths:
           description: "Endpoint not found"
         500:
           description: "An unknown error occured"
+      x-swagger-router-controller: "Media"
+    put:
+      tags: 
+      - "Media"
+      description: "This method create a new media item from title and type only"
+      operationId: "putMedia"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/mediaShort"
+      responses:
+        200:
+          description: "OK. The media was created."
+          schema:
+            $ref: "#/definitions/mediaShort"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
       x-swagger-router-controller: "Media"
     post:
       tags:
@@ -1229,24 +1643,56 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
-  /media/{mediaId}/s3Etag:
+  /media/{mediaId}/audioFileName:
     patch:
       tags:
       - "Media"
-      description: "Update the AWS s3 Etag for given media"
-      operationId: "patchMediaS3Etag"
+      description: "Update the AWS s3 image file name for given media"
+      operationId: "patchMediaAudioFileName"
       parameters:
       - name: "mediaId"
         in: "path"
-        description: "The artwork agreement's unique ID"
+        description: "The media unique ID"
         required: true
         type: "integer"
       - in: "body"
-        name: "s3Etag"
-        description: "The AWS s3 Etag string for the given media"
+        name: "audioFileName"
+        description: "The AWS audio file name string for the given media"
         required: true
         schema:
-          $ref: "#/definitions/media/properties/s3Etag"
+          $ref: "#/definitions/media/properties/audioFile"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/media"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Media"
+  /media/{mediaId}/imageFileName:
+    patch:
+      tags:
+      - "Media"
+      description: "Update the AWS s3 image file name for given media"
+      operationId: "patchMediaImageFileName"
+      parameters:
+      - name: "mediaId"
+        in: "path"
+        description: "The media unique ID"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "imageFileName"
+        description: "The AWS audio file name string for the given media"
+        required: true
+        schema:
+          $ref: "#/definitions/media/properties/imageFile"
       responses:
         200:
           description: "OK"
@@ -1982,6 +2428,31 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "Payments"
+  /socan/join:
+    post:
+      tags:
+      - "Socan"
+      description: "join Socan as a writer member"
+      operationId: "postSocan"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "The socan member details"
+        required: true
+        schema:
+          $ref: "#/definitions/socan"
+      responses:
+        200:
+          description: "OK. Member application recieved"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Socan"
 securityDefinitions:
   basicAuth:
     description: "HTTP Basic Authentication"
@@ -2045,14 +2516,28 @@ definitions:
         type: "string"
         example: "0xdd87ae15f4be97e2739c9069ddef674f907d27a8"
         description: "The blockchain wallet address for this right holder profile"
-      avatarS3Etag:
+      avatarImage:
         type: "string"
-        description: "The ETag in AWS S3 for the given right holder avatar"
-        example: "2f03d99fbf37d8d585285fd4cce27feb"
+        description: "The file name key in AWS S3 for the given right holder avatar image"
+        example: "image.jpg"
+      defaultRoles:
+        type: "array"
+        description: "The array of the default roles for the given right holder profile" 
+        items:
+          $ref: "#/definitions/rightHolder/properties/defaultRoles"
+      groups:
+        type: "array"
+        description: "The array of the groups for the given right holder profile" 
+        items:
+          $ref: "#/definitions/rightHolder/properties/groups"
       artistName:
         type: "string"
         description: "The artist name for the given right Holder"
         example: "Questlove"
+      newUser: 
+        type: "boolean"
+        description: "The boolean value set if user was created/modified from client and needs to sync with Cognito"
+        example: "true"
       socialMediaLinks:
         type: "object"
         description: "The urls for the social media profiles for the given right holder, like Facebook, Instagram, Youtube, Twitter"
@@ -2067,8 +2552,11 @@ definitions:
       jurisdiction: "Canada"
       ipi: "00004576"
       wallet: "0xdd87ae15f4be97e2739c9069ddef674f907d27a8"
-      avatarS3Etag: "2f03d99fbf37d8d585285fd4cce27fea"
+      avatarImage: "image.jpg"
       artistName: "Questlove"
+      groups: "[Group1, Group2]"
+      defaultRoles: "[Songwriter, Producer]"
+      newUser: "true"
       socialMediaLinks: 
         facebook: "https://facebook.com/ex"
         twitter: "https://twitter.com/ex"
@@ -2084,6 +2572,12 @@ definitions:
     items:
       type: "integer"
       example: 1
+  mediaShort:
+    properties:
+      titre:
+        type: "string"
+      type:
+        type: "string"
   media:
     properties:
       mediaId:
@@ -2106,10 +2600,10 @@ definitions:
         type: "string"
         example: "120000"
         description: "The duration in milliseconds for the given media"
-      cover:
-        type: "boolean"
-        example: false
-        description: "Whether or not this piece of media is a cover"
+      type:
+        type: "string"
+        example: "remix"
+        description: "Whether or not this piece of media is a cover, remix, or original song"
       genre:
         type: "string"
         example: "Rock"
@@ -2140,8 +2634,7 @@ definitions:
       lyrics:
         type: "string"
         description: "The lyrics of the given media"
-        example: "Love you Baby. Love you Baby. Love you Baby. Love you Baby.
-        Love you Baby. Baby. Wooo. Love You Baby."
+        example: "Love you Baby. Love you Baby. Love you Baby. Love you Baby. Love you Baby. Baby. Wooo. Love You Baby."
       inLanguages:
         type: "array"
         description: "An array of languages of the lyrics for the given media"
@@ -2149,6 +2642,10 @@ definitions:
           type: "string"
           example: "english"
       isrc:
+        type: "string"
+        description: "The ISRC of the given media"
+        example: "abcde1234567"
+      iswc:
         type: "string"
         description: "The ISRC of the given media"
         example: "abcde1234567"
@@ -2180,10 +2677,20 @@ definitions:
         additionalProperties:
           type: "string"
           description: "playlist links for the given media" 
-      s3Etag:
+      audioFile:
         type: "string"
-        description: "The ETag in AWS S3 for the given media"
-        example: "2f03d99fbf37d8d585285fd4cce27feb"
+        description: "The audio file name"
+        example: "audio.mp3"
+      imageFile:
+        type: "string"
+        description: "The image file name"
+        example: "cover.jpg"
+      rightHolders:
+        type: "object"
+        description: "The rightholders and roles associated to this media"
+        items: 
+          type: "array"
+          description: "roles uuid in a string array"
     example:
       [
         {
@@ -2194,19 +2701,19 @@ definitions:
           creationDate: "2019-01-01T15:53:00",
           modificationDate: "2019-01-01T15:53:01",
           publishDate: "2019-01-01T15:53:02",
-          cover: false,
+          type: "original",
           isrc: "abcde1234567",
           upc: "123456789111",
           publisher: "sync publishing",
           msDuration: "288000",
-          lyrics: "Love you Baby. Love you Baby. Love you Baby. Love you Baby.
-          Love you Baby. Baby. Wooo. Love You Baby.",
+          lyrics: "Love you Baby. Love you Baby. Love you Baby. Love you Baby. Love you Baby. Baby. Wooo. Love You Baby.",
           inLanguages: ["english"],
+          audioFile: "track.mp3",
+          imageFile: "cover.jpg",
           socialMediaLinks: {facebook: "https://facebook.com/ex", twitter: "https://twitter.com/ex", youtube: "https://youtube.com/ex"},
           streamingServiceLinks: {spotify: "https://open.spotify.com/track/asdgj4qhfasd", apple: "https://twitter.com/ex"},
           pressArticleLinks: {medium: "https://medium.com/ex", metro: "https://metro.ca/ex"},
-          playlistLinks: {spotify: "https://open.spotify.com/playlist/37i9dQZEVXbKfIuOAZrk7G", youtube: "https://www.youtube.com/playlist?list=PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx"},
-          s3Etag: "2f03d99fbf37d8d585285fd4cce27feb"
+          playlistLinks: {spotify: "https://open.spotify.com/playlist/37i9dQZEVXbKfIuOAZrk7G", youtube: "https://www.youtube.com/playlist?list=PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx"}
         }
       ]
   listProposals:
@@ -2254,7 +2761,7 @@ definitions:
           $ref: "#/definitions/rightHolderShort"
     example:
       {
-        "proposalId": "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e"        
+        "proposalId": "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e"
       }
   listeVote:
     type: "object"
@@ -2322,6 +2829,15 @@ definitions:
         additionalProperties:
           type: "string"
           description: "the initiator object for the given right split"
+      creationDate:
+        type: "string"
+        format: "iso8601-date-time"
+        example: "2019-01-01T15:53:00"
+        description: "the creation date generated at time of split proposal creation"
+      _d:
+        type: "string"
+        example: "1566229239"
+        description: "the creation date of split stored as a Unix timestamp (in seconds)"
       comments: 
         type: "array"
         items:
@@ -2329,158 +2845,56 @@ definitions:
           description: "the comment and rightHolderId for the given proposal"
       state:
         type: "string"
-        description: "define the state of the proposal (BROUILLON, PRET, VOTATION, ACCEPTE, REFUSE"
-    example:
-      {
-        "uuid": "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e",
-        "mediaId": "1",
-        "initiator": {"id": "40e5ad76-d2c6-4f1e-9eb4-98213e29e36f", "name": "Jim Smith"},
-        "rightsSplits": {
-          "workCopyrightSplit": {                                       
-            "music": [
-            {
-              "contributorRole": {
-                "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e": "songwriter",
-                "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "composer"
-              },
-              "rightHolder": {
-                "rightHolderId": "40e5ad76-d2c6-4f1e-9eb4-98213e29e36f",
-                "name": "Joe Smith"
-              },
-              "splitPct": "50",
-              "voteStatus": "active",
-              "_t": "2019-07-08T16:45:51Z"
-            },
-            {
-              "contributorRole": {
-                "12345c60-7b1a-11e8-9c9c-2d42b21b1a3f": "songwriter",
-                "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "composer"
-              },
-              "rightHolder": {
-                "rightHolderId": "523bac7a-b14c-4a33-87ad-6aa3e848f2f6",
-                "name": "Bob Andrews"
-              },
-              "splitPct": "25",
-              "voteStatus": "active",
-              "_t": "2019-07-08T16:46:51Z"
-            }
-            ],
-            "lyrics": [
-              {
-                "contributorRole": {
-                  "12345c60-7b1a-11e8-9c9c-2d42b21b1a4g": "arranger"
-                },
-                "rightHolder": {
-                  "rightHolderId": "8c9a463d-4803-4221-9e96-f940f250e87d",
-                  "name": "Joe Duchane"
-                },    
-                "splitPct": "25",
-                "voteStatus": "active",
-                "_t": "2019-07-08T16:47:51Z"
-              }
-            ]
-          },
-          "performanceNeighboringRightSplit": {
-          "principal": [
-            {
-              "contributorRole": {
-                "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e": "guitarist",
-                "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "writer"
-              },
-              "rightHolder": {
-                "rightHolerId": "40e5ad76-d2c6-4f1e-9eb4-98213e29e36f",
-                "name": "Joe Smith"
-              },
-              "splitPct": "80",
-              "voteStatus": "active",
-              "_t": "2019-07-08T16:40:51Z"
-            }
-          ],
-          "accompaniment": [
-            {
-              "contributorRole": {
-                "12345c60-7b1a-11e8-9c9c-2d42b21b1a3f": "flutist",
-                "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "writer"
-              },
-              "rightHolder": {
-                "rightHolderId": "523bac7a-b14c-4a33-87ad-6aa3e848f2f6",
-                "name": "Bob Andrews"
-              },
-              "splitPct": "20",
-              "voteStatus": "active",
-              "_t": "2019-07-08T16:39:51Z"
-            }
-          ]
-          },
-          "masterNeighboringRightSplit": [
-            {
-              "contributorRole": {
-                "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e": "guitarist",
-                "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "writer"
-              },
-              "rightHolder": {
-                "rightHolderId": "40e5ad76-d2c6-4f1e-9eb4-98213e29e36f",
-                "name": "Joe Smith"
-              },
-              "splitPct": "50",
-              "voteStatus": "active",
-              "_t": "2019-07-08T16:45:51Z"
-            },
-            {
-              "contributorRole": {
-                "12345c60-7b1a-11e8-9c9c-2d42b21b1a3f": "flutist",
-                "45745c60-7b1a-11e8-9c9c-2d42b21b1a3i": "writer"
-              },
-              "rightHolder": {
-                "rightHolderId": "523bac7a-b14c-4a33-87ad-6aa3e848f2f6",
-                "name": "Bob Andrews"
-              },
-              "splitPct": "25",
-              "voteStatus": "active",
-              "_t": "2019-07-08T16:46:51Z"
-            },
-            {
-              "contributorRole": {
-                "12345c60-7b1a-11e8-9c9c-2d42b21b1a4g": "composer"
-              },
-              "rightHolder": {
-                "rightHolderId": "8c9a463d-4803-4221-9e96-f940f250e87d",
-                "name": "Joe Duchane"
-              },
-              "splitPct": "25",
-              "voteStatus": "active",
-              "_t": "2019-07-08T16:47:51Z"
-            }
-          ]
-        },
-        "comments": [{
-          "rightHolderId": "40e5ad76-d2c6-4f1e-9eb4-98213e29e36f",
-          "comment": "Ok"
-        },
-        {
-          "rightHolderId": "523bac7a-b14c-4a33-87ad-6aa3e848f2f6",
-          "comment": "Not enough, more split"
-        }
-        ]
-    }
+        description: "define the state of the proposal (BROUILLON, PRET, VOTATION, ACCEPTE, REFUSE"    
+  splitsharevote:
+    type: "object"
+    properties:
+      userId:
+        type: "string"
+        description: "Identifiant de l'ayant-droit bénéficiaire"  
+      choix:
+        type: "string"
+        description: "Choix de vote"
+      jeton:
+        type: "string"
+        description: "Jeton de votation pour un tiers"
+  splitshareinvite:
+    type: "object"
+    properties:
+      proposalId:
+        type: "string"
+        description: "Identifiant de la proposition"
+      rightHolder:
+        type: "object"
+        description: "Ayant-droit qui partage"
+        properties:
+          nom:
+            type: "string"
+          uuid:
+            type: "string"
+      shareeId:
+        type: "string"
+        description: "Identifiant de l'ayant-droit qui bénéficie"
+      mediaId:
+        type: "integer"
   splitshare:
     type: "object"
     properties:
       uuid:
         type: "string"
-        description: "UUID of split share"
+        description: "Identifiant de la proposition"
       rightHolderId:
         type: "string"
-        description: "UUID of rightHolder who is share his percentage"
+        description: "Identifiant unique de l'ayant-droit qui partage"
       shareeId:
         type: "string"
-        description: "UUID of rightHolder who is share his percentage"
+        description: "Identifiant unique de l'ayant-droit qui bénificie (p.ex., l'éditeur)"
       rightHolderPct:
         type: "string"
-        description: "Right holder percentage"
+        description: "% de l'ayant-droit"
       shareePct:
         type: "string"
-        description: "Sharee percentage"
+        description: "% de l'ayant-droit qui bénéficie"
   payments:
     type: "array"
     description: "An array of information about payments"
@@ -2515,3 +2929,82 @@ definitions:
       amount: 20
       payee: 1
       transactionHash: "0x58a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c"
+  socan:
+    type: "object"
+    properties:
+      GIVEN_NAMES: 
+        type: "string"
+        example: "Bob"
+        description: "Legal first name"
+      MIDDLE_NAME: 
+        type: "string"
+        example: "Bobby"
+        description: "Legal first name"
+      LAST_NAME:
+        type: "string"
+        example: "Smith"
+        description: "Legal last name"
+      DATE_OF_BIRTH: 
+        type: "string"
+        example: "01/01/1984"
+      STREET1: 
+        type: "string"
+        example: "6750 Avenue de L'Esplanade, 102"
+      CITY: 
+        type: "string"
+        example: "Montreal"
+      PROVINCE: 
+        type: "string"
+        example: "QC"
+      COUNTRY: 
+        type: "string"
+        example: "CAN"
+      POSTAL_CODE: 
+        type: "string"
+        example: "H2V4M1"
+      PHONE_NO1: 
+        type: "string"
+        example: "514 100 1000"
+      EMAIL_ADDRESS: 
+        type: "string"
+        example: "socan@iptoki.com"
+      EMAIL_ADDRESS_VERIFY: 
+        type: "string"
+        example: "socan@iptoki.com"
+      USER_ID: 
+        type: "string"
+        example: "iptoki"
+      PASSWORD: 
+        type: "string"
+        example: "12345678"
+      PASSWORD_VERIFY:
+        type: "string"
+        example: "12345678"
+      HEAR_OF_SOCAN: 
+        type: "string"
+        example: "OTHER"
+      LANGUAGE_PREFERENCE:
+        type: "string" 
+        example: "E"
+      TERMS: 
+        type: "string"
+        example: "Y"
+    example:
+      GIVEN_NAMES: "IPtoki"
+      MIDDLE_NAME: "Socan"
+      LAST_NAME: "Test"
+      DATE_OF_BIRTH: "01/01/1984"
+      STREET1: "6750 Avenue de L'Esplanade, 102"
+      CITY: "Montreal"
+      PROVINCE: "QC"
+      COUNTRY: "CAN"
+      POSTAL_CODE: "H2V4M1"
+      PHONE_NO1: "514 100 1000"
+      EMAIL_ADDRESS: "socan@iptoki.com"
+      EMAIL_ADDRESS_VERIFY: "socan@iptoki.com"
+      USER_ID: "iptoki"
+      PASSWORD: "12345678"
+      PASSWORD_VERIFY: "12345678"
+      HEAR_OF_SOCAN: "OTHER"
+      LANGUAGE_PREFERENCE: "E"
+      TERMS: "Y"

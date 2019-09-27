@@ -5,7 +5,7 @@ const uuidv1 = require('uuid/v1');
 
 // AWS 
 const AWS = require('aws-sdk');
-const REGION = 'us-east-2';
+const REGION = 'us-east-1';
 
 AWS.config.update({
   region: REGION,
@@ -37,8 +37,7 @@ exports.deletePayment = function(id) {
       if (err) {
         console.log("Error", err);
         resolve();
-      } else {
-        console.log("Success", data);
+      } else {        
         resolve('Payment record removed');
       }
     });
@@ -64,7 +63,7 @@ exports.getAllPayments = function() {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data);
+        
         resolve(data);
       }
     });
@@ -92,7 +91,7 @@ exports.getPayment = function(id) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data);
+        
         resolve(data);
       }
     });
@@ -126,7 +125,7 @@ exports.patchPaymentTransactionHash = function(id,transactionHash) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -160,7 +159,7 @@ exports.patchPaymentTransactionID = function(id,transactionId) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
@@ -187,7 +186,6 @@ exports.postPayment = function(body) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Count);
         // Create unique ID value
         let ID_VALUE = data.Count + 1;
 
@@ -245,7 +243,7 @@ exports.updatePayment = function(id,body) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log("Success", data.Attributes);
+        
         resolve(data.Attributes);
       }
     });
