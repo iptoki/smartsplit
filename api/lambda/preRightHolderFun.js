@@ -1,6 +1,6 @@
 const AWS = require('aws-sdk');
 const TABLE = 'rightHolder';
-const REGION = 'us-east-1';
+const REGION = 'us-east-2';
 
 const ddb = new AWS.DynamoDB.DocumentClient({region: REGION});
 
