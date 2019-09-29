@@ -792,7 +792,7 @@ exports.patchMediaStreamingServiceLinks = function(mediaId,streamingServiceLinks
   });
 }
 
-exports.putMedia = function(title, type) {
+exports.putMedia = function(title, type, creator) {
   return new Promise(function(resolve, reject) {
     let params = {
       "TableName": TABLE,
@@ -822,7 +822,8 @@ exports.putMedia = function(title, type) {
             'mediaId': ID_VALUE,            
             'title': title,
             'type': type,
-            'creationDate': DATE_CREATED      
+            'creationDate': DATE_CREATED,
+            'creator': creator
           }
         };        
 
