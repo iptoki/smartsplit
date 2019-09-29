@@ -5,7 +5,7 @@ var Media = require('../service/MediaService');
 
 module.exports.putMedia = function putMedia(req, res, next) {
   var body = req.swagger.params['body'].value
-  let title = body.title, type = body.type, creator = body.createur
+  let title = body.title, type = body.type, creator = body.creator
   Media.putMedia(title, type, creator)
     .then(function (response) {
       utils.writeJson(res, response);

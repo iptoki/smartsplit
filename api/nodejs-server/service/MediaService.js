@@ -80,13 +80,11 @@ exports.getMedia = function(mediaId) {
         'mediaId': mediaId
       }
     };    
-    console.log(params)
     ddb.get(params, function(err, data) {
       if (err) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log(data)
         resolve(data);
       }
     });
@@ -825,9 +823,7 @@ exports.putMedia = function(title, type, creator) {
             'creationDate': DATE_CREATED,
             'creator': creator
           }
-        };        
-
-        console.log('Ajout média court', params)
+        };
 
         ddb.put(params, function(err, data) {
           if (err) {
