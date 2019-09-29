@@ -70,10 +70,8 @@ function finDuVote(proposalId) {
 
       function estUnanime(elem, type) {
         let ret = true
-        console.log('estUnanime ?',partages, elem, type)
         if(elem && type && partages[elem][type]) {
           partages[elem][type].forEach((droit)=>{
-            console.log('estUnanime()', elem, type, droit.voteStatus)
             if(droit.voteStatus === 'reject') {
               ret = false
               return
@@ -304,8 +302,6 @@ exports.invite = function(proposalId, rightHolders) {
           initiateurId = proposition.initiator.id,
           rightsSplits = proposition.rightsSplits
 
-      console.log(`Inviation pour la proposition ${proposalId} faite par ${initiateur}\n`, proposition)
-
       // 0. Réceptionne le secret de génération JWT des paramètres AWS
       utils.getParameter('SECRET_JWS_INVITE', (secret)=>{
   
@@ -321,8 +317,6 @@ exports.invite = function(proposalId, rightHolders) {
           )
           rightHolders[elem].jeton = jeton
         })
-
-        console.log(`Jetons de votation générés pour les ayants-droits\n`, rightHolders)
 
         // 1. Initialisation des votes
         
@@ -371,10 +365,9 @@ exports.invite = function(proposalId, rightHolders) {
 
         // 2.a -> Mettre à jour la proposition
         overwriteRightSplits(proposalId, rightsSplits)
-        console.log('Droits initiaux calculés\n', rightsSplits)
         
         // 3. Récupérer le titre du média avec le mediaId (async)        
-        axios.get(`http://api.smartsplit.org:8080/v1/media/${proposition.mediaId}`)
+        axios.get(`http://dev.api.smartsplit.org:8080/v1/media/${proposition.mediaId}`)
         .then(res=>{
           let titre = res.data.Item.title
           // 3.a -> Envoyer un courriel à tous (différent si initiateur)
@@ -447,7 +440,6 @@ exports.justifierRefus = function(userId, jeton, raison) {
             ajouterCommentaire(propositionId, rightHolderId, 'Initiateur du split')
           }
 
-          console.log(`Justification du refus de par ${userId} parce que ${raison}`)
           resolve(contenu.data)
       } catch(err) {
           console.log(err)

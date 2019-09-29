@@ -80,13 +80,11 @@ exports.getMedia = function(mediaId) {
         'mediaId': mediaId
       }
     };    
-    console.log(params)
     ddb.get(params, function(err, data) {
       if (err) {
         console.log("Error", err);
         resolve();
       } else {
-        console.log(data)
         resolve(data);
       }
     });
@@ -792,7 +790,7 @@ exports.patchMediaStreamingServiceLinks = function(mediaId,streamingServiceLinks
   });
 }
 
-exports.putMedia = function(title, type) {
+exports.putMedia = function(title, type, creator) {
   return new Promise(function(resolve, reject) {
     let params = {
       "TableName": TABLE,
@@ -822,11 +820,10 @@ exports.putMedia = function(title, type) {
             'mediaId': ID_VALUE,            
             'title': title,
             'type': type,
-            'creationDate': DATE_CREATED      
+            'creationDate': DATE_CREATED,
+            'creator': creator
           }
-        };        
-
-        console.log('Ajout média court', params)
+        };
 
         ddb.put(params, function(err, data) {
           if (err) {

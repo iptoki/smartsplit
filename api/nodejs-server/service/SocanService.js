@@ -36,7 +36,6 @@ exports.postSocan = function(body) {
     .then((response) => {                                
       let ACCESS_TOKEN = response.access_token
       // let ACCESS_TOKEN_2 = accessTokenAWS
-      console.log(ACCESS_TOKEN)
       let config = {
         headers: {'Authorization': "Bearer " + ACCESS_TOKEN}
       };

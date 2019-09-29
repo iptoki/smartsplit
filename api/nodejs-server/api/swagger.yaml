@@ -2578,6 +2578,8 @@ definitions:
         type: "string"
       type:
         type: "string"
+      createur:
+        type: "string"
   media:
     properties:
       mediaId:
