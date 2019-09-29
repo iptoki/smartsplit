@@ -3,6 +3,8 @@ const TABLE = 'media';
 const utils = require('../utils/utils.js');
 const uuidv1 = require('uuid/v1');
 
+const moment = require('moment')
+
 // AWS
 const AWS = require('aws-sdk');
 const REGION = 'us-east-2';
@@ -847,64 +849,98 @@ exports.putMedia = function(title, type, creator) {
  **/
 exports.postMedia = function(body) {
   return new Promise(function(resolve, reject) {
-    let params = {
-      "TableName": TABLE,
-    }
-    ddb.scan(params, function(err, data) {
-      if (err) {
-        console.log("Error", err);
-        resolve();
-      } else {
-        // Create unique ID value
-        let ID_VALUE = data.Count + 1;
-        // Assign creationDate to current date time
-        let d = Date(Date.now());   
-        let DATE_CREATED = d.toString();
-        let params = {
-          TableName: TABLE,
-          Item: {
-            'mediaId': ID_VALUE,
-            'artist': body[0].artist,
-            'album': body[0].album,
-            'type': body[0].type,
-            'creationDate': DATE_CREATED,
-            'modificationDate': body[0].modificationDate,
-            'audioFile': body[0].audioFile,
-            'imageFile': body[0].imageFile,
-            'publishDate': body[0].publishDate,
-            'publisher': body[0].publisher,
-            'title': body[0].title,
-            'genre': body[0].genre,
-            'secondaryGenre': body[0].secondaryGenre,
-            'lyrics': body[0].lyrics,
-            'inLanguages': body[0].inLanguages,
-            'isrc': body[0].isrc,
-            'iswc': body[0].iswc,
-            'upc': body[0].upc,
-            'msDuration': body[0].msDuration,       
-            'socialMediaLinks': body[0].socialMediaLinks,
-            'streamingServiceLinks': body[0].streamingServiceLinks,
-            'pressArticleLinks': body[0].pressArticleLinks,
-            'playlistLinks': body[0].playlistLinks,
-            'rightHolders': body[0].rightHolders
-          }
-        };
-        // Check Types, and Split Calculation
-        // 
-        ddb.put(params, function(err, data) {
-          if (err) {
-            console.log("Error", err);
-            resolve();
-          } else {
-            resolve("Success. Item Added");
-          }
-        });
+
+    console.log(body)
+
+    // Create unique ID value
+    let ID_VALUE = body.mediaId
+    
+    if(!ID_VALUE) {
+      reject(".")
+    } else {
+      // Assign creationDate to current date time      
+/* 
+      let obj = {
+        'mediaId': ID_VALUE,
+        'creator': body.creator,
+        'artist': body.artist,
+        'album': body.album,
+        'type': body.type,
+        'creationDate': DATE_CREATED,
+        'modificationDate': body.modificationDate,
+        'audioFile': body.audioFile,
+        'imageFile': body.imageFile,
+        'publishDate': body.publishDate,
+        'publisher': body.publisher,
+        'title': body.title,
+        'genre': body.genre,
+        'secondaryGenre': body.secondaryGenre,
+        'lyrics': body.lyrics,
+        'inLanguages': body.inLanguages,
+        'isrc': body.isrc,
+        'iswc': body.iswc,
+        'upc': body.upc,
+        'msDuration': body.msDuration,       
+        'socialMediaLinks': body.socialMediaLinks,
+        'streamingServiceLinks': body.streamingServiceLinks,
+        'pressArticleLinks': body.pressArticleLinks,
+        'playlistLinks': body.playlistLinks,
+        'rightHolders': body.rightHolders
       }
+ */
+      let d = moment(Date.now()).format();   
+      let DATE_CREATED = d;
 
-    });
-  });
+      let params = {
+        TableName: TABLE,
+        Key: {
+          'mediaId': body.mediaId
+        },
+        UpdateExpression: 'set creator  = :cr, artist = :ar, album = :al, atype = :ty, \
+        \ creationDate = :crD, modificationDate = :moD, publishDate = :puD, audioFile = :auF, imageFile = :imF, publisher = :pu, \
+        \ title = :ti, genre = :ge, secondaryGenre = :ge2, lyrics = :ly, inLanguages = :inL, isrc = :isrc, upc = :upc, iswc = :iswc, \
+        \ msDuration = :dur, socialMediaLinks = :smL, streamingServiceLinks = :ssL, pressArticleLinks = :paL, playlistLinks = :plL, remixer = :rem',
+        ExpressionAttributeValues: {
+          ':cr' : body.creator,
+          ':ar' : body.artist,
+          ':al' : body.album ? body.album : " ",
+          ':ty' : body.type,
+          ':crD' : DATE_CREATED,
+          ':moD' : body.modificationDate ? body.modificationDate : " ",
+          ':puD' : body.publishDate ? body.publishDate : " ",
+          ':auF' : body.audioFile ? body.audioFile : " ",
+          ':imF' : body.imageFile ? body.imageFile : " ",
+          ':pu' : body.publisher ? body.publisher : " ",
+          ':ti' : body.title ? body.title : " ",
+          ':ge' : body.genre ? body.genre : " ",
+          ':ge2' : body.secondaryGenre ? body.secondaryGenre : " ",
+          ':ly' : body.lyrics ? body.lyrics : " ",
+          ':inL' : body.inLanguages ? body.inLanguages : [],
+          ':isrc' : body.isrc ? body.isrc : " ",       
+          ':iswc' : body.iswc ? body.iswc : " ",
+          ':upc' : body.upc ? body.upc : " ",
+          ':dur' : body.msDuration ? body.msDuration : " " ,
+          ':smL' : body.socialMediaLinks ? body.socialMediaLinks : [],
+          ':ssL' : body.streamingServiceLinks ? body.streamingServiceLinks : [],
+          ':paL' : body.pressArticleLinks ? body.pressArticleLinks : [],
+          ':plL' : body.playlistLinks ? body.playlistLinks : [],
+          ':rem' : body.remixer ? body.remixer : " "
+        },
+        ReturnValues: 'UPDATED_NEW'
+      };
+      // Check Types, and Split Calculation
+      // 
+      ddb.update(params, function(err, data) {
+        if (err) {
+          console.log("Error", err);
+          reject();
+        } else {
+          resolve(data);
+        }
+      });
+    }
+  })
 }
-
 
 /**
  * Update media with the given ID
@@ -928,26 +964,26 @@ exports.updateMedia = function(mediaId,body) {
         \ lyrics = :l, inLanguages = :u, isrc = :z, upc = :b, msDuration = :d, socialMediaLinks = :e, streamingServiceLinks = :k, pressArticleLinks = :x, playlistLinks = :q', 
 
       ExpressionAttributeValues: {
-        ':t' : body[0].title,
-        ':g' : body[0].genre,
-        ':y' : body[0].secondaryGenre,
-        ':a' : body[0].album,
-        ':y' : body[0].artist,
-        ':c' : body[0].creationDate,
+        ':t' : body.title,
+        ':g' : body.genre,
+        ':y' : body.secondaryGenre,
+        ':a' : body.album,
+        ':y' : body.artist,
+        ':c' : body.creationDate,
         ':f' : DATE_MODIFIED,
-        ':i' : body[0].publishDate,
-        ':v' : body[0].type,
-        ':p' : body[0].publisher,
-        ':l' : body[0].lyrics,
-        ':u' : body[0].inLanguages,
-        ':s' : body[0].s3Etag,
-        ':z' : body[0].isrc,
-        ':b' : body[0].upc,
-        ':d' : body[0].msDuration,       
-        ':e' : body[0].socialMediaLinks,
-        ':k' : body[0].streamingServiceLinks,
-        ':x' : body[0].pressArticleLinks,
-        ':q' : body[0].playlistLinks
+        ':i' : body.publishDate,
+        ':v' : body.type,
+        ':p' : body.publisher,
+        ':l' : body.lyrics,
+        ':u' : body.inLanguages,
+        ':s' : body.s3Etag,
+        ':z' : body.isrc,
+        ':b' : body.upc,
+        ':d' : body.msDuration,       
+        ':e' : body.socialMediaLinks,
+        ':k' : body.streamingServiceLinks,
+        ':x' : body.pressArticleLinks,
+        ':q' : body.playlistLinks
       },
       ReturnValues: 'UPDATED_NEW'
     };

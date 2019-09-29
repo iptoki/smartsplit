@@ -29,6 +29,7 @@
     "lodash": "^4.17.15",
     "lodb": "^0.5.2",
     "mocha": "^6.1.4",
+    "moment": "^2.24.0",
     "morgan": "^1.9.1",
     "node-waf": "^1.0.0",
     "node-webtokens": "^1.0.0",
