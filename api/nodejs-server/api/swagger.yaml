@@ -2578,8 +2578,12 @@ definitions:
         type: "string"
       type:
         type: "string"
+      createur:
+        type: "string"
   media:
     properties:
+      creator:
+        type: "string"
       mediaId:
         type: "integer"
         example: 1
@@ -2654,28 +2658,28 @@ definitions:
         description: "The UPC of the given media"
         example: "123456789111"
       socialMediaLinks:
-        type: "object"
+        type: "array"
         description: "The urls for the given media for social media like Facebook, Instagram, and Twitter."
-        additionalProperties:
+        items:
           type: "string"
           description: "social media links for the given media" 
       streamingServiceLinks:
-        type: "object"
+        type: "array"
         description: "The urls for the given media for streaming services like Spotify and Apple Music"
-        additionalProperties:
-          type: "string"
+        items:
+          type: "object"
           description: "streaming service links for the given media" 
       pressArticleLinks:
-        type: "object"
+        type: "array"
         description: "The urls for news articles about the given media like music blogs and newspapers"
-        additionalProperties:
-          type: "string"
+        items:
+          type: "object"
           description: "press article links for the given media" 
       playlistLinks:
-        type: "object"
+        type: "array"
         description: "The urls for playlists of similar songs to the given media like Spotify or Youtube playlists"
-        additionalProperties:
-          type: "string"
+        items:
+          type: "object"
           description: "playlist links for the given media" 
       audioFile:
         type: "string"
@@ -2686,11 +2690,13 @@ definitions:
         description: "The image file name"
         example: "cover.jpg"
       rightHolders:
-        type: "object"
+        type: "array"
         description: "The rightholders and roles associated to this media"
         items: 
-          type: "array"
-          description: "roles uuid in a string array"
+          type: "object"
+          description: "Names of rightholder"
+      remixer:
+        type: "string"
     example:
       [
         {
