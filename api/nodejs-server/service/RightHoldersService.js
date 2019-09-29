@@ -5,7 +5,7 @@ const utils = require('../utils/utils.js');
 
 // AWS
 const AWS = require('aws-sdk');
-const REGION = 'us-east-1';
+const REGION = 'us-east-2';
 
 AWS.config.update({
   region: REGION,
