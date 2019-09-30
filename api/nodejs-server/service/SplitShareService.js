@@ -9,9 +9,10 @@ const axios = require('axios')
 // AWS
 const AWS = require('aws-sdk')
 const REGION = 'us-east-2'
+const REGION_PARAMS = 'us-east-2'
 
 AWS.config.update({
-  region: REGION,
+  region: REGION_PARAMS,
   accessKeyId: utils.getParameter('ACCESS_KEY'),
   secretAccessKey: utils.getParameter('SECRET_ACCESS_KEY')
 });
