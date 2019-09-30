@@ -11,10 +11,12 @@ const uuidv1 = require('uuid/v1');
 // Besoin de bootstraper la récupération des paramètres puis l'activation de la BD AWS
 const AWS = require('aws-sdk');
 const REGION = 'us-east-1';
+const REGION_PARAMS = 'us-east-2';
+
 const utils = require('../utils/utils.js');
 
 AWS.config.update({
-  region: REGION,
+  region: REGION_PARAMS,
   accessKeyId: utils.getParameter('ACCESS_KEY'),
   secretAccessKey: utils.getParameter('SECRET_ACCESS_KEY')
 });
