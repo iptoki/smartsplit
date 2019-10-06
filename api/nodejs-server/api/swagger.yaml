@@ -2607,7 +2607,7 @@ definitions:
       creator:
         type: "string"
       mediaId:
-        type: "integer"
+        type: "string"
         example: 1
         description: "The id of this piece of media"
       title:
@@ -2622,10 +2622,14 @@ definitions:
         type: "string"
         example: "LYB"
         description: "The artist name who created this piece of media"
+      cover:
+        type: "string"
       msDuration:
         type: "string"
         example: "120000"
         description: "The duration in milliseconds for the given media"
+      bpm:
+        type: "string"      
       type:
         type: "string"
         example: "remix"
@@ -2635,9 +2639,9 @@ definitions:
         example: "Rock"
         description: "The genre of the given media"
       secondaryGenre:
-        type: "string"
-        example: "Hip Hop"
-        description: "The secondary genre of the given media"
+        type: "array"
+        items:
+          type: "string"
       creationDate:
         type: "string"
         format: "iso8601-date-time"
@@ -2657,16 +2661,21 @@ definitions:
         type: "string"
         example: "sync publishing"
         description: "The publisher for the given media (Left blank if no publisher)"
-      lyrics:
+      fichier:
         type: "string"
+      lyrics:
+        type: "object"
+        properties: 
+          text:
+            type: "string"          
+          languages:
+            type: "array"
+            items:
+              type: "string"
+          access: 
+            type: "string"
         description: "The lyrics of the given media"
-        example: "Love you Baby. Love you Baby. Love you Baby. Love you Baby. Love you Baby. Baby. Wooo. Love You Baby."
-      inLanguages:
-        type: "array"
-        description: "An array of languages of the lyrics for the given media"
-        items:
-          type: "string"
-          example: "english"
+        example: "Love you Baby. Love you Baby. Love you Baby. Love you Baby. Love you Baby. Baby. Wooo. Love You Baby."      
       isrc:
         type: "string"
         description: "The ISRC of the given media"
@@ -2683,7 +2692,7 @@ definitions:
         type: "array"
         description: "The urls for the given media for social media like Facebook, Instagram, and Twitter."
         items:
-          type: "string"
+          type: "object"
           description: "social media links for the given media" 
       streamingServiceLinks:
         type: "array"
@@ -2702,15 +2711,18 @@ definitions:
         description: "The urls for playlists of similar songs to the given media like Spotify or Youtube playlists"
         items:
           type: "object"
-          description: "playlist links for the given media" 
-      audioFile:
-        type: "string"
-        description: "The audio file name"
-        example: "audio.mp3"
-      imageFile:
-        type: "string"
-        description: "The image file name"
-        example: "cover.jpg"
+          description: "playlist links for the given media"
+      files:
+        type: "object"
+        properties:
+          cover:
+            type: "object"
+          audio:
+            type: "object"
+          score:
+            type: "object"
+          midi:
+            type: "object"      
       rightHolders:
         type: "array"
         description: "The rightholders and roles associated to this media"
@@ -2718,6 +2730,22 @@ definitions:
           type: "object"
           description: "Names of rightholder"
       remixer:
+        type: "string"
+      distributor:
+        type: "string"
+      distributorAddress:
+        type: "string"
+      label:
+        type: "string"
+      labelAddress:
+        type: "string"
+      studio:
+        type: "string"
+      studioAddress:
+        type: "string"
+      influence:
+        type: "string"
+      jurisdiction:
         type: "string"
     example:
       [

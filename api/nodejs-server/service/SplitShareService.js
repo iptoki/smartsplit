@@ -93,7 +93,7 @@ exports.inviteEditeur = function(body, type) {
                     "toEmail": destinataire.email,
                     "firstName": destinataire.firstName,
                     "workTitle": titre,
-                    "callbackURL": `http://proto.smartsplit.org:3000/partage/editeur/vote/${jeton}`,
+                    "callbackURL": `http://proto.smartsplit.org/partage/editeur/vote/${jeton}`,
                     "template": "partageEditeur",
                     "ayantDroit": _ayantDroit.nom
                 }
@@ -121,7 +121,7 @@ exports.inviteEditeur = function(body, type) {
                   "toEmail": ayantDroit.email,
                   "firstName": ayantDroit.firstName,
                   "workTitle": titre,
-                  "callbackURL": `http://proto.smartsplit.org:3000/partager/${mediaId}`,
+                  "callbackURL": `http://proto.smartsplit.org/partager/${mediaId}`,
                   "template": "partageEditeurEnvoye",
               }
             ]
@@ -257,7 +257,7 @@ exports.splitShareVote = function(body) {
                                 "toEmail": destinataire.email,
                                 "firstName": destinataire.firstName,
                                 "workTitle": titre,
-                                "callbackURL": `http://proto.smartsplit.org:3000/partage/editeur/vote/${jeton}`
+                                "callbackURL": `http://proto.smartsplit.org/partage/editeur/vote/${jeton}`
                             }
                           ]
 
@@ -287,7 +287,7 @@ exports.splitShareVote = function(body) {
                                 "toEmail": ayantDroit.email,
                                 "firstName": ayantDroit.firstName,
                                 "workTitle": titre,
-                                "callbackURL": `http://proto.smartsplit.org:3000/partage/editeur/vote/${jeton}`
+                                "callbackURL": `http://proto.smartsplit.org/partage/editeur/vote/${jeton}`
                             }
                           ]
 
