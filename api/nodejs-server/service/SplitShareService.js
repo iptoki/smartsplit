@@ -84,20 +84,24 @@ exports.inviteEditeur = function(body, type) {
           ddb.get(params, function(err, data) {
             if (err) {
               console.log("Error", err)
-            }        
-            let destinataire = data.Item
-            // 3.1 Envoyer un courriel au bénéficiaire
-            let body = [
-              {
-                  "toEmail": destinataire.email,
-                  "firstName": destinataire.firstName,
-                  "workTitle": titre,
-                  "callbackURL": `http://proto.smartsplit.org:3000/partage/editeur/vote/${jeton}`,
-                  "template": "partageEditeur",
-                  "ayantDroit": _ayantDroit.nom
-              }
-            ]      
-            axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)          
+            }
+            try {
+              let destinataire = data.Item
+              // 3.1 Envoyer un courriel au bénéficiaire
+              let body = [
+                {
+                    "toEmail": destinataire.email,
+                    "firstName": destinataire.firstName,
+                    "workTitle": titre,
+                    "callbackURL": `http://proto.smartsplit.org:3000/partage/editeur/vote/${jeton}`,
+                    "template": "partageEditeur",
+                    "ayantDroit": _ayantDroit.nom
+                }
+              ]      
+              axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)          
+            } catch (err) {
+              console.log(err)
+            }
           })
 
           // 4. Envoi de la confirmation d'envoi à l'ayant-droit qui a partagé

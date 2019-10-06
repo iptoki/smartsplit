@@ -237,6 +237,28 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "SplitShare"
+  /entities:
+    get:
+      tags:
+      - Entities
+      description: "Accepter le vote d'une proposition de part au bénéficiaire"
+      operationId: "getAllEntities"      
+      responses:
+        200:
+          description: "OK."
+          schema:
+            $ref: "#/definitions/entity"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Entities"
   /proposal/derniere-proposition/{mediaId}:
     get:
       tags:
@@ -2901,6 +2923,22 @@ definitions:
       shareePct:
         type: "string"
         description: "% de l'ayant-droit qui bénéficie"
+  entity:
+    type: "object"
+    properties:
+      uuid:
+        type: "string"
+        description: "Identifiant de la proposition"
+      members:
+        type: "array"
+        items:
+          type: "string"      
+      name:
+        type: "string"
+        description: "Identifiant unique de l'ayant-droit qui bénificie (p.ex., l'éditeur)"
+      type:
+        type: "string"
+        description: "% de l'ayant-droit"      
   payments:
     type: "array"
     description: "An array of information about payments"
