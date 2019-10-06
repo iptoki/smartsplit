@@ -1,11 +1,11 @@
 import { CognitoUserPoolEvent, Handler, Context, Callback } from 'aws-lambda';
 import { CognitoIdentityServiceProvider } from 'aws-sdk';
 const AWS = require('aws-sdk');
-const cognitoIdentityService = new AWS.CognitoIdentityServiceProvider({apiVersion: '2016-04-18', region: 'us-east-2'});
+const cognitoIdentityService = new AWS.CognitoIdentityServiceProvider({apiVersion: '2016-04-18', region: 'us-east-1'});
 
 module.exports.getUserByAttribute = async (attributeName, attributeValue) => {
   const params = {
-      UserPoolId: "us-east-2_tK9rNdAB1", // Userpool DEV
+      UserPoolId: "us-east-1_W3bnhMGGM", // Userpool DEV
       // Filter: `${attributeName} = "${attributeValue}"`,
   }
   try {
