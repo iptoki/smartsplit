@@ -4,7 +4,7 @@ dotenv.config()
 // Connexion à AWSSecretManager pour récupérer des secrets
 let getParameter = exports.getParameter = function (paramKey, fn) {    
     const AWS = require('aws-sdk');
-    const REGION = 'us-east-1';
+    const REGION = 'us-east-2';
     AWS.config.update({
         region: REGION
     });
