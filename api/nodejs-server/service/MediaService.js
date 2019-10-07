@@ -886,6 +886,8 @@ exports.postMedia = function(body) {
             _media = _i
           }
 
+          console.log(_media, body)
+
           let params2 = {
             TableName: TABLE,
             Key: {
@@ -899,13 +901,13 @@ exports.postMedia = function(body) {
             \ label = :lbl, labelAddress = :lblA, distributor = :dist, distributorAddress = :distA',
             ExpressionAttributeValues: {
               ':cr' : body.creator ? body.creator : (_media.creator ? _media.creator : " "),
-              ':ar' : body.artist ? body.artist : _media.artist,
+              ':ar' : body.artist ? body.artist : (_media.artist ? _media.artist : " "),
               ':al' : body.album ? body.album : (_media.album ? _media.album : " "),
               ':ty' : body.type ? body.type: (_media.type ? _media.type : " "),
               ':moD' : DATE_MODIFIED,
               ':puD' : body.publishDate ? body.publishDate : (_media.publishDate? _media.publishDate: " "),
               ':files' : body.files ? body.files : (_media.files ? _media.files : {}),
-              ':pu' : body.publisher ? body.publisher : (_media.publisher ? media.publisher : " "),
+              ':pu' : body.publisher ? body.publisher : (_media.publisher ? _media.publisher : " "),
               ':ti' : body.title ? body.title : (_media.title ? _media.title : " "),
               ':ge' : body.genre ? body.genre : (_media.genre ? _media.genre : " "),
               ':ge2' : body.secondaryGenres ? body.secondaryGenres : (_media.secondaryGenres ? _media.secondaryGenres : [] ),
@@ -935,14 +937,18 @@ exports.postMedia = function(body) {
           };
           // Check Types, and Split Calculation
           // 
-          ddb.update(params2, function(err, data) {
-            if (err) {
-              console.log("Error", err);
-              reject();
-            } else {
-              resolve(data);
-            }
-          });
+          try{
+            ddb.update(params2, function(err, data) {
+              if (err) {
+                console.log("Error", err);
+                reject();
+              } else {
+                resolve(data);
+              }
+            });
+          } catch (err) {
+            console.log(err)
+          }
 
         })
       } catch (err) {
