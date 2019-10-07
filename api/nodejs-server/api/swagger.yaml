@@ -2638,7 +2638,7 @@ definitions:
         type: "string"
         example: "Rock"
         description: "The genre of the given media"
-      secondaryGenre:
+      secondaryGenres:
         type: "array"
         items:
           type: "string"
