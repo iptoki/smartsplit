@@ -909,7 +909,7 @@ exports.postMedia = function(body) {
               ':ti' : body.title ? body.title : (_media.title ? _media.title : " "),
               ':ge' : body.genre ? body.genre : (_media.genre ? _media.genre : " "),
               ':ge2' : body.secondaryGenres ? body.secondaryGenres : (_media.secondaryGenres ? _media.secondaryGenres : [] ),
-              ':ly' : body.lyrics ? body.lyrics : (_media.lyrics ? _media.lyrics : {text: "", languages: [], access: "private"}),
+              ':ly' : body.lyrics ? body.lyrics : (_media.lyrics ? _media.lyrics : {text: " ", languages: [], access: "private"}),
               ':isrc' : body.isrc ? body.isrc : (_media.isrc ? _media.isrc : " "),
               ':iswc' : body.iswc ? body.iswc : (_media.iswc ? _media.iswc : " "),
               ':upc' : body.upc ? body.upc : (_media.upc ? _media.upc : " "),
