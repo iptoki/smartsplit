@@ -2742,7 +2742,7 @@ definitions:
         description: "Le jeton JWT à décoder"      
     example:
       {
-        "JWT": "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e.xyz.xzdv"
+        "jeton": "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e.xyz.xzdv"
       }
   voteProposal:
     type: "object"
