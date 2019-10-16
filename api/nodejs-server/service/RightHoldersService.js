@@ -540,7 +540,8 @@ exports.postRightHolder = function(body) {
           'socialMediaLinks': body.socialMediaLinks,
           'defaultRoles': body.defaultRoles,
           'groups': body.groups,
-          'newUser': body.newUser
+          'accountCreationType': body.accountCreationType,
+          'locale': body.locale
         }
       };
       ddb.put(params, function(err, data) {
@@ -571,7 +572,7 @@ exports.updateRightHolder = function(rightHolderId,body) {
       },
       UpdateExpression: 'set ipi  = :i, wallet = :w, media = :m, firstName = :f, email = :e, lastName = :l, \
                              socialMediaLinks = :s, jurisdiction = :j, artistName = :n, avatarImage = :t, \
-                             defaultRoles = :r, groups = :g, newUser = :u',
+                             defaultRoles = :r, groups = :g, accountCreationType = :u, locale = :x',
       ExpressionAttributeValues: {
         ':i' : body.ipi,
         ':w' : body.wallet,
@@ -585,7 +586,8 @@ exports.updateRightHolder = function(rightHolderId,body) {
         ':s' : body.socialMediaLinks,
         ':r' : body.defaultRoles,
         ':g' : body.groups,
-        ':u' : body.newUser
+        ':u' : body.accountCreationType,
+        ':x' : body.locale
       },
       ReturnValues: 'UPDATED_NEW'
     };

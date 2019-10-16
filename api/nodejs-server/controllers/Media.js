@@ -107,18 +107,6 @@ module.exports.patchMediaISRC = function patchMediaISRC (req, res, next) {
     });
 };
 
-module.exports.patchMediaInLanguages = function patchMediaInLanguages (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  var inLanguages = req.swagger.params['inLanguages'].value;
-  Media.patchMediaInLanguages(mediaId,inLanguages)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
 module.exports.patchMediaLyrics = function patchMediaLyrics (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
   var lyrics = req.swagger.params['lyrics'].value;
@@ -167,10 +155,10 @@ module.exports.patchMediaPublisher = function patchMediaPublisher (req, res, nex
     });
 };
 
-module.exports.patchMediaAudioFile = function patchMediaS3Etag (req, res, next) {
+module.exports.patchMediaFiles = function patchMediaFiles(req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
-  var audioFile = req.swagger.params['audioFile'].value;
-  Media.patchMediaAudioFile(mediaId,audioFile)
+  var files = req.swagger.params['files'].value;
+  Media.patchMediaAudioFile(mediaId,files)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -179,29 +167,6 @@ module.exports.patchMediaAudioFile = function patchMediaS3Etag (req, res, next) 
     });
 };
 
-module.exports.patchMediaImageFile = function patchMediaImageFile (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  var imageFile = req.swagger.params['imageFile'].value;
-  Media.patchMediaImageFile(mediaId,imageFile)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.patchMediaSecondaryGenre = function patchMediaSecondaryGenre (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  var secondaryGenre = req.swagger.params['secondaryGenre'].value;
-  Media.patchMediaSecondaryGenre(mediaId,secondaryGenre)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
 
 module.exports.patchMediaSocialMediaLinks = function patchMediaSocialMediaLinks (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
