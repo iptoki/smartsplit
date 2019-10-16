@@ -2456,10 +2456,14 @@ definitions:
         type: "string"
         description: "The artist name for the given right Holder"
         example: "Questlove"
-      newUser: 
-        type: "boolean"
-        description: "The boolean value set if user was created/modified from client and needs to sync with Cognito"
-        example: "true"
+      accountCreationType: 
+        type: "string"
+        description: "The string value that describes if the account is self registered or create by a split initiator"
+        example: "initiatorCreatedUser"
+      locale: 
+        type: "string"
+        description: "The string value of the locale detected from the browser upon user or initiator account creation"
+        example: "fr"
       socialMediaLinks:
         type: "object"
         description: "The urls for the social media profiles for the given right holder, like Facebook, Instagram, Youtube, Twitter"
@@ -2478,7 +2482,8 @@ definitions:
       artistName: "Questlove"
       groups: "[Group1, Group2]"
       defaultRoles: "[Songwriter, Producer]"
-      newUser: "true"
+      accountCreationType: "initiatorCreatedUser"
+      locale: "en"
       socialMediaLinks: 
         facebook: "https://facebook.com/ex"
         twitter: "https://twitter.com/ex"
