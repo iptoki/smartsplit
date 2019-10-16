@@ -34,9 +34,11 @@ exports.handler = function(event, context, callback) {
         
         console.log(event.request.userAttributes.given_name, event.request.userAttributes.family_name, event.request.userAttributes);
         
-        let prenom, nom, nomArtiste, roles, instruments, groupes;
+        let prenom, nom, nomArtiste, roles, instruments, groupes, locale, accountCreationType;
         prenom = JSON.parse(JSON.stringify(event.request.userAttributes.given_name));
         nom = JSON.parse(JSON.stringify(event.request.userAttributes.family_name));
+        locale = event.request.userAttributes.locale;
+        accountCreationType = event.request.userAttributes.gender // gender used as flag;
         nomArtiste = event.request.userAttributes['custom:artistName'] ? JSON.parse(JSON.stringify(event.request.userAttributes['custom:artistName'])) : `${prenom} ${nom}`;
         roles = event.request.userAttributes['custom:defaultRoles'] ? JSON.parse(event.request.userAttributes['custom:defaultRoles']) : [];
         instruments = event.request.userAttributes['custom:instruments'] ? JSON.parse(event.request.userAttributes['custom:instruments']) : [];
@@ -53,7 +55,9 @@ exports.handler = function(event, context, callback) {
             'artistName': nomArtiste,
             'defaultRoles': roles,
             'instruments': instruments,
-            'groups': groupes
+            'groups': groupes,
+            'locale': locale,
+            'accountCreationType': accountCreationType
           }
         };
         ddb.put(params, function(err, data) {
