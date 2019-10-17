@@ -194,38 +194,6 @@ exports.patchMediaGenre = function(mediaId,genre) {
 }
 
 
-/**
- * Update the genre of the media with the given ID
- *
- * mediaId Integer The artwork agreement's unique ID
- * genre Genre The genre of the artwork
- * returns Object
- **/
-exports.patchMediaSecondaryGenre = function(mediaId,secondaryGenre) {
-  return new Promise(function(resolve, reject) {
-    let params = {
-      TableName: TABLE,
-      Key: {
-        'mediaId': mediaId
-      },
-      UpdateExpression: 'set secondaryGenre = :g',
-      ExpressionAttributeValues: {
-        ':g' : secondaryGenre.secondaryGenre
-      },
-      ReturnValues: 'UPDATED_NEW'
-    };
-    // Call DynamoDB to delete the item from the table
-    ddb.update(params, function(err, data) {
-      if (err) {
-        console.log("Error", err);
-        resolve();
-      } else {
-        resolve(data.Attributes);
-      }
-    });
-  });
-}
-
 
 /**
  * Update the ISRC of the media with the given ID
@@ -471,49 +439,16 @@ exports.patchMediaAlbum = function(mediaId,album) {
  * audioFile  The AWS s3 filename string for the given media
  * returns media
  **/
-exports.patchMediaAudioFile = function(mediaId,audioFile) {
+exports.patchMediaFiles = function(mediaId,files) {
   return new Promise(function(resolve, reject) {
     let params = {
       TableName: TABLE,
       Key: {
         'mediaId': mediaId
       },
-      UpdateExpression: 'set audioFile  = :s',
+      UpdateExpression: 'set files  = :s',
       ExpressionAttributeValues: {
-        ':s' : audioFile.audioFile
-      },
-      ReturnValues: 'UPDATED_NEW'
-    };
-    ddb.update(params, function(err, data) {
-      if (err) {
-        console.log("Error", err);
-        resolve();
-      } else {
-        
-        resolve(data.Attributes);
-      }
-    });
-  });
-}
-
-
-/**
- * Update the AWS audio file for given media
- *
- * mediaId Integer The artwork agreement's unique ID
- * audioFile  The AWS s3 filename string for the given media
- * returns media
- **/
-exports.patchMediaImageFile = function(mediaId,imageFile) {
-  return new Promise(function(resolve, reject) {
-    let params = {
-      TableName: TABLE,
-      Key: {
-        'mediaId': mediaId
-      },
-      UpdateExpression: 'set imageFile  = :s',
-      ExpressionAttributeValues: {
-        ':s' : imageFile.imageFile
+        ':s' : files.files 
       },
       ReturnValues: 'UPDATED_NEW'
     };
@@ -550,41 +485,6 @@ exports.patchMediaLyrics = function(mediaId,lyrics) {
       },
       ReturnValues: 'UPDATED_NEW'
     };
-    ddb.update(params, function(err, data) {
-      if (err) {
-        console.log("Error", err);
-        resolve();
-      } else {
-        
-        resolve(data.Attributes);
-      }
-    });
-  });
-}
-
-
-/**
- * Update list of languages for the lyrics for the given piece of media
- *
- * mediaId Integer The artwork agreement's unique ID
- * inLanguages inLanguages The object containing the languages for the given media's lyrics
- * returns media
- **/
-exports.patchMediaInLanguages = function(mediaId,inLanguages) {
-  return new Promise(function(resolve, reject) {
-    let params = {
-      TableName: TABLE,
-      Key: {
-        'mediaId': mediaId
-      },
-      UpdateExpression: 'set inLanguages = list_append(if_not_exists(inLanguages, :empty_list), :l)',
-      ExpressionAttributeValues: {
-        ':l' : inLanguages,
-        ':empty_list': []
-      },
-      ReturnValues: 'UPDATED_NEW'
-    };
-    // Call DynamoDB to delete the item from the table
     ddb.update(params, function(err, data) {
       if (err) {
         console.log("Error", err);
@@ -977,14 +877,13 @@ exports.updateMedia = function(mediaId,body) {
       Key: {
         'mediaId': mediaId
       },
-      UpdateExpression: 'set title  = :t, genre = :g, secondaryGenre = :y, album = :a, s3Etag = :s\
+      UpdateExpression: 'set title  = :t, genre = :g, album = :a, files = :s\
         \ artist = :y, creationDate = :c, modificationDate = :f, publishDate = :i, type = :v, publisher = :p, \
-        \ lyrics = :l, inLanguages = :u, isrc = :z, upc = :b, msDuration = :d, socialMediaLinks = :e, streamingServiceLinks = :k, pressArticleLinks = :x, playlistLinks = :q', 
+        \ lyrics = :l, isrc = :z, upc = :b, msDuration = :d, socialMediaLinks = :e, streamingServiceLinks = :k, pressArticleLinks = :x, playlistLinks = :q', 
 
       ExpressionAttributeValues: {
         ':t' : body.title,
         ':g' : body.genre,
-        ':y' : body.secondaryGenre,
         ':a' : body.album,
         ':y' : body.artist,
         ':c' : body.creationDate,
@@ -993,8 +892,7 @@ exports.updateMedia = function(mediaId,body) {
         ':v' : body.type,
         ':p' : body.publisher,
         ':l' : body.lyrics,
-        ':u' : body.inLanguages,
-        ':s' : body.s3Etag,
+        ':s' : body.files,
         ':z' : body.isrc,
         ':b' : body.upc,
         ':d' : body.msDuration,       
