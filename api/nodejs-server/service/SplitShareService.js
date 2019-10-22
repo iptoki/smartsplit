@@ -26,6 +26,7 @@ exports.getSplitShare = function(proposalId, rightHolderId) {
     let params = {
       TableName: "splitShare"           
     }
+    let parts = []
     ddb.scan(params, function(err, data) {
       if (err) {
         console.log("Error", err)
@@ -33,9 +34,10 @@ exports.getSplitShare = function(proposalId, rightHolderId) {
       let partages = data.Items
       partages.forEach(p=>{
         if(p.proposalId === proposalId && p.rightHolderId === rightHolderId) {
-          resolve(p)
+          parts.push(p)          
         }
       })
+      resolve(parts)
     })
   })  
 }
