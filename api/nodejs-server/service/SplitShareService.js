@@ -47,7 +47,8 @@ exports.inviteEditeur = function(body, type) {
     let proposalId = body.proposalId,
         mediaId = body.mediaId, 
         _beneficiaire = body.shareeId, 
-        _ayantDroit = body.rightHolder
+        _ayantDroit = body.rightHolder,
+        _version = body.version
 
     try {
       // 1. Réceptionne le secret de génération JWT des paramètres AWS
@@ -57,7 +58,12 @@ exports.inviteEditeur = function(body, type) {
         const EXPIRATION = "7 days"
         let jeton = jwt.sign(
           {
-              data: {proposalId: proposalId, donateur: _ayantDroit.uuid, beneficiaire: _beneficiaire}
+              data: {
+                proposalId: proposalId, 
+                donateur: _ayantDroit.uuid, 
+                beneficiaire: _beneficiaire,
+                version: _version
+              }
           },
           secret,
           {expiresIn: EXPIRATION}
@@ -139,7 +145,12 @@ exports.inviteEditeur = function(body, type) {
               console.log("Error", err)
             }        
             data.Items.forEach(p => {
-              if(p.proposalId === proposalId && p.rightHolderId === _ayantDroit.uuid && p.shareeId === _beneficiaire) {
+              if(
+                p.proposalId === proposalId && 
+                p.rightHolderId === _ayantDroit.uuid && 
+                p.shareeId === _beneficiaire &&
+                p.version === _version) {
+
                 // 5. Modifier l'état de la proposition
                 let params = {
                   TableName: TABLE,
@@ -196,7 +207,8 @@ exports.splitShareVote = function(body) {
               if(p.proposalId === contenu.proposalId && 
                 p.rightHolderId === contenu.donateur && 
                 p.shareeId === contenu.beneficiaire &&
-                rightHolderId === contenu.beneficiaire) {
+                rightHolderId === contenu.beneficiaire &&
+                p.version === contenu.version) {
                 // 5. Modifier l'état de la proposition
                 let params = {
                   TableName: TABLE,
@@ -332,6 +344,7 @@ exports.addSplitShare = function(body, type) {
         'proposalId': body.proposalId,
         'rightHolderPct': body.rightHolderPct,
         'shareePct': body.shareePct,
+        'version': body.version,
         'etat': 'ATTENTE',
         'type': type
       }
