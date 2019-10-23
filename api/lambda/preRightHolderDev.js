@@ -77,7 +77,7 @@ exports.handler = function(event, context, callback) {
             		"toEmail": event.request.userAttributes.email,
             		"firstName": prenom,
             		"lastName": nom,
-            		"callbackURL": "http://proto.smartsplit.org/",
+            		"callbackURL": "http://dev.smartsplit.org/",
             		"template": "compteCree"
             	}
             ]
