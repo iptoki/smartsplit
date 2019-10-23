@@ -143,7 +143,7 @@ function finDuVote(proposalId) {
                   "toEmail": _rH.email,
                   "firstName": _rH.firstName,
                   "workTitle": titre,
-                  "callbackURL": `http://dev.smartsplit.org/partager/${proposition.mediaId}`
+                  "callbackURL": `http://proto.smartsplit.org/partager/${proposition.mediaId}`
               }
             ]
     
@@ -378,7 +378,7 @@ exports.invite = function(proposalId, rightHolders) {
                   "toEmail": rightHolders[elem].email,
                   "firstName": rightHolders[elem].name,
                   "workTitle": titre,
-                  "callbackURL": `http://dev.smartsplit.org/proposition/vote/${rightHolders[elem].jeton}`
+                  "callbackURL": `http://proto.smartsplit.org/proposition/vote/${rightHolders[elem].jeton}`
               }
             ]
             
@@ -524,7 +524,7 @@ exports.voteProposal = function(userId, jeton, droits) {
                       "template": "thanksForVoting",
                       "firstName": `${_rH.firstName} ${_rH.lastName}`,
                       "workTitle": media.Item.title,
-                      "callbackURL": `http://dev.smartsplit.org/proposition/vote/${jeton}`
+                      "callbackURL": `http://proto.smartsplit.org/proposition/vote/${jeton}`
                   }
                 ]
 

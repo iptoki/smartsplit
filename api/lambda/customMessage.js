@@ -16,7 +16,7 @@ exports.handler = (event, context, callback) => {
         <div id=":x9" class="a3s aXjCH " role="gridcell" tabindex="-1">
         <p>Bonjour ${event.request.userAttributes.given_name},</p>
         <p>Avant d'aller plus loin dans le processus de vote sur l'application Smartsplit, tu dois compléter et confirmer ton compte en choisissant ton mot de passe.</p>
-            <button style="background-color: #2da84f; padding: 15px 32px; text-align: center; display: inline-block; font-size: 16px;" ><a style="color: white; text-decoration: none;" href="http://dev.smartsplit.org/forgot-password-verification?confirmation_code=${event.request.codeParameter}&user_name=${event.userName}&email=${event.request.userAttributes.email}"> Choisir mon mot de passe </a></button>
+            <button style="background-color: #2da84f; padding: 15px 32px; text-align: center; display: inline-block; font-size: 16px;" ><a style="color: white; text-decoration: none;" href="http://proto.smartsplit.org/forgot-password-verification?confirmation_code=${event.request.codeParameter}&user_name=${event.userName}&email=${event.request.userAttributes.email}"> Choisir mon mot de passe </a></button>
         <p>Merci,</p>
         <p>L'équipe Smartsplit</p>
         </div>`
@@ -35,7 +35,7 @@ exports.handler = (event, context, callback) => {
         <div id=":x9" class="a3s aXjCH " role="gridcell" tabindex="-1">
         <p>Hello ${event.request.userAttributes.given_name},</p>
         <p>Before proceeding further in the voting process in the Smartsplit application, you need to complete and confirm your account by choosing your password.</p>
-            <button style="background-color: #2da84f; padding: 15px 32px; text-align: center; display: inline-block; font-size: 16px;" ><a style="color: white; text-decoration: none;" href="http://dev.smartsplit.org/forgot-password-verification?confirmation_code=${event.request.codeParameter}&user_name=${event.userName}&email=${event.request.userAttributes.email}"> Choose your password </a></button>
+            <button style="background-color: #2da84f; padding: 15px 32px; text-align: center; display: inline-block; font-size: 16px;" ><a style="color: white; text-decoration: none;" href="http://proto.smartsplit.org/forgot-password-verification?confirmation_code=${event.request.codeParameter}&user_name=${event.userName}&email=${event.request.userAttributes.email}"> Choose your password </a></button>
         <p>Thanks,</p>
         <p>The Smartsplit team</p>
         </div>`
@@ -54,7 +54,7 @@ exports.handler = (event, context, callback) => {
         <div id=":x9" class="a3s aXjCH " role="gridcell" tabindex="-1">
         <p>Bonjour ${event.request.userAttributes.given_name},</p>
         <p>Cliquez le lien pour réinitialiser votre mot de passe pour l'application Smartsplit.</p>
-            <button style="background-color: #2da84f; padding: 15px 32px; text-align: center; display: inline-block; font-size: 16px;" ><a style="color: white; text-decoration: none;" href="http://dev.smartsplit.org/forgot-password-verification?confirmation_code=${event.request.codeParameter}&user_name=${event.userName}&email=${event.request.userAttributes.email}"> Réinitialiser votre mot de passe </a></button>
+            <button style="background-color: #2da84f; padding: 15px 32px; text-align: center; display: inline-block; font-size: 16px;" ><a style="color: white; text-decoration: none;" href="http://proto.smartsplit.org/forgot-password-verification?confirmation_code=${event.request.codeParameter}&user_name=${event.userName}&email=${event.request.userAttributes.email}"> Réinitialiser votre mot de passe </a></button>
         <p>Merci,</p>
         <p>L'équipe Smartsplit</p>
         </div>`
@@ -73,7 +73,7 @@ exports.handler = (event, context, callback) => {
         <div id=":x9" class="a3s aXjCH " role="gridcell" tabindex="-1">
         <p>Hello ${event.request.userAttributes.given_name},</p>
         <p>Click the link to reset your password for your Smartsplit account.</p>
-            <button style="background-color: #2da84f; padding: 15px 32px; text-align: center; display: inline-block; font-size: 16px;" ><a style="color: white; text-decoration: none;" href="http://dev.smartsplit.org/forgot-password-verification?confirmation_code=${event.request.codeParameter}&user_name=${event.userName}&email=${event.request.userAttributes.email}"> Reset your password </a></button>
+            <button style="background-color: #2da84f; padding: 15px 32px; text-align: center; display: inline-block; font-size: 16px;" ><a style="color: white; text-decoration: none;" href="http://proto.smartsplit.org/forgot-password-verification?confirmation_code=${event.request.codeParameter}&user_name=${event.userName}&email=${event.request.userAttributes.email}"> Reset your password </a></button>
         <p>Thanks,</p>
         <p>The Smartsplit team</p>
         </div>`
