@@ -354,6 +354,9 @@ exports.addSplitShare = function(body, type) {
         console.log("Error", err);
         resolve();
       } else {
+
+        // Ajouter l'ayant-droit à l'oeuvre avec le rôle éditeur (45745c60-7b1a-11e8-9c9c-2d42b21b1a50)
+
         resolve(SPLITSHARE_UUID);
       }
     });
