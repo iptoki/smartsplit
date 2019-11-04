@@ -726,7 +726,7 @@ exports.getMediaProposals = function(mediaId) {
     ddb.scan(params, function(err, data) {
       if (err) {
         console.log("Error", err);
-        resolve()
+        reject(err)
       } else {
                 
         let _items = []

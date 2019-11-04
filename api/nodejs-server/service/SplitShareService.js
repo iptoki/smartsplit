@@ -30,13 +30,20 @@ exports.getSplitShare = function(proposalId, rightHolderId) {
     ddb.scan(params, function(err, data) {
       if (err) {
         console.log("Error", err)
+        reject(err)
       }
       let partages = data.Items
       partages.forEach(p=>{
         if(p.proposalId === proposalId && p.rightHolderId === rightHolderId) {
           parts.push(p)          
         }
+      })      
+
+      // Ordonner par _d (horodatage)
+      parts.sort((a,b)=>{
+        return a._d - b._d
       })
+
       resolve(parts)
     })
   })  
@@ -346,6 +353,7 @@ exports.addSplitShare = function(body, type) {
         'shareePct': body.shareePct,
         'version': body.version,
         'etat': 'ATTENTE',
+        '_d': new Date().getTime(),
         'type': type
       }
     };
