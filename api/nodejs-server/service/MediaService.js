@@ -784,9 +784,17 @@ exports.postMedia = function(body) {
           
           if(_i){
             _media = _i
+            if(_media.lyrics) {
+              if(_media.lyrics.text === "") {
+                _media.lyrics.text = " "
+              }
+            }
           }
-
-          console.log(_media, body)
+          if(body.lyrics) {
+            if(body.lyrics.text === "") {
+              body.lyrics.text = " "
+            }
+          }
 
           let params2 = {
             TableName: TABLE,
@@ -834,9 +842,7 @@ exports.postMedia = function(body) {
               ':distA' : body.distributorAddress ? body.distributorAddress : (_media.distributorAddress ? _media.distributorAddress : " "),
             },
             ReturnValues: 'UPDATED_NEW'
-          };
-          // Check Types, and Split Calculation
-          // 
+          };          
           try{
             ddb.update(params2, function(err, data) {
               if (err) {

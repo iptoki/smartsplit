@@ -20,6 +20,89 @@ const ddb = new AWS.DynamoDB.DocumentClient({region: REGION})
 
 const TYPE_PARTAGE = ['workCopyrightSplit', 'performanceNeighboringRightSplit', 'masterNeighboringRightSplit']
 
+function majAyantDroitsMedia(mediaId, partages) {
+
+  try {
+
+    const ROLES = {
+      COMPOSITEUR: "45745c60-7b1a-11e8-9c9c-2d42b21b1a31",
+      AUTEUR: "45745c60-7b1a-11e8-9c9c-2d42b21b1a33",
+      ARRANGEUR: "45745c60-7b1a-11e8-9c9c-2d42b21b1a32",
+      ACCOMPAGNEMENT: "45745c60-7b1a-11e8-9c9c-2d42b21b1a37",
+      PRODUCTEUR: "45745c60-7b1a-11e8-9c9c-2d42b21b1a40",
+      REALISATEUR: "45745c60-7b1a-11e8-9c9c-2d42b21b1a41",
+      STUDIO: "45745c60-7b1a-11e8-9c9c-2d42b21b1a42",
+      GRAPHISTE: "45745c60-7b1a-11e8-9c9c-2d42b21b1a43",
+      CHANTEUR: "45745c60-7b1a-11e8-9c9c-2d42b21b1a35",
+      MUSICIEN: "45745c60-7b1a-11e8-9c9c-2d42b21b1a36"
+    }
+
+    // Mise à jour de la table media avec les ayant-droits
+    let _TABLE = "media"
+
+    // 1. Réinitialiser les ayant-droits
+    let rHs = []
+
+    let params = {
+      TableName: _TABLE,
+      Key: {
+        'mediaId': mediaId
+      },
+      UpdateExpression: 'set rightHolders  = :r',
+      ExpressionAttributeValues: {
+        ':r' : rHs
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+      } else {
+        // 2. Analyse et ajout à partir de la proposition des ayant-droits
+        Object.keys(partages).forEach(type=>{
+          Object.keys(partages[type]).forEach(sousType=>{
+            let part = partages[type][sousType]
+            part.forEach(_p=>{
+              let adId =  _p.rightHolder.rightHolderId
+              let roles = []
+              Object.keys(_p.contributorRole).forEach(roleId=>{
+                roles.push(roleId)
+              })
+              let obj = {
+                "id": adId,
+                "roles": roles
+              }
+              rHs.push(obj)
+            })          
+          })
+        })
+        // Ajout des ayant-droits au média
+        let _params = {
+          TableName: _TABLE,
+          Key: {
+            'mediaId': mediaId
+          },
+          UpdateExpression: 'set rightHolders  = :r',
+          ExpressionAttributeValues: {
+            ':r' : rHs
+          },
+          ReturnValues: 'UPDATED_NEW'
+        };
+        ddb.update(_params, function(err, data) {
+          if (err) {
+            console.log("Error", err);
+          } else {
+            console.log('Ayant-droits mis à jour')
+          }
+        })
+      }
+    })
+  } catch(err) {
+    console.log(err)
+  }
+
+}
+
 function finDuVote(proposalId) {  
   // Si tous les votes sont récupérés, envoi du courriel de fin de votation 
 
@@ -643,7 +726,7 @@ exports.getMediaProposals = function(mediaId) {
     ddb.scan(params, function(err, data) {
       if (err) {
         console.log("Error", err);
-        resolve()
+        reject(err)
       } else {
                 
         let _items = []
@@ -916,6 +999,10 @@ exports.postProposal = function(body) {
         console.log("Error", err);
         resolve();
       } else {
+
+        // Réinitialiser et mettre à jour les ayant-droits dans le média concerné
+        majAyantDroitsMedia(body.mediaId, body.rightsSplits)
+
         resolve(SPLIT_UUID);
       }
     });
@@ -1002,6 +1089,9 @@ exports.updateProposal = function(uuid, body) {
         resolve();
       } else {
         
+        // Réinitialiser et mettre à jour les ayant-droits dans le média concerné
+        majAyantDroitsMedia(body.mediaId, body.rightsSplits)
+
         resolve(uuid);
       }
     })  

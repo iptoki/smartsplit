@@ -30,13 +30,20 @@ exports.getSplitShare = function(proposalId, rightHolderId) {
     ddb.scan(params, function(err, data) {
       if (err) {
         console.log("Error", err)
+        reject(err)
       }
       let partages = data.Items
       partages.forEach(p=>{
         if(p.proposalId === proposalId && p.rightHolderId === rightHolderId) {
           parts.push(p)          
         }
+      })      
+
+      // Ordonner par _d (horodatage)
+      parts.sort((a,b)=>{
+        return a._d - b._d
       })
+
       resolve(parts)
     })
   })  
@@ -346,6 +353,7 @@ exports.addSplitShare = function(body, type) {
         'shareePct': body.shareePct,
         'version': body.version,
         'etat': 'ATTENTE',
+        '_d': new Date().getTime(),
         'type': type
       }
     };
@@ -354,6 +362,9 @@ exports.addSplitShare = function(body, type) {
         console.log("Error", err);
         resolve();
       } else {
+
+        // Ajouter l'ayant-droit à l'oeuvre avec le rôle éditeur (45745c60-7b1a-11e8-9c9c-2d42b21b1a50)
+
         resolve(SPLITSHARE_UUID);
       }
     });
