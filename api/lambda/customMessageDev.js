@@ -1,6 +1,24 @@
 const AWS = require('aws-sdk');
+const ddb = new AWS.DynamoDB.DocumentClient({region: 'us-east-2'});
 
 exports.handler = (event, context, callback) => {
+
+    let params = {
+        TableName: TABLE,
+        Key: {
+          'rightHolderId': event.request.userAttributes.username
+        }
+      };
+      // Call DynamoDB to delete the item from the table
+      ddb.get(params, function(err, data) {
+        if (err) {
+          console.log("Error", err);
+          resolve();
+        } else {
+           // ADD CUSTOME MESSAGE CODE HERE 
+            console.log(data)
+        }
+      });
 
     let CustomMessage_ChoosePassword_FR = `<style>
         p {

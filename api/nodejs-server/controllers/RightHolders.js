@@ -35,6 +35,17 @@ module.exports.getRightHolder = function getRightHolder (req, res, next) {
     });
 };
 
+module.exports.postEmailToRightHolderId = function postEmailToRightHolderId (req, res, next) {
+  var body = req.swagger.params['body'].value;
+  RightHolders.postEmailToRightHolderId(body)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
 module.exports.patchRightHolderArtistName = function patchRightHolderArtistName (req, res, next) {
   var rightHolderId = req.swagger.params['rightHolderId'].value;
   var artistName = req.swagger.params['artistName'].value;
@@ -63,6 +74,18 @@ module.exports.patchRightHolderEmail = function patchRightHolderEmail (req, res,
   var rightHolderId = req.swagger.params['rightHolderId'].value;
   var email = req.swagger.params['email'].value;
   RightHolders.patchRightHolderEmail(rightHolderId,email)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.patchRightHolderSource = function patchRightHolderSource (req, res, next) {
+  var rightHolderId = req.swagger.params['rightHolderId'].value;
+  var source = req.swagger.params['source'].value;
+  RightHolders.patchRightHolderSource(rightHolderId,source)
     .then(function (response) {
       utils.writeJson(res, response);
     })
