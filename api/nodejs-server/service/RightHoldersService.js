@@ -104,9 +104,9 @@ exports.getRightHolder = function(rightHolderId) {
  * rightHolderId Integer The rights holder's unique profile ID
  * returns rightHolder
  **/
-exports.getRightHolderId = function(email) {
+exports.postEmailToRightHolderId = function(body) {
   return new Promise(function(resolve, reject) {
-    let EMAIL = email
+    let EMAIL = body.email
     let EMAIL_FILTER_STRING = 'email = \"'+ EMAIL + '\"';
     let params = {
       "AttributesToGet": ["sub"],

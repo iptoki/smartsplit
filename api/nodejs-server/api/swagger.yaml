@@ -1190,24 +1190,19 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "RightHolders"
-  /rightHolders/{email}:
-    get:
+  /rightHolders/emailToRightHolderId:
+    post:
       tags:
       - "RightHolders"
       description: "Get the right holder's ID given their email address"
-      operationId: "getRightHolderId"
+      operationId: "postEmailToRightHolderId"
       parameters:
-      - name: "email"
-        in: "path"
-        description: "The right holder's email address"
-        required: true
-        type: "string"
       - in: "body"
-        name: "rightHolderId"
-        description: "The rights holder's id"
+        name: "body"
+        description: "request"
         required: true
         schema:
-          $ref: "#/definitions/rightHolder/properties/rightHolderId"
+          $ref: "#/definitions/rightHolder"
       responses:
         200:
           description: "OK"

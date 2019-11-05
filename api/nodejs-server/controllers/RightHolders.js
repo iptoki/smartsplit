@@ -35,9 +35,9 @@ module.exports.getRightHolder = function getRightHolder (req, res, next) {
     });
 };
 
-module.exports.getRightHolderId = function getRightHolderId (req, res, next) {
-  var email = req.swagger.params['email'].value;
-  RightHolders.getRightHolderId(email)
+module.exports.postEmailToRightHolderId = function postEmailToRightHolderId (req, res, next) {
+  var body = req.swagger.params['body'].value;
+  RightHolders.postEmailToRightHolderId(body)
     .then(function (response) {
       utils.writeJson(res, response);
     })
