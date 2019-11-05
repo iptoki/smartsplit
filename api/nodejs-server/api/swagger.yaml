@@ -259,6 +259,34 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "Entities"
+    post:
+      tags:
+      - Entities
+      description: "ajouter une entité pour un utilisateur"
+      operationId: "putUserInEntity"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/entityPutUser"
+      responses:
+        200:
+          description: "OK."
+          schema:
+            $ref: "#/definitions/entityPutUser"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Entities"
   /proposal/derniere-proposition/{mediaId}:
     get:
       tags:
@@ -2869,7 +2897,16 @@ definitions:
         description: "Identifiant unique de l'ayant-droit qui bénificie (p.ex., l'éditeur)"
       type:
         type: "string"
-        description: "% de l'ayant-droit"      
+        description: "% de l'ayant-droit"
+  entityPutUser:
+    type: "object"
+    properties:
+      entite:
+        type: "string"
+        description: "nom de l'entité"
+      username:
+        type: "string"
+        description: "utilisateur (uuid)"      
   payments:
     type: "array"
     description: "An array of information about payments"
