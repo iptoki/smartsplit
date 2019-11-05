@@ -15,7 +15,9 @@ AWS.config.update({
 });
 
 const ddb = new AWS.DynamoDB.DocumentClient({region: REGION});
-
+const USER_POOL_ID = 'us-east-2_tK9rNdAB1'
+const COGNITO_CLIENT = new AWS.CognitoIdentityServiceProvider();
+const axios = require('axios');
 
 /**
  * Delete a right holder's profile with the given ID
@@ -68,7 +70,6 @@ exports.getAllRightHolders = function() {
 }
 
 
-
 /**
  * Get a right holder's profile with the given ID
  *
@@ -96,6 +97,34 @@ exports.getRightHolder = function(rightHolderId) {
   });
 }
 
+
+/**
+ * Get a right holder's profile with the given ID
+ *
+ * rightHolderId Integer The rights holder's unique profile ID
+ * returns rightHolder
+ **/
+exports.getRightHolderId = function(email) {
+  return new Promise(function(resolve, reject) {
+    let EMAIL = email
+    let EMAIL_FILTER_STRING = 'email = \"'+ EMAIL + '\"';
+    let params = {
+      "AttributesToGet": ["sub"],
+      "Filter": EMAIL_FILTER_STRING,
+      "Limit": 1,
+      "UserPoolId": USER_POOL_ID
+    }
+    COGNITO_CLIENT.listUsers(params, (err, data) => {
+      if (err) {
+          console.log(err);
+      }
+      else {
+          console.log(data);
+          resolve(data.Users[0].Attributes[0].Value)
+      }
+    });
+  })
+}
 
 /**
  * Update the artist name of a right holder
@@ -182,6 +211,39 @@ exports.patchRightHolderEmail = function(rightHolderId,email) {
       UpdateExpression: 'set email = :e',
       ExpressionAttributeValues: {
         ':e' : email.email
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        
+        resolve(data.Attributes);
+      }
+    });
+  });
+}
+
+
+/**
+ * Update right holder's source with given ID
+ *
+ * rightHolderId Integer The right holder's unique profile ID
+ * source Either pochette or smartsplit
+ **/
+exports.patchRightHolderSource = function(rightHolderId,source) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'rightHolderId': rightHolderId
+      },
+      UpdateExpression: 'set source = :s',
+      ExpressionAttributeValues: {
+        ':s' : source.source
       },
       ReturnValues: 'UPDATED_NEW'
     };
@@ -532,6 +594,7 @@ exports.postRightHolder = function(body) {
           'media': body.media,
           'firstName': body.firstName,
           'email': body.email,
+          'source': body.source,
           'lastName': body.lastName,
           'password': body.password,
           'jurisdiction' : body.jurisdiction,
@@ -572,13 +635,14 @@ exports.updateRightHolder = function(rightHolderId,body) {
       },
       UpdateExpression: 'set ipi  = :i, wallet = :w, media = :m, firstName = :f, email = :e, lastName = :l, \
                              socialMediaLinks = :s, jurisdiction = :j, artistName = :n, avatarImage = :t, \
-                             defaultRoles = :r, groups = :g, accountCreationType = :u, locale = :x',
+                             defaultRoles = :r, groups = :g, accountCreationType = :u, locale = :x, source = :z',
       ExpressionAttributeValues: {
         ':i' : body.ipi,
         ':w' : body.wallet,
         ':m' : body.media,
         ':f' : body.firstName,
         ':e' : body.email,
+        ':z' : body.source,
         ':l' : body.lastName,
         ':j' : body.jurisdiction,
         ':n' : body.artistName,

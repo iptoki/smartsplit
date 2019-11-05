@@ -1190,6 +1190,78 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "RightHolders"
+  /rightHolders/{email}:
+    get:
+      tags:
+      - "RightHolders"
+      description: "Get the right holder's ID given their email address"
+      operationId: "getRightHolderId"
+      parameters:
+      - name: "email"
+        in: "path"
+        description: "The right holder's email address"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "rightHolderId"
+        description: "The rights holder's id"
+        required: true
+        schema:
+          $ref: "#/definitions/rightHolder/properties/rightHolderId"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            properties:
+              rightHolderId:
+                type: "string"
+                example: "134a8431-ea1f-4c04-ad1b-dfd27adee166"
+                description: "The right holder's ID"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "RightHolders"
+  /rightHolders/{rightHolderId}/source:
+    patch:
+      tags:
+      - "RightHolders"
+      description: "Update right holder's source (pochette or smartsplit) address with given ID"
+      operationId: "patchRightHolderSource"
+      parameters:
+      - name: "rightHolderId"
+        in: "path"
+        description: "The right holder's unique profile ID"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "source"
+        description: "The rights holder's source, either smartsplit or pochette upon request"
+        required: true
+        schema:
+          $ref: "#/definitions/rightHolder/properties/source"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/rightHolder/properties/source"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "RightHolders"
   /rightHolders/{rightHolderId}/ipi:
     patch:
       tags:
@@ -2454,6 +2526,10 @@ definitions:
         type: "string"
         example: "john.smith@example.com"
         description: "The email address for this right holder profile"
+      source:
+        type: "string"
+        example: "pochette"
+        description: "The last known application that the user made a request to update account/profile"
       jurisdiction:
         type: "string"
         example: "Canada"
@@ -2503,6 +2579,7 @@ definitions:
       firstName: "John"
       lastName: "Smith"
       email: "john.smith@example.com"
+      source: "pochette"
       jurisdiction: "Canada"
       ipi: "00004576"
       wallet: "0xdd87ae15f4be97e2739c9069ddef674f907d27a8"
