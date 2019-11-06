@@ -234,16 +234,16 @@ exports.patchRightHolderEmail = function(rightHolderId,email) {
  * rightHolderId Integer The right holder's unique profile ID
  * source Either pochette or smartsplit
  **/
-exports.patchRightHolderSource = function(rightHolderId,source) {
+exports.patchRightHolderRequestSource = function(rightHolderId,requestSource) {
   return new Promise(function(resolve, reject) {
     let params = {
       TableName: TABLE,
       Key: {
         'rightHolderId': rightHolderId
       },
-      UpdateExpression: 'set source = :s',
+      UpdateExpression: 'set requestSource = :s',
       ExpressionAttributeValues: {
-        ':s' : source.source
+        ':s' : requestSource.requestSource
       },
       ReturnValues: 'UPDATED_NEW'
     };
@@ -594,7 +594,7 @@ exports.postRightHolder = function(body) {
           'media': body.media,
           'firstName': body.firstName,
           'email': body.email,
-          'source': body.source,
+          'requestSource': body.requestSource,
           'lastName': body.lastName,
           'password': body.password,
           'jurisdiction' : body.jurisdiction,
@@ -635,14 +635,14 @@ exports.updateRightHolder = function(rightHolderId,body) {
       },
       UpdateExpression: 'set ipi  = :i, wallet = :w, media = :m, firstName = :f, email = :e, lastName = :l, \
                              socialMediaLinks = :s, jurisdiction = :j, artistName = :n, avatarImage = :t, \
-                             defaultRoles = :r, groups = :g, accountCreationType = :u, locale = :x, source = :z',
+                             defaultRoles = :r, groups = :g, accountCreationType = :u, locale = :x, requestSource = :z',
       ExpressionAttributeValues: {
         ':i' : body.ipi,
         ':w' : body.wallet,
         ':m' : body.media,
         ':f' : body.firstName,
         ':e' : body.email,
-        ':z' : body.source,
+        ':z' : body.requestSource,
         ':l' : body.lastName,
         ':j' : body.jurisdiction,
         ':n' : body.artistName,
