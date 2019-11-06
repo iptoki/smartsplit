@@ -1223,12 +1223,12 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "RightHolders"
-  /rightHolders/{rightHolderId}/source:
+  /rightHolders/{rightHolderId}/requestSource:
     patch:
       tags:
       - "RightHolders"
-      description: "Update right holder's source (pochette or smartsplit) address with given ID"
-      operationId: "patchRightHolderSource"
+      description: "Update right holder's requestSource (pochette or smartsplit) address with given ID"
+      operationId: "patchRightHolderRequestSource"
       parameters:
       - name: "rightHolderId"
         in: "path"
@@ -1236,16 +1236,20 @@ paths:
         required: true
         type: "string"
       - in: "body"
-        name: "source"
-        description: "The rights holder's source, either smartsplit or pochette upon request"
+        name: "requestSource"
+        description: "The rights holder's requestSource, either smartsplit or pochette upon request"
         required: true
         schema:
-          $ref: "#/definitions/rightHolder/properties/source"
+          $ref: "#/definitions/rightHolder/properties/requestSource"
       responses:
         200:
           description: "OK"
           schema:
-            $ref: "#/definitions/rightHolder/properties/source"
+            properties:
+              requestSource:
+                type: "string"
+                example: "Smartsplit"
+                description: "The application requestSource of the right holder's last request"
         400:
           description: "Bad request"
         403:
@@ -2521,7 +2525,7 @@ definitions:
         type: "string"
         example: "john.smith@example.com"
         description: "The email address for this right holder profile"
-      source:
+      requestSource:
         type: "string"
         example: "pochette"
         description: "The last known application that the user made a request to update account/profile"
@@ -2574,7 +2578,7 @@ definitions:
       firstName: "John"
       lastName: "Smith"
       email: "john.smith@example.com"
-      source: "pochette"
+      requestSource: "pochette"
       jurisdiction: "Canada"
       ipi: "00004576"
       wallet: "0xdd87ae15f4be97e2739c9069ddef674f907d27a8"

@@ -82,10 +82,10 @@ module.exports.patchRightHolderEmail = function patchRightHolderEmail (req, res,
     });
 };
 
-module.exports.patchRightHolderSource = function patchRightHolderSource (req, res, next) {
+module.exports.patchRightHolderRequestSource = function patchRightHolderRequestSource (req, res, next) {
   var rightHolderId = req.swagger.params['rightHolderId'].value;
-  var source = req.swagger.params['source'].value;
-  RightHolders.patchRightHolderSource(rightHolderId,source)
+  var requestSource = req.swagger.params['requestSource'].value;
+  RightHolders.patchRightHolderRequestSource(rightHolderId,requestSource)
     .then(function (response) {
       utils.writeJson(res, response);
     })
