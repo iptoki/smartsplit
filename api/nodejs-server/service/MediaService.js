@@ -801,13 +801,14 @@ exports.postMedia = function(body) {
             Key: {
               'mediaId': parseInt(body.mediaId)
             },
-            UpdateExpression: 'set creator  = :cr, artist = :ar, album = :al, atype = :ty,\
+            UpdateExpression: 'set creator  = :cr, creationDate = :c, artist = :ar, album = :al, atype = :ty,\
             \ modificationDate = :moD, publishDate = :puD, files = :files, publisher = :pu,\
             \ title = :ti, genre = :ge, secondaryGenre = :ge2, lyrics = :ly, isrc = :isrc, upc = :upc, iswc = :iswc,\
             \ msDuration = :dur, socialMediaLinks = :smL, streamingServiceLinks = :ssL, pressArticleLinks = :paL, playlistLinks = :plL, remixer = :rem,\
             \ rightHolders = :rHs, cover = :cov, jurisdiction = :jur, bpm = :bpm, influence = :inf, studio = :stu, studioAddress = :stuA,\
             \ label = :lbl, labelAddress = :lblA, distributor = :dist, distributorAddress = :distA',
             ExpressionAttributeValues: {
+              ':c' : body.creationDate,
               ':cr' : body.creator ? body.creator : (_media.creator ? _media.creator : " "),
               ':ar' : body.artist ? body.artist : (_media.artist ? _media.artist : " "),
               ':al' : body.album ? body.album : (_media.album ? _media.album : " "),
@@ -876,6 +877,9 @@ exports.postMedia = function(body) {
 exports.updateMedia = function(mediaId,body) {
   return new Promise(function(resolve, reject) {
     // Assign modificationDate to current date time
+
+    console.log('update media')
+
     let d = Date(Date.now());   
     let DATE_MODIFIED = d.toString();
     let params = {
