@@ -808,7 +808,7 @@ exports.postMedia = function(body) {
             \ rightHolders = :rHs, cover = :cov, jurisdiction = :jur, bpm = :bpm, influence = :inf, studio = :stu, studioAddress = :stuA,\
             \ label = :lbl, labelAddress = :lblA, distributor = :dist, distributorAddress = :distA',
             ExpressionAttributeValues: {
-              ':c' : body.creationDate,
+              ':c' : body.creationDate || moment().format(),
               ':cr' : body.creator ? body.creator : (_media.creator ? _media.creator : " "),
               ':ar' : body.artist ? body.artist : (_media.artist ? _media.artist : " "),
               ':al' : body.album ? body.album : (_media.album ? _media.album : " "),
