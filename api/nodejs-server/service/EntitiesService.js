@@ -18,8 +18,7 @@ AWS.config.update({
 
 const ddb = new AWS.DynamoDB.DocumentClient({region: REGION})
 
-exports.putUserInEntity = function(entite, username) {
-  console.log(entite, username)
+exports.putUserInEntity = function(entite, username) {  
   return new Promise(function(resolve, reject){
     try {
       // 4. Récupère la proposition de part à un tier
