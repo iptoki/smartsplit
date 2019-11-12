@@ -34,11 +34,12 @@ exports.handler = function(event, context, callback) {
         
         console.log(event.request.userAttributes.given_name, event.request.userAttributes.family_name, event.request.userAttributes);
         
-        let prenom, nom, nomArtiste, roles, instruments, groupes, locale, accountCreationType;
+        let prenom, nom, nomArtiste, roles, instruments, groupes, locale, accountCreationType, requestSource;
         prenom = JSON.parse(JSON.stringify(event.request.userAttributes.given_name));
         nom = JSON.parse(JSON.stringify(event.request.userAttributes.family_name));
         locale = event.request.userAttributes.locale;
-        accountCreationType = event.request.userAttributes.gender // gender used as flag;
+        accountCreationType = event.request.userAttributes.gender; // gender used as flag;
+        requestSource = event.request.userAttributes['custom:requestSource']
         nomArtiste = event.request.userAttributes['custom:artistName'] ? JSON.parse(JSON.stringify(event.request.userAttributes['custom:artistName'])) : `${prenom} ${nom}`;
         roles = event.request.userAttributes['custom:defaultRoles'] ? JSON.parse(event.request.userAttributes['custom:defaultRoles']) : [];
         instruments = event.request.userAttributes['custom:instruments'] ? JSON.parse(event.request.userAttributes['custom:instruments']) : [];
@@ -67,21 +68,27 @@ exports.handler = function(event, context, callback) {
             reject(err);
           } else {
             
+
             /*
             
             Envoi courriel de bienvenue.
             
             */
-            let body = [
-            	{
-            		"toEmail": event.request.userAttributes.email,
-            		"firstName": prenom,
-            		"lastName": nom,
-            		"callbackURL": "http://dev.smartsplit.org/",
-            		"template": "compteCree"
-            	}
-            ]
-            
+            console.log(event.request.userAttributes)
+            console.log(event.request.userAttributes.gender)
+
+
+            if (requestSource === "pochette"){
+              let body = [
+              	{
+              		"toEmail": event.request.userAttributes.email,
+              		"firstName": prenom,
+              		"lastName": nom,
+              		"callbackURL": "http://proto.smartsplit.org/",
+              		"template": accountCreationType === "initiatorCreatedUser" ? "initiateurCompteCreePochette" : "compteCreePochette"  
+              	}
+              ]
+              
             const options = {
               hostname: 'messaging.smartsplit.org',
               port: 3034,
@@ -108,7 +115,51 @@ exports.handler = function(event, context, callback) {
             // Write data to request body
             req.write(JSON.stringify(body));
             req.end();
+              
+              
+              
+            } else {
+              let body = [
+              	{
+              		"toEmail": event.request.userAttributes.email,
+              		"firstName": prenom,
+              		"lastName": nom,
+              		"callbackURL": "http://proto.smartsplit.org/",
+              		"template": accountCreationType === "initiatorCreatedUser" ? "initiateurCompteCree" : "compteCree"  
+              	}
+              ]
+              
+            const options = {
+              hostname: 'messaging.smartsplit.org',
+              port: 3034,
+              path: '/sendEmail',
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Content-Length': Buffer.byteLength(JSON.stringify(body))
+              }
+            }
             
+            const req = http.request(options, (res) => {
+              console.log(`STATUS: ${res.statusCode}`);
+              console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
+              
+              res.setEncoding('utf8');
+              
+            });
+          
+            req.on('error', (e) => {
+              console.error(`problem with request: ${e.message}`);
+            });
+            
+            // Write data to request body
+            req.write(JSON.stringify(body));
+            req.end();
+              
+              
+            }
+            
+
             /*
             
             Ajouter les entités de groupes ici
