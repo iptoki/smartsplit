@@ -44,6 +44,58 @@ exports.deleteMedia = function(mediaId) {
   });
 }
 
+exports.setMediaProposalInitiator = function(mediaId, rightHolderId) {
+  return new Promise(function(resolve, reject) {
+
+    try {
+      // Récupérer le média
+      let params = {
+        TableName: TABLE,
+        Key: {
+          'mediaId': mediaId
+        }
+      }
+      ddb.get(params, function(err, data) {
+        if (err) {
+          console.log("Error", err);
+          resolve();
+        } else {
+
+          try {
+            // Assigner l'ayant-droit qui initie le partage
+            let params = {
+              TableName: TABLE,
+              Key: {
+                'mediaId': mediaId
+              },
+              UpdateExpression: 'set initiateurPropositionEnCours = :a',
+              ExpressionAttributeValues: {
+                ':a' : rightHolderId
+              },
+              ReturnValues: 'UPDATED_NEW'
+            };
+            // Call DynamoDB to update the item from the table
+            ddb.update(params, function(err, data) {
+              if (err) {
+                console.log("Error", err);
+                resolve();
+              } else {
+                resolve(data.Attributes);
+              }
+            });
+          } catch (err) {
+            console.log(err)
+          }
+
+          resolve(data);
+        }
+      });
+    } catch (err) {
+      console.log(err)
+    }
+   
+  });
+}
 
 /**
  * Get a list of all media
@@ -777,10 +829,14 @@ exports.postMedia = function(body) {
 
         ddb.query(params, (err, res)=>{
           if(err)
-            console.log(err)
-          
+            console.log(err)          
+
           let _media
-          let _i = res.Items[0]
+          let _i
+          
+          if(res.Items.length > 0) {
+            _i = res.Items[0]
+          }
           
           if(_i){
             _media = _i
@@ -860,8 +916,7 @@ exports.postMedia = function(body) {
         })
       } catch (err) {
         console.log(err)
-      }
-      
+      }      
       
     }
   })
@@ -877,8 +932,6 @@ exports.postMedia = function(body) {
 exports.updateMedia = function(mediaId,body) {
   return new Promise(function(resolve, reject) {
     // Assign modificationDate to current date time
-
-    console.log('update media')
 
     let d = Date(Date.now());   
     let DATE_MODIFIED = d.toString();

@@ -3,6 +3,19 @@
 var utils = require('../utils/writer.js');
 var Media = require('../service/MediaService');
 
+module.exports.setMediaProposalInitiator = function setMediaProposalInitiator(req, res, next) {
+  var body = req.swagger.params['body'].value
+  let mediaId = req.swagger.params['mediaId'].value
+  let rhId = body.rightHolderId
+  Media.setMediaProposalInitiator(mediaId, rhId)
+  .then(function(response) {
+    utils.writeJson(res, response)
+  })
+  .catch(function (response) {
+    utils.writeJson(res, response)
+  })
+}
+
 module.exports.putMedia = function putMedia(req, res, next) {
   var body = req.swagger.params['body'].value
   let title = body.title, type = body.type, creator = body.creator

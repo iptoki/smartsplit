@@ -265,6 +265,26 @@ function finDuVote(proposalId) {
               }
             })
 
+            // Retirer l'initiateur de la proposition en cours du média
+            params = {
+              TableName: 'media',
+              Key: {
+                'mediaId': proposition.mediaId
+              },
+              UpdateExpression: 'set initiateurPropositionEnCours  = :e',
+              ExpressionAttributeValues: {
+                ':e': " "
+              },
+              ReturnValues: 'UPDATED_NEW'
+            }
+            ddb.update(params, function(err, data) {
+              if (err) {
+                console.log("Error", err)
+              } else {
+                
+              }
+            })
+
           })
         })
       })

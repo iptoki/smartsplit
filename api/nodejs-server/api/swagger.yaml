@@ -1692,6 +1692,38 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "Media"
+  /media/proposal/{mediaId}:
+    put:
+      tags:
+      - "Media"
+      description: "Set the media current proposal initiator"
+      operationId: "setMediaProposalInitiator"
+      parameters:
+      - name: "mediaId"
+        in: "path"
+        description: "Identifiant unique du média"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "body"
+        description: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/mediaProposal"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/media"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Media"
   /media/{mediaId}/title:
     patch:
       tags:
@@ -3017,6 +3049,11 @@ definitions:
       amount: 20
       payee: 1
       transactionHash: "0x58a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c"
+  mediaProposal:
+    type: "object"
+    properties:          
+      rightHolderId: 
+        type: "string"      
   socan:
     type: "object"
     properties:
