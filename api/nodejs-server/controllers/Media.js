@@ -275,3 +275,30 @@ module.exports.updateMedia = function updateMedia (req, res, next) {
       utils.writeJson(res, response);
     });
 };
+
+module.exports.decodeMedia = function decodeMedia (req, res, next) {
+  var body = req.swagger.params['body'].value
+  var token = body.token
+  Media.decodeMedia(token)
+  .then(function (response) {
+    utils.writeJson(res, response)
+  })
+  .catch(function (response) {
+    utils.writeJson(res, response)
+  });  
+
+};
+
+module.exports.shareMedia = function shareMedia (req, res, next) {
+  var body = req.swagger.params['body'].value
+  var mediaId = body.mediaId
+  var rightHolders = body.rightHolders
+  Media.shareMedia(mediaId, rightHolders)
+  .then(function (response) {
+    utils.writeJson(res, response)
+  })
+  .catch(function (response) {
+    utils.writeJson(res, response)
+  });  
+
+};

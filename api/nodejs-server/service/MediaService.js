@@ -1,7 +1,7 @@
 'use strict';
 const TABLE = 'media';
 const utils = require('../utils/utils.js');
-const uuidv1 = require('uuid/v1');
+const jwt = require('jsonwebtoken');
 
 const moment = require('moment')
 
@@ -977,5 +977,90 @@ exports.updateMedia = function(mediaId,body) {
       }
     });
   });
+}
+
+
+exports.decodeMedia = function(token) {
+  return new Promise(function(resolve, reject) {
+    utils.getParameter('SECRET_JWS_MEDIA', (secret)=>{
+      try {
+          let content = jwt.verify(token, secret)
+          resolve(content.data)
+      } catch(err) {
+          console.log(err)
+      }
+    })
+  })
+}
+
+
+exports.shareMedia = function(mediaId, rightHolders) {   
+
+  return new Promise(function(resolve, reject) {
+    // Get the media 
+    let params = {
+      TableName: TABLE,
+      Key: {
+        'mediaId': mediaId
+      }
+    };
+    ddb.get(params, function(err, data) {
+      if (err) {
+        console.log("Error", err)
+      }
+        
+      let media = data.Item
+      // let title = media.title
+      // let rightHolderIds = media.rightHolderIds
+
+      utils.getParameter('SECRET_JWS_MEDIA', (secret)=>{
+  
+        const EXPIRATION = "365 days"                              
+        Object.keys(rightHolders).forEach((elem)=>{
+          let token = jwt.sign(          
+            {
+                data: {mediaId: mediaId, rightHolderId: rightHolders[elem].rightHolderId}
+            },
+            secret,
+            {expiresIn: EXPIRATION}
+          )
+          rightHolders[elem].token = token
+        })
+        
+        // 3. Récupérer le titre du média avec le mediaId (async)        
+        axios.get(`http://api.smartsplit.org:8080/v1/media/${mediaId}`)
+        .then(res=>{
+          let titre = res.data.Item.title
+          // 3.a -> Envoyer un courriel à tous (différent si initiateur)
+          Object.keys(rightHolders).forEach((elem)=>{
+            let body = [
+              {
+                  "toEmail": rightHolders[elem].email,
+                  "firstName": rightHolders[elem].name,
+                  "workTitle": titre,
+                  "template":"sharePublicMedia",
+                  "callbackURL": `http://pochette.info/oeuvre/${mediaId}/resume/${rightHolders[elem].jeton}`
+              }
+            ]
+            
+            // if(access === "private") {
+            //   // Confirmation d'envoi de proposition
+            //   body[0].template = "sharePrivateMedia"            
+            // } else if (access === "public"){
+            //   body[0].template = "sharePublicMedia"
+            // } else if (access === "permissioned"){
+            //   body[0].template = "sharePermissionedMedia"
+            // }
+            axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)
+          })
+
+          
+        })
+        .catch(err=>{
+          console.log(err)
+        })        
+      })
+    })  
+  })
 }
 

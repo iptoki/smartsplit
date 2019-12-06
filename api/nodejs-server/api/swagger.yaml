@@ -2276,6 +2276,64 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
+  /media/decodeMedia:    
+    post:
+      tags:
+      - Media
+      description: "This method decodes a media token for shared media links"
+      operationId: "decodeMedia"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/decodeMedia"
+      responses:
+        200:
+          description: "OK."
+          schema:
+            $ref: "#/definitions/decodeMedia"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Media"  
+  /media/shareMedia:
+    post:
+      tags:
+      - Media
+      description: "This method invites a collaborator to a shared link for an audio file"
+      operationId: "shareMedia"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/shareMedia"
+      responses:
+        200:
+          description: "OK."
+          schema:
+            $ref: "#/definitions/shareMedia"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      security:
+      - jwt: []
+      x-swagger-router-controller: "Media"
   /payments:
     get:
       tags:
@@ -2811,6 +2869,35 @@ definitions:
           playlistLinks: {spotify: "https://open.spotify.com/playlist/37i9dQZEVXbKfIuOAZrk7G", youtube: "https://www.youtube.com/playlist?list=PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx"}
         }
       ]
+  decodeMedia:
+    type: "object"
+    properties: 
+      token:
+        type: "string"
+        example: "JWT Token"
+        description: "The JWT to decode"      
+    example:
+      {
+        "token": "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e.xyz.xzdv"
+      }
+  shareMedia:
+    type: "object"
+    properties: 
+      mediaId:
+        type: "string"
+        example: "111"
+        description: "The unique ID for the given media"
+      rightHolders:
+        type: "object"
+        example: "{{rightHolderId: '018e1527-d625-40b6-b63f-9f8bbc8da261', name: 'Bob', email: 'bob@example.com'}, ... }"
+        description: "An object of collaborators de colaborateurs (id, name, and email)"
+        items:
+          $ref: "#/definitions/rightHolderShort"
+    example:
+      {
+        "mediaId": "111",
+        "rightHolders": "{{rightHolderId: '018e1527-d625-40b6-b63f-9f8bbc8da261', name: 'Bob', email: 'bob@example.com'}, ... }"
+      }
   listProposals:
     type: "array"
     description: "An array of information about splits"
