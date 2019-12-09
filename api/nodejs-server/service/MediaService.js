@@ -994,7 +994,7 @@ exports.decodeMedia = function(token) {
 }
 
 
-exports.shareMedia = function(mediaId, rightHolders) {   
+exports.shareMedia = function(mediaId, rightHolders, access) {   
 
   return new Promise(function(resolve, reject) {
     // Get the media 
@@ -1019,7 +1019,7 @@ exports.shareMedia = function(mediaId, rightHolders) {
         Object.keys(rightHolders).forEach((elem)=>{
           let token = jwt.sign(          
             {
-                data: {mediaId: mediaId, rightHolderId: rightHolders[elem].rightHolderId}
+                data: {mediaId: mediaId, rightHolderId: rightHolders[elem].rightHolderId, access: access}
             },
             secret,
             {expiresIn: EXPIRATION}
@@ -1038,23 +1038,20 @@ exports.shareMedia = function(mediaId, rightHolders) {
                   "toEmail": rightHolders[elem].email,
                   "firstName": rightHolders[elem].name,
                   "workTitle": titre,
-                  "template":"sharePublicMedia",
-                  "callbackURL": `http://pochette.info/oeuvre/${mediaId}/resume/${rightHolders[elem].jeton}`
+                  "callbackURL": `http://pochette.info/oeuvre/${mediaId}/resume/${rightHolders[elem].token}`
               }
             ]
             
-            // if(access === "private") {
-            //   // Confirmation d'envoi de proposition
-            //   body[0].template = "sharePrivateMedia"            
-            // } else if (access === "public"){
-            //   body[0].template = "sharePublicMedia"
-            // } else if (access === "permissioned"){
-            //   body[0].template = "sharePermissionedMedia"
-            // }
+            if(access === "private") {
+              body[0].template = "sharePrivateMedia"            
+            } else if (access === "public"){
+              body[0].template = "sharePublicMedia"
+            } else if (access === "permissioned"){
+              body[0].template = "sharePermissionedMedia"
+            }
             axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)
           })
-
-          
+                  
         })
         .catch(err=>{
           console.log(err)
