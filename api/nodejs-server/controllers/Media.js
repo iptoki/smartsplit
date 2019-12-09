@@ -293,7 +293,8 @@ module.exports.shareMedia = function shareMedia (req, res, next) {
   var body = req.swagger.params['body'].value
   var mediaId = body.mediaId
   var rightHolders = body.rightHolders
-  Media.shareMedia(mediaId, rightHolders)
+  var access = body.access
+  Media.shareMedia(mediaId, rightHolders, access)
   .then(function (response) {
     utils.writeJson(res, response)
   })
