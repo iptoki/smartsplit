@@ -10,7 +10,7 @@ const uuidv1 = require('uuid/v1');
 // AWS
 // Besoin de bootstraper la récupération des paramètres puis l'activation de la BD AWS
 const AWS = require('aws-sdk');
-const REGION = 'us-east-2';
+const REGION = 'us-east-1';
 const REGION_PARAMS = 'us-east-2';
 
 const utils = require('../utils/utils.js');
