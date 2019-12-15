@@ -69,7 +69,7 @@ function majAyantDroitsMedia(mediaId, partages) {
               let obj = {
                 "id": adId
               }
-              let _ad = _objRhs[adId] = obj
+              let _ad = _objRhs[adId]
               if(_ad) {
                 roles = _ad.roles
                 obj = _ad
