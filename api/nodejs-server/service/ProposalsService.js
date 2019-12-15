@@ -42,6 +42,7 @@ function majAyantDroitsMedia(mediaId, partages) {
 
     // 1. Réinitialiser les ayant-droits
     let rHs = []
+    let _objRhs = {}
 
     let params = {
       TableName: _TABLE,
@@ -65,17 +66,28 @@ function majAyantDroitsMedia(mediaId, partages) {
             part.forEach(_p=>{
               let adId =  _p.rightHolder.rightHolderId
               let roles = []
+              let obj = {
+                "id": adId
+              }
+              let _ad = _objRhs[adId]
+              if(_ad) {
+                roles = _ad.roles
+                obj = _ad
+              }
               Object.keys(_p.contributorRole).forEach(roleId=>{
                 roles.push(roleId)
               })
-              let obj = {
-                "id": adId,
-                "roles": roles
-              }
-              rHs.push(obj)
-            })          
+              obj.roles = roles
+              _objRhs[adId] = obj              
+            })
           })
         })
+
+        // Ajout des ayant-droit uniques
+        Object.keys(_objRhs).forEach(id=>{
+          rHs.push(_objRhs[id])
+        })
+
         // Ajout des ayant-droits au média
         let _params = {
           TableName: _TABLE,
