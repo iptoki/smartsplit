@@ -851,56 +851,60 @@ exports.postMedia = function(body) {
               body.lyrics.text = " "
             }
           }
-
-          let params2 = {
-            TableName: TABLE,
-            Key: {
-              'mediaId': parseInt(body.mediaId)
-            },
-            UpdateExpression: 'set creator  = :cr, creationDate = :c, artist = :ar, album = :al, atype = :ty,\
-            \ modificationDate = :moD, publishDate = :puD, files = :files, publisher = :pu,\
-            \ title = :ti, genre = :ge, secondaryGenre = :ge2, lyrics = :ly, isrc = :isrc, upc = :upc, iswc = :iswc,\
-            \ msDuration = :dur, socialMediaLinks = :smL, streamingServiceLinks = :ssL, pressArticleLinks = :paL, playlistLinks = :plL, remixer = :rem,\
-            \ rightHolders = :rHs, cover = :cov, jurisdiction = :jur, bpm = :bpm, influence = :inf, studio = :stu, studioAddress = :stuA,\
-            \ label = :lbl, labelAddress = :lblA, distributor = :dist, distributorAddress = :distA',
-            ExpressionAttributeValues: {
-              ':c' : body.creationDate || moment().format(),
-              ':cr' : body.creator ? body.creator : (_media.creator ? _media.creator : " "),
-              ':ar' : body.artist ? body.artist : (_media.artist ? _media.artist : " "),
-              ':al' : body.album ? body.album : (_media.album ? _media.album : " "),
-              ':ty' : body.type ? body.type: (_media.type ? _media.type : " "),
-              ':moD' : DATE_MODIFIED,
-              ':puD' : body.publishDate ? body.publishDate : (_media.publishDate? _media.publishDate: " "),
-              ':files' : body.files ? body.files : (_media.files ? _media.files : {}),
-              ':pu' : body.publisher ? body.publisher : (_media.publisher ? _media.publisher : " "),
-              ':ti' : body.title ? body.title : (_media.title ? _media.title : " "),
-              ':ge' : body.genre ? body.genre : (_media.genre ? _media.genre : " "),
-              ':ge2' : body.secondaryGenres ? body.secondaryGenres : (_media.secondaryGenres ? _media.secondaryGenres : [] ),
-              ':ly' : body.lyrics ? body.lyrics : (_media.lyrics ? _media.lyrics : {text: " ", languages: [], access: "private"}),
-              ':isrc' : body.isrc ? body.isrc : (_media.isrc ? _media.isrc : " "),
-              ':iswc' : body.iswc ? body.iswc : (_media.iswc ? _media.iswc : " "),
-              ':upc' : body.upc ? body.upc : (_media.upc ? _media.upc : " "),
-              ':dur' : body.msDuration ? body.msDuration : " " ,
-              ':smL' : body.socialMediaLinks ? body.socialMediaLinks : (_media.socialMediaLinks ? _media.socialMediaLinks : []),
-              ':ssL' : body.streamingServiceLinks ? body.streamingServiceLinks : (_media.streamingServiceLinks ? _media.streamingServiceLinks : []),
-              ':paL' : body.pressArticleLinks ? body.pressArticleLinks : (_media.pressArticleLinks ? _media.pressArticleLinks : []),
-              ':plL' : body.playlistLinks ? body.playlistLinks : (_media.playlistLinks ? _media.playlistLinks : []),
-              ':rem' : body.remixer ? body.remixer : (_media.remixer ? _media.remixer : " "),
-              ':rHs' : body.rightHolders ? body.rightHolders : (_media.rightHolders ? _media.rightHolders : []),
-              ':cov' : body.cover ? body.cover : (_media.cover ? _media.cover : "false"),
-              ':jur' : body.jurisdiction ? body.jurisdiction : (_media.jurisdiction ? _media.jurisdiction : " "),
-              ':bpm' : body.bpm ? body.bpm : (_media.bpm ? _media.bpm : " "),
-              ':inf' : body.influence ? body.influence : (_media.influence ? _media.influence : " "),
-              ':stu' : body.studio ? body.studio : (_media.studio ? _media.studio : " "),
-              ':stuA' : body.studioAddress ? body.studioAddress : (_media.studioAddress ? _media.studioAddress : " "),
-              ':lbl' : body.label ? body.label : (_media.label ? _media.label : " "),
-              ':lblA' : body.labelA ? body.labelA : (_media.labelA ? _media.labelA : " "),
-              ':dist' : body.distributor ? body.distributor : (_media.distributor ? _media.distributor : " "),
-              ':distA' : body.distributorAddress ? body.distributorAddress : (_media.distributorAddress ? _media.distributorAddress : " "),
-            },
-            ReturnValues: 'UPDATED_NEW'
-          };          
+          
           try{
+
+            console.log(body)
+
+            let params2 = {
+              TableName: TABLE,
+              Key: {
+                'mediaId': parseInt(body.mediaId)
+              },
+              UpdateExpression: 'set creator  = :cr, creationDate = :c, artist = :ar, album = :al, atype = :ty,\
+              \ modificationDate = :moD, publishDate = :puD, files = :files, publisher = :pu,\
+              \ title = :ti, genre = :ge, secondaryGenre = :ge2, lyrics = :ly, isrc = :isrc, upc = :upc, iswc = :iswc,\
+              \ msDuration = :dur, socialMediaLinks = :smL, streamingServiceLinks = :ssL, pressArticleLinks = :paL, playlistLinks = :plL, remixer = :rem,\
+              \ rightHolders = :rHs, cover = :cov, jurisdiction = :jur, bpm = :bpm, influence = :inf, studio = :stu, studioAddress = :stuA,\
+              \ label = :lbl, labelAddress = :lblA, distributor = :dist, distributorAddress = :distA',
+              ExpressionAttributeValues: {
+                ':c' : body.creationDate || moment().format(),
+                ':cr' : body.creator ? body.creator : (_media.creator ? _media.creator : " "),
+                ':ar' : body.artist ? body.artist : (_media.artist ? _media.artist : " "),
+                ':al' : body.album ? body.album : (_media.album ? _media.album : " "),
+                ':ty' : body.type ? body.type: (_media.type ? _media.type : " "),
+                ':moD' : DATE_MODIFIED,
+                ':puD' : body.publishDate ? body.publishDate : (_media.publishDate? _media.publishDate: " "),
+                ':files' : body.files ? body.files : (_media.files ? _media.files : {}),
+                ':pu' : body.publisher ? body.publisher : (_media.publisher ? _media.publisher : " "),
+                ':ti' : body.title ? body.title : (_media.title ? _media.title : " "),
+                ':ge' : body.genre ? body.genre : (_media.genre ? _media.genre : " "),
+                ':ge2' : body.secondaryGenres ? body.secondaryGenres : (_media.secondaryGenres ? _media.secondaryGenres : [] ),
+                ':ly' : body.lyrics ? body.lyrics : (_media.lyrics ? _media.lyrics : {text: " ", languages: [], access: "private"}),
+                ':isrc' : body.isrc ? body.isrc : (_media.isrc ? _media.isrc : " "),
+                ':iswc' : body.iswc ? body.iswc : (_media.iswc ? _media.iswc : " "),
+                ':upc' : body.upc ? body.upc : (_media.upc ? _media.upc : " "),
+                ':dur' : body.msDuration ? body.msDuration : " " ,
+                ':smL' : body.socialMediaLinks ? body.socialMediaLinks : (_media.socialMediaLinks ? _media.socialMediaLinks : []),
+                ':ssL' : body.streamingServiceLinks ? body.streamingServiceLinks : (_media.streamingServiceLinks ? _media.streamingServiceLinks : []),
+                ':paL' : body.pressArticleLinks ? body.pressArticleLinks : (_media.pressArticleLinks ? _media.pressArticleLinks : []),
+                ':plL' : body.playlistLinks ? body.playlistLinks : (_media.playlistLinks ? _media.playlistLinks : []),
+                ':rem' : body.remixer ? body.remixer : (_media.remixer ? _media.remixer : " "),
+                ':rHs' : body.rightHolders ? body.rightHolders : (_media.rightHolders ? _media.rightHolders : []),
+                ':cov' : body.cover ? body.cover : (_media.cover ? _media.cover : "false"),
+                ':jur' : body.jurisdiction ? body.jurisdiction : (_media.jurisdiction ? _media.jurisdiction : " "),
+                ':bpm' : body.bpm ? body.bpm : (_media.bpm ? _media.bpm : " "),
+                ':inf' : body.influence ? body.influence : (_media.influence ? _media.influence : " "),
+                ':stu' : body.studio ? body.studio : (_media.studio ? _media.studio : " "),
+                ':stuA' : body.studioAddress ? body.studioAddress : (_media.studioAddress ? _media.studioAddress : " "),
+                ':lbl' : body.label ? body.label : (_media.label ? _media.label : " "),
+                ':lblA' : body.labelA ? body.labelA : (_media.labelA ? _media.labelA : " "),
+                ':dist' : body.distributor ? body.distributor : (_media.distributor ? _media.distributor : " "),
+                ':distA' : body.distributorAddress ? body.distributorAddress : (_media.distributorAddress ? _media.distributorAddress : " "),
+              },
+              ReturnValues: 'UPDATED_NEW'
+            };
+
             ddb.update(params2, function(err, data) {
               if (err) {
                 console.log("Error", err);
