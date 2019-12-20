@@ -9,7 +9,7 @@ info:
   x-providerName: "smartsplit.org"
   x-logo:
     url: "http://smartsplit.org/wp-content/uploads/2019/05/Logo-v02-005-noir.png"
-host: "api.smartsplit.org:8080"
+host: "dev.api.smartsplit.org:8080"
 basePath: "/v1"
 tags:
 - name: "Authentication Details"
