@@ -1927,7 +1927,7 @@ paths:
         description: The blockchain hash of the transaction
         required: true
 servers:
-  - url: 'https://dev.api.smartsplit.org:8080/v1'
+  - url: 'https://api.smartsplit.org:8080/v1'
 components:
   requestBodies:
     proposal:
