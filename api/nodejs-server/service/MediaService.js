@@ -1003,7 +1003,8 @@ exports.shareMedia = function(body) {
       prenom = body.prenom,
       nom = body.nom,
       courriel = body.courriel,
-      acces = body.acces
+      acces = body.acces,
+      contexte = body.contexte
 
   return new Promise(function(resolve, reject) {
     // Get the media 
@@ -1050,7 +1051,7 @@ exports.shareMedia = function(body) {
                 "firstName": `${prenom} ${nom}`,
                 "workTitle": data.Item.title,
                 "template": template,
-                "callbackURL": `http://dev.pochette.info/oeuvre/${mediaId}/resume?jeton=${jeton}`
+                "callbackURL": `http://dev.${contexte}/oeuvre/${mediaId}/resume?jeton=${jeton}`
             }
           ]
         
