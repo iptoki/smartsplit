@@ -2,6 +2,7 @@
 const TABLE = 'media';
 const utils = require('../utils/utils.js');
 const jwt = require('jsonwebtoken');
+const axios = require('axios')
 
 const moment = require('moment')
 
@@ -983,7 +984,6 @@ exports.updateMedia = function(mediaId,body) {
   });
 }
 
-
 exports.decodeMedia = function(token) {
   return new Promise(function(resolve, reject) {
     utils.getParameter('SECRET_JWS_MEDIA', (secret)=>{
@@ -997,8 +997,13 @@ exports.decodeMedia = function(token) {
   })
 }
 
+exports.shareMedia = function(body) {   
 
-exports.shareMedia = function(mediaId, rightHolders, access) {   
+  let mediaId = body.mediaId,
+      prenom = body.prenom,
+      nom = body.nom,
+      courriel = body.courriel,
+      acces = body.acces
 
   return new Promise(function(resolve, reject) {
     // Get the media 
@@ -1012,56 +1017,55 @@ exports.shareMedia = function(mediaId, rightHolders, access) {
       if (err) {
         console.log("Error", err)
       }
-        
-      let media = data.Item
-      // let title = media.title
-      // let rightHolderIds = media.rightHolderIds
-
+            
       utils.getParameter('SECRET_JWS_MEDIA', (secret)=>{
   
-        const EXPIRATION = "365 days"                              
-        Object.keys(rightHolders).forEach((elem)=>{
-          let token = jwt.sign(          
+        try {
+          const EXPIRATION = "365 days"
+          let jeton = jwt.sign(          
             {
-                data: {mediaId: mediaId, rightHolderId: rightHolders[elem].rightHolderId, access: access}
+                data: {mediaId: mediaId, acces: acces}
             },
             secret,
             {expiresIn: EXPIRATION}
-          )
-          rightHolders[elem].token = token
-        })
-        
-        // 3. Récupérer le titre du média avec le mediaId (async)        
-        axios.get(`http://dev.api.smartsplit.org:8080/v1/media/${mediaId}`)
-        .then(res=>{
-          let titre = res.data.Item.title
-          // 3.a -> Envoyer un courriel à tous (différent si initiateur)
-          Object.keys(rightHolders).forEach((elem)=>{
-            let body = [
-              {
-                  "toEmail": rightHolders[elem].email,
-                  "firstName": rightHolders[elem].name,
-                  "workTitle": titre,
-                  "callbackURL": `http://pochette.info/oeuvre/${mediaId}/resume/${rightHolders[elem].token}`
-              }
-            ]
-            
-            if(access === "private") {
-              body[0].template = "sharePrivateMedia"            
-            } else if (access === "public"){
-              body[0].template = "sharePublicMedia"
-            } else if (access === "permissioned"){
-              body[0].template = "sharePermissionedMedia"
+          )        
+          
+          let template = ""
+          switch(acces) {
+            case 1:
+              template = "sharePublicAccessLink"
+              break;
+            case 2:
+              template = "sharePrivateAccessLink"
+              break;
+            case 3:
+              template = "shareAdminAccessLink"
+              break;
+            default:
+          }
+
+          let body = [
+            {
+                "toEmail": courriel,
+                "firstName": `${prenom} ${nom}`,
+                "workTitle": data.Item.title,
+                "template": template,
+                "callbackURL": `http://dev.pochette.info/oeuvre/${mediaId}/resume?jeton=${jeton}`
             }
-            axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)
+          ]
+        
+          axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)
+          .catch(err=>{
+            console.log(err)
           })
-                  
-        })
-        .catch(err=>{
+        } catch (err) {
           console.log(err)
-        })        
-      })
-    })  
+        } finally {
+          resolve("OK")
+        }
+               
+      })                
+    })
   })
 }
 

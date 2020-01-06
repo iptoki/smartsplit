@@ -1628,7 +1628,7 @@ paths:
           description: "An unknown error occured"
       security:
       - jwt: []
-      x-swagger-router-controller: "Media"
+      x-swagger-router-controller: "Media"  
   /media/{mediaId}:
     get:
       tags:
@@ -2902,20 +2902,20 @@ definitions:
     example:
       {
         "token": "45745c60-7b1a-11e8-9c9c-2d42b21b1a3e.xyz.xzdv"
-      }
+      }  
   shareMedia:
     type: "object"
     properties: 
       mediaId:
-        type: "string"
-        example: "111"
-        description: "The unique ID for the given media"
-      rightHolders:
-        type: "object"
-        example: "{{rightHolderId: '018e1527-d625-40b6-b63f-9f8bbc8da261', name: 'Bob', email: 'bob@example.com'}, ... }"
-        description: "An object of collaborators de colaborateurs (id, name, and email)"
-        items:
-          $ref: "#/definitions/rightHolderShort"
+        type: "integer"        
+      acces:
+        type: "integer"        
+      prenom:
+        type: "string"        
+      nom: 
+        type: "string"        
+      courriel:
+        type: "string" 
     example:
       {
         "mediaId": "111",
