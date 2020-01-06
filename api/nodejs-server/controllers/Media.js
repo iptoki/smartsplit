@@ -290,10 +290,8 @@ module.exports.decodeMedia = function decodeMedia (req, res, next) {
 };
 
 module.exports.shareMedia = function shareMedia (req, res, next) {
-  var body = req.swagger.params['body'].value
-  var mediaId = body.mediaId
-  var rightHolders = body.rightHolders
-  Media.shareMedia(mediaId, rightHolders)
+  var body = req.swagger.params['body'].value    
+  Media.shareMedia(body)
   .then(function (response) {
     utils.writeJson(res, response)
   })
