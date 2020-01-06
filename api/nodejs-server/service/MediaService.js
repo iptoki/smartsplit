@@ -1051,7 +1051,7 @@ exports.shareMedia = function(body) {
                 "firstName": `${prenom} ${nom}`,
                 "workTitle": data.Item.title,
                 "template": template,
-                "callbackURL": `http://dev.${contexte}/oeuvre/${mediaId}/resume?jeton=${jeton}`
+                "callbackURL": `http://dev.${contexte}/oeuvre/resume/${jeton}`
             }
           ]
         
