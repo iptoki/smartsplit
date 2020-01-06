@@ -278,7 +278,7 @@ module.exports.updateMedia = function updateMedia (req, res, next) {
 
 module.exports.decodeMedia = function decodeMedia (req, res, next) {
   var body = req.swagger.params['body'].value
-  var token = body.token
+  var token = body.jeton
   Media.decodeMedia(token)
   .then(function (response) {
     utils.writeJson(res, response)
