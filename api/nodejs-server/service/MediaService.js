@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const axios = require('axios')
 
 const moment = require('moment')
+moment.defaultFormat = "DD-MM-YYYY HH:mm"
 
 // AWS
 const AWS = require('aws-sdk');
@@ -109,7 +110,39 @@ exports.getAllMedia = function() {
     let params = {
       "TableName": TABLE,
     }
-    // Call DynamoDB to delete the item from the table
+    ddb.scan(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve();
+      } else {
+        resolve(data.Items);
+      }
+    });
+  });
+}
+
+exports.listeCreateur = function(mediaId) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      "TableName": TABLE,
+    }
+    ddb.scan(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        
+        resolve();
+      } else {
+        resolve(data.Items);
+      }
+    });
+  });
+}
+
+exports.listeCollaborations = function(mediaId) {
+  return new Promise(function(resolve, reject) {
+    let params = {
+      "TableName": TABLE,
+    }
     ddb.scan(params, function(err, data) {
       if (err) {
         console.log("Error", err);
@@ -813,7 +846,7 @@ exports.postMedia = function(body) {
       // Assign creationDate to current date time      
 
       try {
-        let d = moment(Date.now()).format();   
+        let d = moment(Date.now()).format()
         let DATE_MODIFIED = d;
 
         // Récupère le média actuel
@@ -830,7 +863,7 @@ exports.postMedia = function(body) {
 
         ddb.query(params, (err, res)=>{
           if(err)
-            console.log(err)          
+            console.log(err)
 
           let _media
           let _i
@@ -854,9 +887,6 @@ exports.postMedia = function(body) {
           }
           
           try{
-
-            console.log(body)
-
             let params2 = {
               TableName: TABLE,
               Key: {
@@ -869,7 +899,7 @@ exports.postMedia = function(body) {
               \ rightHolders = :rHs, cover = :cov, jurisdiction = :jur, bpm = :bpm, influence = :inf, studio = :stu, studioAddress = :stuA,\
               \ label = :lbl, labelAddress = :lblA, distributor = :dist, distributorAddress = :distA',
               ExpressionAttributeValues: {
-                ':c' : body.creationDate || moment().format(),
+                ':c' : body.creationDate || moment(Date.now(), moment.defaultFormat).format("LTS"),
                 ':cr' : body.creator ? body.creator : (_media.creator ? _media.creator : " "),
                 ':ar' : body.artist ? body.artist : (_media.artist ? _media.artist : " "),
                 ':al' : body.album ? body.album : (_media.album ? _media.album : " "),
