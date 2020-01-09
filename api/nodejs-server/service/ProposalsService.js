@@ -4,6 +4,8 @@ const TABLE = 'proposal';
 const utils = require('../utils/utils.js');
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
+const moment = require('moment')
+moment.defaultFormat = "DD-MM-YYYY HH:mm"
 
 // AWS
 const AWS = require('aws-sdk');
@@ -103,8 +105,7 @@ function majAyantDroitsMedia(mediaId, partages) {
         ddb.update(_params, function(err, data) {
           if (err) {
             console.log("Error", err);
-          } else {
-            console.log('Ayant-droits mis à jour')
+          } else {            
           }
         })
       }
@@ -1009,39 +1010,94 @@ exports.patchProposalComments = function(uuid, comments) {
  **/
 exports.postProposal = function(body) {
   return new Promise(function(resolve, reject) {
-    let SPLIT_UUID = uuidv1();
-    let d = Date(Date.now());   
-    let DATE_CREATED = d.toString();
-    let UNIX_TIMESTAMP = new Date().getTime()
+
+    // Détermine si un brouillon n'est pas existant, si oui, on le remplacera
     let params = {
-      TableName: TABLE,
-      Item: {
-        'uuid': SPLIT_UUID,
-        'mediaId': body.mediaId,
-        'initiator': body.initiator,
-        'creationDate': DATE_CREATED,
-        'rightsSplits': body.rightsSplits,
-        'comments': body.comments,
-        'etat': body.etat,
-        '_d': UNIX_TIMESTAMP
-      }
-    };
-    ddb.put(params, function(err, data) {
+      "TableName": TABLE,
+    }
+
+    let item, SPLIT_UUID, d, DATE_CREATED, UNIX_TIMESTAMP
+
+    ddb.scan(params, function(err, data) {
       if (err) {
         console.log("Error", err);
         resolve();
       } else {
-
-        // Réinitialiser et mettre à jour les ayant-droits dans le média concerné
-        majAyantDroitsMedia(body.mediaId, body.rightsSplits)
-
-        resolve(SPLIT_UUID);
+        let p = false
+        data.Items.forEach(_p=>{
+          if(_p.mediaId === body.mediaId && _p.etat === "BROUILLON") {
+            p = _p
+            item = p
+            item.rightsSplits = body.rightsSplits
+            item.comments = body.comments
+            item.etat = body.etat
+          }          
+        })
+        if(!p) {
+          SPLIT_UUID = uuidv1()
+          DATE_CREATED = moment(Date.now()).format()
+          UNIX_TIMESTAMP = new Date().getTime()
+          item = {
+            'uuid': SPLIT_UUID,
+            'mediaId': body.mediaId,
+            'initiator': body.initiator,
+            'creationDate': DATE_CREATED,
+            'rightsSplits': body.rightsSplits,
+            'comments': body.comments,
+            'etat': body.etat,
+            '_d': UNIX_TIMESTAMP
+          }
+        }
+        
+        if(!p) {
+          let params = {
+            TableName: TABLE,
+            Item: item
+          };  
+          // Pas de brouillon
+          ddb.put(params, function(err, data) {
+            if (err) {
+              console.log("Error", err);
+              resolve();
+            } else {
+              // Réinitialiser et mettre à jour les ayant-droits dans le média concerné
+              majAyantDroitsMedia(body.mediaId, body.rightsSplits)
+              resolve(SPLIT_UUID);
+            }
+          })
+        } else {
+          // Brouillon trouvé, mise à jour
+          let params = {
+            TableName: TABLE,
+            Key: {
+              'uuid': p.uuid
+            },
+            UpdateExpression: 'set rightsSplits  = :r, etat = :e',
+            ExpressionAttributeValues: {
+              ':r' : body.rightsSplits,
+              ':e' : body.etat
+            },
+            ReturnValues: 'UPDATED_NEW'
+          }
+          ddb.update(params, function(err, data) {
+            if (err) {
+              console.log("Error", err);
+              resolve();
+            } else {
+              resolve(p.uuid);
+            }
+          })
+          
+        }
+        resolve(data.Items);
       }
     });
+
+    
+    
+    
   });
 }
-
-
 
 /**
  * Post proposal rights split contract to blockchain
