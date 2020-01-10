@@ -415,8 +415,8 @@ exports.invite = function(proposalId, rightHolders) {
         
       let proposition = data.Item
 
-      let initiateur = proposition.initiator.name,
-          initiateurId = proposition.initiator.id,
+      let initiateur = proposition.initiatorName,
+          initiateurId = proposition.initiatorUuid,
           rightsSplits = proposition.rightsSplits
 
       // 0. Réceptionne le secret de génération JWT des paramètres AWS
@@ -840,16 +840,17 @@ exports.getProposalsRightHolder = function(rightHolderId) {
  * initiator Initiator The initiator of the given split proposal
  * returns Object
  **/
-exports.patchProposalInitiator = function(uuid,initiator) {
+exports.patchProposalInitiator = function(uuid,initiatorUuid, initiatorName) {
   return new Promise(function(resolve, reject) {
     let params = {
       TableName: TABLE,
       Key: {
         'uuid': uuid
       },
-      UpdateExpression: 'set initiator = :i',
+      UpdateExpression: 'set initiatorUuid = :i, initiatorName = :n',
       ExpressionAttributeValues: {
-        ':i' : initiator.initiator
+        ':i' : initiatorUuid,
+        ':n' : initiatorName,
       },
       ReturnValues: 'UPDATED_NEW'
     };
@@ -1040,7 +1041,8 @@ exports.postProposal = function(body) {
           item = {
             'uuid': SPLIT_UUID,
             'mediaId': body.mediaId,
-            'initiator': body.initiator,
+            'initiatorName': body.initiatorName,
+            'initiatorUuid': body.initiatorUuid,
             'creationDate': DATE_CREATED,
             'rightsSplits': body.rightsSplits,
             'comments': body.comments,

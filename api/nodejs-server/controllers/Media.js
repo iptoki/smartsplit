@@ -50,8 +50,8 @@ module.exports.getAllMedia = function getAllMedia (req, res, next) {
 };
 
 module.exports.listeCreateur = function listeCreateur (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value
-  Media.listeCreateur(mediaId)
+  var uuid = req.swagger.params['uuid'].value
+  Media.listeCreateur(uuid)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -60,9 +60,9 @@ module.exports.listeCreateur = function listeCreateur (req, res, next) {
     });
 };
 
-module.exports.listeCollaborateurs = function listeCollaborateurs (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value
-  Media.listeCollaborateurs(mediaId)
+module.exports.listeCollaborations = function listeCollaborations (req, res, next) {
+  var uuid = req.swagger.params['uuid'].value
+  Media.listeCollaborations(uuid)
     .then(function (response) {
       utils.writeJson(res, response);
     })

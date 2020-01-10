@@ -121,33 +121,171 @@ exports.getAllMedia = function() {
   });
 }
 
-exports.listeCreateur = function(mediaId) {
-  return new Promise(function(resolve, reject) {
+function mediasDontEstInitiateurDeProposition(initiatorUuid) {
+  return new Promise( (res, rej) => {
+    // Récupérer les propositions par l'index initiatorUuid-index
     let params = {
-      "TableName": TABLE,
-    }
-    ddb.scan(params, function(err, data) {
-      if (err) {
-        console.log("Error", err);
-        
-        resolve();
-      } else {
-        resolve(data.Items);
+      "TableName": 'proposal',
+      "IndexName": "initiatorUuid-index",
+      "ConsistentRead": false,
+      "KeyConditionExpression": "initiatorUuid = :u",
+      "ExpressionAttributeValues": {
+          ":u": initiatorUuid
       }
-    });
-  });
+    }
+    ddb.query(params, function(err, data) {
+      if (err) {
+        console.log(err, err.stack)
+        rej()
+      }
+      else {
+        let medias = []
+        data.Items.forEach(_p=>{
+          if(!medias.includes(_p.mediaId)) { medias.push(_p.mediaId) }          
+        })        
+        // Récupérer chaque média (complet)
+        let mediasRetour = []
+        if(medias.length > 0) {
+          medias.forEach(_m=>{
+            let paramsMedia = {
+              table: 'media',
+              Key: {
+                "mediaId": _m
+              }
+            }
+            ddb.getItem(paramsMedia, (err,data)=>{
+              if(err) { console.log(err. err.stack) }
+              else {
+                let media = data.Item
+                // Récupérer la dernière proposition du média
+                propositionsParMedia(media.mediaId)
+                .then(__p=>{
+                  media.propositions = _p
+                  mediasRetour.push(media)
+                  // Fin lorsque tous les médias sont chargés
+                  if(medias.length === mediasRetour.length) {
+                    res(mediasRetour)
+                  }
+                })
+              }
+            })
+          })
+        } else {
+          res(mediasRetour)
+        }
+      }     
+    })
+  })
+
 }
 
-exports.listeCollaborations = function(mediaId) {
+function propositionsParMedia(mediaId) {
+  
+  // Récupérer les médias par l'index mediaId-index
+  //  * La plus récente est à l'index 0
+
+  return new Promise( (res, rej) => {
+    let params = {
+      "TableName": 'proposal',
+      "IndexName": "mediaId-index",      
+      "ConsistentRead": false,
+      "KeyConditionExpression": "mediaId = :m",
+      "ExpressionAttributeValues": {
+          ":m": mediaId
+      }
+    }
+    ddb.query(params, function(err, data) {
+      if (err) {
+        console.log(err, err.stack)
+        rej()
+      }
+      else {
+        data.Items.sort( (a, b)=> b._d - a._d )
+        res(data.Items)
+      }
+    })
+  })
+}
+
+function mediasParCreateur(rightHolderId) {
+  return new Promise((res, rej)=>{
+    // Récupérer les médias par l'index creator-index
+    let params = {    
+      "IndexName": "creator-index",      
+      "ExpressionAttributeValues": {
+          ":c": rightHolderId
+      },
+      "KeyConditionExpression": "creator = :c",
+      "TableName": TABLE
+    }
+    ddb.query(params, function(err, data) {      
+      if (err) {
+        rej()
+      }
+      else {        
+        res(data.Items)
+      }     
+    })
+  })
+}
+
+exports.listeCreateur = function(rightHolderId) {
+  /**
+   * Deux structures à assembler de manière asynchrones et en chaîne.
+   *  * Pour chaque média récupéré, on associe la dernière proposition
+   * A : Médias créés par l'ayant-droit
+   * B : Médias dont l'ayant-droit a initié une proposition
+   */
+  return new Promise( (res, rej)=>{
+    // (A) 1. Récupérer la liste des médias dont l'ayant-droit est le créateur
+    mediasParCreateur(rightHolderId)
+    .then(medias=>{   
+      // (A) 2. Associer la proposition la plus récente pour chaque media
+      let cpt = 0 // Compteur pour suivre le nombre 
+      medias.forEach( (m, idx) =>{
+        // (A) 3. Trouver la proposition la plus récente du média
+        propositionsParMedia(m.mediaId)
+        .then(p=>{
+          medias[idx].propositions = p
+          cpt++ 
+          // (A -> B) 3.1 Détecte que toutes les réponses sont revenues
+          if(cpt == medias.length) {
+            // (B) 4. Découvrir les propositions dont l'usager est l'initiateur
+            //        et qui ne sont pas des médias créés par l'usager
+            mediasDontEstInitiateurDeProposition(rightHolderId, medias)
+            .then(_medias=>{
+                // (A + B) 5. Construire la structure finale
+                //            Ajoute aux médias déjà récupérés si non existant
+                _medias.forEach(__m=>{
+                  if(!medias.find(___m=>___m.mediaId === __m.mediaId)) { medias.push(_m) }
+                })
+                // (B) 6. Trier la liste de médias restant en ordre d'identifiant séquentiel croissant
+                medias.sort( (a, b)=> a.mediaId - b.mediaId )
+                res( medias )
+              }
+            )
+          }
+        })
+      })  
+    })
+  })  
+}
+
+exports.listeCollaborations = function(rightHolderId) {
   return new Promise(function(resolve, reject) {
     let params = {
       "TableName": TABLE,
     }
+    // 1. Récupérer liste des propositions 
+    // 2. Extraire des propositions les mediaId uniques qui ont l'ayant-droit dans leurs collaborateurs
+    // 3. Pour tous les médias extraits, enlever ceux dont l'ayant-droit est le créateur
+    // 4. Trier la liste de médias restant en ordre d'identifiant séquentiel
+    // 5. Retourner la liste des médias ainsi épurée, et associer la proposition la plus récente au média
     ddb.scan(params, function(err, data) {
       if (err) {
         console.log("Error", err);
         resolve();
-      } else {
+      } else {        
         resolve(data.Items);
       }
     });
@@ -161,7 +299,7 @@ exports.listeCollaborations = function(mediaId) {
  * mediaId Integer The artwork agreement's unique ID
  * returns media
  **/
-exports.getMedia = function(mediaId) {
+exports.getMedia = function getMedia(mediaId) {
   return new Promise(function(resolve, reject) {
     let params = {
       TableName: TABLE,
