@@ -292,7 +292,6 @@ exports.listeCollaborations = function(rightHolderId) {
   });
 }
 
-
 /**
  * Get media with the given ID
  *
