@@ -753,11 +753,10 @@ paths:
               additionalProperties:
                 type: "object"
                 description: "the copyright object for the given right split"
-            initiator: 
-              type: "object"
-              additionalProperties:
-                type: "string"
-                description: "the initiator object for the given right split"
+            initiatorUuid: 
+              type: "string"
+            initiatorName: 
+              type: "string"              
             creationDate:
               type: "string"
               format: "iso8601-date-time"
@@ -779,7 +778,8 @@ paths:
             {
               "uuid": "12345c60-7b1a-11e8-9c9c-2d42b21b1a3e",
               "mediaId": "1",
-              "initiator": {"id": "40e5ad76-d2c6-4f1e-9eb4-98213e29e36f", "name": "Jim Smith"},
+              "initiatorUuid": "40e5ad76-d2c6-4f1e-9eb4-98213e29e36f", 
+              "initiatorName": "Jim Smith",
               "creationDate": "2019-01-01T15:53:00",
               "_d": "1566229239",
               "rightsSplits": {
@@ -1629,7 +1629,7 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "Media"  
-  /media/artiste-createur/{uuid}:
+  /media/liste-createur/{uuid}:
     get:
       tags:
       - "Media"
@@ -1640,7 +1640,7 @@ paths:
         in: "path"
         description: "The artwork agreement's unique ID"
         required: true
-        type: "integer"
+        type: "string"
       responses:
         200:
           description: "OK"
@@ -1655,7 +1655,7 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
-  /media/artiste-collaborateur/{uuid}:
+  /media/liste-collaborateur/{uuid}:
     get:
       tags:
       - "Media"
@@ -1666,7 +1666,7 @@ paths:
         in: "path"
         description: "The artwork agreement's unique ID"
         required: true
-        type: "integer"
+        type: "string"
       responses:
         200:
           description: "OK"
@@ -3081,11 +3081,10 @@ definitions:
         additionalProperties:
           type: "object"
           description: "the copyright object for the given right split"
-      initiator: 
-        type: "object"
-        additionalProperties:
-          type: "string"
-          description: "the initiator object for the given right split"
+      initiatorUuid: 
+        type: "string"        
+      initiatorName: 
+        type: "string"
       creationDate:
         type: "string"
         format: "iso8601-date-time"
