@@ -153,7 +153,7 @@ function mediasDontEstInitiateurDeProposition(initiatorUuid) {
                 "mediaId": _m
               }
             }
-            ddb.getItem(paramsMedia, (err,data)=>{
+            ddb.get(paramsMedia, (err,data)=>{
               if(err) { console.log(err. err.stack) }
               else {
                 let media = data.Item
