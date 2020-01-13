@@ -148,19 +148,19 @@ function mediasDontEstInitiateurDeProposition(initiatorUuid) {
         if(medias.length > 0) {
           medias.forEach(_m=>{
             let paramsMedia = {
-              table: 'media',
+              "TableName": 'media',
               Key: {
                 "mediaId": _m
               }
             }
             ddb.get(paramsMedia, (err,data)=>{
-              if(err) { console.log(err. err.stack) }
+              if(err) { console.log(err.stack) }
               else {
                 let media = data.Item
                 // Récupérer la dernière proposition du média
                 propositionsParMedia(media.mediaId)
                 .then(__p=>{
-                  media.propositions = _p
+                  media.propositions = __p
                   mediasRetour.push(media)
                   // Fin lorsque tous les médias sont chargés
                   if(medias.length === mediasRetour.length) {
@@ -236,37 +236,48 @@ exports.listeCreateur = function(rightHolderId) {
    * A : Médias créés par l'ayant-droit
    * B : Médias dont l'ayant-droit a initié une proposition
    */
-  return new Promise( (res, rej)=>{
+  return new Promise( (res, rej)=>{        
+
     // (A) 1. Récupérer la liste des médias dont l'ayant-droit est le créateur
     mediasParCreateur(rightHolderId)
-    .then(medias=>{   
-      // (A) 2. Associer la proposition la plus récente pour chaque media
-      let cpt = 0 // Compteur pour suivre le nombre 
-      medias.forEach( (m, idx) =>{
-        // (A) 3. Trouver la proposition la plus récente du média
-        propositionsParMedia(m.mediaId)
-        .then(p=>{
-          medias[idx].propositions = p
-          cpt++ 
-          // (A -> B) 3.1 Détecte que toutes les réponses sont revenues
-          if(cpt == medias.length) {
-            // (B) 4. Découvrir les propositions dont l'usager est l'initiateur
-            //        et qui ne sont pas des médias créés par l'usager
-            mediasDontEstInitiateurDeProposition(rightHolderId, medias)
-            .then(_medias=>{
-                // (A + B) 5. Construire la structure finale
-                //            Ajoute aux médias déjà récupérés si non existant
-                _medias.forEach(__m=>{
-                  if(!medias.find(___m=>___m.mediaId === __m.mediaId)) { medias.push(_m) }
-                })
-                // (B) 6. Trier la liste de médias restant en ordre d'identifiant séquentiel croissant
-                medias.sort( (a, b)=> a.mediaId - b.mediaId )
-                res( medias )
-              }
-            )
+    .then(medias=>{
+
+      function b(rightHolderId) {
+        // (B) 4. Découvrir les propositions dont l'usager est l'initiateur
+        //        et qui ne sont pas des médias créés par l'usager
+        mediasDontEstInitiateurDeProposition(rightHolderId)
+        .then(_medias=>{
+            // (A + B) 5. Construire la structure finale
+            //            Ajoute aux médias déjà récupérés si non existant
+            _medias.forEach(__m=>{
+              if(!medias.find(___m=>___m.mediaId === __m.mediaId)) { medias.push(_m) }
+            })
+            // (B) 6. Trier la liste de médias restant en ordre d'identifiant séquentiel croissant
+            medias.sort( (a, b)=> a.mediaId - b.mediaId )
+            res( medias )
           }
+        )
+      }
+
+      // Si n'a pas de médias, tester si est initiateur de proposition
+      if(medias.length === 0) {
+        b(rightHolderId)
+      } else {
+        // (A) 2. Associer la proposition la plus récente pour chaque media
+        let cpt = 0 // Compteur pour suivre le nombre 
+        medias.forEach( (m, idx) =>{
+          // (A) 3. Trouver la proposition la plus récente du média
+          propositionsParMedia(m.mediaId)
+          .then(p=>{
+            medias[idx].propositions = p
+            cpt++ 
+            // (A -> B) 3.1 Détecte que toutes les réponses sont revenues
+            if(cpt == medias.length) {
+              b(rightHolderId)
+            }
+          })
         })
-      })  
+      }        
     })
   })  
 }
