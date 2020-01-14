@@ -43,8 +43,8 @@ paths:
       operationId: "postAuth"
       parameters:
       - in: "body"
-        name: "auth"
-        description: "JSON string containing your authentication details"
+        name: "body"
+        description: "JSON string containing your password"
         required: true
         schema:
           $ref: "#/definitions/auth"
@@ -55,6 +55,25 @@ paths:
             $ref: "#/definitions/authResult"
         401:
           description: "Invalid credentials and/or API token"
+      x-swagger-router-controller: "AuthenticationDetails"
+  /auth/verifyPassword:
+    post:
+      tags:
+      - "Authentication Details"
+      description: "Check if the password is valid to access the beta"
+      operationId: "postAuthVerifyPassword"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "JSON string containing your authentication details"
+        required: true
+        schema:
+          $ref: "#/definitions/authVerifyPassword"
+      responses:
+        200:
+          description: "Success"
+        401:
+          description: "Failure. Invalid credentials and/or API token"
       x-swagger-router-controller: "AuthenticationDetails"
   /refreshToken:
     get:
@@ -2643,6 +2662,10 @@ definitions:
         description: "The JWT access token for the current session"
     example:
       accessToken: "fyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJjb21wYW55IjoiRnV0dXJlRWQiLCJzdWIiOjEsImlzcyI6Imh0dHA6XC9cL2Z1dHVyZWVkLmRldlwvYXBpXC92MVwvc3R1ZGVudFwvbG9naW5cL3VzZXJuYW1lIiwiaWF0IjoiMTQyNzQyNjc3MSIsImV4cCI6IjE0Mjc0MzAzNzEiLCJuYmYiOiIxNDI3NDI2NzcxIiwianRpIjoiNmFlZDQ3MGFiOGMxYTk0MmE0MTViYTAwOTBlMTFlZTUifQ.MmM2YTUwMjEzYTE0OGNhNjk5Y2Y2MjEwZDdkN2Y1OTQ2NWVhZTdmYmI4OTA5YmM1Y2QwYTMzZjUwNTgwY2Y0MQ"
+  authVerifyPassword:
+    properties:
+      password:
+        type: "string"
   rightHolders:
     type: "array"
     description: "An array of right holder profile information"

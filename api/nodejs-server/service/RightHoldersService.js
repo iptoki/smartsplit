@@ -5,7 +5,7 @@ const utils = require('../utils/utils.js');
 
 // AWS
 const AWS = require('aws-sdk');
-const REGION = 'us-east-2';
+const REGION = 'us-east-1';
 const REGION_PARAMS = 'us-east-2';
 
 AWS.config.update({
@@ -15,7 +15,7 @@ AWS.config.update({
 });
 
 const ddb = new AWS.DynamoDB.DocumentClient({region: REGION});
-const USER_POOL_ID = 'us-east-2_tK9rNdAB1'
+const USER_POOL_ID = 'us-east-1_W3bnhMGGM'
 const COGNITO_CLIENT = new AWS.CognitoIdentityServiceProvider();
 const axios = require('axios');
 

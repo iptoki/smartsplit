@@ -5,7 +5,7 @@ const uuidv1 = require('uuid/v1');
 
 // AWS 
 const AWS = require('aws-sdk');
-const REGION = 'us-east-2';
+const REGION = 'us-east-1';
 const REGION_PARAMS = 'us-east-2';
 
 AWS.config.update({

@@ -9,7 +9,7 @@ moment.defaultFormat = "DD-MM-YYYY HH:mm"
 
 // AWS
 const AWS = require('aws-sdk');
-const REGION = 'us-east-2';
+const REGION = 'us-east-1';
 const REGION_PARAMS = 'us-east-2';
 
 AWS.config.update({
@@ -1229,7 +1229,7 @@ exports.shareMedia = function(body) {
                 "firstName": `${prenom} ${nom}`,
                 "workTitle": data.Item.title,
                 "template": template,
-                "callbackURL": `http://dev.${contexte}/oeuvre/resume/${jeton}`
+                "callbackURL": `http://proto.${contexte}/oeuvre/resume/${jeton}`
             }
           ]
         

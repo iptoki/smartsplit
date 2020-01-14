@@ -23,3 +23,15 @@ module.exports.postAuth = function postAuth (req, res, next) {
       utils.writeJson(res, response);
     });
 };
+
+module.exports.postAuthVerifyPassword = function postAuthVerifyPassword (req, res, next) {
+  var body = req.swagger.params['body'].value;
+  var password = body.password
+  AuthenticationDetails.postAuthVerifyPassword(password)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};

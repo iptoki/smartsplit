@@ -10,7 +10,7 @@ const uuidv1 = require('uuid/v1');
 // AWS
 // Besoin de bootstraper la récupération des paramètres puis l'activation de la BD AWS
 const AWS = require('aws-sdk');
-const REGION = 'us-east-2';
+const REGION = 'us-east-1';
 const REGION_PARAMS = 'us-east-2';
 
 const utils = require('../utils/utils.js');
@@ -43,6 +43,24 @@ exports.getRefreshToken = function() {
 
 
 /**
+ * Validates password to enter Smartsplit beta application
+ *
+ * returns Succuss or Failure Message
+ **/
+exports.postAuthVerifyPassword = function(password) {
+  return new Promise(function(resolve, reject) {
+    utils.getParameter('BETA_PASSWORD', (pwd)=>{
+      if (password === pwd) {
+        resolve("Success");
+      } else {
+        resolve("Failure");
+      }
+    })
+  })
+}
+
+
+/**
  * Get a JWT token for the rest of the requests
  *
  * auth Auth JSON string containing your authentication details
@@ -58,7 +76,7 @@ exports.postAuth = function(auth) {
       "typ": "/v1/auth",
       "request": auth
     };
-    let secret = 'TOPSECRET';
+    let secret =  utils.getParameter('JWS_API_SECRET')
 
     jwt.encode(secret, payload, function (err, token) {
       if (err) {
