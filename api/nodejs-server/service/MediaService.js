@@ -949,8 +949,7 @@ exports.putMedia = function(title, type, creator) {
         ID_VALUE += 1 // Ajout 1
 
         // Assign creationDate to current date time
-        let d = Date(Date.now());   
-        let DATE_CREATED = d.toString();
+        let DATE_CREATED = moment(Date.now()).format()
         let params = {
           TableName: TABLE,
           Item: {
