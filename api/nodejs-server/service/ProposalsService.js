@@ -9,7 +9,7 @@ moment.defaultFormat = "DD-MM-YYYY HH:mm"
 
 // AWS
 const AWS = require('aws-sdk');
-const REGION = 'us-east-2';
+const REGION = 'us-east-1';
 const REGION_PARAMS = 'us-east-2';
 
 AWS.config.update({
@@ -484,7 +484,7 @@ exports.invite = function(proposalId, rightHolders) {
         overwriteRightSplits(proposalId, rightsSplits)
         
         // 3. Récupérer le titre du média avec le mediaId (async)        
-        axios.get(`http://dev.api.smartsplit.org:8080/v1/media/${proposition.mediaId}`)
+        axios.get(`http://api.smartsplit.org:8080/v1/media/${proposition.mediaId}`)
         .then(res=>{
           let titre = res.data.Item.title
           // 3.a -> Envoyer un courriel à tous (différent si initiateur)

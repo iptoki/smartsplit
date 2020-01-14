@@ -1,6 +1,6 @@
 swagger: "2.0"
 info:
-  description: "Provides a RESTful API for interacting with Smartsplit"
+  description: "Provides a RESTful API for interacting with Smartsplit. Documentation is written in both French and English."
   version: "v1"
   title: "Smartsplit API"
   x-origin:
@@ -9,7 +9,7 @@ info:
   x-providerName: "smartsplit.org"
   x-logo:
     url: "http://smartsplit.org/wp-content/uploads/2019/05/Logo-v02-005-noir.png"
-host: "dev.api.smartsplit.org:8080"
+host: "api.smartsplit.org:8080"
 basePath: "/v1"
 tags:
 - name: "Authentication Details"
