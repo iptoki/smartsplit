@@ -70,8 +70,9 @@ module.exports.getProposalsRightHolder = function getProposalsRightHolder (req, 
 
 module.exports.patchProposalInitiator = function patchProposalInitiator (req, res, next) {
   var uuid = req.swagger.params['uuid'].value;
-  var initiator = req.swagger.params['initiator'].value;
-  Proposals.patchProposalInitiator(uuid,initiator)
+  var initiatorUuid = req.swagger.params['initiatorUuid'].value
+  var initiatorName = req.swagger.params['initiatorName'].value
+  Proposals.patchProposalInitiator(uuid,initiatorUuid, initiatorName)
     .then(function (response) {
       utils.writeJson(res, response);
     })

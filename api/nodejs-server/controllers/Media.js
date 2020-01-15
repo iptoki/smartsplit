@@ -49,6 +49,28 @@ module.exports.getAllMedia = function getAllMedia (req, res, next) {
     });
 };
 
+module.exports.listeCreateur = function listeCreateur (req, res, next) {
+  var uuid = req.swagger.params['uuid'].value
+  Media.listeCreateur(uuid)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
+module.exports.listeCollaborations = function listeCollaborations (req, res, next) {
+  var uuid = req.swagger.params['uuid'].value
+  Media.listeCollaborations(uuid)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
 module.exports.getMedia = function getMedia (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
   Media.getMedia(mediaId)
@@ -179,7 +201,6 @@ module.exports.patchMediaFiles = function patchMediaFiles(req, res, next) {
       utils.writeJson(res, response);
     });
 };
-
 
 module.exports.patchMediaSocialMediaLinks = function patchMediaSocialMediaLinks (req, res, next) {
   var mediaId = req.swagger.params['mediaId'].value;
