@@ -9,7 +9,7 @@ moment.defaultFormat = "DD-MM-YYYY HH:mm"
 
 // AWS
 const AWS = require('aws-sdk');
-const REGION = 'us-east-1';
+const REGION = 'us-east-2';
 const REGION_PARAMS = 'us-east-2';
 
 AWS.config.update({
@@ -949,8 +949,7 @@ exports.putMedia = function(title, type, creator) {
         ID_VALUE += 1 // Ajout 1
 
         // Assign creationDate to current date time
-        let d = Date(Date.now());   
-        let DATE_CREATED = d.toString();
+        let DATE_CREATED = moment(Date.now()).format()
         let params = {
           TableName: TABLE,
           Item: {
