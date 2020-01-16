@@ -2818,14 +2818,9 @@ definitions:
           type: "string"
       creationDate:
         type: "string"
-        format: "iso8601-date-time"
-        example: "2019-01-01T15:53:00"
-        description: "The creation date of the rights agreement for the given media"
-      modificationDate:
-        type: "string"
-        format: "iso8601-date-time"
-        example: "2019-01-01T15:53:00"
-        description: "The date the rights agreement for the given media was modified"
+        format: "unix timestamp"
+        example: "1234567891234"
+        description: "The creation date of the rights agreement for the given media"      
       publishDate:
         type: "string"
         format: "iso8601-date-time"
