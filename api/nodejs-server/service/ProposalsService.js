@@ -1035,9 +1035,8 @@ exports.postProposal = function(body) {
           }          
         })
         if(!p) {
-          SPLIT_UUID = uuidv1()
-          DATE_CREATED = moment(Date.now()).format()
-          UNIX_TIMESTAMP = new Date().getTime()
+          SPLIT_UUID = uuidv1()          
+          DATE_CREATED = UNIX_TIMESTAMP = new Date().getTime()
           item = {
             'uuid': SPLIT_UUID,
             'mediaId': body.mediaId,
