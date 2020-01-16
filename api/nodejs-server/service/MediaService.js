@@ -949,7 +949,7 @@ exports.putMedia = function(title, type, creator) {
         ID_VALUE += 1 // Ajout 1
 
         // Assign creationDate to current date time
-        let DATE_CREATED = moment(Date.now()).format()
+        let DATE_CREATED = Date.getTime()
         let params = {
           TableName: TABLE,
           Item: {
@@ -993,7 +993,7 @@ exports.postMedia = function(body) {
       // Assign creationDate to current date time      
 
       try {
-        let d = moment(Date.now()).format()
+        let d = Date.getTime()
         let DATE_MODIFIED = d;
 
         // Récupère le média actuel
@@ -1046,7 +1046,7 @@ exports.postMedia = function(body) {
               \ rightHolders = :rHs, cover = :cov, jurisdiction = :jur, bpm = :bpm, influence = :inf, studio = :stu, studioAddress = :stuA,\
               \ label = :lbl, labelAddress = :lblA, distributor = :dist, distributorAddress = :distA',
               ExpressionAttributeValues: {
-                ':c' : body.creationDate || moment(Date.now(), moment.defaultFormat).format("LTS"),
+                ':c' : body.creationDate || Date.getTime(),
                 ':cr' : body.creator ? body.creator : (_media.creator ? _media.creator : " "),
                 ':ar' : body.artist ? body.artist : (_media.artist ? _media.artist : " "),
                 ':al' : body.album ? body.album : (_media.album ? _media.album : " "),
