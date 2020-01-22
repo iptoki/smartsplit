@@ -285,18 +285,30 @@ exports.listeCreateur = function(rightHolderId) {
 exports.listeCollaborations = function(rightHolderId) {
   return new Promise(function(resolve, reject) {
     let params = {
-      "TableName": TABLE,
+      "TableName": 'proposal',
     }
-    // 1. Récupérer liste des propositions 
-    // 2. Extraire des propositions les mediaId uniques qui ont l'ayant-droit dans leurs collaborateurs
-    // 3. Pour tous les médias extraits, enlever ceux dont l'ayant-droit est le créateur
-    // 4. Trier la liste de médias restant en ordre d'identifiant séquentiel
-    // 5. Retourner la liste des médias ainsi épurée, et associer la proposition la plus récente au média
+    // 1. Récupérer liste des propositions     
     ddb.scan(params, function(err, data) {
       if (err) {
         console.log("Error", err);
         resolve();
-      } else {        
+      } else {
+        let propositions = data.Items
+        // 2. Extraire des propositions les mediaId uniques qui ont l'ayant-droit dans leurs collaborateurs
+        propositions.forEach(p=>{
+          Object.keys(p.rightsSplits).forEach(type=>{
+            Object.keys(p.rightsSplits[type]).forEach(sousType=>{
+              p.rightsSplits[type][sousType].forEach(rH=>{
+                // Si l'ayant-droit est dans les collaborateurs
+                
+              })
+            })
+          })
+        })
+        // 3. Pour tous les médias extraits, enlever ceux dont l'ayant-droit est le créateur
+        // 4. Trier la liste de médias restant en ordre d'identifiant séquentiel
+        // 5. Retourner la liste des médias ainsi épurée, et associer la proposition la plus récente au média
+
         resolve(data.Items);
       }
     });
