@@ -266,7 +266,7 @@ exports.listeCreateur = function(rightHolderId) {
         // (A) 2. Associer la proposition la plus récente pour chaque media
         let cpt = 0 // Compteur pour suivre le nombre 
         medias.forEach( (m, idx) =>{
-          // (A) 3. Trouver la proposition la plus récente du média
+          // (A) 3. Récupérer les propositions du média
           propositionsParMedia(m.mediaId)
           .then(p=>{
             medias[idx].propositions = p
@@ -291,25 +291,72 @@ exports.listeCollaborations = function(rightHolderId) {
     ddb.scan(params, function(err, data) {
       if (err) {
         console.log("Error", err);
-        resolve();
+        reject(err);
       } else {
-        let propositions = data.Items
+        let propositions = data.Items        
+        let listeMediaIds = []
+        let listeMedias = []
         // 2. Extraire des propositions les mediaId uniques qui ont l'ayant-droit dans leurs collaborateurs
         propositions.forEach(p=>{
           Object.keys(p.rightsSplits).forEach(type=>{
             Object.keys(p.rightsSplits[type]).forEach(sousType=>{
-              p.rightsSplits[type][sousType].forEach(rH=>{
+              p.rightsSplits[type][sousType].forEach(part=>{
                 // Si l'ayant-droit est dans les collaborateurs
-                
+                if(part.rightHolder.rightHolderId === rightHolderId) {
+                  // Si le mediaId n'a pas déjà été saisi
+                  if(!listeMediaIds.includes(p.mediaId)) {
+                    listeMediaIds.push(p.mediaId)
+                  }
+                }
               })
             })
           })
         })
-        // 3. Pour tous les médias extraits, enlever ceux dont l'ayant-droit est le créateur
-        // 4. Trier la liste de médias restant en ordre d'identifiant séquentiel
-        // 5. Retourner la liste des médias ainsi épurée, et associer la proposition la plus récente au média
-
-        resolve(data.Items);
+        // 3. Pour tous les médias saisie, les récupérer
+        let cptMedia = 0 // Compteur de récupération des médias
+        listeMediaIds.forEach(mediaId=>{
+          let params = {
+            TableName: TABLE,
+            Key: {
+              'mediaId': mediaId
+            }
+          };    
+          ddb.get(params, function(err, data) {
+            if (err) {
+              console.log("Error", err);
+              reject(err)          
+            } else {
+              let _media = data.Item              
+              if(_media.creator !== rightHolderId) {
+                listeMedias.push(_media)
+              }
+              cptMedia++
+              if(cptMedia === listeMediaIds.length) {
+                // Tous les médias sont récupérés
+                // Récupérer les propositions pour chacun des médias de la listeMedias
+                let cptPropositionsMedia = 0 // Compteur pour suivre le nombre 
+                listeMedias.forEach( (m, idx) =>{
+                  // (A) 3. Récupérer les propositions du média
+                  propositionsParMedia(m.mediaId)
+                  .then(p=>{
+                    listeMedias[idx].propositions = p
+                    cptPropositionsMedia++ 
+                    // (A -> B) 3.1 Détecte que toutes les réponses sont revenues
+                    if(cptPropositionsMedia == listeMedias.length) {
+                      // 4. Trier la liste de médias restant en ordre d'identifiant séquentiel
+                      listeMedias.sort((a,b)=>a.mediaId < b.mediaId)
+                      // 5. Retourner la liste des médias ainsi épurée, et associer la proposition la plus récente au média
+                      resolve(listeMedias)
+                    }
+                  })
+                })
+              }
+            }
+          });
+        })  
+        if(listeMediaIds.length === 0) {
+          resolve(listeMedias)
+        }        
       }
     });
   });
