@@ -44,51 +44,6 @@ app.use(morgan('short'));
 app.use(express.static('./public'));
 app.use(cors())
 
-app.options('v1/media/', cors()) // enable pre-flight request for DELETE request
-app.delete('v1/media/:mediaId', cors(), function (req, res, next) {
-  res.json({msg: 'This is CORS-enabled for all origins!'})
-})
-app.post('v1/media/', cors(), function (req, res, next) {
-  res.json({msg: 'This is CORS-enabled for all origins!'})
-})
-app.put('v1/media/:mediaId', cors(), function (req, res, next) {
-  res.json({msg: 'This is CORS-enabled for all origins!'})
-})
-app.options('v1/proposal/', cors()) // enable pre-flight request for DELETE request
-app.delete('v1/proposal/:uuid', cors(), function (req, res, next) {
-  res.json({msg: 'This is CORS-enabled for all origins!'})
-})
-app.post('v1/proposal/', cors(), function (req, res, next) {
-  res.json({msg: 'This is CORS-enabled for all origins!'})
-})
-app.put('v1/proposal/:uuid', cors(), function (req, res, next) {
-  res.json({msg: 'This is CORS-enabled for all origins!'})
-})
-app.options('v1/rightHolders/', cors()) // enable pre-flight request for DELETE request
-app.delete('v1/rightHolders/:rightHolderId', cors(), function (req, res, next) {
-  res.json({msg: 'This is CORS-enabled for all origins!'})
-})
-app.post('v1/rightHolders/', cors(), function (req, res, next) {
-  res.json({msg: 'This is CORS-enabled for all origins!'})
-})
-app.put('v1/rightHolders/:rightHolderId', cors(), function (req, res, next) {
-  res.json({msg: 'This is CORS-enabled for all origins!'})
-})
-app.options('v1/payments/', cors()) // enable pre-flight request for DELETE request
-app.delete('v1/payments/:id', cors(), function (req, res, next) {
-  res.json({msg: 'This is CORS-enabled for all origins!'})
-})
-app.post('v1/payments/', cors(), function (req, res, next) {
-  res.json({msg: 'This is CORS-enabled for all origins!'})
-})
-app.put('v1/payments/:id', cors(), function (req, res, next) {
-  res.json({msg: 'This is CORS-enabled for all origins!'})
-})
-app.post('v1/socan/join', cors(), function (req, res, next) {
-  res.json({msg: 'This is CORS-enabled for all origins!'})
-})
-
-
 // Initialize the Swagger middleware
 swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
 
