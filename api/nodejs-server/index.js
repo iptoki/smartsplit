@@ -20,6 +20,12 @@ const jsyaml = require('js-yaml');
 const serverPort = 8080;
 const cors = require('cors');
 
+// Connexion à la base de données
+require("mongoose").connect(
+	process.env["MONGODB_PATH"] || "mongodb://localhost/smartsplit",
+	{useNewUrlParser: true, useUnifiedTopology: true}
+)
+
 // swaggerRouter configuration
 let options = {
   swaggerUi: path.join(__dirname, '/swagger.json'),
