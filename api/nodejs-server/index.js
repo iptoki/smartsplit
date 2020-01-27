@@ -7,6 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const http = require('http');
 const express = require('express');
+require("express-async-errors")
 const router = express.Router();
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
@@ -96,6 +97,17 @@ swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
 
   // Serve the Swagger documents and Swagger UI
   app.use(middleware.swaggerUi());
+
+  // Attrapage des erreurs
+  app.use(function(err, req, res, next) {
+    res
+      .status(err.httpStatus || 500)
+      .json(err.jsonError || {
+        error: err.message
+      })
+
+    console.error(err)
+  })
 
   try {
     // myroutine(); // may throw three types of exceptions
