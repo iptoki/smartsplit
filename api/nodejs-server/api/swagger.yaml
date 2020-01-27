@@ -2749,8 +2749,12 @@ definitions:
       wallet: "0xdd87ae15f4be97e2739c9069ddef674f907d27a8"
       avatarImage: "image.jpg"
       artistName: "Questlove"
-      groups: "[Group1, Group2]"
-      defaultRoles: "[Songwriter, Producer]"
+      groups:
+      - "Group 1"
+      - "Group 2"
+      defaultRoles:
+      - "Songwriter"
+      - "Producer"
       accountCreationType: "initiatorCreatedUser"
       locale: "en"
       socialMediaLinks: 
