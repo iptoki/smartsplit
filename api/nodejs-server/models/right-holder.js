@@ -1,4 +1,5 @@
 const mongoose = require("mongoose")
+const BaseModel = require("./base")
 const uuidv1 = require('uuid/v1')
 
 const RightHolderSchema = new mongoose.Schema({
@@ -18,7 +19,7 @@ const RightHolderSchema = new mongoose.Schema({
 	lastName: String,
 	locale: String,
 	socialMediaLinks: {type: Map, of: String},
-})
+}, BaseModel.defaultOptions)
 
 /**
  * Filtre les résulats d'une recherche par email
