@@ -19,6 +19,7 @@ const RightHolderSchema = new mongoose.Schema({
 	lastName: String,
 	locale: String,
 	socialMediaLinks: {type: Map, of: String},
+	editeur: Boolean,
 }, BaseModel.defaultOptions)
 
 /**
