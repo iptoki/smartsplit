@@ -1,4 +1,5 @@
 const dotenv = require('dotenv');
+const {promisify} = require("util")
 dotenv.config()
 
 // Connexion à AWSSecretManager pour récupérer des secrets
@@ -36,4 +37,24 @@ let getParameter = exports.getParameter = function (paramKey, fn) {
     }
     
 }
-  
+
+module.exports.getParameterA = async function(key) {
+    if(key in process.env)
+        return process.env[key]
+
+    return await new Promise(function(resolve, reject) {
+        const AWS = require('aws-sdk')
+        const ssm = new AWS.SSM()
+
+        ssm.getParameter(
+            {Name: key, WithDecryption: false},
+            function(err, data) {
+                if(err) {
+                    reject(err)
+                } else {
+                    resolve(data)
+                }
+            }
+        )
+    })
+}

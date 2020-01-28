@@ -1,6 +1,7 @@
 module.exports = class APIError extends Error {
-	constructor(status, message, ...args) {
+	constructor(status, data, ...args) {
+		super(data.error || "Internal Server Error", ...args)
 		this.httpStatus = status
-		super(message, ...args)
+		this.jsonError = data
 	}
 }

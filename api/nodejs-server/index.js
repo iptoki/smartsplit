@@ -38,7 +38,7 @@ let spec = fs.readFileSync(path.join(__dirname,'api/swagger.yaml'), 'utf8');
 let swaggerDoc = jsyaml.safeLoad(spec);
 
 // bodyparser config
-app.use(bodyParser.json());
+app.use(bodyParser.json({strict: false}));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(morgan('short'));
 app.use(express.static('./public'));

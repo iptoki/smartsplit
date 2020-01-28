@@ -8,10 +8,14 @@ return {
 	 */
 	replace: async function(methodName, field) {
 	target[methodName] = async function(req, res) {
-		const body = req.swagger.params[field].value
+		let body = req.swagger.params[field].value
+
+		if(typeof body === "object" && field in body)
+			body = body[field]
+
 		const obj = await findFromRequest(req, res)
 		const out = {}
-		obj[field] = out[field] = body[field]
+		obj[field] = out[field] = body
 		await obj.save()
 		res.json(out)
 	}},
