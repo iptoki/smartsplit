@@ -1,323 +1,143 @@
-'use strict';
+const Media = require("../models/media")
+const APIError = require("./error")
+const jwt = require('jsonwebtoken');
+const {getParameter} = require("../utils/utils")
 
-var utils = require('../utils/writer.js');
-var Media = require('../service/MediaService');
+// TODO: Middleware pour que req.media existe et éviter de répéter les appels à getMediaFromRequest?
 
-module.exports.setMediaProposalInitiator = function setMediaProposalInitiator(req, res, next) {
-  var body = req.swagger.params['body'].value
-  let mediaId = req.swagger.params['mediaId'].value
-  let rhId = body.rightHolderId
-  Media.setMediaProposalInitiator(mediaId, rhId)
-  .then(function(response) {
-    utils.writeJson(res, response)
-  })
-  .catch(function (response) {
-    utils.writeJson(res, response)
-  })
+/** Obtiens un média par son ID */
+async function getMediaById(mediaId) {
+	const media = await Media.findById(mediaId)
+
+	// TODO: Ajouter la vérification des permissions ici
+
+	if(!media) throw new APIError(404, {
+		error: "This media does not exist in database",
+		mediaId
+	})
+
+	return media
 }
 
-module.exports.putMedia = function putMedia(req, res, next) {
-  var body = req.swagger.params['body'].value
-  let title = body.title, type = body.type, creator = body.creator
-  Media.putMedia(title, type, creator)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
+/** Obtiens un média depuis la requête Express */
+function getMediaFromRequest(req, res) {
+	return getMediaById(req.swagger.params["mediaId"].value)
 }
 
-module.exports.deleteMedia = function deleteMedia (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  Media.deleteMedia(mediaId)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
 
-module.exports.getAllMedia = function getAllMedia (req, res, next) {
-  Media.getAllMedia()
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
+/** Liste tous les médias */
+module.exports.getAllMedia = async function(req, res) {
+	res.json(await Media.find())
+}
 
-module.exports.listeCreateur = function listeCreateur (req, res, next) {
-  var uuid = req.swagger.params['uuid'].value
-  Media.listeCreateur(uuid)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
+/** Obtiens un média en particulier */
+module.exports.getMedia = async function(req, res) {
+	res.json(await getMediaFromRequest(req, res))
+}
 
-module.exports.listeCollaborations = function listeCollaborations (req, res, next) {
-  var uuid = req.swagger.params['uuid'].value
-  Media.listeCollaborations(uuid)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
+/** Ajoute un média par son titre, type et créateur seulement */
+module.exports.putMedia = async function putMedia(req, res) {
+	const body = req.swagger.params["body"].value
+	const media = new Media({
+		title: body.title,
+		type: body.type,
+		creator: body.creator,
+	})
 
-module.exports.getMedia = function getMedia (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  Media.getMedia(mediaId)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
+	await media.save()
+	res.json(media)
+}
 
-module.exports.patchMediaAlbum = function patchMediaAlbum (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  var album = req.swagger.params['album'].value;
-  Media.patchMediaAlbum(mediaId,album)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
+/** Ajoute un média complet */
+module.exports.postMedia = async function postMedia(req, res) {
+	const body = req.swagger.params["body"].value
 
-module.exports.patchMediaArtist = function patchMediaArtist (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  var artist = req.swagger.params['artist'].value;
-  Media.patchMediaArtist(mediaId,artist)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
+	res.json(await Promise.all(body.map(async (inputMedia) => {
+		if(await Media.findOne().byBody(inputMedia))
+			return res.status(409).json({
+				error: "Can't add this media because it already exists",
+				media: inputMedia
+			})
 
-module.exports.patchMediaDuration = function patchMediaDuration (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  var msDuration = req.swagger.params['msDuration'].value;
-  Media.patchMediaDuration(mediaId,msDuration)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
+		const media = new Media(inputMedia)
+		await media.save()
+		return media
+	})))
+}
 
-module.exports.patchMediaGenre = function patchMediaGenre (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  var genre = req.swagger.params['genre'].value;
-  Media.patchMediaGenre(mediaId,genre)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
+/** Mets à jours un média existant */
+module.exports.updateMedia = async function updateMedia(req, res) {
+	const media = await getMediaFromRequest(req, res)
+	Object.assign(media, req.swagger.params["body"].value[0])
+	await media.save()
+	res.json(media)
+}
 
-module.exports.patchMediaISRC = function patchMediaISRC (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  var isrc = req.swagger.params['isrc'].value;
-  Media.patchMediaISRC(mediaId,isrc)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
+/** Supprime un média */
+module.exports.deleteMedia = async function deleteMedia(req, res) {
+	const media = await getMediaFromRequest(req, res)
+	await media.remove()
+	res.json(media)
+}
 
-module.exports.patchMediaLyrics = function patchMediaLyrics (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  var lyrics = req.swagger.params['lyrics'].value;
-  Media.patchMediaLyrics(mediaId,lyrics)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
+// Génération des méthodes PATCH pour chaque champ
+const patch = require("./utils")(module.exports, getMediaFromRequest)
+patch.replace("patchMediaAlbum",                 "album"                )
+patch.replace("patchMediaArtist",                "artist"               )
+patch.replace("patchMediaDuration",              "msDuration"           )
+patch.replace("patchMediaGenre",                 "genre"                )
+patch.replace("patchMediaISRC",                  "isrc"                 )
+patch.replace("patchMediaLyrics",                "lyrics"               )
+patch.merge  ("patchMediaPlaylistLinks",         "playlistLinks"        )
+patch.merge  ("patchMediaPressArticleLinks",     "pressArticleLinks"    )
+patch.replace("patchMediaPublisher",             "publisher"            )
+patch.replace("patchMediaFiles",                 "files"                )
+patch.merge  ("patchMediaSocialMediaLinks",      "socialMediaLinks"     )
+patch.merge  ("patchMediaStreamingServiceLinks", "streamingServiceLinks")
+patch.replace("patchMediaTitle",                 "title"                )
+patch.replace("patchMediaUPC",                   "upc"                  )
+patch.replace("patchModificationDate",           "modificationDate"     )
+patch.replace("patchPublishDate",                "publishDate"          )
 
-module.exports.patchMediaPlaylistLinks = function patchMediaPlaylistLinks (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  var playlistLinks = req.swagger.params['playlistLinks'].value;
-  Media.patchMediaPlaylistLinks(mediaId,playlistLinks)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
 
-module.exports.patchMediaPressArticleLinks = function patchMediaPressArticleLinks (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  var pressArticleLinks = req.swagger.params['pressArticleLinks'].value;
-  Media.patchMediaPressArticleLinks(mediaId,pressArticleLinks)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
+/** Décode le jeton d'un média et retourne son contenu */
+module.exports.decodeMedia = async function decodeMedia(req, res) {
+	const body = req.swagger.params['body'].value
+	const token = body.token || body.jeton
 
-module.exports.patchMediaPublisher = function patchMediaPublisher (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  var publisher = req.swagger.params['publisher'].value;
-  Media.patchMediaPublisher(mediaId,publisher)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
+	try {
+		res.json(await Media.decodeToken(token))
+	} catch(e) {
+		res.status(400).json({
+			error: "Invalid media token received"
+		})
+	}
+}
 
-module.exports.patchMediaFiles = function patchMediaFiles(req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  var files = req.swagger.params['files'].value;
-  Media.patchMediaAudioFile(mediaId,files)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
+/** Partage le média par courriel */
+module.exports.shareMedia = async function shareMedia(req, res) {
+	const body = req.swagger.params["body"].value
+	const media = await getMediaById(body.mediaId)
 
-module.exports.patchMediaSocialMediaLinks = function patchMediaSocialMediaLinks (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  var socialMediaLinks = req.swagger.params['socialMediaLinks'].value;
-  Media.patchMediaSocialMediaLinks(mediaId,socialMediaLinks)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
+	await media.shareByEmail(
+		`${body.prenom} ${body.nom}`,
+		body.courriel,
+		body.acces,
+		"365 days",
+		body.contexte
+	)
 
-module.exports.patchMediaStreamingServiceLinks = function patchMediaStreamingServiceLinks (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  var streamingServiceLinks = req.swagger.params['streamingServiceLinks'].value;
-  Media.patchMediaStreamingServiceLinks(mediaId,streamingServiceLinks)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
+	res.json(true)
+}
 
-module.exports.patchMediaTitle = function patchMediaTitle (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  var title = req.swagger.params['title'].value;
-  Media.patchMediaTitle(mediaId,title)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
+module.exports.setMediaProposalInitiator = async function(req, res) {
+	throw new Error("Not implemented yet")
+}
 
-module.exports.patchMediaUPC = function patchMediaUPC (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  var upc = req.swagger.params['upc'].value;
-  Media.patchMediaUPC(mediaId,upc)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
+module.exports.listeCreateur = async function(req, res) {
+	throw new Error("Not implemented yet")
+}
 
-module.exports.patchModificationDate = function patchModificationDate (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  var modificationDate = req.swagger.params['modificationDate'].value;
-  Media.patchModificationDate(mediaId,modificationDate)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.patchPublishDate = function patchPublishDate (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  var publishDate = req.swagger.params['publishDate'].value;
-  Media.patchPublishDate(mediaId,publishDate)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.postMedia = function postMedia (req, res, next) {
-  var body = req.swagger.params['body'].value;
-  Media.postMedia(body)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.updateMedia = function updateMedia (req, res, next) {
-  var mediaId = req.swagger.params['mediaId'].value;
-  var body = req.swagger.params['body'].value;
-  Media.updateMedia(mediaId,body)
-    .then(function (response) {
-      utils.writeJson(res, response);
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response);
-    });
-};
-
-module.exports.decodeMedia = function decodeMedia (req, res, next) {
-  var body = req.swagger.params['body'].value
-  var token = body.jeton
-  Media.decodeMedia(token)
-  .then(function (response) {
-    utils.writeJson(res, response)
-  })
-  .catch(function (response) {
-    utils.writeJson(res, response)
-  });  
-
-};
-
-module.exports.shareMedia = function shareMedia (req, res, next) {
-  var body = req.swagger.params['body'].value    
-  Media.shareMedia(body)
-  .then(function (response) {
-    utils.writeJson(res, response)
-  })
-  .catch(function (response) {
-    utils.writeJson(res, response)
-  });  
-
-};
+module.exports.listeCollaborations = async function(req, res) {
+	throw new Error("Not implemented yet")
+}
