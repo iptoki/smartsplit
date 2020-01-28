@@ -3184,16 +3184,16 @@ definitions:
     type: "object"
     properties:
       id:
-        type: "integer"
-        example: 1
+        type: "string"
+        example: "1"
         description: "Media ID related to this payment"
       amount: 
         type: "number"
         example: 20
-        description: "The amount of the payment in $ CAD"
+        description: "The amount of the payment in $ CAD (cents)"
       payee: 
-        type: "number"
-        example: 2
+        type: "string"
+        example: "2"
         description: "The ID of the profile of the creator who was paid"
       transactionId:
         type: "string"
@@ -3205,9 +3205,9 @@ definitions:
         description: "The blockchain transaction hash for this payment"
     example:
       transactionId: "12345678"
-      id: 1
-      amount: 20
-      payee: 1
+      id: "abcdef"
+      amount: 200
+      payee: "2"
       transactionHash: "0x58a4c5ff945f8f1c0d0218466886d1e860c78cb625a2a4860e1efaf3a7c33b0c"
   mediaProposal:
     type: "object"
