@@ -32,7 +32,8 @@ module.exports.getAllMedia = async function(req, res) {
 
 /** Obtiens un média en particulier */
 module.exports.getMedia = async function(req, res) {
-	res.json(await getMediaFromRequest(req, res))
+	// FIXME: Item est une relique de DynamoDB qui s'est introduit dans l'API, puis le client
+	res.json({Item: await getMediaFromRequest(req, res)})
 }
 
 /** Ajoute un média par son titre, type et créateur seulement */
@@ -52,17 +53,37 @@ module.exports.putMedia = async function putMedia(req, res) {
 module.exports.postMedia = async function postMedia(req, res) {
 	const body = req.swagger.params["body"].value
 
-	res.json(await Promise.all(body.map(async (inputMedia) => {
-		if(await Media.findOne().byBody(inputMedia))
+	// res.json(await Promise.all(body.map(async (inputMedia) => {
+	// 	if(await Media.findOne().byBody(inputMedia))
+	// 		return res.status(409).json({
+	// 			error: "Can't add this media because it already exists",
+	// 			media: inputMedia
+	// 		})
+
+	// 	const media = new Media(inputMedia)
+	// 	await media.save()
+	// 	return media
+	// })))
+
+	// FIXME: Cette section accept un élément dans un array, et le retourne sous la clé "Attributes". C'est une relique de DynamoDB qui s'est propagée dans l'API et le client
+
+	let media = null
+
+	if(body.mediaId) {
+		media = await getMediaById(body.mediaId)
+		Object.assign(media, body)
+	} else {
+		if(await Media.findOne().byBody(body))
 			return res.status(409).json({
 				error: "Can't add this media because it already exists",
-				media: inputMedia
+				media: body
 			})
 
-		const media = new Media(inputMedia)
-		await media.save()
-		return media
-	})))
+		media = new Media(body)
+	}
+
+	await media.save()
+	res.json({Attributes: media.toJSON()}) 
 }
 
 /** Mets à jours un média existant */
@@ -130,14 +151,29 @@ module.exports.shareMedia = async function shareMedia(req, res) {
 	res.json(true)
 }
 
+/** Définis l'ayant-droit de la dernière proposition */
 module.exports.setMediaProposalInitiator = async function(req, res) {
-	throw new Error("Not implemented yet")
+	const body = req.swagger.params["body"].value
+	const media = await getMediaFromRequest(req, res)
+	media.initiateurPropositionEnCours = body.rightHolderid
+	await media.save()
+	res.json(media)
 }
 
+/** Liste tous les médias dont l'utilisateur est le créateur ou a initié une proposition */
 module.exports.listeCreateur = async function(req, res) {
-	throw new Error("Not implemented yet")
+	const rightHolderId = req.swagger.params["uuid"].value
+	console.warn("UNIMPLEMENTED", "Media.listeCreateur", "stub implementation")
+
+	res.json((await Media.find({creator: rightHolderId})).map(o => {
+		o = o.toJSON()
+		o.propositions = []
+		return o
+	}))
 }
 
+/** Liste tous les médias sur lesquels l'ayant-droit a collaboré */
 module.exports.listeCollaborations = async function(req, res) {
-	throw new Error("Not implemented yet")
+	console.warn("UNIMPLEMENTED", "Media.listeCollaborations", "stub implementation")
+	res.json([])
 }

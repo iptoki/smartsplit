@@ -30,10 +30,10 @@ const MediaSchema = new mongoose.Schema({
 	album: String,
 	genre: String,
 	atype: String, // TODO: C'est quoi exactement? Nombre?
-	bpm: Number,
-	cover: Boolean,
-	creationDate: Date,
-	creator: {type: mongoose.ObjectId, ref: "RightHolder"},
+	bpm: String, // TOOD: Number
+	cover: String, // TODO: Boolean
+	creationDate: String, // TODO: Date
+	creator: {type: String, ref: "RightHolder"},
 	distributor: String,
 	distributorAddress: String, // TODO: object distributor avec nom et addresse?
 	files: {type: Map, of: MediaFileSchema},
@@ -57,7 +57,7 @@ const MediaSchema = new mongoose.Schema({
 	publisher: String,
 	remixer: String,
 	rightHolders: [MediaRightHolderSchema],
-	secondaryGenre: [String],
+	secondaryGenre: {type: [String], alias: "secondaryGenres"}, // FIXME: Bug frontend, envois "secondaryGenres", reçois "secondaryGenre"
 	socialMediaLinks: [LinkSchema],
 	streamingServiceLinks: [LinkSchema],
 	studio: String, // TODO: Object "Studio"
@@ -88,10 +88,6 @@ MediaSchema.methods.createToken = async function(access, expires) {
 		await getParameterA("SECRET_JWS_MEDIA"),
 		{expiresIn: expires}
 	)
-}
-
-MediaSchema.methods.test = function() {
-	return "test successful"
 }
 
 MediaSchema.methods.shareByEmail = async function(
