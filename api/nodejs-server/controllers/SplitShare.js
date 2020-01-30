@@ -1,51 +1,71 @@
-'use strict';
+const SplitShare = require('../models/split-share')
 
-var utils = require('../utils/writer.js')
-var SplitShare = require('../service/SplitShareService')
-
-module.exports.addEditorSplitShare = function addEditorSplitShare (req, res, next) {
-
-  let body = req.swagger.params['body'].value
-
-  SplitShare.addSplitShare(body, 'EDITOR')
-    .then(function (response) {
-      utils.writeJson(res, response)
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response)
-    })
+/** Ajoute un split de partage éditeur */
+module.exports.addEditorSplitShare = async function(req, res) {
+	const body = req.swagger.params["body"].value
+	const splitShare = new SplitShare(body)
+	await splitShare.save()
+	res.json(splitShare)
 }
 
-module.exports.inviteEditeur = function inviteEditeur (req, res, next) {
-  let body = req.swagger.params['body'].value 
-  SplitShare.inviteEditeur(body)
-    .then(function (response) {
-      utils.writeJson(res, response)
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response)
-    })
+/** Retourne un split de partage éditeur */
+module.exports.getSplitShare = async function(req, res) {
+	const proposalId = req.swagger.params["proposalId"].value
+	const rightHolderId = req.swagger.params["rightHolderId"].value
+
+	const splitShare = await SplitShare.findOne({proposalId, rightHolderId})
+	res.json(splitShare ? [splitShare] : [])
 }
 
-module.exports.splitShareVote = function splitShareVote (req, res, next) {
-  let body = req.swagger.params['body'].value 
-  SplitShare.splitShareVote(body)
-    .then(function (response) {
-      utils.writeJson(res, response)
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response)
-    })
+/** Envoie le courriel d'invitation à l'éditeur */
+module.exports.inviteEditeur = async function(req, res) {
+	const body = req.swagger.params["body"].value 
+	const {mediaId, proposalId, shareeId, rightHolder, version} = body
+	const rightHolderId = rightHolder.uuid
+
+	const proposal = await SplitShare
+		.findOne({proposalId, rightHolderId})
+		.populate("sharee")
+		.populate("rightHolder")
+		.populate("proposal")
+
+	proposal.mediaId = mediaId
+	await proposal.populate("media").execPopulate()
+
+	proposal.etat = "VOTATION"
+	await proposal.save()
+	await proposal.emailInvite("7 days")
+	res.json(proposal._id)
 }
 
-module.exports.getSplitShare = function getSplitShare (req, res, next) {
-  let propositionId = req.swagger.params['proposalId'].value 
-  let rightHolderId = req.swagger.params['rightHolderId'].value 
-  SplitShare.getSplitShare(propositionId, rightHolderId)
-    .then(function (response) {
-      utils.writeJson(res, response)
-    })
-    .catch(function (response) {
-      utils.writeJson(res, response)
-    })
+/** Vote pour une proposition de split d'éditeur */
+module.exports.splitShareVote = async function(req, res) {
+	const body = req.swagger.params["body"].value
+	const data = (await SplitShare.decodeToken(body.token || body.jeton)).data
+
+	console.log("DATA", data)
+	console.log("QUERY", {
+			proposalId:    data.proposalId,
+			rightHolderId: data.donateur,
+			shareeId:      data.beneficiaire,
+			version:       data.version
+		})
+
+	const proposal = await SplitShare
+		.findOne({
+			proposalId:    data.proposalId,
+			rightHolderId: data.donateur,
+			shareeId:      data.beneficiaire,
+			version:       data.version
+		})
+		.populate("media")
+		.populate("rightHolder")
+		.populate("sharee")
+
+	proposal.etat = body.choix === "accept" ? "ACCEPTE": "REFUSE"
+	
+	await proposal.save()
+	await proposal.emailStatusUpdate(proposal.etat)
+
+	res.json(body.choix)
 }
