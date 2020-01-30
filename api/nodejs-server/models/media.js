@@ -45,9 +45,9 @@ const MediaSchema = new mongoose.Schema({
 	label: String, // TODO: object "label"
 	labelAddress: String,
 	lyrics: {
-		access: String,
+		access: {type: String, default: ""},
 		languages: [String],
-		text: String
+		text: {type: String, default: ""}
 	},
 	modificationDate: Date,
 	msDuration: String, // TODO: Number

@@ -127,7 +127,8 @@ module.exports.decodeMedia = async function decodeMedia(req, res) {
 	const token = body.token || body.jeton
 
 	try {
-		res.json(await Media.decodeToken(token))
+		const data = await Media.decodeToken(token)
+		res.json(data && data.data)
 	} catch(e) {
 		res.status(400).json({
 			error: "Invalid media token received"

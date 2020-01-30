@@ -5,7 +5,7 @@ const uuidv1 = require('uuid/v1')
 const ProposalCommentSchema = new mongoose.Schema({
 	rightHolderId: {type: String, ref: "RightHolder"},
 	comment: String,
-})
+}, {_id: false})
 
 const ProposalSplitSchema = new mongoose.Schema({
 	contributorRole: {type: Map, of: String},
@@ -16,7 +16,7 @@ const ProposalSplitSchema = new mongoose.Schema({
 	},
 	splitPct: Number,
 	voteStatus: String, // TODO: enum
-})
+}, {_id: false})
 
 const RightTypes = [
 	"masterNeighboringRightSplit",
@@ -83,11 +83,9 @@ ProposalSchema.statics.decodeToken = async function(token) {
 ProposalSchema.methods.forEachSplit = function(callback) {
 	// Parcours des types de droits
 	for(let rightType of RightTypes) {
-		console.log("LOOP SUB", rightType, this.rightsSplits[rightType])
 		// Parcours des sous-types de droits
 		if(this.rightsSplits[rightType])
 		for(let [rightSubType, splits] of this.rightsSplits[rightType]) {
-			console.log("LOOP SUB SUB", rightSubType, splits)
 			// Parcours de chaque split
 			if(splits)
 			for(split of splits) {
@@ -125,29 +123,23 @@ ProposalSchema.pre("save", async function() {
 /** Initialize la proposition en état de votation */
 ProposalSchema.methods.initiateVote = function() {
 	this.etat = "VOTATION"
-	this.setVote(this.initiatorUuid, "accept")
+
+	RightTypes.forEach(rightType => {
+		this.setVote(this.initiatorUuid, rightType, "accept")
+	})
 }
 
 /** Définis le vote d'un ayant-droit dans les splits de la proposition */
-ProposalSchema.methods.setVote = function(rightHolderId, voteState) {
-	this.forEachSplit(split => {
-		if(split.rightHolder.rightHolderId == rightHolderId)
+ProposalSchema.methods.setVote = function(rightHolderId, rightType, voteState) {
+	this.forEachSplit((split, splitSubType, splitType) => {
+		if(split.rightHolder.rightHolderId !== rightHolderId)
+			return
+
+		if(splitType == rightType)
 			split.voteStatus = voteState
 	})
 
 	this.rightsSplits = this.rightsSplits // force comme "modifié"
-}
-
-/** Vérifie si les votes sont unanimes pour un certain type de vote */
-ProposalSchema.methods.voteIsUnanimous = function(voteState = "accept") {
-	let isUnanimous = true
-
-	this.forEachSplit(split => {
-		if(split.voteStatus != voteState)
-			isUnanimous = false
-	})
-
-	return isUnanimous
 }
 
 /** Génère un jeton pour un ayant-droit pour donner accès à la proposition */
@@ -192,6 +184,33 @@ ProposalSchema.methods.emailInvites = async function(rightHolders, expire = "7 d
 	)
 }
 
+/** Envoie le courriel de notification aux ayant-droits suite à une mise à jours de l'état de la proposition (accepté ou refusé) */
+ProposalSchema.methods.emailProposalUpdate = async function(template) {
+	console.log("emailing proposal updates")
+	await this.ensureMediaPopulated()
+
+	const rightHolders = await this.model("RightHolder").find(
+		{_id: {$in: this.rightHolders}},
+		{email: true, firstName: true}
+	).lean()
+
+	console.log("got right holders", rightHolders)
+
+	return await Promise.all(rightHolders.map(async (rightHolder) => {
+		console.log("EMAIL", rightHolder)
+		const body = {
+			toEmail: rightHolder.email,
+			firstName: rightHolder.firstName,
+			workTitle: this.media.title,
+			callbackURL: `http://dev.smartsplit.org/partager/${this.mediaId}`,
+			template
+		}
+		
+		await require("../utils/email").sendEmail(body)
+		return true
+	}))
+}
+
 /**
  * Mets à jours l'état interne de la proposition, enregistre, et si applicable, envoie un courriel d'information si le vote est terminé
  *
@@ -209,35 +228,31 @@ ProposalSchema.methods.updateStateAndSave = async function() {
 		votes[split.voteStatus || "active"]++
 	})
 
-	if(this.etat == "BROUILLON") {
-		// no-op
-	}
-	else if(votes.active > 0) {
-		this.etat = "VOTATION"
-	}
-	else if(votes.reject > 0) {
+	if(votes.reject > 0)
 		this.etat = "REFUSE"
-	}
-	else if(votes.accept > 0) {
+	else if(votes.active > 0)
+		this.etat = "VOTATION"
+	else if(votes.accept > 0)
 		this.etat = "ACCEPTE"
-	}
-	else {
+	else
 		this.etat = "ERREUR"
-	}
 
 	await this.save()
 
-	if(this.etat === initialState)
-		return
+	if(this.etat !== initialState) {
+		if(this.etat === "ACCEPTE")
+			await this.emailProposalUpdate("unanimousVote")
 
-	// TOOD: envoie courriels
+		if(this.etat === "REFUSE")
+			await this.emailProposalUpdate("nonUnanimousVote")
+	}
 }
 
 /**
  * Mets à jours les ayant-droits du média relié
  * FIXME: Implémenté ainsi pour rester compatible/identique au comportement DynamoDB durant la migration. Cette façon de faire comporte certains problèmes lié au fait que la mise à jours de n'importe quelle proposition va modifier les ayant droits attribués au média. Il ferait du sens d'au moins attendre que la proposition soit finalisée avant de faire ce changement.
  */
-ProposalSchema.methods.updateMediaRightHolders = function() {
+ProposalSchema.methods.updateMediaRightHolders = async function() {
 	let rightHolders = {}
 
 	this.forEachSplit(split => {
@@ -251,7 +266,7 @@ ProposalSchema.methods.updateMediaRightHolders = function() {
 
 		let roles = rightHolders[rightHolderId].roles
 		
-		for(let [_, contributorRole] of split.contributorRole]) {
+		for(let [_, contributorRole] of split.contributorRole) {
 			if(!roles.includes(contributorRole))
 				roles.push(contributorRole)
 		}
@@ -263,7 +278,10 @@ ProposalSchema.methods.updateMediaRightHolders = function() {
 		this.media.rightHolders = rightHolders
 		await this.media.rightHolders.save()
 	} else {
-		await Media.update({_id: this.mediaId}, {rightHolders})
+		await this.model("Media").update(
+			{_id: this.mediaId},
+			{$set: {rightHolders}}
+		)
 	}
 
 	return rightHolders

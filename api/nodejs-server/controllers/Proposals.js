@@ -1,4 +1,5 @@
 const Proposal = require("../models/proposal")
+const APIError = require("./error")
 
 /** Obtiens une proposition par son ID */
 async function getProposalById(proposalId, withMedia = false) {
@@ -43,7 +44,8 @@ module.exports.getProposal = async function(req, res) {
 
 /** Retourne la dernière proposition ouverte pour un média */
 module.exports.getDernierePropositionPourMedia = async function(req, res) {
-	res.json(await Proposal.findOne().sort({_d: -1}))
+	const mediaId = req.swagger.params["mediaId"].value
+	res.json(await Proposal.findOne({_id: mediaId}).sort({_d: -1}))
 }
 
 /** Retourne les propositions impliquant un ayant-droit */
@@ -132,7 +134,9 @@ module.exports.decodeProposal = async function(req, res) {
 	const body = req.swagger.params["body"].value
 	const token = body.token || body.jeton
 
-	res.json(await Proposal.decodeToken(token))
+	const data = await Proposal.decodeToken(token)
+
+	res.json(data && data.data)
 }
 
 /** Mets la proposition en votation et envoie les couriels d'invitation à voter */
@@ -153,49 +157,44 @@ module.exports.inviteProposal = async function(req, res) {
 		res.json([true])
 }
 
+/** Ajoute un vote à une proposition */
+module.exports.voteProposal = async function(req, res) {
+	const body = req.swagger.params["body"].value
+	const token  = body.token  || body.jeton
+	const rights = body.rights || body.droits
+	const userId = body.userId
+
+	let tdata = (await Proposal.decodeToken(token)).data
+
+	const proposal = await getProposalById(tdata.proposalId, true)
+
+	for(let rightType in rights) {
+		let {vote, raison} = rights[rightType]
+
+		proposal.setVote(userId, rightType, vote)
+		proposal.comments.push({
+			rightHolderId: userId,
+			comment: raison
+		})
+	}
+
+	await proposal.updateStateAndSave()
+	res.json({
+		proposalId: proposal._id,
+		rightHolderId: userId
+	})
+}
+
+// Pas utilisé?
 module.exports.justifierRefus = async function(req, res) {
-	let _body = req.swagger.params['body'].value
-	let jeton = _body.jeton, 
-			userId = _body.userId,
-			raison = _body.raison
-
-	Proposals.justifierRefus(userId,  jeton, raison)  
-	.then(function (response) {
-		utils.writeJson(res, response)
+	res.status(501).json({
+		error: "Cet API n'est pas implémenté."
 	})
-	.catch(function (response) {
-		utils.writeJson(res, response)
-	});  
+}
 
-};
-
-module.exports.voteProposal = function voteProposal (req, res, next) {
-	let _body = req.swagger.params['body'].value
-	let jeton = _body.jeton, 
-			droits = _body.droits, 
-			userId = _body.userId
-
-	Proposals.voteProposal(userId, jeton, droits)
-
-	.then(function (response) {
-		utils.writeJson(res, response)
-	})
-	.catch(function (response) {
-		utils.writeJson(res, response)
-	});  
-
-};
-
+// Pas utilisé?
 module.exports.listeVotes = function listeVotes (req, res, next) {
-	let _body = req.swagger.params['body'].value
-	let proposalId = _body.proposalId
-
-	Proposals.listeVotes(proposalId)
-	.then(function (response) {
-		utils.writeJson(res, response)
+	res.status(501).json({
+		error: "Cet API n'est pas implémenté."
 	})
-	.catch(function (response) {
-		utils.writeJson(res, response)
-	});  
-
-};
+}
