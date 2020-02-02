@@ -126,6 +126,31 @@ exports.postEmailToRightHolderId = function(body) {
   })
 }
 
+exports.patchRightHolderEstEditeur = function(rightHolderId, estEditeur) {
+  return new Promise(function(resolve, reject) {
+    let params = {  
+      TableName: TABLE,
+      Key: {
+        'rightHolderId': rightHolderId
+      },
+      UpdateExpression: 'set editeur = :e',
+      ExpressionAttributeValues: {
+        ':e' : estEditeur.editeur
+      },
+      ReturnValues: 'UPDATED_NEW'
+    };
+    // Call DynamoDB to delete the item from the table
+    ddb.update(params, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+        resolve()
+      } else {        
+        resolve(data.Attributes);
+      }
+    })
+  })
+}
+
 /**
  * Update the artist name of a right holder
  *
