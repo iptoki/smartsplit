@@ -283,6 +283,55 @@ exports.listeCreateur = function(rightHolderId) {
 }
 
 exports.listeCollaborations = function(rightHolderId) {
+
+  function recupererMedias(listeMediaIds, resolve) {    
+    let listeMedias = []
+    // Tous les medias posible sont récupérés
+    // 3. Pour tous les médias saisie, les récupérer
+    let cptMedia = 0 // Compteur de récupération des médias
+    if(listeMediaIds.length === 0) { resolve (listeMedias) }
+    listeMediaIds.forEach(mediaId=>{
+      let params = {
+        TableName: TABLE,
+        Key: {
+          'mediaId': mediaId
+        }
+      };    
+      ddb.get(params, function(err, data) {
+        if (err) {
+          console.log("Error", err);
+          reject(err)          
+        } else {
+          let _media = data.Item              
+          if(_media.creator !== rightHolderId) {
+            listeMedias.push(_media)
+          }
+          cptMedia++
+          if(cptMedia === listeMediaIds.length) {
+            // Tous les médias sont récupérés
+            // Récupérer les propositions pour chacun des médias de la listeMedias
+            let cptPropositionsMedia = 0 // Compteur pour suivre le nombre 
+            listeMedias.forEach( (m, idx) =>{
+              // (A) 3. Récupérer les propositions du média
+              propositionsParMedia(m.mediaId)
+              .then(p=>{
+                listeMedias[idx].propositions = p
+                cptPropositionsMedia++ 
+                // (A -> B) 3.1 Détecte que toutes les réponses sont revenues
+                if(cptPropositionsMedia == listeMedias.length) {
+                  // 4. Trier la liste de médias restant en ordre d'identifiant séquentiel
+                  listeMedias.sort((a,b)=>a.mediaId < b.mediaId)
+                  // 5. Retourner la liste des médias ainsi épurée, et associer la proposition la plus récente au média
+                  resolve(listeMedias)
+                }
+              })
+            })
+          }
+        }
+      })
+    })                  
+  }
+
   return new Promise(function(resolve, reject) {
     let params = {
       "TableName": 'proposal',
@@ -297,7 +346,10 @@ exports.listeCollaborations = function(rightHolderId) {
         let listeMediaIds = []
         let listeMedias = []
         // 2. Extraire des propositions les mediaId uniques qui ont l'ayant-droit dans leurs collaborateurs
-        propositions.forEach(p=>{
+        let cptPropositions = 0
+        if(propositions.length === 0) { resolve(listeMedias)}
+        propositions.forEach(p=>{          
+          // 2.1 Medias dans lesquels l'ayant-droit a des parts originales
           Object.keys(p.rightsSplits).forEach(type=>{
             Object.keys(p.rightsSplits[type]).forEach(sousType=>{
               p.rightsSplits[type][sousType].forEach(part=>{
@@ -311,55 +363,39 @@ exports.listeCollaborations = function(rightHolderId) {
               })
             })
           })
+          // 2.2 Medias dans lesquels l'ayant-droit a des parts éditeur
+          let params2 = {
+            "TableName": "splitShare",
+            "IndexName": "proposalId-index",
+            "ConsistentRead": false,
+            "KeyConditionExpression": "proposalId = :u",
+            "ExpressionAttributeValues": {
+                ":u": p.uuid
+            }
+          }
+          try {
+            let cptPartagesEditeurs = 0
+            ddb.query(params2, function(err2, data2) {
+              cptPropositions++
+              if(err2) { console.log(err2) }
+              if(data2.Items.length === 0 && cptPropositions === propositions.length) { recupererMedias(listeMediaIds, resolve) }
+              data2.Items.forEach(partage=>{
+                cptPartagesEditeurs++
+                if(partage.shareeId === rightHolderId) {
+                  if(!listeMediaIds.includes(p.mediaId)) {
+                    listeMediaIds.push(p.mediaId)
+                  }
+                }
+                if(cptPartagesEditeurs === data2.Items.length && cptPropositions === propositions.length) {                  
+                  recupererMedias(listeMediaIds, resolve)
+                }                
+              })              
+            })
+          } catch (err) {console.log(err)}          
         })
-        // 3. Pour tous les médias saisie, les récupérer
-        let cptMedia = 0 // Compteur de récupération des médias
-        listeMediaIds.forEach(mediaId=>{
-          let params = {
-            TableName: TABLE,
-            Key: {
-              'mediaId': mediaId
-            }
-          };    
-          ddb.get(params, function(err, data) {
-            if (err) {
-              console.log("Error", err);
-              reject(err)          
-            } else {
-              let _media = data.Item              
-              if(_media.creator !== rightHolderId) {
-                listeMedias.push(_media)
-              }
-              cptMedia++
-              if(cptMedia === listeMediaIds.length) {
-                // Tous les médias sont récupérés
-                // Récupérer les propositions pour chacun des médias de la listeMedias
-                let cptPropositionsMedia = 0 // Compteur pour suivre le nombre 
-                listeMedias.forEach( (m, idx) =>{
-                  // (A) 3. Récupérer les propositions du média
-                  propositionsParMedia(m.mediaId)
-                  .then(p=>{
-                    listeMedias[idx].propositions = p
-                    cptPropositionsMedia++ 
-                    // (A -> B) 3.1 Détecte que toutes les réponses sont revenues
-                    if(cptPropositionsMedia == listeMedias.length) {
-                      // 4. Trier la liste de médias restant en ordre d'identifiant séquentiel
-                      listeMedias.sort((a,b)=>a.mediaId < b.mediaId)
-                      // 5. Retourner la liste des médias ainsi épurée, et associer la proposition la plus récente au média
-                      resolve(listeMedias)
-                    }
-                  })
-                })
-              }
-            }
-          });
-        })  
-        if(listeMediaIds.length === 0) {
-          resolve(listeMedias)
-        }        
       }
-    });
-  });
+    })
+  })
 }
 
 /**
@@ -1228,6 +1264,26 @@ exports.decodeMedia = function(token) {
           resolve(content.data)
       } catch(err) {
           console.log(err)
+      }
+    })
+  })
+}
+
+exports.jetonMedia = function(mediaId, acces) {
+  return new Promise(function(resolve, reject) {
+    utils.getParameter('SECRET_JWS_MEDIA', (secret)=>{
+      try {
+        const EXPIRATION = "365 days"
+        let jeton = jwt.sign(          
+          {
+              data: {mediaId: mediaId, acces: acces}
+          },
+          secret,
+          {expiresIn: EXPIRATION}
+        )
+        resolve(jeton)
+      } catch(err) {
+        console.log(err)
       }
     })
   })

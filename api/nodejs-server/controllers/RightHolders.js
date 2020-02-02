@@ -46,6 +46,18 @@ module.exports.postEmailToRightHolderId = function postEmailToRightHolderId (req
     });
 };
 
+module.exports.patchRightHolderEstEditeur = function patchRightHolderEstEditeur (req, res, next) {
+  var rightHolderId = req.swagger.params['rightHolderId'].value
+  var editeur = req.swagger.params['editeur'].value
+  RightHolders.patchRightHolderEstEditeur(rightHolderId,editeur)
+  .then(function (response) {
+    utils.writeJson(res, response)
+  })
+  .catch(function (response) {
+    utils.writeJson(res, response)
+  })
+}
+
 module.exports.patchRightHolderArtistName = function patchRightHolderArtistName (req, res, next) {
   var rightHolderId = req.swagger.params['rightHolderId'].value;
   var artistName = req.swagger.params['artistName'].value;

@@ -49,6 +49,18 @@ module.exports.getAllMedia = function getAllMedia (req, res, next) {
     });
 };
 
+module.exports.jetonMedia = function jetonMedia (req, res, next) {
+  var mediaId = req.swagger.params['mediaId'].value, 
+      acces = req.swagger.params['acces'].value
+  Media.jetonMedia(mediaId, acces)
+  .then(function (response) {
+    utils.writeJson(res, response)
+  })
+  .catch(function (response) {
+    utils.writeJson(res, response)
+  })
+}
+
 module.exports.listeCreateur = function listeCreateur (req, res, next) {
   var uuid = req.swagger.params['uuid'].value
   Media.listeCreateur(uuid)

@@ -760,21 +760,43 @@ exports.getMediaProposals = function(mediaId) {
       if (err) {
         console.log("Error", err);
         reject(err)
-      } else {
-                
+      } else {                
         let _items = []
         data.Items.forEach(elem=>{
           if(elem.mediaId === parseInt(mediaId)) {
             _items.push(elem)
           }
         })
-
         // Ordonner par _d (horodatage)
         _items.sort((a,b)=>{
           return a._d - b._d
         })
 
-        resolve(_items)
+        let cptPropositions = 0
+        _items.forEach(proposition=>{
+          // Récupérer les partages d'éditeurs de la proposition
+          try {
+            let params2 = {
+              "TableName": "splitShare",
+              "IndexName": "proposalId-index",
+              "ConsistentRead": false,
+              "KeyConditionExpression": "proposalId = :u",
+              "ExpressionAttributeValues": {
+                  ":u": proposition.uuid
+              }
+            }
+            ddb.query(params2, (err, data2)=>{
+              if(err) {console.log(err)}
+              cptPropositions++
+              proposition.partagesTiers = data2.Items
+              if(cptPropositions === _items.length) {
+                resolve(_items)
+              }                    
+            })
+          } catch (err) {
+            console.log(err)
+          }
+        })
       }
     })    
   })
@@ -796,14 +818,26 @@ exports.getProposal = function(uuid) {
     };
     ddb.get(params, function(err, data) {
       if (err) {
-        console.log("Error", err);
         resolve();
       } else {
-        
-        resolve(data);
+        // Récupérer les partages d'éditeurs de la proposition
+        let params2 = {
+          "TableName": "splitShare",
+          "IndexName": "proposalId-index",
+          "ConsistentRead": false,
+          "KeyConditionExpression": "proposalId = :u",
+          "ExpressionAttributeValues": {
+              ":u": uuid
+          }
+        }
+        ddb.query(params2, (err, data2)=>{
+          if(err) {console.log(err)}          
+          data.partagesTiers = data2.Items
+          resolve(data);
+        })        
       }
-    });
-  });
+    })
+  })
 }
 
 
