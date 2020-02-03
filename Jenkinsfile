@@ -15,4 +15,8 @@ node {
 			image.push("preproduction")
 		}
 	}
+
+	stage("Déploiement de la nouvelle image") {
+		build job: "SmartSplit DEV Déploiement"
+	}
 }
