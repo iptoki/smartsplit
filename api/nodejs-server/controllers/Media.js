@@ -178,3 +178,12 @@ module.exports.listeCollaborations = async function(req, res) {
 	console.warn("UNIMPLEMENTED", "Media.listeCollaborations", "stub implementation")
 	res.json([])
 }
+
+/** Retourne un jeton avec le niveau d'accès spécifié */
+module.exports.jetonMedia = async function(req, res) {
+	const media = await getMediaFromRequest(req, res)
+	const access = req.swagger.params["acces"].value
+	// res.json(await media.createToken(access, "365 days"))
+	// FIXME: La version DynamoDB retourne du texte brut
+	res.end(await media.createToken(access, "365 days"))
+}

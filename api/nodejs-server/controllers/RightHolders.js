@@ -66,6 +66,7 @@ patch.merge  ("patchRightHolderSocialMediaLinks", "socialMediaLinks")
 patch.concat ("patchRightHolderDefaultRoles",     "defaultRoles"    )
 patch.concat ("patchRightHolderGroups",           "groups"          )
 patch.replace("patchRightHolderWallet",           "wallet"          )
+patch.replace("patchRightHolderEstEditeur",       "editeur"         )
 
 /**
  * Effectue une recherche d'ayant-droit par adresse courriel:

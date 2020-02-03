@@ -9,7 +9,7 @@ info:
   x-providerName: "smartsplit.org"
   x-logo:
     url: "http://smartsplit.org/wp-content/uploads/2019/05/Logo-v02-005-noir.png"
-host: "api.smartsplit.org:8080"
+#host: api.smartsplit.org
 basePath: "/v1"
 tags:
 - name: "Authentication Details"
@@ -28,6 +28,7 @@ tags:
   description: "Applying to join Socan"
 schemes:
 - "https"
+- "http"
 consumes:
 - "application/json"
 produces:
@@ -1162,6 +1163,42 @@ paths:
                 type: "string"
                 example: "Smith"
                 description: "The right holder's last name"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "RightHolders"
+  /rightHolders/{rightHolderId}/editeur:
+    patch:
+      tags:
+      - "RightHolders"
+      description: "Mise à jour de l'état éditeur avec l'identifiant unique"
+      operationId: "patchRightHolderEstEditeur"
+      parameters:
+      - name: "rightHolderId"
+        in: "path"
+        description: "The rights holder's unique profile ID"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "editeur"
+        description: "The rights holder's last name"
+        required: true
+        schema:
+          $ref: "#/definitions/rightHolderEditeur"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            properties:
+              lastName:
+                type: "boolean"
+                example: true
+                description: "Est un éditeur ou non"
         400:
           description: "Bad request"
         403:
@@ -2375,7 +2412,35 @@ paths:
           description: "An unknown error occured"
       security:
       - jwt: []
-      x-swagger-router-controller: "Media"  
+      x-swagger-router-controller: "Media"
+  /media/jetonMedia/{mediaId}/{acces}:
+    get:
+      tags:
+      - Media
+      operationId: "jetonMedia"
+      parameters:
+      - in: "path"
+        name: "mediaId"
+        type: "string"
+        required: true
+      - in: "path"
+        type: "string"
+        name: "acces"
+        required: true
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/media"
+        400:
+          description: "Bad request"
+        403:
+          description: "Permission denied"
+        404:
+          description: "Endpoint not found"
+        500:
+          description: "An unknown error occured"
+      x-swagger-router-controller: "Media"
   /media/shareMedia:
     post:
       tags:
@@ -2671,6 +2736,11 @@ definitions:
     description: "An array of right holder profile information"
     items:
       $ref: "#/definitions/rightHolder"
+  rightHolderEditeur:
+    type: "object"
+    properties:
+      editeur:
+        type: "boolean"
   rightHolder:
     type: "object"
     properties:
@@ -2738,6 +2808,9 @@ definitions:
         additionalProperties:
           type: "string"
           description: "social media links for the given right holder profile"
+      editeur:
+        type: "boolean"
+        description: "Est un ayant-droit éditeur"        
     example:
       rightHolderId: "12345c60-7b1a-11e8-9c9c-2d42b21b1a4g"
       firstName: "John"
@@ -2757,6 +2830,7 @@ definitions:
       - "Producer"
       accountCreationType: "initiatorCreatedUser"
       locale: "en"
+      editeur: true
       socialMediaLinks: 
         facebook: "https://facebook.com/ex"
         twitter: "https://twitter.com/ex"
