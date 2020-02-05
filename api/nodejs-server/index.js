@@ -17,7 +17,7 @@ const app = express();
 
 const swaggerTools = require('swagger-tools');
 const jsyaml = require('js-yaml');
-const serverPort = 8080;
+const serverPort = parseInt(process.env["API_HTTP_PORT"], 10) || 8080;
 const cors = require('cors');
 
 // Connexion à la base de données
