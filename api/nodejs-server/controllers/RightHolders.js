@@ -4,8 +4,6 @@ const APIError = require("./error")
 async function getRightHolderById(rightHolderId) {
 	const rightHolder = await RightHolder.findById(rightHolderId)
 
-	// TODO: Ajouter la vérification des permissions ici
-
 	if(!rightHolder) throw new APIError(404, {
 		error: "Right holder does not exist in database",
 		rightHolderId
@@ -16,6 +14,12 @@ async function getRightHolderById(rightHolderId) {
 
 function getRightHolderFromRequest(req, res) {
 	return getRightHolderById(req.swagger.params["rightHolderId"].value)
+}
+
+function getWritableRightHolderFromRequest(req, res) {
+	const id = req.swagger.params["rightHolderId"].value
+	req.auth.requireRightHolder(id)
+	return getRightHolderById(id)
 }
 
 module.exports.getAllRightHolders = async function(req, res) {
@@ -47,13 +51,13 @@ module.exports.postRightHolder = async function(req, res) {
 }
 
 module.exports.updateRightHolder = async function (req, res, next) {
-	const rh = await getRightHolderFromRequest(req, res)
+	const rh = await getWritableRightHolderFromRequest(req, res)
 	Object.assign(rh, req.swagger.params["body"].value)
 	await rh.save()
 	res.json(rh)
 }
 
-const patch = require("./utils")(module.exports, getRightHolderFromRequest)
+const patch = require("./utils")(module.exports, getWritableRightHolderFromRequest)
 patch.replace("patchRightHolderArtistName",       "artistName"      )
 patch.replace("patchRightHolderAvatarImage",      "avatarImage"     )
 patch.replace("patchRightHolderEmail",            "email"           )

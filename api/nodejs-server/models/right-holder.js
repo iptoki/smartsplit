@@ -34,7 +34,7 @@ RightHolderSchema.query.byEmail = function(email) {
  */
 RightHolderSchema.query.byBody = function(body) {
 	return this.where({$or: [
-		{rightHolderId: body.rightHolderId},
+		{_id: body.rightHolderId},
 		{email: body.email}
 	]})
 }

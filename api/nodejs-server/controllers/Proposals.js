@@ -10,8 +10,6 @@ async function getProposalById(proposalId, withMedia = false) {
 
 	proposal = await proposal
 
-	// TODO: Ajouter la vérification des permissions ici
-
 	if(!proposal) throw new APIError(404, {
 		error: "This proposal does not exist in database",
 		proposalId
@@ -21,8 +19,13 @@ async function getProposalById(proposalId, withMedia = false) {
 }
 
 /** Obtiens une proposition depuis la requête Express */
-function getProposalFromRequest(req, res, withMedia = false) {
-	return getProposalById(req.swagger.params["uuid"].value, withMedia)
+async function getProposalFromRequest(req, res, withMedia = false) {
+	const proposal = await getProposalById(
+		req.swagger.params["uuid"].value, withMedia
+	)
+	
+	req.auth.requireRightHolder(...proposal.rightHolders)
+	return proposal
 }
 
 /** Liste toutes les propositions pour un média */

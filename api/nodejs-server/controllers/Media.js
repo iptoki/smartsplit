@@ -20,8 +20,15 @@ async function getMediaById(mediaId) {
 }
 
 /** Obtiens un média depuis la requête Express */
-function getMediaFromRequest(req, res) {
-	return getMediaById(req.swagger.params["mediaId"].value)
+async function getMediaFromRequest(req, res) {
+	const media = await getMediaById(req.swagger.params["mediaId"].value)
+	
+	req.auth.requireRightHolder(
+		media.creator,
+		...media.rightHolders.filter(rh => rh.id)
+	)
+	
+	return media
 }
 
 

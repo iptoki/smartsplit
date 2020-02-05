@@ -44,6 +44,9 @@ app.use(morgan('short'));
 app.use(express.static('./public'));
 app.use(cors())
 
+// Initialisation du gestionnaire d'authentification pour l'API
+app.use(require("./service/JWTAuth").expressMiddleware)
+
 // Initialize the Swagger middleware
 swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
 
@@ -63,7 +66,7 @@ swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
   app.use(function(err, req, res, next) {
     res
       .status(err.httpStatus || 500)
-      .json(err.jsonError || {
+      .json(err.jsonError || err.data || {
         error: err.message
       })
 

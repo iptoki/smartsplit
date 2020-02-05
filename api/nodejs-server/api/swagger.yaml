@@ -12,6 +12,8 @@ info:
 #host: api.smartsplit.org
 basePath: "/v1"
 tags:
+- name: "Users"
+  description: "Manage users, their profile and settings"
 - name: "Authentication Details"
   description: "Obtaining and refreshing your JWT token"
 - name: "RightHolders"
@@ -93,6 +95,27 @@ paths:
       security:
       - jwt: []
       x-swagger-router-controller: "AuthenticationDetails"
+  /user:
+    post:
+      tags:
+      - Users
+      description: "Creates a new user account"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Profile data and settings to be assigned to the new user"
+        required: true
+        schema:
+          $ref: "#/definitions/user_signup"
+      responses:
+        200:
+          description: "OK: User created"
+          schema:
+            $ref: "#/definitions/user_read"
+        409:
+          description: "Conflict: User already exists"
+      x-swagger-router-controller: "Users"
+      operationId: "createNewUser"
   /editorsplitshare/invite:
     post:
       tags:
@@ -3393,3 +3416,68 @@ definitions:
       HEAR_OF_SOCAN: "OTHER"
       LANGUAGE_PREFERENCE: "E"
       TERMS: "Y"
+  user_common:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+        format: "email"
+        example: "maxime@iptoki.com"
+        description: "The user's email address"
+      requestSource:
+        type: "string"
+        example: "pochette"
+        description: "The last known application that the user made a request to update account/profile"
+      firstName:
+        type: "string"
+        example: "John"
+        description: "The first name displayed on the right holder's profile"
+      lastName:
+        type: "string"
+        example: "Smith"
+        description: "The last name displayed on the right holder's profile"
+      accountCreationType: 
+        type: "string"
+        description: "The string value that describes if the account is self registered or create by a split initiator"
+        example: "initiatorCreatedUser"
+      locale: 
+        type: "string"
+        description: "The string value of the locale detected from the browser upon user or initiator account creation"
+        example: "fr"
+    required:
+      - email
+  user_read:
+    allOf:
+    - $ref: "#/definitions/user_common"
+    - type: "object"
+      properties:
+        userId:
+          type: "string"
+          example: "a1ed6d95-5342-4242-b0d1-99ad5786427e"
+          description: "The user's unique UUID"
+          format: "uuid"
+        rightHolders:
+          type: "array"
+          description: "The UUID of the right holders this user has access to"
+          example:
+            - a1ed6d95-5342-4242-b0d1-99ad5786427e
+          items:
+            type: "string"
+            format: "uuid"
+  user_write:
+    allOf:
+    - $ref: "#/definitions/user_common"
+    - type: "object"
+      properties:
+        password:
+          type: "string"
+          example: "correct horse battery staple"
+          description: "The user's password"
+  user_signup:
+    allOf:
+      - $ref: '#/definitions/user_common'
+      - $ref: '#/definitions/user_write'
+      - type: "object"
+        properties:
+          rightHolder:
+            $ref: "#/definitions/rightHolder"
