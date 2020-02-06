@@ -64,6 +64,32 @@ UserSchema.methods.verifyPassword = async function(password) {
 	return await PasswordUtil.verify(password, this.password)
 }
 
+/** Crée un token autorisant la réinitialisation du mot de passe de cet utilisateur */
+UserSchema.methods.createPasswordResetToken = async function(expires) {
+	console.log("EXPIRE", arguments)
+	const jwt = require('jsonwebtoken')
+	const {getParameterA} = require("../utils/utils")
+
+	return jwt.sign(
+		{userId: this._id},
+		await getParameterA("SECRET_JWS_API"),
+		{expiresIn: expires}
+	)
+}
+
+/** Vérifie un token de réinitialisation de mot de passe */
+UserSchema.methods.verifyPasswordResetToken = async function(token) {
+	const jwt = require('jsonwebtoken')
+	const {getParameterA} = require("../utils/utils")
+	const secret = await getParameterA("SECRET_JWS_MEDIA")
+
+	try {
+		return jwt.verify(token, secret).userId == this._id
+	} catch(e) {
+		return false
+	}
+}
+
 /** Envoie le courriel de bienvenue à l'utilisateur */
 UserSchema.methods.emailWelcome = async function() {
 	let template = "compteCree"
@@ -77,6 +103,25 @@ UserSchema.methods.emailWelcome = async function() {
 		lastName: this.lastName,
 		callbackURL: "https://www-dev.smartsplit.org/",
 		template: template
+	})
+}
+
+/** Envoie un courriel de réinitialisation de mot de passe à l'utilisateur */
+UserSchema.methods.emailPasswordReset = async function(expires = "2 hours") {
+	const token = await this.createPasswordResetToken(expires)
+	let template = "réinitialisationMotDePasse"
+
+	if(this.requestSource === "pochette")
+		template += "Pochette"
+
+	return await require("../utils/email").sendEmail({
+		toEmail: this.email,
+		email: this.email,
+		firstName: this.firstName,
+		lastName: this.lastName,
+		template: template,
+		resetToken: token,
+		userId: this._id
 	})
 }
 

@@ -16,16 +16,17 @@ module.exports.postAuth = async function(req, res) {
 	// await session.save()
 	
 	res.json({
-		accessToken: JWTAuth.createUserToken(user)
+		accessToken: JWTAuth.createUserToken(user),
+		user: user
 	})
 }
 
 /** Retourne un nouveau jeton d'accès mis à jours à partir du jeton existant */
 module.exports.getRefreshToken = async function(req, res) {
+	const user = await req.auth.user
 	res.json({
-		accessToken: JWTAuth.createUserToken(
-			await req.auth.user
-		)
+		accessToken: JWTAuth.createUserToken(user),
+		user: user
 	})
 }
 

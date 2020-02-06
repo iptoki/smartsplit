@@ -116,6 +116,25 @@ paths:
           description: "Conflict: User already exists"
       x-swagger-router-controller: "Users"
       operationId: "createNewUser"
+  /user/password-reset:
+    post:
+      tags:
+      - Users
+      description: "Sends a password reset for an email address"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Parameters to specify which user to reset the password of"
+        required: true
+        schema:
+          $ref: "#/definitions/password_reset"
+      responses:
+        200:
+          description: "OK: Password reset procedure initiated"
+          schema:
+            $ref: "#/definitions/password_reset_result"
+      x-swagger-router-controller: "Users"
+      operationId: "doPasswordReset"
   /editorsplitshare/invite:
     post:
       tags:
@@ -3481,3 +3500,21 @@ definitions:
         properties:
           rightHolder:
             $ref: "#/definitions/rightHolder"
+  password_reset:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+        format: "email"
+        example: "example@smartsplit.org"
+        description: "The email of the user being sent the password recovery"
+      requestSource:
+        type: "string"
+        example: "smartsplit"
+        description: "The source of the request (pochette|smartsplit)"
+    required:
+    - email
+  password_reset_result:
+    type: "boolean"
+    example: "true"
+    description: "Boolean representing whether a user exists with that email address or not"

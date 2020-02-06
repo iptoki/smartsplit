@@ -1,6 +1,7 @@
 const User = require("../models/user")
 const RightHolder = require("../models/right-holder")
 
+/** Crée un nouvel utilisateur et son ayant droit correspondant */
 module.exports.createNewUser = async function(req, res) {
 	const body = req.swagger.params["body"].value
 	
@@ -34,4 +35,23 @@ module.exports.createNewUser = async function(req, res) {
 		))
 
 	res.json(user)
+}
+
+/** Envoie le courriel de réinitialisation de mot de passe */
+module.exports.doPasswordReset = async function(req, res) {
+	const body = req.swagger.params["body"].value
+	const user = await User.findOne().byEmail(body.email)
+
+	if(!user)
+		return res.json(false)
+
+	user.requestSource = body.requestSource || "smartsplit"
+	console.log(
+		"réinitialisation de mot de passe",
+		user._id, user.email,
+		await user.createPasswordResetToken("2 hours")
+	)
+	// TODO: Mettre à jours serveur de messagerie
+	// await user.emailPasswordReset()
+	res.json(true)
 }
