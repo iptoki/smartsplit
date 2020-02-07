@@ -53,7 +53,8 @@ module.exports.putMedia = async function putMedia(req, res) {
 	})
 
 	await media.save()
-	res.json(media)
+	// res.json(media)
+	res.json({id: media._id}) // FIXME: le client plante si on retourne plus que le id
 }
 
 /** Ajoute un média complet */
