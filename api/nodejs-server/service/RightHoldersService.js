@@ -115,12 +115,16 @@ exports.postEmailToRightHolderId = function(body) {
       "UserPoolId": USER_POOL_ID
     }
     COGNITO_CLIENT.listUsers(params, (err, data) => {
-      if (err) {
+      try {
+        if (err) {
           console.log(err);
-      }
-      else {
-          console.log(data);
-          resolve(data.Users[0].Attributes[0].Value)
+        }
+        else {
+            console.log(data);
+            resolve(data.Users[0].Attributes[0].Value)
+        }
+      } catch(err) {
+        console.log(err)
       }
     });
   })
