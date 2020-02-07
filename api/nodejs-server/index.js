@@ -42,7 +42,7 @@ app.use(bodyParser.json({strict: false}));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(morgan('short'));
 app.use(express.static('./public'));
-app.use(cors())
+app.use(cors({maxAge: 30*60}))
 
 // Initialisation du gestionnaire d'authentification pour l'API
 app.use(require("./service/JWTAuth").expressMiddleware)
