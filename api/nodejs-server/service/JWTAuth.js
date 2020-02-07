@@ -75,6 +75,8 @@ module.exports.expressMiddleware = function(req, res, next) {
 	
 	/** Rejette la requête sur l'utilisateur de l'API n'a pas accès à au moins un des ayant droits demandés */
 	req.auth.requireRightHolder = function(...rightHolderIds) {
+		req.auth.requireUser()
+		
 		const userRHs = req.auth.data.rightHolders
 		
 		for(rightHolderId of rightHolderIds) {
