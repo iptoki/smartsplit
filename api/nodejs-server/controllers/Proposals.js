@@ -24,8 +24,8 @@ async function getProposalFromRequest(req, res, withMedia = false) {
 		req.swagger.params["uuid"].value, withMedia
 	)
 	
-	if(proposal)
-		req.auth.requireRightHolder(...proposal.rightHolders)
+	// if(proposal)
+	// 	req.auth.requireRightHolder(...proposal.rightHolders)
 	
 	return proposal
 }

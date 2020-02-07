@@ -21,11 +21,11 @@ async function getMediaById(mediaId) {
 async function getMediaFromRequest(req, res) {
 	const media = await getMediaById(req.swagger.params["mediaId"].value)
 	
-	if(media)
-		req.auth.requireRightHolder(
-			media.creator,
-			...media.rightHolders.filter(rh => rh.id)
-		)
+	// if(media)
+	// 	req.auth.requireRightHolder(
+	// 		media.creator,
+	// 		...media.rightHolders.filter(rh => rh.id)
+	// 	)
 	
 	return media
 }
