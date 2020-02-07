@@ -9,8 +9,6 @@ const {getParameter} = require("../utils/utils")
 async function getMediaById(mediaId) {
 	const media = await Media.findById(mediaId)
 
-	// TODO: Ajouter la vérification des permissions ici
-
 	if(!media) throw new APIError(404, {
 		error: "This media does not exist in database",
 		mediaId
@@ -23,10 +21,11 @@ async function getMediaById(mediaId) {
 async function getMediaFromRequest(req, res) {
 	const media = await getMediaById(req.swagger.params["mediaId"].value)
 	
-	req.auth.requireRightHolder(
-		media.creator,
-		...media.rightHolders.filter(rh => rh.id)
-	)
+	if(media)
+		req.auth.requireRightHolder(
+			media.creator,
+			...media.rightHolders.filter(rh => rh.id)
+		)
 	
 	return media
 }
