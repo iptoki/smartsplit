@@ -1,5 +1,6 @@
 const User = require("../models/user")
 const RightHolder = require("../models/right-holder")
+const Entity = require("../models/entity")
 
 /** Crée un nouvel utilisateur et son ayant droit correspondant */
 module.exports.createNewUser = async function(req, res) {
@@ -21,6 +22,8 @@ module.exports.createNewUser = async function(req, res) {
 		const rightHolder = new RightHolder(body.rightHolder)
 		await rightHolder.save()
 		user.rightHolders.push(rightHolder._id)
+		
+		await Entity.addMemberInMany(rightHolder._id, ...rightHolder.groups)
 	}
 	
 	await user.setEmail(body.email, false /* on a déjà vérifié plus haut */)
