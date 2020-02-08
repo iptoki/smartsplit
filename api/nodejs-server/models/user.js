@@ -94,6 +94,9 @@ UserSchema.methods.verifyPasswordResetToken = async function(token) {
 UserSchema.methods.emailWelcome = async function() {
 	let template = "compteCree"
 	
+	if(this.accountCreationType === "initiatorCreatedUser")
+		template = "initiateurCompteCree"
+	
 	if(this.requestSource === "pochette")
 		template += "Pochette"
 	

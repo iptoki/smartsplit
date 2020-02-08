@@ -50,7 +50,7 @@ module.exports.getProposal = async function(req, res) {
 /** Retourne la dernière proposition ouverte pour un média */
 module.exports.getDernierePropositionPourMedia = async function(req, res) {
 	const mediaId = req.swagger.params["mediaId"].value
-	res.json(await Proposal.findOne({_id: mediaId}).sort({_d: -1}))
+	res.json(await Proposal.findOne({mediaId}).sort({_d: -1}))
 }
 
 /** Retourne les propositions impliquant un ayant-droit */

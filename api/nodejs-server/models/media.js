@@ -26,7 +26,7 @@ const MediaSchema = new mongoose.Schema({
 	_id: {type: Number, alias: "mediaId", default: Date.now}, // TODO: Utiliser un vrai ID
 	type: String, // TODO: ???
 	title: String,
-	artist: String,
+	artist: {type: String, default: ""},
 	album: String,
 	genre: String,
 	atype: String, // TODO: C'est quoi exactement? Nombre?
@@ -67,6 +67,13 @@ const MediaSchema = new mongoose.Schema({
 	pressArticleLinks: [LinkSchema],
 	socialMediaLinks: [LinkSchema]
 }, BaseModel.defaultOptions)
+
+MediaSchema.virtual("proposals", {
+	ref: "Proposal",
+	localField: "_id",
+	foreignField: "mediaId",
+	justOne: false
+})
 
 MediaSchema.query.byBody = function(body) {
 	return this.where({_id: body.mediaId})

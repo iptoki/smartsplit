@@ -171,19 +171,32 @@ module.exports.setMediaProposalInitiator = async function(req, res) {
 /** Liste tous les médias dont l'utilisateur est le créateur ou a initié une proposition */
 module.exports.listeCreateur = async function(req, res) {
 	const rightHolderId = req.swagger.params["uuid"].value
-	console.warn("UNIMPLEMENTED", "Media.listeCreateur", "stub implementation")
+	const medias = await Media
+		.find({creator: rightHolderId})
+		.populate("proposals")
 
-	res.json((await Media.find({creator: rightHolderId})).map(o => {
-		o = o.toJSON()
-		o.propositions = []
+	res.json(medias.map(media => {
+		o = media.toJSON()
+		o.propositions = media.proposals.sort((a, b) => b._d - a._d)
 		return o
 	}))
 }
 
 /** Liste tous les médias sur lesquels l'ayant-droit a collaboré */
 module.exports.listeCollaborations = async function(req, res) {
-	console.warn("UNIMPLEMENTED", "Media.listeCollaborations", "stub implementation")
-	res.json([])
+	const rightHolderId = req.swagger.params["uuid"].value
+	const medias = await Media
+		.find({
+			"rightHolders.id": rightHolderId,
+			creator: {$ne: rightHolderId}
+		})
+		.populate("proposals")
+		
+	res.json(medias.map(media => {
+		o = media.toJSON()
+		o.propositions = media.proposals.sort((a, b) => b._d - a._d)
+		return o
+	}))
 }
 
 /** Retourne un jeton avec le niveau d'accès spécifié */
