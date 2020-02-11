@@ -28,6 +28,8 @@ tags:
   description: "Viewing and updating payment details"
 - name: "Socan"
   description: "Applying to join Socan"
+- name: "Blockchain Protected Work"
+  description: "Protect your work by putting its hash on the blockchain"
 schemes:
 - "https"
 - "http"
@@ -2742,6 +2744,99 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Socan"
+  /protected-work:
+    post:
+      tags:
+      - "Blockchain Protected Work"
+      description: "Submit work to be hashed and its proof added to the blockchain"
+      x-swagger-router-controller: "ProtectedWorks"
+      operationId: "postWork"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Work data to be protected, without the file"
+        required: true
+        schema:
+          $ref: "#/definitions/protected_work_input"
+      responses:
+        200:
+          description: "Work successfully added to the database and is ready to receive its file data"
+          schema:
+            $ref: "#/definitions/protected_work_output"
+  /protected-work/{id}:
+    get:
+      tags:
+      - "Blockchain Protected Work"
+      description: "Returns the protected work data and status"
+      x-swagger-router-controller: "ProtectedWorks"
+      operationId: "getWork"
+      parameters:
+      - name: "id"
+        in: "path"
+        type: "string"
+        description: "The ID of the protected work to query"
+        required: true
+      responses:
+        200:
+          description: "OK, returning protected work data and status"
+          schema:
+            $ref: "#/definitions/protected_work_output"
+        403:
+          description: "Forbidden: the current API user is not allowed to access this protected work" 
+  /protected-work/{id}/file:
+    put:
+      tags:
+      - "Blockchain Protected Work"
+      description: "Upload the file to generate the hashes"
+      x-swagger-router-controller: "ProtectedWorks"
+      operationId: "putWorkFile"
+      consumes:
+      - multipart/form-data
+      parameters:
+      - name: "id"
+        in: "path"
+        type: "string"
+        description: "The ID of the protected work proof"
+        required: true
+      - name: "file"
+        in: "formData"
+        type: "file"
+        description: "The file to compute its hashes"
+        required: true
+      responses:
+        200:
+          description: "New hash successfully computed and updated"
+          schema:
+            $ref: "#/definitions/protected_work_output"
+        403:
+          description: "Forbidden: the current API user is not allowed to access this protected work"
+        409:
+          description: "Conflict: The file hash has already been submitted to the blockchain and cannot be modified"
+  /protected-work/{id}/ethereum:
+    post:
+      tags:
+      - "Blockchain Protected Work"
+      description: "Submits the protected work to the blockchain"
+      x-swagger-router-controller: "ProtectedWorks"
+      operationId: "postWorkToEthereum"
+      consumes:
+      - application/json
+      - multipart/form-data
+      - application/x-www-form-urlencoded
+      - application/octet-stream
+      parameters:
+      - name: "id"
+        in: "path"
+        type: "string"
+        description: "The ID of the protected work to submit to the blockchain"
+        required: true
+      responses:
+        200:
+          description: "The updated work status on the blockchain"
+          schema:
+            $ref: "#/definitions/protected_work_output"
+        403:
+          description: "Forbidden: the current API user is not allowed to access this protected work"
 securityDefinitions:
   basicAuth:
     description: "HTTP Basic Authentication"
@@ -3518,3 +3613,82 @@ definitions:
     type: "boolean"
     example: "true"
     description: "Boolean representing whether a user exists with that email address or not"
+  protected_work_common:
+    type: "object"
+    properties:
+      title:
+        type: "string"
+        description: "The title of the work to protect"
+        example: "Example"
+      artistName:
+        type: "string"
+        description: "The artist name of the person creating the work"
+        example: "DJ Test"
+      rightHolderId:
+        type: "string"
+        description: "The UUID of a SmartSplit right holder owning this work"
+        example: "7bf2ee10-4d1d-11ea-bcf2-4513a1e8c3ed"
+      mediaId:
+        type: "string"
+        description: "The UUID of a corresponding media on SmartSplit"
+        example: "8bfe2360-4d1d-11ea-bcf2-4513a1e8c3ed"
+      metadata:
+        type: "object"
+        description: "Container for the metadata to be hashed along the file on the blockchain"
+        properties:
+          content:
+            type: "string"
+            description: "The contents of the metadata to attach on the blockchain."
+            example: "Location: Montréal\nCellular-Network: Robellus\nWiFi-Network: SmartSplit"
+          hash:
+            $ref: "#/definitions/hash_collection"
+  protected_work_input:
+    allOf:
+    - $ref: "#/definitions/protected_work_common"
+  protected_work_output:
+    allOf:
+    - $ref: "#/definitions/protected_work_common"
+    - type: "object"
+      properties:
+        protectedWorkId:
+          type: "string"
+          format: "uuid"
+        file:
+          type: "object"
+          properties:
+            url:
+              type: "string"
+              description: "The URL to the uploaded file"
+              example: "https://files.smartsplit.org/protected-work/3ad70870-4d1e-11ea-bcf2-4513a1e8c3ed/01_Demo.mp3"
+            hash:
+              $ref: "#/definitions/hash_collection"
+        ethereum:
+          $ref: "#/definitions/ethereum_status"
+  ethereum_status:
+    type: "object"
+    description: "Represents the status of the processing of the transaction on the Ethereum blockchain"
+    properties:
+      status:
+        type: "string"
+        description: "The status of the transaction: NONE if no transaction has been initiated, PROCESSING if the transaction is pending on the blockchain, PROCESSED if the transaction is processed and has been mined in a block and the transactionId field is populated, ERROR for any error condition."
+        example: "PROCESSED"
+      transactionId:
+        type: "string"
+        description: "The transaction ID on the Ethereum blockchain"
+        example: "0xe53d1fdd2783c13dcde09b1219a64723facd280f1cdaa139d9d125d3a6419c52"
+  hash_collection:
+    type: "object"
+    description: "A collection of different hashes representing content. It is always filled by the server."
+    properties:
+      md5:
+        type: "string"
+        description: "An MD5 hash sum of the content"
+        example: "7da5c9a60e63ba6cf3ba9898ca504518"
+      sha1:
+        type: "string"
+        description: "The SHA1 hash sum of the content"
+        example: "1f23336c93bcaafe41c38464f5edf5605d33a92b"
+      sha512:
+        type: "string"
+        description: "The SHA512 hash sum of the content"
+        example: "e41894f08d7ce497f8577692073eeea5323108d07667c1e630fd80bed086eaccd362dce987e50c1ff48acbb276d83a19beebba74b4d85070cc0e50c363efb653"

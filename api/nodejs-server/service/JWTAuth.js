@@ -14,7 +14,7 @@ getParameterA("SECRET_JWS_API")
 class AuthError extends Error {
 	constructor(status, data, ...args) {
 		super(data.error || "Unauthorized", ...args)
-		this.httpStatus = status // Unauthorized
+		this.httpStatus = status || 401 // Unauthorized
 		this.data = data
 	}
 }
