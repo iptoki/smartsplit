@@ -1171,7 +1171,7 @@ exports.postMedia = function(body) {
                 ':stu' : body.studio ? body.studio : (_media.studio ? _media.studio : " "),
                 ':stuA' : body.studioAddress ? body.studioAddress : (_media.studioAddress ? _media.studioAddress : " "),
                 ':lbl' : body.label ? body.label : (_media.label ? _media.label : " "),
-                ':lblA' : body.labelA ? body.labelA : (_media.labelA ? _media.labelA : " "),
+                ':lblA' : body.labelAddress ? body.labelAddress : (_media.labelAddress ? _media.labelAddress : " "),
                 ':dist' : body.distributor ? body.distributor : (_media.distributor ? _media.distributor : " "),
                 ':distA' : body.distributorAddress ? body.distributorAddress : (_media.distributorAddress ? _media.distributorAddress : " "),
               },
