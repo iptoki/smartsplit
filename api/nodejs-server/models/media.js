@@ -32,7 +32,7 @@ const MediaSchema = new mongoose.Schema({
 	atype: String, // TODO: C'est quoi exactement? Nombre?
 	bpm: String, // TOOD: Number
 	cover: String, // TODO: Boolean
-	creationDate: String, // TODO: Date
+	creationDate: {type: String, default: () => ""+Date.now()}, // TODO: Date
 	creator: {type: String, ref: "RightHolder"},
 	distributor: String,
 	distributorAddress: String, // TODO: object distributor avec nom et addresse?
@@ -49,7 +49,7 @@ const MediaSchema = new mongoose.Schema({
 		languages: [String],
 		text: {type: String, default: ""}
 	},
-	modificationDate: Date,
+	modificationDate: {type: Number, default: Date.now},
 	msDuration: String, // TODO: Number
 	playlistLinks: [LinkSchema],
 	playlistLinksJoined: [String],
@@ -67,6 +67,10 @@ const MediaSchema = new mongoose.Schema({
 	pressArticleLinks: [LinkSchema],
 	socialMediaLinks: [LinkSchema]
 }, BaseModel.defaultOptions)
+
+MediaSchema.pre("save", async function() {
+	this.modificationDate = Date.now()
+})
 
 MediaSchema.virtual("proposals", {
 	ref: "Proposal",

@@ -173,6 +173,7 @@ module.exports.listeCreateur = async function(req, res) {
 	const rightHolderId = req.swagger.params["uuid"].value
 	const medias = await Media
 		.find({creator: rightHolderId})
+		.sort({_id: -1})
 		.populate("proposals")
 
 	res.json(medias.map(media => {
@@ -190,6 +191,7 @@ module.exports.listeCollaborations = async function(req, res) {
 			"rightHolders.id": rightHolderId,
 			creator: {$ne: rightHolderId}
 		})
+		.sort({_id: -1})
 		.populate("proposals")
 		
 	res.json(medias.map(media => {
