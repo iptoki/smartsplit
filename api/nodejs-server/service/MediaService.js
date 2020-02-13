@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const axios = require('axios')
 
 const moment = require('moment')
-moment.defaultFormat = "DD-MM-YYYY HH:mm"
+moment.defaultFormat = "DD-MM-YYYY"
 
 // AWS
 const AWS = require('aws-sdk');
@@ -1128,6 +1128,8 @@ exports.postMedia = function(body) {
             }
           }
           
+          let dateCreationUnix = moment(body.creationDate, moment.defaultFormat).unix() * 1000
+
           try{
             let params2 = {
               TableName: TABLE,
@@ -1141,7 +1143,7 @@ exports.postMedia = function(body) {
               \ rightHolders = :rHs, cover = :cov, jurisdiction = :jur, bpm = :bpm, influence = :inf, studio = :stu, studioAddress = :stuA,\
               \ label = :lbl, labelAddress = :lblA, distributor = :dist, distributorAddress = :distA',
               ExpressionAttributeValues: {
-                ':c' : body.creationDate || new Date().getTime(),
+                ':c' : dateCreationUnix || new Date().getTime(),
                 ':cr' : body.creator ? body.creator : (_media.creator ? _media.creator : " "),
                 ':ar' : body.artist ? body.artist : (_media.artist ? _media.artist : " "),
                 ':al' : body.album ? body.album : (_media.album ? _media.album : " "),
