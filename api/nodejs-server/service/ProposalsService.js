@@ -409,135 +409,139 @@ exports.invite = function(proposalId, rightHolders) {
       }
     };
     ddb.get(params, function(err, data) {
-      if (err) {
-        console.log("Error", err)
-      }
-        
-      let proposition = data.Item
-
-      let initiateur = proposition.initiatorName,
-          initiateurId = proposition.initiatorUuid,
-          rightsSplits = proposition.rightsSplits
-
-      // 0. Réceptionne le secret de génération JWT des paramètres AWS
-      utils.getParameter('SECRET_JWS_INVITE', (secret)=>{
-  
-        // 0.1 --> Génère un jeton JWT pour chaque ayant-droit
-        const EXPIRATION = "7 days"                              
-        Object.keys(rightHolders).forEach((elem)=>{
-          let jeton = jwt.sign(          
-            {
-                data: {proposalId: proposalId, rightHolderId: rightHolders[elem].rightHolderId}
-            },
-            secret,
-            {expiresIn: EXPIRATION}
-          )
-          rightHolders[elem].jeton = jeton
-        })
-
-        // 1. Initialisation des votes
-        
-        // a) Le vote positif de l'initiateur est mis à 'accept' partout où ce dernier aparaît
-        // b) Les votes de chaque autre collaborateur est laissé à 'active'
-        TYPE_PARTAGE.forEach((elem, idx)=>{
-          // Dépendant du type de partage ...
-
-          function accepter(elem, rightHolderId, type) {
-            if(elem && type && rightsSplits[elem][type]) {
-              rightsSplits[elem][type].forEach((droit, idx)=>{
-                if(droit.rightHolder.rightHolderId === rightHolderId) {
-                  droit.voteStatus = 'accept'
-                  rightsSplits[elem][type][idx] = droit
-                }
-              })
-            }
-          }
-
-          switch(idx) {
-            case 0: // Droit d'auteur
-              if(rightsSplits[elem]) {                  
-                // Paroles
-                accepter(elem, initiateurId, 'lyrics')
-                accepter(elem, initiateurId, 'music')
-              }
-              break
-            case 1: // Droit voisin interprète
-              if(rightsSplits[elem]) {
-                accepter(elem, initiateurId, 'principal')
-                accepter(elem, initiateurId, 'accompaniment')
-              }
-              break
-            case 2: // Droit voisin enregistrement
-              if(rightsSplits[elem]) {
-                accepter(elem, initiateurId, 'split')
-              }
-              break
-            default:
-          }
-
-          // Ajoute le commentaire
-          ajouterCommentaire(proposalId, initiateurId, 'Initiateur du split')
-
-        })
-
-        // 2.a -> Mettre à jour la proposition
-        overwriteRightSplits(proposalId, rightsSplits)
-        
-        // 3. Récupérer le titre du média avec le mediaId (async)        
-        axios.get(`http://dev.api.smartsplit.org:8080/v1/media/${proposition.mediaId}`)
-        .then(res=>{
-          let titre = res.data.Item.title
-          // 3.a -> Envoyer un courriel à tous (différent si initiateur)
-          Object.keys(rightHolders).forEach((elem)=>{
-            let body = [
-              {
-                  "toEmail": rightHolders[elem].email,
-                  "firstName": rightHolders[elem].name,
-                  "workTitle": titre,
-                  "callbackURL": `http://dev.smartsplit.org/proposition/vote/${rightHolders[elem].jeton}`
-              }
-            ]
-            
-            if(initiateurId === rightHolders[elem].rightHolderId) {
-              // Confirmation d'envoi de proposition
-              body[0].template = "splitSent"            
-            } else {
-              // Invitation à voter
-              body[0].splitInitiator = initiateur
-              body[0].template = "splitCreated"
-            }
-            axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)
-          })
-
-          // 4. Modifier l'état de la proposition
-          let params = {
-            TableName: TABLE,
-            Key: {
-              'uuid': proposalId
-            },
-            UpdateExpression: 'set etat = :s',
-            ExpressionAttributeValues: {
-              ':s' : "VOTATION"
-            },
-            ReturnValues: 'UPDATED_NEW'
-          };
-          ddb.update(params, function(err, data) {
-            if (err) {
-              console.log("Error", err)
-            } else {
-              
-              // 5. Résoudre ce qui doit se produire dans le futur avec le jeton de l'initiateur          
-              // Test la fin du vote              
-              finDuVote(proposalId)
-              resolve(initiateurId)
-            }
-          })
+      try {
+        if (err) {
+          console.log("Error", err)
+        }
           
+        let proposition = data.Item
+  
+        let initiateur = proposition.initiatorName,
+            initiateurId = proposition.initiatorUuid,
+            rightsSplits = proposition.rightsSplits
+  
+        // 0. Réceptionne le secret de génération JWT des paramètres AWS
+        utils.getParameter('SECRET_JWS_INVITE', (secret)=>{
+    
+          // 0.1 --> Génère un jeton JWT pour chaque ayant-droit
+          const EXPIRATION = "7 days"                              
+          Object.keys(rightHolders).forEach((elem)=>{
+            let jeton = jwt.sign(          
+              {
+                  data: {proposalId: proposalId, rightHolderId: rightHolders[elem].rightHolderId}
+              },
+              secret,
+              {expiresIn: EXPIRATION}
+            )
+            rightHolders[elem].jeton = jeton
+          })
+  
+          // 1. Initialisation des votes
+          
+          // a) Le vote positif de l'initiateur est mis à 'accept' partout où ce dernier aparaît
+          // b) Les votes de chaque autre collaborateur est laissé à 'active'
+          TYPE_PARTAGE.forEach((elem, idx)=>{
+            // Dépendant du type de partage ...
+  
+            function accepter(elem, rightHolderId, type) {
+              if(elem && type && rightsSplits[elem][type]) {
+                rightsSplits[elem][type].forEach((droit, idx)=>{
+                  if(droit.rightHolder.rightHolderId === rightHolderId) {
+                    droit.voteStatus = 'accept'
+                    rightsSplits[elem][type][idx] = droit
+                  }
+                })
+              }
+            }
+  
+            switch(idx) {
+              case 0: // Droit d'auteur
+                if(rightsSplits[elem]) {                  
+                  // Paroles
+                  accepter(elem, initiateurId, 'lyrics')
+                  accepter(elem, initiateurId, 'music')
+                }
+                break
+              case 1: // Droit voisin interprète
+                if(rightsSplits[elem]) {
+                  accepter(elem, initiateurId, 'principal')
+                  accepter(elem, initiateurId, 'accompaniment')
+                }
+                break
+              case 2: // Droit voisin enregistrement
+                if(rightsSplits[elem]) {
+                  accepter(elem, initiateurId, 'split')
+                }
+                break
+              default:
+            }
+  
+            // Ajoute le commentaire
+            ajouterCommentaire(proposalId, initiateurId, 'Initiateur du split')
+  
+          })
+  
+          // 2.a -> Mettre à jour la proposition
+          overwriteRightSplits(proposalId, rightsSplits)
+          
+          // 3. Récupérer le titre du média avec le mediaId (async)        
+          axios.get(`http://dev.api.smartsplit.org:8080/v1/media/${proposition.mediaId}`)
+          .then(res=>{
+            let titre = res.data.Item.title
+            // 3.a -> Envoyer un courriel à tous (différent si initiateur)
+            Object.keys(rightHolders).forEach((elem)=>{
+              let body = [
+                {
+                    "toEmail": rightHolders[elem].email,
+                    "firstName": rightHolders[elem].name,
+                    "workTitle": titre,
+                    "callbackURL": `http://dev.smartsplit.org/proposition/vote/${rightHolders[elem].jeton}`
+                }
+              ]
+              
+              if(initiateurId === rightHolders[elem].rightHolderId) {
+                // Confirmation d'envoi de proposition
+                body[0].template = "splitSent"            
+              } else {
+                // Invitation à voter
+                body[0].splitInitiator = initiateur
+                body[0].template = "splitCreated"
+              }
+              axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)
+            })
+  
+            // 4. Modifier l'état de la proposition
+            let params = {
+              TableName: TABLE,
+              Key: {
+                'uuid': proposalId
+              },
+              UpdateExpression: 'set etat = :s',
+              ExpressionAttributeValues: {
+                ':s' : "VOTATION"
+              },
+              ReturnValues: 'UPDATED_NEW'
+            };
+            ddb.update(params, function(err, data) {
+              if (err) {
+                console.log("Error", err)
+              } else {
+                
+                // 5. Résoudre ce qui doit se produire dans le futur avec le jeton de l'initiateur          
+                // Test la fin du vote              
+                finDuVote(proposalId)
+                resolve(initiateurId)
+              }
+            })
+            
+          })
+          .catch(err=>{
+            console.log(err)
+          })        
         })
-        .catch(err=>{
-          console.log(err)
-        })        
-      })
+      } catch (err) {
+        console.log(err)
+      }      
     })  
   })
 }
@@ -605,6 +609,8 @@ exports.voteProposal = function(userId, jeton, droits) {
                 })
               })
             })
+
+            console.log(proposalId, rightsSplits)
 
             // Appliquer le changement de droits
             overwriteRightSplits(proposalId, rightsSplits)

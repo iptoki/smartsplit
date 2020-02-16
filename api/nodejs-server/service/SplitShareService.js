@@ -84,104 +84,111 @@ exports.inviteEditeur = function(body, type) {
           }
         };
         ddb.get(params, function(err, data) {
-          if (err) {
-            console.log("Error", err)
-          }                
-          let titre = data.Item.title
-          
-          // 3. Récupère le bénéficiaire
-          let params = {
-            TableName: "rightHolder",
-            Key: {
-              'rightHolderId': _beneficiaire
-            }
-          };
-          ddb.get(params, function(err, data) {
+          try {
             if (err) {
               console.log("Error", err)
-            }
-            try {
-              let destinataire = data.Item
-              // 3.1 Envoyer un courriel au bénéficiaire
+            }                
+            let titre = data.Item.title
+            
+            // 3. Récupère le bénéficiaire
+            let params = {
+              TableName: "rightHolder",
+              Key: {
+                'rightHolderId': _beneficiaire
+              }
+            };
+            ddb.get(params, function(err, data) {
+              if (err) {
+                console.log("Error", err)
+              }
+              try {
+                let destinataire = data.Item
+                // 3.1 Envoyer un courriel au bénéficiaire
+                let body = [
+                  {
+                      "toEmail": destinataire.email,
+                      "firstName": destinataire.firstName,
+                      "workTitle": titre,
+                      "callbackURL": `http://dev.smartsplit.org/partage/editeur/vote/${jeton}`,
+                      "template": "partageEditeur",
+                      "ayantDroit": _ayantDroit.nom
+                  }
+                ]      
+                axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)          
+              } catch (err) {
+                console.log(err)
+              }
+            })
+  
+            // 4. Envoi de la confirmation d'envoi à l'ayant-droit qui a partagé
+            params = {
+              TableName: "rightHolder",
+              Key: {
+                'rightHolderId': _ayantDroit.uuid
+              }
+            };
+            
+            ddb.get(params, function(err, data) {
+              if (err) {
+                console.log("Error", err)
+              }        
+              let ayantDroit = data.Item
               let body = [
                 {
-                    "toEmail": destinataire.email,
-                    "firstName": destinataire.firstName,
+                    "toEmail": ayantDroit.email,
+                    "firstName": ayantDroit.firstName,
                     "workTitle": titre,
-                    "callbackURL": `http://dev.smartsplit.org/partage/editeur/vote/${jeton}`,
-                    "template": "partageEditeur",
-                    "ayantDroit": _ayantDroit.nom
+                    "callbackURL": `http://dev.smartsplit.org/partager/${mediaId}`,
+                    "template": "partageEditeurEnvoye",
                 }
-              ]      
-              axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)          
-            } catch (err) {
-              console.log(err)
+              ]
+              axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)
+            })
+  
+            // 4. Récupère la proposition de part à un tier
+            params = {
+              TableName: "splitShare"           
             }
-          })
-
-          // 4. Envoi de la confirmation d'envoi à l'ayant-droit qui a partagé
-          params = {
-            TableName: "rightHolder",
-            Key: {
-              'rightHolderId': _ayantDroit.uuid
-            }
-          };
-          ddb.get(params, function(err, data) {
-            if (err) {
-              console.log("Error", err)
-            }        
-            let ayantDroit = data.Item
-            let body = [
-              {
-                  "toEmail": ayantDroit.email,
-                  "firstName": ayantDroit.firstName,
-                  "workTitle": titre,
-                  "callbackURL": `http://dev.smartsplit.org/partager/${mediaId}`,
-                  "template": "partageEditeurEnvoye",
+            ddb.scan(params, function(err, data) {
+              if (err) {
+                console.log("Error", err)
               }
-            ]
-            axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)
-          })                   
+              data.Items.forEach(p => {                
+                console.log(p, proposalId, _ayantDroit, _beneficiaire, _version)
+                if(
+                  p.proposalId === proposalId && 
+                  p.rightHolderId === _ayantDroit.uuid && 
+                  p.shareeId === _beneficiaire && 
+                  p.version === _version) {
 
-          // 4. Récupère la proposition de part à un tier
-          params = {
-            TableName: "splitShare"           
-          }
-          ddb.scan(params, function(err, data) {
-            if (err) {
-              console.log("Error", err)
-            }        
-            data.Items.forEach(p => {
-              if(
-                p.proposalId === proposalId && 
-                p.rightHolderId === _ayantDroit.uuid && 
-                p.shareeId === _beneficiaire &&
-                p.version === _version) {
-
-                // 5. Modifier l'état de la proposition
-                let params = {
-                  TableName: TABLE,
-                  Key: {
-                    'uuid': p.uuid
-                  },
-                  UpdateExpression: 'set etat = :s',
-                  ExpressionAttributeValues: {
-                    ':s' : "VOTATION"
-                  },
-                  ReturnValues: 'UPDATED_NEW'
-                };
-                ddb.update(params, function(err, data) {
-                  if (err) {
-                    console.log("Error", err)
-                  } else {
                     
-                    // Test la fin du vote
-                    resolve(p.uuid)
-                  }
-                })
-              }
-            })          
-          })
+                  // 5. Modifier l'état de la proposition
+                  let params = {
+                    TableName: TABLE,
+                    Key: {
+                      'uuid': p.uuid
+                    },
+                    UpdateExpression: 'set etat = :s',
+                    ExpressionAttributeValues: {
+                      ':s' : "VOTATION"
+                    },
+                    ReturnValues: 'UPDATED_NEW'
+                  };
+                  ddb.update(params, function(err, data) {
+                    if (err) {
+                      console.log("Error", err)
+                    } else {
+                      
+                      // Test la fin du vote
+                      resolve(p.uuid)
+                    }
+                  })
+                }
+              })          
+            })
+          } catch(err) {
+            console.log(err)
+          }          
         })            
       })
     } catch (err) {
@@ -198,6 +205,7 @@ exports.splitShareVote = function(body) {
       let jeton = body.jeton
       let rightHolderId = body.userId
       let choix = body.choix
+      let raison = body.raison || ""
       utils.getParameter('SECRET_JWS_INVITE', (secret)=>{
         try {
           let contenu = jwt.verify(jeton, secret).data
@@ -222,18 +230,17 @@ exports.splitShareVote = function(body) {
                   Key: {
                     'uuid': p.uuid
                   },
-                  UpdateExpression: 'set etat = :s',
+                  UpdateExpression: 'set etat = :s, raison = :r',
                   ExpressionAttributeValues: {
-                    ':s' : choix === 'accept' ? 'ACCEPTE' : 'REFUSE'
+                    ':s' : choix === 'accept' ? 'ACCEPTE' : 'REFUSE',
+                    ':r' : raison ? raison : " "
                   },
                   ReturnValues: 'UPDATED_NEW'
                 };
                 ddb.update(params, function(err, data) {
                   if (err) {
                     console.log("Error", err)
-                  } else {
-                    
-                    
+                  } else {                              
                     let params = {
                       TableName: "proposal",
                       Key: {
@@ -341,7 +348,7 @@ exports.splitShareVote = function(body) {
 
 exports.addSplitShare = function(body, type) {
   return new Promise(function(resolve, reject) {
-    let SPLITSHARE_UUID = uuidv1();    
+    let SPLITSHARE_UUID = uuidv1()
     let params = {
       TableName: TABLE,
       Item: {
@@ -357,16 +364,74 @@ exports.addSplitShare = function(body, type) {
         'type': type
       }
     };
-    ddb.put(params, function(err, data) {
+    ddb.put(params, function(err, data) {      
       if (err) {
-        console.log("Error", err);
-        resolve();
-      } else {
-
-        // Ajouter l'ayant-droit à l'oeuvre avec le rôle éditeur (45745c60-7b1a-11e8-9c9c-2d42b21b1a50)
-
-        resolve(SPLITSHARE_UUID);
+        console.log("Error", err);        
+      } else {        
+        try {
+          // Ajouter l'ayant-droit à l'oeuvre avec le rôle éditeur (45745c60-7b1a-11e8-9c9c-2d42b21b1a50)
+          let paramsP = {
+            TableName: "proposal",
+            Key: {
+              'uuid': body.proposalId
+            }
+          }
+          ddb.get(paramsP, function(err, dataP) {
+            if (err) {
+              console.log("Error", err)
+            }
+            let _p = dataP.Item
+            let paramsM = {
+              TableName: "media",
+              Key: {
+                'mediaId': _p.mediaId
+              }
+            }            
+            ddb.get(paramsM, (err, dataM)=>{
+              try {
+                if(err) { console.log(err)}
+                let _m = dataM.Item
+                let _aDs = _m.rightHolders
+                let trouve = false
+                _aDs.forEach(_aD=>{
+                  if(body.shareeId === _aD.id) {
+                    trouve = true
+                    if(!_aD.roles.includes('45745c60-7b1a-11e8-9c9c-2d42b21b1a50')) {
+                      _aD.roles.push('45745c60-7b1a-11e8-9c9c-2d42b21b1a50')
+                    }
+                  }
+                })
+                if(!trouve) {
+                  let _nAd = {
+                    id: body.shareeId,
+                    roles: ['45745c60-7b1a-11e8-9c9c-2d42b21b1a50']
+                  }
+                  _aDs.push(_nAd)
+                }
+                let paramsUM = {
+                  TableName: "media",
+                  Key: {
+                    'mediaId': _p.mediaId                    
+                  },
+                  UpdateExpression: 'set rightHolders = :rHs',
+                  ExpressionAttributeValues: {
+                    ':rHs' : _aDs
+                  },
+                  ReturnValues: 'UPDATED_NEW'
+                }
+                ddb.update(paramsUM, (err, dUM)=>{
+                  if(err) {console.log(err)}                  
+                  resolve(SPLITSHARE_UUID)
+                })
+              } catch (err) {
+                console.log(err)
+              }
+            })            
+          })
+        } catch(err)      {
+          console.log(err)
+        }
       }
-    });
-  });
+    })
+  })
 }

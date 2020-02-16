@@ -2809,7 +2809,7 @@ definitions:
           description: "social media links for the given right holder profile"
       editeur:
         type: "boolean"
-        description: "Est un ayant-droit éditeur"        
+        description: "Est un ayant droit éditeur"        
     example:
       rightHolderId: "12345c60-7b1a-11e8-9c9c-2d42b21b1a4g"
       firstName: "John"
@@ -3063,7 +3063,7 @@ definitions:
         description: "Raison du refus"
   rightHolderShort:
     type: "object"
-    description: "Structure courte d'un ayant-droit (nom, id, courriel)"
+    description: "Structure courte d'un ayant droit (nom, id, courriel)"
     properties:
       name:
         type: "string"
@@ -3180,6 +3180,9 @@ definitions:
         type: "string"
         description: "Choix de vote"
       jeton:
+        type: "string"
+        description: "Jeton de votation pour un tiers"
+      raison:
         type: "string"
         description: "Jeton de votation pour un tiers"
   splitshareinvite:
