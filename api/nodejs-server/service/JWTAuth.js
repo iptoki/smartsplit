@@ -48,12 +48,18 @@ module.exports.expressMiddleware = function(req, res, next) {
 	Object.defineProperty(req.auth, "data", {
 		get: function() {
 			if(tokenData === null) try {
-				tokenData = decodeToken(req.headers["authorization"])
+				let authHeader = (req.headers.authorization || "").split(" ")
+
+				if(authHeader[0] === "Bearer")
+					tokenData = decodeToken(authHeader[1])
+				else
+					tokenData = false
 			} catch(e) {
 				tokenData = false
 			}
 			
-			return tokenData || null		}
+			return tokenData || null
+		}
 	})
 	
 	/** Retourne une requête de l'object utilisateur de la base de donnée */
