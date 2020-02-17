@@ -38,11 +38,11 @@ module.exports.getAllMedia = async function(req, res) {
 
 /** Obtiens un média en particulier */
 module.exports.getMedia = async function(req, res) {
-	// FIXME: Item est une relique de DynamoDB qui s'est introduit dans l'API, puis le client
-	res.json({Item: await getMediaFromRequest(req, res)})
+	res.json(await getMediaFromRequest(req, res))
 }
 
 /** Ajoute un média par son titre, type et créateur seulement */
+// TODO: API Inutile, retirer
 module.exports.putMedia = async function putMedia(req, res) {
 	const body = req.swagger.params["body"].value
 	const media = new Media({
@@ -52,28 +52,12 @@ module.exports.putMedia = async function putMedia(req, res) {
 	})
 
 	await media.save()
-	// res.json(media)
-	res.json({id: media._id}) // FIXME: le client plante si on retourne plus que le id
+	res.json({id: media._id})
 }
 
 /** Ajoute un média complet */
 module.exports.postMedia = async function postMedia(req, res) {
 	const body = req.swagger.params["body"].value
-
-	// res.json(await Promise.all(body.map(async (inputMedia) => {
-	// 	if(await Media.findOne().byBody(inputMedia))
-	// 		return res.status(409).json({
-	// 			error: "Can't add this media because it already exists",
-	// 			media: inputMedia
-	// 		})
-
-	// 	const media = new Media(inputMedia)
-	// 	await media.save()
-	// 	return media
-	// })))
-
-	// FIXME: Cette section accept un élément dans un array, et le retourne sous la clé "Attributes". C'est une relique de DynamoDB qui s'est propagée dans l'API et le client
-
 	let media = null
 
 	if(body.mediaId) {
@@ -90,7 +74,7 @@ module.exports.postMedia = async function postMedia(req, res) {
 	}
 
 	await media.save()
-	res.json({Attributes: media.toJSON()}) 
+	res.json(media)
 }
 
 /** Mets à jours un média existant */
@@ -163,7 +147,7 @@ module.exports.shareMedia = async function shareMedia(req, res) {
 module.exports.setMediaProposalInitiator = async function(req, res) {
 	const body = req.swagger.params["body"].value
 	const media = await getMediaFromRequest(req, res)
-	media.initiateurPropositionEnCours = body.rightHolderid
+	media.initiateurPropositionEnCours = body.rightHolderId
 	await media.save()
 	res.json(media)
 }
@@ -205,7 +189,5 @@ module.exports.listeCollaborations = async function(req, res) {
 module.exports.jetonMedia = async function(req, res) {
 	const media = await getMediaFromRequest(req, res)
 	const access = req.swagger.params["acces"].value
-	// res.json(await media.createToken(access, "365 days"))
-	// FIXME: La version DynamoDB retourne du texte brut
-	res.end(await media.createToken(access, "365 days"))
+	res.json(await media.createToken(access, "365 days"))
 }

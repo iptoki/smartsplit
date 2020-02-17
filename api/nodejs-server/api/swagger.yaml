@@ -3132,51 +3132,49 @@ definitions:
       jurisdiction:
         type: "string"
     example:
-      [
-        {
-          title: "Love You Baby",
-          artist: "LYB",
-          genre: "Rock",
-          secondaryGenres: ["Pop"],
-          creationDate: "2019-01-01T15:53:00",
-          modificationDate: "2019-01-01T15:53:01",
-          publishDate: "2019-01-01T15:53:02",
-          type: "original",
-          isrc: "abcde1234567",
-          upc: "123456789111",
-          publisher: "sync publishing",
-          msDuration: "288000",
-          lyrics: {
-            text: "Love you Baby. Love you Baby. Love you Baby. Love you Baby. Love you Baby. Baby. Wooo. Love You Baby.",
-            languages: ["en"],
-            access: "private"
-          },
-          files: {
-            cover: {
-              files: [
-                {file: "cover.jpg", access: "private"}
-              ]
-            }
-          },
-          socialMediaLinks: [
-            {name: "facebook", url: "https://facebook.com/ex"},
-            {name: "twitter",  url: "https://twitter.com/ex"},
-            {name: "youtube",  url: "https://youtube.com/ex"}
-          ],
-          streamingServiceLinks: [
-            {name: "spotify", url: "https://open.spotify.com/track/asdgj4qhfasd"},
-            {name: "apple",   url: "https://twitter.com/ex"}
-          ],
-          pressArticleLinks: [
-            {name: "medium", url: "https://medium.com/ex"},
-            {name: "metro",  url: "https://metro.ca/ex"}
-          ],
-          playlistLinks: [
-            {name: "spotify", url: "https://open.spotify.com/playlist/37i9dQZEVXbKfIuOAZrk7G"},
-            {name: "youtube", url: "https://www.youtube.com/playlist?list=PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx"}
-          ]
-        }
-      ]
+      {
+        title: "Love You Baby",
+        artist: "LYB",
+        genre: "Rock",
+        secondaryGenres: ["Pop"],
+        creationDate: "2019-01-01T15:53:00",
+        modificationDate: "2019-01-01T15:53:01",
+        publishDate: "2019-01-01T15:53:02",
+        type: "original",
+        isrc: "abcde1234567",
+        upc: "123456789111",
+        publisher: "sync publishing",
+        msDuration: "288000",
+        lyrics: {
+          text: "Love you Baby. Love you Baby. Love you Baby. Love you Baby. Love you Baby. Baby. Wooo. Love You Baby.",
+          languages: ["en"],
+          access: "private"
+        },
+        files: {
+          cover: {
+            files: [
+              {file: "cover.jpg", access: "private"}
+            ]
+          }
+        },
+        socialMediaLinks: [
+          {name: "facebook", url: "https://facebook.com/ex"},
+          {name: "twitter",  url: "https://twitter.com/ex"},
+          {name: "youtube",  url: "https://youtube.com/ex"}
+        ],
+        streamingServiceLinks: [
+          {name: "spotify", url: "https://open.spotify.com/track/asdgj4qhfasd"},
+          {name: "apple",   url: "https://twitter.com/ex"}
+        ],
+        pressArticleLinks: [
+          {name: "medium", url: "https://medium.com/ex"},
+          {name: "metro",  url: "https://metro.ca/ex"}
+        ],
+        playlistLinks: [
+          {name: "spotify", url: "https://open.spotify.com/playlist/37i9dQZEVXbKfIuOAZrk7G"},
+          {name: "youtube", url: "https://www.youtube.com/playlist?list=PLgzTt0k8mXzEk586ze4BjvDXR7c-TUSnx"}
+        ]
+      }
   decodeMedia:
     type: "object"
     properties: 

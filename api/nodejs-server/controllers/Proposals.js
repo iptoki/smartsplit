@@ -43,8 +43,7 @@ module.exports.getAllProposals = async function(req, res) {
 
 /** Retourne une proposition */
 module.exports.getProposal = async function(req, res) {
-	// FIXME: le client s'attends à un {Item: ...}, résidus de DynamoDB
-	res.json({Item: await getProposalFromRequest(req, res)})
+	res.json(await getProposalFromRequest(req, res))
 }
 
 /** Retourne la dernière proposition ouverte pour un média */
