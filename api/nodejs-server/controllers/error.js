@@ -3,5 +3,6 @@ module.exports = class APIError extends Error {
 		super(data.error || "Internal Server Error", ...args)
 		this.httpStatus = status
 		this.jsonError = data
+		this.log = false
 	}
 }

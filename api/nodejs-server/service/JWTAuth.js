@@ -16,6 +16,7 @@ class AuthError extends Error {
 		super(data.error || "Unauthorized", ...args)
 		this.httpStatus = status || 401 // Unauthorized
 		this.data = data
+		this.log = false
 	}
 }
 

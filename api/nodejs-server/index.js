@@ -70,7 +70,8 @@ swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
         error: err.message
       })
 
-    console.error(err)
+    if(err.log !== false)
+      console.error(err)
   })
 
   try {
