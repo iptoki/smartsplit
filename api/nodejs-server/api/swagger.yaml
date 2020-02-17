@@ -712,7 +712,14 @@ paths:
         description: "The initiator of the given split proposal"
         required: true
         schema:
-          $ref: "#/definitions/proposal/properties/initiator"
+          type: object
+          properties:
+            initiatorUuid:
+              type: string
+              description: The UUID of the initiator of the split proposal
+            initiatorName:
+              type: string
+              description: The name of the initiator of the split proposal
       responses:
         200:
           description: "OK"
@@ -3035,7 +3042,12 @@ definitions:
         type: "string"
         format: "unix timestamp"
         example: "1234567891234"
-        description: "The creation date of the rights agreement for the given media"      
+        description: "The creation date of the rights agreement for the given media"
+      modificationDate:
+        type: "integer"
+        format: "unix timestamp"
+        example: 1234567891234
+        description: "The modification date of the rights agreement for the given media"
       publishDate:
         type: "string"
         format: "iso8601-date-time"
