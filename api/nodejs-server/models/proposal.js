@@ -123,10 +123,21 @@ ProposalSchema.pre("save", async function() {
 /** Initialize la proposition en état de votation */
 ProposalSchema.methods.initiateVote = function() {
 	this.etat = "VOTATION"
-
-	RightTypes.forEach(rightType => {
-		this.setVote(this.initiatorUuid, rightType, "accept")
+	
+	this.forEachSplit(split => {
+		if(split.rightHolder.rightHolderId === this.initiatorUuid)
+			split.voteStatus = "accept"
+		else
+			split.voteStatus = "active"
 	})
+
+	this.rightsSplits = this.rightsSplits // force comme "modifié"
+}
+
+/** Réinitialise la proposition en état de rédaction */
+ProposalSchema.methods.resetToDraft = function() {
+	this.etat = "PRET"
+	this.forEachSplit(split => split.voteStatus = "active")
 }
 
 /** Définis le vote d'un ayant-droit dans les splits de la proposition */

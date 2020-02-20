@@ -201,28 +201,38 @@ module.exports.jetonMedia = async function(req, res) {
 
 /** Duplique un média et ses propositions, et retourne le nouveau média */
 module.exports.duplicateMedia = async function(req, res) {
-	const media = await getMediaFromRequest(
-		req, res,
-		media => media.populate("proposals")
-	)
+	const body = req.swagger.params["body"].value
+	const [media, user] = await Promise.all([
+		getMediaFromRequest(
+			req, res,
+			media => media.populate("proposals")
+		),
+		req.auth.user
+	])
 	
 	const newMedia = new Media({
 		...media.toObject(),
-		_id: undefined
+		_id: undefined,
+		creationDate: ""+Date.now()
 	})
 	
-	const saving = [
-		newMedia.save(),
-		...media.proposals.map(proposal => {
-			const newProposal = new Proposal({
-				...proposal.toObject(),
-				_id: undefined,
-				mediaId: newMedia._id
-			})
-
-			return newProposal.save()
+	const saving = [newMedia.save()]
+	
+	const lastProposal = media.proposals.sort((a, b) => a._d - b._d)[0]
+	if(body.proposals === true && lastProposal) {
+		const newProposal = new Proposal({
+			...lastProposal.toObject(),
+			_id: undefined,
+			mediaId: newMedia._id,
+			creationDate: undefined,
+			_d: undefined,
+			initiatorUuid: user.rightHolders[0],
+			initiatorName: `${user.firstName} ${user.lastName}`
 		})
-	]
+		
+		newProposal.resetToDraft()
+		saving.push(newProposal.save())
+	}
 
 	await Promise.all(saving)
 	res.json(newMedia)
