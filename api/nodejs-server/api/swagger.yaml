@@ -1883,6 +1883,33 @@ paths:
         500:
           description: "An unknown error occured"
       x-swagger-router-controller: "Media"
+  /media/{mediaId}/duplicate:
+    post:
+      tags:
+      - "Media"
+      description: "Duplicates a given media, and optionally, its subcomponents"
+      x-swagger-router-controller: "Media"
+      operationId: "duplicateMedia"
+      parameters:
+      - name: "mediaId"
+        in: "path"
+        type: integer
+        description: "The ID of the media to duplicate"
+        required: true
+      - name: "body"
+        in: "body"
+        description: "Optional parameters to specify what to duplicate"
+        schema:
+          type: "object"
+          properties:
+            proposals:
+              type: "boolean"
+              example: true
+      responses:
+        200:
+          description: "Media successfully duplicated, returns the newly duplicated media"
+          schema:
+            $ref: "#/definitions/media"
   /media/{mediaId}/title:
     patch:
       tags:

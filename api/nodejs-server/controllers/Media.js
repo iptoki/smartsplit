@@ -1,4 +1,5 @@
 const Media = require("../models/media")
+const Proposal = require("../models/proposal")
 const APIError = require("./error")
 const jwt = require('jsonwebtoken');
 const {getParameter} = require("../utils/utils")
@@ -6,9 +7,14 @@ const {getParameter} = require("../utils/utils")
 // TODO: Middleware pour que req.media existe et éviter de répéter les appels à getMediaFromRequest?
 
 /** Obtiens un média par son ID */
-async function getMediaById(mediaId) {
-	const media = await Media.findById(mediaId)
-
+async function getMediaById(mediaId, cb) {
+	let media = Media.findById(mediaId)
+	
+	if(cb)
+		media = cb(media)
+	
+	media = await media
+	
 	if(!media) throw new APIError(404, {
 		error: "This media does not exist in database",
 		mediaId
@@ -18,9 +24,9 @@ async function getMediaById(mediaId) {
 }
 
 /** Obtiens un média depuis la requête Express */
-async function getMediaFromRequest(req, res) {
-	const media = await getMediaById(req.swagger.params["mediaId"].value)
-	
+async function getMediaFromRequest(req, res, cb) {
+	const media = await getMediaById(req.swagger.params["mediaId"].value, cb)
+
 	// if(media)
 	// 	req.auth.requireRightHolder(
 	// 		media.creator,
@@ -190,4 +196,34 @@ module.exports.jetonMedia = async function(req, res) {
 	const media = await getMediaFromRequest(req, res)
 	const access = req.swagger.params["acces"].value
 	res.json(await media.createToken(access, "365 days"))
+}
+
+
+/** Duplique un média et ses propositions, et retourne le nouveau média */
+module.exports.duplicateMedia = async function(req, res) {
+	const media = await getMediaFromRequest(
+		req, res,
+		media => media.populate("proposals")
+	)
+	
+	const newMedia = new Media({
+		...media.toObject(),
+		_id: undefined
+	})
+	
+	const saving = [
+		newMedia.save(),
+		...media.proposals.map(proposal => {
+			const newProposal = new Proposal({
+				...proposal.toObject(),
+				_id: undefined,
+				mediaId: newMedia._id
+			})
+
+			return newProposal.save()
+		})
+	]
+
+	await Promise.all(saving)
+	res.json(newMedia)
 }
