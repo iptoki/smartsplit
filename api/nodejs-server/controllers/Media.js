@@ -93,7 +93,16 @@ module.exports.updateMedia = async function updateMedia(req, res) {
 
 /** Supprime un média */
 module.exports.deleteMedia = async function deleteMedia(req, res) {
-	const media = await getMediaFromRequest(req, res)
+	const media = await getMediaFromRequest(
+		req, res,
+		media => media.populate("proposals")
+	)
+
+	if(!(await media.isSafeToDelete()))
+		return res.status(403).json({
+			error: "Cannot delete this media as it has an active or accepted proposal"
+		})
+
 	await media.remove()
 	res.json(media)
 }
@@ -218,7 +227,7 @@ module.exports.duplicateMedia = async function(req, res) {
 	
 	const saving = [newMedia.save()]
 	
-	const lastProposal = media.proposals.sort((a, b) => a._d - b._d)[0]
+	const lastProposal = await media.getLastProposal()
 	if(body.proposals === true && lastProposal) {
 		const newProposal = new Proposal({
 			...lastProposal.toObject(),

@@ -129,4 +129,20 @@ MediaSchema.methods.shareByEmail = async function(
 	await axios.post('http://messaging.smartsplit.org:3034/sendEmail', body)
 }
 
+MediaSchema.methods.getLastProposal = async function() {
+	if(!this.populated("proposals"))
+		await this.populate("proposals").execPopulate()
+
+	return this.proposals.sort((a, b) => a._d - b._d)[0]
+}
+
+MediaSchema.methods.isSafeToDelete = async function() {
+	const lastProposal = await this.getLastProposal()
+
+	if(!lastProposal)
+		return true
+
+	return ["BROUILLON", "PRET", "REFUSE"].includes(lastProposal.etat)
+}
+
 module.exports = mongoose.model("Media", MediaSchema)
