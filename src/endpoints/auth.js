@@ -1,0 +1,63 @@
+const JWTAuth = require("../service/JWTAuth")
+const User = require("../models/user")
+const { api } = require("../app")
+
+const UserSchema = require("../schemas/users")
+const AuthSchema = require("../schemas/auth")
+
+api.post("/auth/login", {
+	tags: ["Authorization"],
+	summary: "Trades an email and password against an access token for use with the API.",
+	requestBody: AuthSchema.login,
+	responses: {
+		200: AuthSchema.sessionInfo,
+		401: AuthSchema.InvalidCredentialsError,
+	}
+}, async function(req, res) {
+	const user = await User.findOne().byEmail(req.body.email)
+	
+	if(!user || !(await user.verifyPassword(req.body.password)))
+		throw new AuthSchema.InvalidCredentialsError()
+	
+	return {
+		accessToken: JWTAuth.createToken(user),
+		user: user
+	}
+})
+
+
+api.get("/auth/check", {
+	tags: ["Authorization"],
+	summary: "Verifies an access token by returning `true` if it's valid, `false` otherwise.",
+	hooks: { auth: false },
+	responses: {
+		200: AuthSchema.check
+	}
+}, async function(req, res) {
+	try {
+		await req.auth.requireUser()
+		return true
+	} catch(e) {
+		if(e instanceof JWTAuth.Error)
+			return false
+		else
+			throw e
+	}
+})
+
+
+api.get("/auth/refresh", {
+	tags: ["Authorization"],
+	summary: "Uses an existing access token to obtain a new access token",
+	hooks: { auth: true },
+	responses: {
+		200: AuthSchema.sessionInfo
+	}
+}, async function(req, res) {
+	const user = await req.auth.requireUser()
+	
+	return {
+		accessToken: JWTAuth.createToken(user),
+		user: user
+	}
+})
