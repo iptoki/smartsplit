@@ -131,8 +131,8 @@ UserSchema.query.byEmail = function(email) {
 UserSchema.query.byPasswordResetToken = function(token) {
 	const data = JWT.decode(JWT_RESET_TYPE, token)
 	
-	if(!data)
-		return this.limit(0)
+	if(!data) // no way to easily make it just return `null`
+		return this.where({_id: null}).skip(1).limit(0)
 	else
 		return this.where({
 			_id: data.user_id,

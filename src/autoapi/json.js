@@ -60,7 +60,6 @@ function validate(body, spec) {
  * Filters outgoing data to the provided Schema Object specification
  */
 function filter(data, schema) {
-	console.log("FILTER", schema.type, data)
 	return Filters[schema.type] ? Filters[schema.type](data, schema) : data
 }
 

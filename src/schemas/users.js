@@ -51,9 +51,3 @@ module.exports = {
 	InvalidResetToken:
 		error("user_invalid_reset_token", 403, "The supplied password reset token is not valid or has expired"),
 }
-		
-	
-
-/*module.exports.user_register = module.exports.user.extend("user_register", {
-	required: ["email", "password", "locale"]
-})*/
