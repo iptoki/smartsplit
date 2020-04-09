@@ -35,9 +35,7 @@ app.use("/v1", function(req, res) {
 	})
 })
 
-app.listen(
-	process.env.API_PORT || 3001,
-	process.env.API_HOST
-)
+app.listen(Config.listen.port, Config.listen.host)
 
-console.log("ready")
+console.log("Server ready and listening")
+console.log(`Swagger documentation => http://${Config.listen.host || "localhost"}:${Config.listen.port}/docs`)

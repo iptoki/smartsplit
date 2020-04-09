@@ -3,13 +3,18 @@
  * configuration options that can be tweaked.
  */
 module.exports = {
-	mongodb: {
-		uri: "mongodb://localhost/smartsplit",
-	},
+	// mongodb: {
+	// 	uri: "mongodb://localhost/smartsplit",
+	// },
 	
-	sendgrid: {
-		apikey: null
-	},
+	// sendgrid: {
+	// 	apikey: null
+	// },
 	
 	jwt_secret: "set this to something random",
+	
+	// listen: {
+	// 	port: 3001,
+	// 	host: "::1"
+	// },
 }

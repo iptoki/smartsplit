@@ -16,6 +16,11 @@ const DefaultConfig = {
 	},
 	
 	jwt_secret: null,
+	
+	listen: {
+		port: process.env.API_PORT || 3001,
+		host: undefined,
+	},
 }
 
 try {
