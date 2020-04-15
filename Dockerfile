@@ -1,4 +1,4 @@
-FROM node:slim AS modules
+FROM node:latest AS modules
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN ["yarn", "install"]
