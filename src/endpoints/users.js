@@ -39,22 +39,54 @@ api.post("/users/", {
 		409: UserSchema.ConflictingUserError,
 	}
 }, async function(req, res) {
-	if(await User.findOne().byBody(req.body))
-		throw new UserSchema.ConflictingUserError({
-			user_id: req.body.user_id,
-			email: req.body.email
-		})
+	let user = await User.findOne().byBody(req.body)
 	
-	const user = new User(req.body)
+	if(user) {
+		// If the user exists, check that the password is correct
+		if(!user.verifyPassword(req.body.password))
+			throw new UserSchema.ConflictingUserError({
+				user_id: req.body.user_id,
+				email: req.body.email
+			})
+		
+		// Check passed, let through to resubmit the welcome email
+	} else {
+		user = new User(req.body)
 	
-	await user.setEmail(req.body.email, false /* skip email check */)
-	await user.setPassword(req.body.password)
-	await user.save()
+		await user.setEmail(req.body.email, false /* skip email check */)
+		await user.setPassword(req.body.password)
+		await user.save()
+	}
 	
-	user.emailWelcome()
+	await user.emailWelcome()
 		.catch(e => console.error(e, "Error sending welcome email"))
 
 	return user
+})
+
+
+api.post("/users/activate", {
+	tags: ["Users"],
+	summary: "Activates a user account",
+	requestBody: UserSchema.activateAccountSchema,
+	responses: {
+		200: AuthSchema.sessionInfo,
+		403: UserSchema.InvalidActivationTokenError,
+		412: UserSchema.AccountAlreadyActivatedError,
+	}
+}, async function(req, res) {
+	const user = await User.findOne().byActivationToken(req.body.token)
+	
+	if(user && user.isActive)
+		throw new UserSchema.AccountAlreadyActivatedError()
+	
+	if(!user || !user.canActivate)
+		throw new UserSchema.InvalidActivationTokenError()
+	
+	user.accountStatus = "active"
+	await user.save()
+	
+	return { accessToken: JWTAuth.createToken(user), user }
 })
 
 
@@ -144,6 +176,10 @@ api.post("/users/change-password", {
 	}
 	
 	user.setPassword(req.body.password, true)
+	
+	if(user.accountStatus === "email-verification-pending")
+		user.accountStatus = "active"
+	
 	await user.save()
 	
 	user.emailPasswordChanged().catch(e => {

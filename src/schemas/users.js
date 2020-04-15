@@ -11,6 +11,17 @@ module.exports = {
 	
 	user: api.schemaFromModel("user", User),
 	
+	activateAccountSchema: api.schema("user_activate_account", {
+		type: "object",
+		required: ["token"],
+		properties: {
+			token: {
+				type: "string",
+				format: "jwt"
+			}
+		}
+	}),
+	
 	requestPasswordReset: api.schema("user_password_reset", {
 		type: "object",
 		required: ["email"],
@@ -50,4 +61,10 @@ module.exports = {
 	
 	InvalidResetToken:
 		error("user_invalid_reset_token", 403, "The supplied password reset token is not valid or has expired"),
+	
+	InvalidActivationTokenError:
+		error("user_invalid_activation_token", 403, "The supplied account activation token is invalid or has expired"),
+	
+	AccountAlreadyActivatedError:
+		error("user_account_already_active", 412, "This account is already active and cannot be activated again"),
 }
