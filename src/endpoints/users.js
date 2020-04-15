@@ -43,7 +43,7 @@ api.post("/users/", {
 	
 	if(user) {
 		// If the user exists, check that the password is correct
-		if(!user.verifyPassword(req.body.password))
+		if(! (await user.verifyPassword(req.body.password)))
 			throw new UserSchema.ConflictingUserError({
 				user_id: req.body.user_id,
 				email: req.body.email
