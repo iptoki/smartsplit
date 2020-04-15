@@ -113,7 +113,10 @@ api.post("/users/request-password-reset", {
 	}
 }, async function(req, res) {
 	const user = await User.findOne().byEmail(req.body.email)
-	await user.emailPasswordReset()
+	
+	if(user)
+		await user.emailPasswordReset()
+	
 	res.status(200).end()
 })
 
