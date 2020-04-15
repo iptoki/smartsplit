@@ -286,10 +286,15 @@ class AutoAPI {
 	 * Returns an Error type passing as a Schema Object to easily generate errors
 	 * and their corresponding Response Object and Schema.
 	 */
-	static error(status, description, schema) {
+	static error(status, description, schema, defdata) {
 		class AutoError extends AutoAPI.Error {
 			constructor(data, ...args) {
-				super(status, {message: description, ...data}, ...args)
+				super(status, {
+					...defdata,
+					message:
+					description,
+					...data
+				}, ...args)
 			}
 		}
 		
@@ -303,8 +308,8 @@ class AutoAPI {
 	 * Creates an Error type passing as a Response Reference to generate Error
 	 * classes with a corresponding Response Object and Schema
 	 */
-	error(id, status, description, schema) {
-		const AutoError = AutoAPI.error(status, description, schema)
+	error(id, status, description, schema, defdata) {
+		const AutoError = AutoAPI.error(status, description, schema, defdata)
 		AutoError.$response = this.response(id, AutoError.$schema)
 		return AutoError
 	}
