@@ -1,4 +1,8 @@
 const DefaultConfig = {
+	defaultLanguage: "fr",
+	
+	clientUrl: "https://www.smartsplit.org",
+	
 	mongodb: {
 		uri: "mongodb://localhost/smartsplit",
 	},

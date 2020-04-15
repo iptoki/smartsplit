@@ -3,6 +3,8 @@
  * configuration options that can be tweaked.
  */
 module.exports = {
+	// clientUrl: "https://www.smartsplit.org",
+	
 	// mongodb: {
 	// 	uri: "mongodb://localhost/smartsplit",
 	// },

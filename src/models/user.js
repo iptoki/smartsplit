@@ -1,14 +1,12 @@
 const mongoose = require("mongoose")
 const uuid = require("uuid").v4
+const Config = require("../config")
 const PasswordUtil = require("../utils/password")
 const JWT = require("../utils/jwt")
-
-const EMAIL_ACCOUNT_CREATED  = "d-3f2ce3bd2e2c4c54831e880443f58fc3" // TODO
-const EMAIL_ACCOUNT_INVITED  = "d-a3ea16f9136643788de1da46b064a824" // TODO
-const EMAIL_PASSWORD_RESET   = "d-594e21a344ec41ad9d5747e332cc26ae" // TODO
-const EMAIL_PASSWORD_CHANGED = "d-d9cebb97bf734005a636be49401d2b71" // TODO
+const sendTemplateTo = require("../utils/email").sendTemplateTo
 
 const JWT_RESET_TYPE = "user:password-reset"
+const JWT_ACTIVATE_TYPE = "user:activate"
 
 
 /**
@@ -196,18 +194,25 @@ UserSchema.methods.verifyPasswordResetToken = function(token) {
 
 
 /**
+ * Creates an activation token to verify the user's email address
+ */
+UserSchema.methods.createActivationToken = function(email, expires = "2 weeks") {
+	return JWT.create(JWT_ACTIVATE_TYPE, {
+		user_id: this.user_id,
+		user_password: this.password,
+		activate_email: email,
+	}, expires)
+}
+
+
+/**
  * Sends the welcome email to the user
  */
-UserSchema.methods.emailWelcome = async function() {
-	return await require("../utils/email")({
-		to: this.$email,
-		template: EMAIL_ACCOUNT_CREATED,
-	},
-	{
-		toEmail: this.email,
-		firstName: this.firstName,
-		lastName: this.lastName,
-		callbackURL: "https://www-dev.smartsplit.org/",
+UserSchema.methods.emailWelcome = async function(expires = "2 weeks") {
+	const token = this.createActivationToken(this.email, expires)
+	
+	return await sendTemplateTo("user:activate-account", this, {}, {
+		activateAccountUrl: Config.clientUrl + "/user/activate?token=" + token
 	})
 }
 
@@ -217,18 +222,9 @@ UserSchema.methods.emailWelcome = async function() {
  */
 UserSchema.methods.emailPasswordReset = async function(expires = "2 hours") {
 	const token = this.createPasswordResetToken(expires)
-	console.log("token", token)
 
-	return await require("../utils/email")({
-		to: this.$email,
-		template: EMAIL_PASSWORD_RESET,
-	}, {
-		toEmail: this.email,
-		email: this.email,
-		firstName: this.firstName,
-		lastName: this.lastName,
-		resetToken: token,
-		userId: this._id
+	return await sendTemplateTo("user:password-reset", this, {}, {
+		resetPasswordUrl: Config.clientUrl + "/user/change-password?token=" + token
 	})
 }
 
@@ -237,15 +233,7 @@ UserSchema.methods.emailPasswordReset = async function(expires = "2 hours") {
  * Sends the password changed notification to the user
  */
 UserSchema.methods.emailPasswordChanged = async function() {
-	return await require("../utils/email")({
-		to: this.$email,
-		template: EMAIL_PASSWORD_CHANGED,
-	}, {
-		toEmail: this.email,
-		email: this.email,
-		firstName: this.firstName,
-		lastName: this.lastName,
-	})
+	return await sendTemplateTo("user:password-changed", this, {}, {})
 }
 
 module.exports = mongoose.model("User", UserSchema)
