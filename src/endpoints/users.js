@@ -39,6 +39,9 @@ api.post("/users/", {
 		409: UserSchema.ConflictingUserError,
 	}
 }, async function(req, res) {
+	if(req.body.user_id === "")
+		delete req.body.user_id
+	
 	let user = await User.findOne().byBody(req.body)
 	
 	if(user) {
