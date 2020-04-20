@@ -139,16 +139,16 @@ api.post("/users/request-password-reset", {
 	summary: "Requests a password reset: sends an email with a reset token/link to the user",
 	requestBody: UserSchema.requestPasswordReset,
 	responses: {
-		200: {
-			description: "Password reset email sent successfully"
-		}
+		200: { description: "Password reset email sent successfully" },
+		404: UserSchema.UserNotFoundError,
 	}
 }, async function(req, res) {
 	const user = await User.findOne().byEmail(req.body.email)
 	
-	if(user)
-		await user.emailPasswordReset()
+	if(!user)
+		throw new UserSchema.UserNotFoundError({email: req.body.email})
 	
+	await user.emailPasswordReset()
 	res.status(200).end()
 })
 
