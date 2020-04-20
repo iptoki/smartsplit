@@ -178,7 +178,7 @@ api.post("/users/change-password", {
 		user = await req.auth.requireUser()
 	}
 	
-	user.setPassword(req.body.password, true)
+	await user.setPassword(req.body.password, true)
 	
 	if(user.accountStatus === "email-verification-pending")
 		user.accountStatus = "active"
