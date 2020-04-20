@@ -85,12 +85,12 @@ const UserSchema = new mongoose.Schema({
 	},
 
 	avatarUrl: {
-		type: String
+		type: String,
 		api: {
-			type: "string"
+			type: "string",
 			example: "https://myimage.jpg"
 		}
-	}
+	},
 
 	locale: {
 		type: String,
