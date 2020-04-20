@@ -44,6 +44,22 @@ const UserSchema = new mongoose.Schema({
 		}
 	},
 	
+	accountStatus: {
+		type: String,
+		default: "email-verification-pending",
+		enum: [
+			"invalid",
+			"email-verification-pending",
+			"split-invited",
+			"active"
+		],
+		api: {
+			type: "string",
+			readOnly: true,
+			example: "active",
+		}
+	},
+	
 	firstName: {
 		type: String,
 		api: {
@@ -110,6 +126,27 @@ UserSchema.virtual("$email").get(function() {
 
 
 /**
+ * Returns whether the current account status is active
+ */
+UserSchema.virtual("isActive").get(function() {
+	return this.accountStatus === "active"
+})
+
+
+/**
+ * Returns whether this account can be activated with an account activation token
+ */
+UserSchema.virtual("canActivate").get(function() {
+	return [
+		undefined,
+		null,
+		"email-verification-pending",
+		"split-invited",
+	].includes(this.accountStatus)
+})
+
+
+/**
  * Looks up the database for an existing user with either the ID or email address
  */
 UserSchema.query.byBody = function(body) {
@@ -120,6 +157,16 @@ UserSchema.query.byBody = function(body) {
 		{_id: body.user_id},
 		{email: body.email.toLowerCase()}
 	]})
+}
+
+
+/**
+ * Filters account that are considered active
+ */
+UserSchema.query.byActive = function() {
+	this.where({
+		accountStatus: "active"
+	})
 }
 
 
@@ -139,6 +186,22 @@ UserSchema.query.byPasswordResetToken = function(token) {
 	
 	if(!data) // no way to easily make it just return `null`
 		return this.where({_id: null}).skip(1).limit(0)
+	else
+		return this.where({
+			_id: data.user_id,
+			password: data.user_password
+		})
+}
+
+
+/**
+ * Looks up a user by an account activation token.
+ */
+UserSchema.query.byActivationToken = function(token) {
+	const data = JWT.decode(JWT_ACTIVATE_TYPE, token)
+	
+	if(!data)
+		return this.where({_id: false}).skip(1).limit(0)
 	else
 		return this.where({
 			_id: data.user_id,
@@ -220,7 +283,7 @@ UserSchema.methods.emailWelcome = async function(expires = "2 weeks") {
 	const token = this.createActivationToken(this.email, expires)
 	
 	return await sendTemplateTo("user:activate-account", this, {}, {
-		activateAccountUrl: Config.clientUrl + "/user/activate?token=" + token
+		activateAccountUrl: Config.clientUrl + "/user/activate/" + token
 	})
 }
 
@@ -232,7 +295,7 @@ UserSchema.methods.emailPasswordReset = async function(expires = "2 hours") {
 	const token = this.createPasswordResetToken(expires)
 
 	return await sendTemplateTo("user:password-reset", this, {}, {
-		resetPasswordUrl: Config.clientUrl + "/user/change-password?token=" + token
+		resetPasswordUrl: Config.clientUrl + "/user/change-password/" + token
 	})
 }
 

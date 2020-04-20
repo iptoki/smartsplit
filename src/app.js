@@ -39,11 +39,18 @@ const errorSchema = api.schema("error", {
 /**
  * Returns an error Response Object for a generic error with the supplied description
  */
-function error(id, status, description, schema) {
+function error(id, status, description, schema, defdata) {
+	const args = [
+		status,
+		description,
+		schema || errorSchema,
+		{ code: id, ...defdata }
+	]
+	
 	if(id)
-		return api.error(id, status, description, schema || errorSchema)
+		return api.error(id, ...args)
 	else
-		return AutoAPI.error(status, description, schema || errorSchema)
+		return AutoAPI.error(...args)
 }
 
 /**

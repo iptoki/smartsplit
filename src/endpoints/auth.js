@@ -12,12 +12,18 @@ api.post("/auth/login", {
 	responses: {
 		200: AuthSchema.sessionInfo,
 		401: AuthSchema.InvalidCredentialsError,
+		412: AuthSchema.AccountNotActiveError,
 	}
 }, async function(req, res) {
 	const user = await User.findOne().byEmail(req.body.email)
 	
 	if(!user || !(await user.verifyPassword(req.body.password)))
 		throw new AuthSchema.InvalidCredentialsError()
+	
+	if(!user.isActive)
+		throw new AuthSchema.AccountNotActiveError({
+			accountStatus: user.accountStatus
+		})
 	
 	return {
 		accessToken: JWTAuth.createToken(user),
