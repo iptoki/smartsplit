@@ -32,7 +32,7 @@ api.post("/users/", {
 	tags: ["Users"],
 	summary: "Create a new user",
 	requestBody: body({allOf: [UserSchema.user, {
-		equired: ["email", "password", "locale"]
+		required: ["email", "password", "locale"]
 	}]}),
 	responses: {
 		200: UserSchema.user,

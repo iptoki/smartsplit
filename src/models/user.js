@@ -59,7 +59,15 @@ const UserSchema = new mongoose.Schema({
 			example: "Doe"
 		}
 	},
-	
+
+	artistName: {
+    type: String,
+    api: {
+      type: "string",
+      example: "Johnny"
+    }
+  },
+
 	locale: {
 		type: String,
 		default: "en",
