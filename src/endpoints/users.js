@@ -18,8 +18,8 @@ api.get("/users/{user_id}", {
 	}
 }, async function(req, res) {
 	const user = req.params.user_id === "session"
-						 ? await req.auth.requireUser()
-						 : await User.findById(req.params.user_id)
+	           ? await req.auth.requireUser()
+	           : await User.findById(req.params.user_id)
 	
 	if(!user)
 		throw new UserSchema.UserNotFoundError({user_id: req.params.user_id})
@@ -118,7 +118,7 @@ api.patch("/users/{user_id}", {
 	if(req.body.password)
 		passwordChanged = await user.setPassword(req.body.password)
 	
-	for(let field of ["firstName", "lastName", "artistName", "locale"])
+	for(let field of ["firstName", "lastName", "artistName" "locale"])
 		if(req.body[field])
 			user[field] = req.body[field]
 	
