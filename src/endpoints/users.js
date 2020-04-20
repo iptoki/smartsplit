@@ -18,8 +18,8 @@ api.get("/users/{user_id}", {
 	}
 }, async function(req, res) {
 	const user = req.params.user_id === "session"
-	           ? await req.auth.requireUser()
-	           : await User.findById(req.params.user_id)
+						 ? await req.auth.requireUser()
+						 : await User.findById(req.params.user_id)
 	
 	if(!user)
 		throw new UserSchema.UserNotFoundError({user_id: req.params.user_id})
