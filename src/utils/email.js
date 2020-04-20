@@ -77,6 +77,7 @@ function sendTemplateTo(templateName, user, options, data) {
 			email: user.email,
 			firstName: user.firstName,
 			lastName: user.lastName,
+			artistName: user.artistName,
 			...data.user,
 		},
 	})

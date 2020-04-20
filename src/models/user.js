@@ -75,7 +75,23 @@ const UserSchema = new mongoose.Schema({
 			example: "Doe"
 		}
 	},
-	
+
+	artistName: {
+		type: String,
+		api: {
+			type: "string",
+			example: "Johnny"
+		}
+	},
+
+	avatarUrl: {
+		type: String,
+		api: {
+			type: "string",
+			example: "https://myimage.jpg"
+		}
+	},
+
 	locale: {
 		type: String,
 		default: "en",

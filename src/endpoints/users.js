@@ -121,7 +121,7 @@ api.patch("/users/{user_id}", {
 	if(req.body.password)
 		passwordChanged = await user.setPassword(req.body.password)
 	
-	for(let field of ["firstName", "lastName", "locale"])
+	for(let field of ["firstName", "lastName", "artistName", "avatarUrl", "locale"])
 		if(req.body[field])
 			user[field] = req.body[field]
 	
