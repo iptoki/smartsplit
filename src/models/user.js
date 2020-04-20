@@ -77,12 +77,12 @@ const UserSchema = new mongoose.Schema({
 	},
 
 	artistName: {
-    type: String,
-    api: {
-      type: "string",
-      example: "Johnny"
-    }
-  },
+		type: String,
+		api: {
+			type: "string",
+			example: "Johnny"
+		}
+	},
 
 	locale: {
 		type: String,
