@@ -94,7 +94,7 @@ Filters.object = function(data, schema) {
  * Filters all of an array's values according to the items specification
  */
 Filters.array = function(data, schema) {
-	return data.map(item => filter(schema.items, item))
+	return data.map(item => filter(item, schema.items))
 }
 
 

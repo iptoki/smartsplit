@@ -1,6 +1,7 @@
 const api = require("../app").api
 const { body } = require("../autoapi")
 const User = require("../models/user")
+const EmailVerification = require("../models/emailVerification")
 const JWTAuth = require("../service/JWTAuth")
 
 const AuthSchema = require("../schemas/auth")
@@ -54,16 +55,16 @@ api.post("/users/", {
 		
 		// Check passed, let through to resubmit the welcome email
 	} else {
-		user = new User(req.body)
-	
-		await user.setEmail(req.body.email, false /* skip email check */)
+		user  = new User(req.body)
+		let email = new EmailVerification({
+			_id: req.body.email,
+			user_id: user._id
+		})
 		await user.setPassword(req.body.password)
 		await user.save()
+		await email.save()
 	}
 	
-	await user.emailWelcome()
-		.catch(e => console.error(e, "Error sending welcome email"))
-
 	return user
 })
 

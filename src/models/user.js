@@ -4,6 +4,7 @@ const Config = require("../config")
 const PasswordUtil = require("../utils/password")
 const JWT = require("../utils/jwt")
 const sendTemplateTo = require("../utils/email").sendTemplateTo
+const EmailVerification = require("../models/emailVerification")
 
 const JWT_RESET_TYPE = "user:password-reset"
 const JWT_ACTIVATE_TYPE = "user:activate"
@@ -25,15 +26,17 @@ const UserSchema = new mongoose.Schema({
 		}
 	},
 	
-	email: {
-		type: String, // UNIQUE INDEX
+	emails: {
+		type: Array,
 		api: {
-			type: "string",
-			example: "example@smartsplit.org",
-			format: "email"
+			type: "array",
+			items: {
+				type: "string",
+				format: "email"
+			}
 		}
 	},
-	
+
 	password: {
 		type: String, // bcrypt
 		api: {
@@ -107,6 +110,14 @@ const UserSchema = new mongoose.Schema({
 	//rightHolders: [{type: String, ref: "RightHolder", default: []}],
 })
 
+/**
+ * Define a virtual property that makes a reference to EmailVerification documents
+ */
+UserSchema.virtual("pendingEmails", {
+	ref: 'EmailVerification',
+	localField: "_id",
+	foreignField: "user_id"
+})
 
 /**
  * Returns the full name of the user (Firstname + Lastname)
@@ -121,15 +132,35 @@ UserSchema.virtual("fullName").get(function() {
 	return null
 })
 
+/**
+ * Returns the primary email of this user
+ */
+UserSchema.virtual("primaryEmail").get(function() {
+	if(!this.emails.length)
+		return null
+	return this.emails[0]
+})
 
 /**
  * Returns an email object of {name, email} to send email to/from this user
  */
 UserSchema.virtual("$email").get(function() {
 	return {
-		name: this.fullName || this.email,
-		email: this.email
+		name: this.fullName || this.primaryEmail,
+		email: this.primaryEmail
 	}
+})
+
+
+/**
+ * Returns all the emails of this user as an array of object like {email, status}
+ */
+UserSchema.virtual("emailList").get(function() {
+	return this.emails.map(function(item) {
+		return {email: item, status: "active"}
+	}).concat(this.pendingEmails.map(function(item) {
+		return {email: item.email, status: "pending"}
+	}))
 })
 
 
@@ -153,6 +184,9 @@ UserSchema.virtual("canActivate").get(function() {
 	].includes(this.accountStatus)
 })
 
+UserSchema.virtual("pendingEmails").get(async function() {
+	return await EmailVerification.find().byUserId(this._id)
+})
 
 /**
  * Looks up the database for an existing user with either the ID or email address
@@ -163,7 +197,7 @@ UserSchema.query.byBody = function(body) {
 
 	return this.where({$or: [
 		{_id: body.user_id},
-		{email: body.email.toLowerCase()}
+		{emails: {"$in": [body.email.toLowerCase()]}}
 	]})
 }
 
@@ -182,7 +216,7 @@ UserSchema.query.byActive = function() {
  * Looks up the database for a user by email address
  */
 UserSchema.query.byEmail = function(email) {
-	return this.where({email: email.toLowerCase()})
+	return this.where({emails: {"$in": [email.toLowerCase()]}})
 }
 
 
@@ -222,13 +256,14 @@ UserSchema.query.byActivationToken = function(token) {
  * Sets the primary email address of a user, checking for duplicates
  */
 UserSchema.methods.setEmail = async function(email, check = true) {
-	if(email.toLowerCase() === this.email)
+	if(this.emails.includes(email.toLowerCase()))
 		return
 	
-	if(check && await this.model("User").findOne({email: email.toLowerCase()}))
+	if(check && await this.model("User").findOne({emails: {"$in": [email.toLowerCase()]}}))
 		throw new Error("Another user is already using this email address")
 
-	this.email = email.toLowerCase()
+	// Adding the email at the beginning of the array makes it the primary one
+	this.emails.unshift(email.toLowerCase())
 }
 
 
@@ -288,7 +323,7 @@ UserSchema.methods.createActivationToken = function(email, expires = "2 weeks") 
  * Sends the welcome email to the user
  */
 UserSchema.methods.emailWelcome = async function(expires = "2 weeks") {
-	const token = this.createActivationToken(this.email, expires)
+	const token = this.createActivationToken(this.primaryEmail, expires)
 	
 	return await sendTemplateTo("user:activate-account", this, {}, {
 		activateAccountUrl: Config.clientUrl + "/user/activate/" + token
