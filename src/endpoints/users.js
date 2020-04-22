@@ -1,4 +1,4 @@
-const api = require("../app").api
+const { api, errorResponse } = require("../app")
 const { body } = require("../autoapi")
 const User = require("../models/user")
 const JWTAuth = require("../service/JWTAuth")
@@ -158,13 +158,13 @@ api.post("/users/request-password-reset", {
 
 api.post("/users/change-password", {
 	tags: ["Users"],
-	summary: "Changes the user's password and returns an new access token. All previous access tokens will be invalidated.",
+	summary: "Changes the user's password and returns an new access token. All previous access tokens will be invalidated. Requires either `token` or `currentPassword` to be provided to authorize the password change.",
 	requestBody: UserSchema.passwordChange,
 	security: [{}],
 	hooks: { auth: true },
 	responses: {
 		200: AuthSchema.sessionInfo,
-		403: UserSchema.InvalidResetToken
+		403: errorResponse("Failed to confirm password change. If `token` was supplied, an error code of `user_invalid_reset_token` is returned. Otherwise, a valid `currentPassword` needs to be provided, or a `user_invalid_current_password` error will be returned.")
 	}
 }, async function(req, res) {
 	let user
@@ -176,6 +176,9 @@ api.post("/users/change-password", {
 			throw new UserSchema.InvalidResetToken({token: req.body.token})
 	} else {
 		user = await req.auth.requireUser()
+		
+		if(!req.body.currentPassword || ! await user.verifyPassword(req.body.currentPassword))
+			throw new UserSchema.InvalidCurrentPassword()
 	}
 	
 	await user.setPassword(req.body.password, true)

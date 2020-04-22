@@ -53,6 +53,17 @@ function error(id, status, description, schema, defdata) {
 		return AutoAPI.error(...args)
 }
 
+
+/**
+ * Builds a generic error response with the description string
+ */
+function errorResponse(description) {
+	const schema = Object.create(errorSchema)
+	schema.description = description
+	return AutoAPI.response(schema)
+}
+		
+
 /**
  * Error class for Invalid
  */
@@ -81,6 +92,7 @@ api.hook("auth", function(spec, addResponse) {
 module.exports = {
 	api,
 	error,
+	errorResponse,
 	InvalidAccessTokenError,
 	APIError: AutoAPI.Error
 }
