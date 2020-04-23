@@ -1,12 +1,10 @@
-const api = require("../app").api
-const { body } = require("../autoapi")
-const User = require("../models/user")
+const api               = require("../app").api
+const { body }          = require("../autoapi")
+const User              = require("../models/user")
 const EmailVerification = require("../models/emailVerification")
-const JWTAuth = require("../service/JWTAuth")
-
-const AuthSchema = require("../schemas/auth")
-const UserSchema = require("../schemas/users")
-const EmailSchema = require("../schemas/emails")
+const JWTAuth           = require("../service/JWTAuth")
+const UserSchema        = require("../schemas/users")
+const EmailSchema       = require("../schemas/emails")
 
 
 api.get("/users/{user_id}/emails", {
@@ -39,24 +37,28 @@ api.post("/users/{user_id}/emails", {
 	responses: {
 		200: EmailSchema.emails,
 		404: UserSchema.UserNotFoundError,
+		409: EmailSchema.ConflictingEmailError,
 	}
 }, async function(req, res) {
-	let userExists = req.params.user_id === "session"
-				   ? await User.exists({_id: req.auth.data.user_id})
-				   : await User.exists({_id: req.params.user_id})
-
-	if(!userExists){
+	const user = req.params.user_id === "session"
+	           ? await req.auth.requireUser()
+	           : await User.findById(req.params.user_id).populate("pendingEmails")
+	
+	if(!user)
 		throw new UserSchema.UserNotFoundError({user_id: req.params.user_id})
-	}
 
-	let email = new EmailVerification({
+	if(await User.findOne().byEmail(req.body.email) || await EmailVerification.findById(req.body.email))
+		throw new EmailSchema.ConflictingEmailError({email: req.body.email})
+	
+	const email = new EmailVerification({
 		_id: req.body.email,
 		user_id: req.params.user_id
 	})
 
-	await email.save()
-	
-	let user = await User.findById(email.user_id).populate("pendingEmails")
+	await email.save()	
+
+	user.pendingEmails.push(email)
+
 	return user.emailList
 })
 
