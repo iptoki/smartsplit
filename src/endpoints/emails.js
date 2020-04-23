@@ -85,7 +85,7 @@ api.post("/users/{user_id}/emails/{email}", {
 	hooks: { auth: true },
 	requestBody: UserSchema.activationToken,
 	responses: {
-		200: EmailSchema.emails,
+		200: { description: "Email successfully activated" },
 		404: EmailSchema.EmailNotFoundError,
 		409: EmailSchema.InvalidActivationTokenError,
 		412: EmailSchema.EmailAlreadyActivatedError
@@ -112,7 +112,7 @@ api.post("/users/{user_id}/emails/{email}", {
 	user.emails.push(email._id)
 	await user.save()
 
-	return user.emailList
+	res.status(200).end()
 })
 
 
@@ -122,7 +122,7 @@ api.delete("/users/{user_id}/emails/{email}", {
 	summary: "Delete an email from a user account",
 	hooks: { auth: true },
 	responses: {
-		200: EmailSchema.emails,
+		200: { description: "Email successfully deleted" },
 		404: UserSchema.UserNotFoundError,
 	}
 }, async function(req, res) {
@@ -137,12 +137,10 @@ api.delete("/users/{user_id}/emails/{email}", {
 		user.emails.splice(user.emails.indexOf(req.params.email))
 		await user.save()
 	}
-	else if(await EmailVerification.findOne().byParams(req.params)) {
+	else if(await EmailVerification.findOne().byParams(req.params)) 
 		await EmailVerification.deleteOne({_id: req.params.email})
-		user.removePendingEmail(req.params.email)
-	}
 	else
 		throw new EmailSchema.EmailNotFoundError({user_id: req.params.user_id, email: req.params.email})
 
-	return user.emailList
+	res.status(200).end()
 })
