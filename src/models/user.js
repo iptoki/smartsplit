@@ -339,7 +339,7 @@ UserSchema.methods.emailWelcome = async function(expires = "2 weeks") {
 	const token = this.createActivationToken(this.primaryEmail, expires)
 	
 	return await sendTemplateTo("user:activate-account", this, {}, {
-		activateAccountUrl: Config.clientUrl + "/users/activate/" + token
+		activateAccountUrl: Config.clientUrl + "/user/activate/" + token
 	})
 }
 
@@ -353,7 +353,7 @@ UserSchema.methods.emailLinkEmailAccount = async function(email, expires = "2 we
 	console.log(token) // Temporary helper
 	
 	return await sendTemplateTo("user:activate-email", this, {}, {
-		linkEmailAccountUrl: Config.clientUrl + "/users/" + this._id + "/emails/" + email
+		linkEmailAccountUrl: Config.clientUrl + "/user/" + this._id + "/emails/" + email
 	})
 }
 
@@ -365,7 +365,7 @@ UserSchema.methods.emailPasswordReset = async function(expires = "2 hours") {
 	const token = this.createPasswordResetToken(expires)
 
 	return await sendTemplateTo("user:password-reset", this, {}, {
-		resetPasswordUrl: Config.clientUrl + "/users/change-password/" + token
+		resetPasswordUrl: Config.clientUrl + "/user/change-password/" + token
 	})
 }
 
