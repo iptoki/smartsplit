@@ -353,7 +353,7 @@ UserSchema.methods.emailLinkEmailAccount = async function(email, expires = "2 we
 	console.log(token) // Temporary helper
 	
 	return await sendTemplateTo("user:activate-email", this, {}, {
-		linkEmailAccountUrl: Config.clientUrl + /* TODO see with frontend */
+		linkEmailAccountUrl: Config.clientUrl /* TODO see with frontend */
 	})
 }
 
