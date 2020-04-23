@@ -23,6 +23,11 @@ const TemplateMap = {
 		fr: "d-4b743067d5a542e4b0ef3032fdc48164",
 	},
 	
+	"user:activate-email": {
+		en: "d-a6424a6f103a4c06af6b5ca80ba6e94c",
+		fr: "d-42c64fbf3a5f4764bffff61bc7b50bd0",
+	},
+
 	"split:created": {
 		en: "d-ffa0d437e03441b5bea6a233de349558",
 		fr: "d-8d0b9acf81e2475a8ab133da07ae3df3",
@@ -74,7 +79,7 @@ function sendTemplateTo(templateName, user, options, data) {
 			id: user.user_id,
 			user_id: user.user_id,
 			fullName: user.fullName,
-			email: user.$email,
+			email: user.primaryEmail,
 			firstName: user.firstName,
 			lastName: user.lastName,
 			artistName: user.artistName,

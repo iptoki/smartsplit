@@ -8,47 +8,10 @@ module.exports = {
 		description: "The ID of the user, or the special value \"session\" to use the currently authenticated user",
 		example: "session"
 	}),
-	
-	emailParam: api.param("emailParam", {
-		in: "path",
-		name: "email",
-		description: "The email of the user",
-		example: "qa@smartsplit.com"
-	}),
-
-	createEmail: api.schema('create_email', {
-		type: "object",
-		properties: {
-			email: {
-				type: "string",
-				format: "email",
-				example: "qa@smartsplit.org"
-			}
-		},
-		required: ["email"]
-	}),
 
 	user: api.schemaFromModel("user", User),
-	
-	emails: api.schema("user_emails", {
-		type: "array",
-		items: {
-			type: "object",
-			properties: {
-				email: {
-					type: "string",
-					format: "email",
-					example: "qa@smartsplit.org"
-				},
-				status: {
-					type: "string",
-					enum: ["active","pending"]
-				}
-			}
-		}
-	}),
 
-	activateAccountSchema: api.schema("user_activate_account", {
+	activateSchema: api.schema("user_activate", {
 		type: "object",
 		required: ["token"],
 		properties: {

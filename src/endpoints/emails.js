@@ -31,7 +31,7 @@ api.get("/users/{user_id}/emails", {
 api.post("/users/{user_id}/emails", {
 	tags: ["Emails"],
 	parameters: [UserSchema.id],
-	summary: "Add a new email as pending in a user account",
+	summary: "Link a new email as pending in a user account",
 	hooks: { auth: true },
 	requestBody: EmailSchema.createEmail,
 	responses: {
@@ -47,17 +47,32 @@ api.post("/users/{user_id}/emails", {
 	if(!user)
 		throw new UserSchema.UserNotFoundError({user_id: req.params.user_id})
 
-	if(await User.findOne().byEmail(req.body.email) || await EmailVerification.findById(req.body.email))
+	if(await User.findOne().byEmail(req.body.email))
 		throw new EmailSchema.ConflictingEmailError({email: req.body.email})
+
+	let date = new Date()
+	date.setTime(date.getTime() - (60*60*1000))
+
+	// Throw if an entry already exists and was created less than an hour ago 
+	if(await EmailVerification.findOne({_id: req.body.email, createdAt: {$gte: date}}))
+		throw new EmailSchema.ConflictingEmailError({email: req.body.email})
+	else { // Delete it otherwise
+		await EmailVerification.deleteOne({_id: req.body.email})
+		user.removePendingEmail(req.body.email)
+	}
 	
-	const email = new EmailVerification({
+	email = new EmailVerification({
 		_id: req.body.email,
-		user_id: req.params.user_id
+		user: req.params.user_id
 	})
 
-	await email.save()	
+	await email.save()
 
 	user.pendingEmails.push(email)
+
+	// TODO
+	await user.emailLinkEmailAccount(req.body.email)
+			.catch(e => console.error(e, "Error sending activation email"))
 
 	return user.emailList
 })
@@ -65,28 +80,69 @@ api.post("/users/{user_id}/emails", {
 
 api.post("/users/{user_id}/emails/{email}", {
 	tags: ["Emails"],
-	parameters: [UserSchema.id, EmailSchema.emailParam],
+	parameters: [UserSchema.id, EmailSchema.email],
 	summary: "Activate an email in the user profile",
 	hooks: { auth: true },
+	requestBody: UserSchema.activationToken,
 	responses: {
 		200: EmailSchema.emails,
-		404: UserSchema.UserNotFoundError
+		404: EmailSchema.EmailNotFoundError,
+		409: EmailSchema.InvalidActivationTokenError,
+		412: EmailSchema.EmailAlreadyActivatedError
 	}
 }, async function(req, res) {
-	
-})
 
+	if(await User.findOne().byEmail(req.params.email))
+		throw new EmailSchema.EmailAlreadyActivatedError()
+
+	const email = await EmailVerification
+		.findOne()
+		.byParams(req.params)
+		.populate("user")
+
+	if(!email)
+		throw new EmailSchema.EmailNotFoundError({user_id: req.params.user_id, email: req.params.email})
+
+	if(!email.verifyActivationToken(req.body.token))
+		throw new EmailSchema.InvalidActivationTokenError()
+
+	await EmailVerification.deleteOne({_id: email._id})
+
+	const user = await User.findById(email.user._id).populate("pendingEmails")
+	user.emails.push(email._id)
+	await user.save()
+
+	return user.emailList
+})
 
 
 api.delete("/users/{user_id}/emails/{email}", {
 	tags: ["Emails"],
-	parameters: [UserSchema.id, EmailSchema.emailParam],
+	parameters: [UserSchema.id, EmailSchema.email],
 	summary: "Delete an email from a user account",
 	hooks: { auth: true },
 	responses: {
 		200: EmailSchema.emails,
-		404: UserSchema.UserNotFoundError
+		404: UserSchema.UserNotFoundError,
 	}
 }, async function(req, res) {
+	const user = req.params.user_id === "session"
+	           ? await req.auth.requireUser()
+	           : await User.findById(req.params.user_id).populate("pendingEmails")
 	
+	if(!user)
+		throw new UserSchema.UserNotFoundError({user_id: req.params.user_id})
+
+	if(user.emails.includes(req.params.email)) {
+		user.emails.splice(user.emails.indexOf(req.params.email))
+		await user.save()
+	}
+	else if(await EmailVerification.findOne().byParams(req.params)) {
+		await EmailVerification.deleteOne({_id: req.params.email})
+		user.removePendingEmail(req.params.email)
+	}
+	else
+		throw new EmailSchema.EmailNotFoundError({user_id: req.params.user_id, email: req.params.email})
+
+	return user.emailList
 })

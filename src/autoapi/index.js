@@ -54,7 +54,7 @@ class AutoAPI {
 		const operation = this.oapi.paths[path][method] = fltSpec
 		
 		this.router[method].call(this.router,
-			path.replace(/\{([^}]+?)\}/, ":$1"),
+			path.replace(/\{([^}]+?)\}/g, ":$1"),
 			JsonAPI.expressRequestHandler(handler, fltSpec)
 		)
 	}
@@ -69,17 +69,17 @@ class AutoAPI {
 		this.route("post", ...args)
 	}
 	
-	/** Declares a PUT endpojnt */
+	/** Declares a PUT endpoint */
 	put(...args) {
 		this.route("put", ...args)
 	}
 	
-	/** Declares a PATCH endpojnt */
+	/** Declares a PATCH endpoint */
 	patch(...args) {
 		this.route("patch", ...args)
 	}
 	
-	/** Declares a DELETE endpojnt */
+	/** Declares a DELETE endpoint */
 	delete(...args) {
 		this.route("delete", ...args)
 	}

@@ -27,7 +27,7 @@ const UserSchema = new mongoose.Schema({
 	},
 	
 	emails: {
-		type: Array,
+		type: [String],
 		api: {
 			type: "array",
 			items: {
@@ -116,8 +116,9 @@ const UserSchema = new mongoose.Schema({
 UserSchema.virtual("pendingEmails", {
 	ref: 'EmailVerification',
 	localField: "_id",
-	foreignField: "user_id"
+	foreignField: "user"
 })
+
 
 /**
  * Returns the full name of the user (Firstname + Lastname)
@@ -136,8 +137,11 @@ UserSchema.virtual("fullName").get(function() {
  * Returns the primary email of this user
  */
 UserSchema.virtual("primaryEmail").get(function() {
-	if(!this.emails.length)
+	if(!this.emails.length){
+		if(this.pendingEmails.length)
+			return this.pendingEmails[0]
 		return null
+	}
 	return this.emails[0]
 })
 
@@ -184,9 +188,6 @@ UserSchema.virtual("canActivate").get(function() {
 	].includes(this.accountStatus)
 })
 
-UserSchema.virtual("pendingEmails").get(async function() {
-	return await EmailVerification.find().byUserId(this._id)
-})
 
 /**
  * Looks up the database for an existing user with either the ID or email address
@@ -278,6 +279,18 @@ UserSchema.methods.setPassword = async function(password, force = false) {
 	return true
 }
 
+/**
+ * Remove an email from the pendingEmails array
+ */
+UserSchema.methods.removePendingEmail = function(email) {
+	let pendings = []
+	for(let pending of this.pendingEmails){
+		if(pending.email !== email)
+			pendings.push(pending)
+	}
+	this.pendingEmails = pendings
+}
+
 
 /**
  * Verifies the password of the current user
@@ -326,7 +339,21 @@ UserSchema.methods.emailWelcome = async function(expires = "2 weeks") {
 	const token = this.createActivationToken(this.primaryEmail, expires)
 	
 	return await sendTemplateTo("user:activate-account", this, {}, {
-		activateAccountUrl: Config.clientUrl + "/user/activate/" + token
+		activateAccountUrl: Config.clientUrl + "/users/activate/" + token
+	})
+}
+
+
+/**
+ * Sends an activation email to link a new email to the user account 
+ */
+UserSchema.methods.emailLinkEmailAccount = async function(email, expires = "2 weeks") {
+	const token = this.createActivationToken(email, expires)
+	
+	console.log(token) // Temporary helper
+	
+	return await sendTemplateTo("user:activate-email", this, {}, {
+		linkEmailAccountUrl: Config.clientUrl + "/users/" + this._id + "/emails/" + email
 	})
 }
 
@@ -338,7 +365,7 @@ UserSchema.methods.emailPasswordReset = async function(expires = "2 hours") {
 	const token = this.createPasswordResetToken(expires)
 
 	return await sendTemplateTo("user:password-reset", this, {}, {
-		resetPasswordUrl: Config.clientUrl + "/user/change-password/" + token
+		resetPasswordUrl: Config.clientUrl + "/users/change-password/" + token
 	})
 }
 

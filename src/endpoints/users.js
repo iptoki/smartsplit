@@ -64,7 +64,6 @@ api.post("/users/", {
 		await user.save()
 		await email.save()
 	}
-	
 	return user
 })
 
@@ -72,7 +71,7 @@ api.post("/users/", {
 api.post("/users/activate", {
 	tags: ["Users"],
 	summary: "Activates a user account",
-	requestBody: UserSchema.activateAccountSchema,
+	requestBody: UserSchema.activateSchema,
 	responses: {
 		200: AuthSchema.sessionInfo,
 		403: UserSchema.InvalidActivationTokenError,
