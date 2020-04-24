@@ -198,7 +198,7 @@ UserSchema.query.byBody = function(body) {
 
 	return this.where({$or: [
 		{_id: body.user_id},
-		{emails: {"$in": [body.email.toLowerCase()]}}
+		{emails: body.email.toLowerCase()}
 	]})
 }
 
@@ -217,7 +217,7 @@ UserSchema.query.byActive = function() {
  * Looks up the database for a user by email address
  */
 UserSchema.query.byEmail = function(email) {
-	return this.where({emails: {"$in": [email.toLowerCase()]}})
+	return this.where({emails: email.toLowerCase()})
 }
 
 
@@ -260,7 +260,7 @@ UserSchema.methods.setEmail = async function(email, check = true) {
 	if(this.emails.includes(email.toLowerCase()))
 		return
 	
-	if(check && await this.model("User").findOne({emails: {"$in": [email.toLowerCase()]}}))
+	if(check && await this.model("User").findOne({emails: email.toLowerCase()}))
 		throw new Error("Another user is already using this email address")
 
 	// Adding the email at the beginning of the array makes it the primary one

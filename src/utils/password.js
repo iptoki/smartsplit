@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt")
 const SALT_ROUNDS = 12
 
 /**
- * Hashes she user's password using the preferred hashing method.
+ * Hashes the user's password using the preferred hashing method.
  * 
  * Currently bcrypt
  */

@@ -71,7 +71,7 @@ module.exports.expressMiddleware = function(req, res, next) {
 			if(!req.auth.data || !req.auth.data.user_id)
 				return Promise.resolve(null)
 			else
-				return User.findById(req.auth.data.user_id).populate("pendingEmails")
+				return User.findById(req.auth.data.user_id)
 		}
 	})
 	

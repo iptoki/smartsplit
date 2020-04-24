@@ -88,4 +88,8 @@ function sendTemplateTo(templateName, user, options, data) {
 	})
 }
 
-module.exports = { sendEmail, sendTemplateTo }
+function normalizeEmailAddress(email) {
+	return email.trim().toLowerCase()
+}
+
+module.exports = { sendEmail, sendTemplateTo, normalizeEmailAddress }

@@ -1,10 +1,12 @@
-const api               = require("../app").api
-const { body }          = require("../autoapi")
-const User              = require("../models/user")
-const EmailVerification = require("../models/emailVerification")
-const JWTAuth           = require("../service/JWTAuth")
-const UserSchema        = require("../schemas/users")
-const EmailSchema       = require("../schemas/emails")
+const api                   = require("../app").api
+const { body }              = require("../autoapi")
+const User                  = require("../models/user")
+const EmailVerification     = require("../models/emailVerification")
+const JWTAuth               = require("../service/JWTAuth")
+const UserSchema            = require("../schemas/users")
+const EmailSchema           = require("../schemas/emails")
+const RequestUtil           = require("../utils/request")
+const normalizeEmailAddress = require("../utils/email").normalizeEmailAddress
 
 
 api.get("/users/{user_id}/emails", {
@@ -17,9 +19,7 @@ api.get("/users/{user_id}/emails", {
 		404: UserSchema.UserNotFoundError,
 	}
 }, async function(req, res) {
-	const user = req.params.user_id === "session"
-	           ? await req.auth.requireUser()
-	           : await User.findById(req.params.user_id).populate("pendingEmails")
+	const user = await RequestUtil.getUserWithPendingEmails(req)
 	
 	if(!user)
 		throw new UserSchema.UserNotFoundError({user_id: req.params.user_id})
@@ -40,9 +40,9 @@ api.post("/users/{user_id}/emails", {
 		409: EmailSchema.ConflictingEmailError,
 	}
 }, async function(req, res) {
-	const user = req.params.user_id === "session"
-	           ? await req.auth.requireUser()
-	           : await User.findById(req.params.user_id).populate("pendingEmails")
+	req.body.email = normalizeEmailAddress(req.body.email)
+
+	const user = await RequestUtil.getUserWithPendingEmails(req)
 	
 	if(!user)
 		throw new UserSchema.UserNotFoundError({user_id: req.params.user_id})
@@ -50,15 +50,14 @@ api.post("/users/{user_id}/emails", {
 	if(await User.findOne().byEmail(req.body.email))
 		throw new EmailSchema.ConflictingEmailError({email: req.body.email})
 
-	let date = new Date()
-	date.setTime(date.getTime() - (60*60*1000))
+	let date = new Date(Date.now() - (0.01*60*60*1000))
 
 	// Throw if an entry already exists and was created less than an hour ago 
 	if(await EmailVerification.findOne({_id: req.body.email, createdAt: {$gte: date}}))
 		throw new EmailSchema.ConflictingEmailError({email: req.body.email})
 	else { // Delete it otherwise
 		await EmailVerification.deleteOne({_id: req.body.email})
-		user.removePendingEmail(req.body.email)
+		user.pendingEmails = user.pendingEmails.filter(e => e.email !== req.body.email)
 	}
 	
 	email = new EmailVerification({
@@ -72,7 +71,7 @@ api.post("/users/{user_id}/emails", {
 
 	// TODO
 	await user.emailLinkEmailAccount(req.body.email)
-			.catch(e => console.error(e, "Error sending activation email"))
+			.catch(e => console.error(e, "Error sending email verification"))
 
 	return user.emailList
 })
@@ -91,24 +90,26 @@ api.post("/users/{user_id}/emails/{email}", {
 		412: EmailSchema.EmailAlreadyActivatedError
 	}
 }, async function(req, res) {
+	req.params.email = normalizeEmailAddress(req.params.email)
 
-	if(await User.findOne().byEmail(req.params.email))
+	const user = await RequestUtil.getUserWithPendingEmails(req)
+
+	if(!user)
+		throw new UserSchema.UserNotFoundError({user_id: req.params.user_id})
+
+	if(user.emails.includes(req.params.email))
 		throw new EmailSchema.EmailAlreadyActivatedError()
 
-	const email = await EmailVerification
-		.findOne()
-		.byParams(req.params)
-		.populate("user")
+	const email = user.pendingEmails.find(item => item.email === req.params.email)
 
 	if(!email)
-		throw new EmailSchema.EmailNotFoundError({user_id: req.params.user_id, email: req.params.email})
+		throw new EmailSchema.EmailNotFoundError({user_id: user._id, email: req.params.email})
 
-	if(!email.verifyActivationToken(req.body.token))
+	if(! await email.verifyActivationToken(req.body.token))
 		throw new EmailSchema.InvalidActivationTokenError()
 
 	await EmailVerification.deleteOne({_id: email._id})
 
-	const user = await User.findById(email.user._id).populate("pendingEmails")
 	user.emails.push(email._id)
 	await user.save()
 
@@ -123,24 +124,22 @@ api.delete("/users/{user_id}/emails/{email}", {
 	hooks: { auth: true },
 	responses: {
 		200: { description: "Email successfully deleted" },
-		404: UserSchema.UserNotFoundError,
+		404: EmailSchema.EmailNotFoundError,
 	}
 }, async function(req, res) {
-	const user = req.params.user_id === "session"
-	           ? await req.auth.requireUser()
-	           : await User.findById(req.params.user_id).populate("pendingEmails")
+	req.params.email = normalizeEmailAddress(req.params.email)
+
+	const user = await RequestUtil.getUserWithPendingEmails(req)
 	
 	if(!user)
 		throw new UserSchema.UserNotFoundError({user_id: req.params.user_id})
 
-	if(user.emails.includes(req.params.email)) {
-		user.emails.splice(user.emails.indexOf(req.params.email))
+	if(user.emails.includes(req.params.email))
 		await user.save()
-	}
 	else if(await EmailVerification.findOne().byParams(req.params)) 
 		await EmailVerification.deleteOne({_id: req.params.email})
 	else
-		throw new EmailSchema.EmailNotFoundError({user_id: req.params.user_id, email: req.params.email})
+		throw new EmailSchema.EmailNotFoundError({user_id: user._id, email: req.params.email})
 
 	res.status(200).end()
 })

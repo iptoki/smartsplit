@@ -9,6 +9,7 @@ const EmailVerificationSchema = new mongoose.Schema({
 	_id: {
 		type: String,
 		alias: "email",
+		lowercase: true,
 		api: {
 			type: "string",
 			format: "email",
@@ -31,7 +32,7 @@ const EmailVerificationSchema = new mongoose.Schema({
 	createdAt: {
 		type: Date,
 		expires: "2w", // Two weeks
-		default: Date.now		
+		default: new Date()		
 	},
 })
 
@@ -61,13 +62,14 @@ EmailVerificationSchema.query.byParams = function(params) {
 /**
  * 
  */
-EmailVerificationSchema.methods.verifyActivationToken = function(token) {
+EmailVerificationSchema.methods.verifyActivationToken = async function(token) {
 	const data = JWT.decode(JWT_ACTIVATE_TYPE, token)
 	
 	if(!data)
 		return false
-	else if(!this.populated("user"))
-		throw new Error("Can't verify ActivationToken when field `user` is not populated")
+
+	if(!this.populated("user"))
+		await this.populate("user").execPopulate()
 
 	return (
 		data.activate_email === this.email &&
