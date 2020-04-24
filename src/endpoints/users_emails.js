@@ -50,7 +50,7 @@ api.post("/users/{user_id}/emails", {
 	if(await User.findOne().byEmail(req.body.email))
 		throw new EmailSchema.ConflictingEmailError({email: req.body.email})
 
-	let date = new Date(Date.now() - (0.01*60*60*1000))
+	let date = new Date(Date.now() - (60*60*1000))
 
 	// Throw if an entry already exists and was created less than an hour ago 
 	if(await EmailVerification.findOne({_id: req.body.email, createdAt: {$gte: date}}))
