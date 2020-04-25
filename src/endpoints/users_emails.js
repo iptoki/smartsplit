@@ -62,7 +62,7 @@ api.post("/users/{user_id}/emails", {
 	
 	email = new EmailVerification({
 		_id: req.body.email,
-		user: req.params.user_id
+		user: user._id
 	})
 
 	await email.save()
