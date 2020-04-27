@@ -155,18 +155,6 @@ UserSchema.virtual("$email").get(function() {
 
 
 /**
- * Returns all the emails of this user as an array of object like {email, status}
- */
-UserSchema.virtual("emailList").get(function() {
-	return this.emails.map(function(item) {
-		return {email: item, status: "active"}
-	}).concat(this.pendingEmails.map(function(item) {
-		return {email: item.email, status: "pending"}
-	}))
-})
-
-
-/**
  * Returns whether the current account status is active
  */
 UserSchema.virtual("isActive").get(function() {
