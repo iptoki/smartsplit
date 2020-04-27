@@ -1,12 +1,12 @@
-const api                   = require("../app").api
-const { body }              = require("../autoapi")
-const User                  = require("../models/user")
-const EmailVerification     = require("../models/emailVerification")
-const JWTAuth               = require("../service/JWTAuth")
-const UserSchema            = require("../schemas/users")
-const EmailSchema           = require("../schemas/emails")
-const RequestUtil           = require("../utils/request")
-const normalizeEmailAddress = require("../utils/email").normalizeEmailAddress
+const api                       = require("../app").api
+const { body }                  = require("../autoapi")
+const User                      = require("../models/user")
+const EmailVerification         = require("../models/emailVerification")
+const JWTAuth                   = require("../service/JWTAuth")
+const UserSchema                = require("../schemas/users")
+const EmailSchema               = require("../schemas/emails")
+const RequestUtil               = require("../utils/request")
+const { normalizeEmailAddress } = require("../utils/email")
 
 
 api.get("/users/{user_id}/emails", {
@@ -69,7 +69,6 @@ api.post("/users/{user_id}/emails", {
 
 	user.pendingEmails.push(email)
 
-	// TODO
 	await user.emailLinkEmailAccount(req.body.email)
 			.catch(e => console.error(e, "Error sending email verification"))
 
@@ -134,12 +133,14 @@ api.delete("/users/{user_id}/emails/{email}", {
 	if(!user)
 		throw new UserSchema.UserNotFoundError({user_id: req.params.user_id})
 
-	if(user.emails.includes(req.params.email))
+	if(user.emails.includes(req.params.email)) {
+		user.emails.splice(user.emails.indexOf(req.params.email))
 		await user.save()
-	else if(await EmailVerification.findOne().byParams(req.params)) 
-		await EmailVerification.deleteOne({_id: req.params.email})
-	else
-		throw new EmailSchema.EmailNotFoundError({user_id: user._id, email: req.params.email})
-
+	}
+	else {
+		let result = await EmailVerification.deleteOne({_id: req.params.email, user: user._id})
+		if(!result.deletedCount)
+			throw new EmailSchema.EmailNotFoundError({user_id: user._id, email: req.params.email})
+	}
 	res.status(200).end()
 })

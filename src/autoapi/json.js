@@ -35,7 +35,7 @@ function expressRequestHandler(handler, spec) {
 }
 
 /**
- * Finds and returns the Content Object macthing the returned status code from
+ * Finds and returns the Content Object matching the returned status code from
  * the Response Object
  */
 function getResponseSchema(spec, status) {

@@ -3,7 +3,7 @@ const { body } = require("../autoapi")
 const User = require("../models/user")
 const EmailVerification = require("../models/emailVerification")
 const JWTAuth = require("../service/JWTAuth")
-
+const RequestUtil = require("../utils/request")
 const AuthSchema = require("../schemas/auth")
 const UserSchema = require("../schemas/users")
 
@@ -18,9 +18,7 @@ api.get("/users/{user_id}", {
 		404: UserSchema.UserNotFoundError,
 	}
 }, async function(req, res) {
-	const user = req.params.user_id === "session"
-	           ? await req.auth.requireUser()
-	           : await User.findById(req.params.user_id)
+	const user = await RequestUtil.getUserWithPendingEmails(req)
 	
 	if(!user)
 		throw new UserSchema.UserNotFoundError({user_id: req.params.user_id})
@@ -58,12 +56,16 @@ api.post("/users/", {
 		user  = new User(req.body)
 		let email = new EmailVerification({
 			_id: req.body.email,
-			user_id: user._id
+			user: user._id
 		})
+		console.log("email._id",email._id)
 		await user.setPassword(req.body.password)
 		await user.save()
 		await email.save()
 	}
+	await user.emailWelcome(req.body.email)
+		.catch(e => console.error(e, "Error sending welcome email"))
+
 	return user
 })
 

@@ -3,8 +3,8 @@ const uuid = require("uuid").v4
 const Config = require("../config")
 const PasswordUtil = require("../utils/password")
 const JWT = require("../utils/jwt")
-const sendTemplateTo = require("../utils/email").sendTemplateTo
 const EmailVerification = require("../models/emailVerification")
+const { sendTemplateTo, normalizeEmailAddress } = require("../utils/email")
 
 const JWT_RESET_TYPE = "user:password-reset"
 const JWT_ACTIVATE_TYPE = "user:activate"
@@ -28,6 +28,7 @@ const UserSchema = new mongoose.Schema({
 	
 	emails: {
 		type: [String],
+		lowercase: true,
 		api: {
 			type: "array",
 			items: {
@@ -137,12 +138,9 @@ UserSchema.virtual("fullName").get(function() {
  * Returns the primary email of this user
  */
 UserSchema.virtual("primaryEmail").get(function() {
-	if(!this.emails.length){
-		if(this.pendingEmails.length)
-			return this.pendingEmails[0]
-		return null
-	}
-	return this.emails[0]
+	if(this.emails.length)
+		return this.emails[0]
+	return null
 })
 
 /**
@@ -198,7 +196,7 @@ UserSchema.query.byBody = function(body) {
 
 	return this.where({$or: [
 		{_id: body.user_id},
-		{emails: body.email.toLowerCase()}
+		{emails: normalizeEmailAddress(body.email)}
 	]})
 }
 
@@ -217,7 +215,7 @@ UserSchema.query.byActive = function() {
  * Looks up the database for a user by email address
  */
 UserSchema.query.byEmail = function(email) {
-	return this.where({emails: email.toLowerCase()})
+	return this.where({emails: normalizeEmailAddress(email)})
 }
 
 
@@ -257,14 +255,15 @@ UserSchema.query.byActivationToken = function(token) {
  * Sets the primary email address of a user, checking for duplicates
  */
 UserSchema.methods.setEmail = async function(email, check = true) {
-	if(this.emails.includes(email.toLowerCase()))
+	email = normalizeEmailAddress(email)
+	if(this.emails.includes(email))
 		return
 	
-	if(check && await this.model("User").findOne({emails: email.toLowerCase()}))
+	if(check && await this.model("User").findOne({emails: email}))
 		throw new Error("Another user is already using this email address")
 
 	// Adding the email at the beginning of the array makes it the primary one
-	this.emails.unshift(email.toLowerCase())
+	this.emails.unshift(email)
 }
 
 
@@ -277,18 +276,6 @@ UserSchema.methods.setPassword = async function(password, force = false) {
 	
 	this.password = await PasswordUtil.hash(password)
 	return true
-}
-
-/**
- * Remove an email from the pendingEmails array
- */
-UserSchema.methods.removePendingEmail = function(email) {
-	let pendings = []
-	for(let pending of this.pendingEmails){
-		if(pending.email !== email)
-			pendings.push(pending)
-	}
-	this.pendingEmails = pendings
 }
 
 
@@ -327,7 +314,7 @@ UserSchema.methods.createActivationToken = function(email, expires = "2 weeks") 
 	return JWT.create(JWT_ACTIVATE_TYPE, {
 		user_id: this.user_id,
 		user_password: this.password,
-		activate_email: email,
+		activate_email: normalizeEmailAddress(email),
 	}, expires)
 }
 
@@ -335,8 +322,8 @@ UserSchema.methods.createActivationToken = function(email, expires = "2 weeks") 
 /**
  * Sends the welcome email to the user
  */
-UserSchema.methods.emailWelcome = async function(expires = "2 weeks") {
-	const token = this.createActivationToken(this.primaryEmail, expires)
+UserSchema.methods.emailWelcome = async function(email, expires = "2 weeks") {
+	const token = this.createActivationToken(email, expires)
 	
 	return await sendTemplateTo("user:activate-account", this, {}, {
 		activateAccountUrl: Config.clientUrl + "/user/activate/" + token

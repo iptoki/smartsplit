@@ -45,19 +45,6 @@ EmailVerificationSchema.query.byUserId = function(user_id) {
 	})
 }
 
-/**
- * Looks up the database for an existing email with the email address and the user ID
- */
-EmailVerificationSchema.query.byParams = function(params) {
-	if(!params.email || !params.user_id)
-		throw new Error("Can't query by params without an email address and a user ID")
-
-	return this.where({
-		_id: params.email.toLowerCase(),
-		user: params.user_id
-	})
-}
-
 
 /**
  * 
