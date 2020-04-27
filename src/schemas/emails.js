@@ -21,6 +21,17 @@ module.exports = {
 		required: ["email"]
 	}),
 	
+	activateEmailSchema: api.schema("user_activate_email", {
+		type: "object",
+		required: ["token"],
+		properties: {
+			token: {
+				type: "string",
+				format: "jwt"
+			}
+		}
+	}),
+
 	emails: api.schema("user_emails", {
 		type: "array",
 		items: {

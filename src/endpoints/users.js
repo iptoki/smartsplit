@@ -73,7 +73,7 @@ api.post("/users/", {
 api.post("/users/activate", {
 	tags: ["Users"],
 	summary: "Activates a user account",
-	requestBody: UserSchema.activateSchema,
+	requestBody: UserSchema.activateAccountSchema,
 	responses: {
 		200: AuthSchema.sessionInfo,
 		403: UserSchema.InvalidActivationTokenError,

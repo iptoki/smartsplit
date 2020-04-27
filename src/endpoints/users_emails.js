@@ -87,7 +87,7 @@ api.post("/users/{user_id}/emails/{email}", {
 	parameters: [UserSchema.id, EmailSchema.email],
 	summary: "Activate an email in the user profile",
 	hooks: { auth: true },
-	requestBody: UserSchema.activationToken,
+	requestBody: EmailSchema.activateEmailSchema,
 	responses: {
 		200: { description: "Email successfully activated" },
 		404: EmailSchema.EmailNotFoundError,

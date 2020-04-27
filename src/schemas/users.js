@@ -11,7 +11,7 @@ module.exports = {
 
 	user: api.schemaFromModel("user", User),
 
-	activateSchema: api.schema("user_activate", {
+	activateAccountSchema: api.schema("user_activate_account", {
 		type: "object",
 		required: ["token"],
 		properties: {
