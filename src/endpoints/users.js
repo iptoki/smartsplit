@@ -58,7 +58,6 @@ api.post("/users/", {
 			_id: req.body.email,
 			user: user._id
 		})
-		console.log("email._id",email._id)
 		await user.setPassword(req.body.password)
 		await user.save()
 		await email.save()
@@ -80,18 +79,20 @@ api.post("/users/activate", {
 		412: UserSchema.AccountAlreadyActivatedError,
 	}
 }, async function(req, res) {
-	const user = await User.findOne().byActivationToken(req.body.token)
-	
-	if(user && user.isActive)
+	const email = await EmailVerification.findOne().byActivationToken(req.body.token)
+
+	if(email && email.user.isActive)
 		throw new UserSchema.AccountAlreadyActivatedError()
 	
-	if(!user || !user.canActivate)
+	if(!email || !email.user.canActivate)
 		throw new UserSchema.InvalidActivationTokenError()
 	
-	user.accountStatus = "active"
-	await user.save()
+	email.user.accountStatus = "active"
+	email.user.emails.push(email._id)
+	await email.user.save()
+	await EmailVerification.deleteOne({_id: email._id})
 	
-	return { accessToken: JWTAuth.createToken(user), user }
+	return { accessToken: JWTAuth.createToken(email.user), user: email.user }
 })
 
 

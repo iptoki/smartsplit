@@ -312,7 +312,7 @@ UserSchema.methods.createActivationToken = function(email, expires = "2 weeks") 
  */
 UserSchema.methods.emailWelcome = async function(email, expires = "2 weeks") {
 	const token = this.createActivationToken(email, expires)
-	
+	console.log(token)
 	return await sendTemplateTo("user:activate-account", this, email, {}, {
 		activateAccountUrl: Config.clientUrl + "/user/activate/" + token
 	})
