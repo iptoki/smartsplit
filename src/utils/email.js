@@ -63,7 +63,7 @@ function sendEmail(options, data) {
 /**
  * Sends an email template to the specified user
  */
-function sendTemplateTo(templateName, user, options, data) {
+function sendTemplateTo(templateName, user, email, options, data) {
 	if(data === undefined) {
 		data = options || {}
 		options = {}
@@ -71,7 +71,7 @@ function sendTemplateTo(templateName, user, options, data) {
 	
 	return sendEmail({
 		template_id: TemplateMap[templateName][user.locale || Config.defaultLanguage],
-		to: user.$email,
+		to: {name: user.fullName, email: email},
 		...options
 	}, {
 		...data,
@@ -79,7 +79,7 @@ function sendTemplateTo(templateName, user, options, data) {
 			id: user.user_id,
 			user_id: user.user_id,
 			fullName: user.fullName,
-			email: user.primaryEmail,
+			email: user.primaryEmail || email,
 			firstName: user.firstName,
 			lastName: user.lastName,
 			artistName: user.artistName,

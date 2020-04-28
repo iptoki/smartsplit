@@ -136,6 +136,8 @@ api.delete("/users/{user_id}/emails/{email}", {
 		throw new UserSchema.UserNotFoundError({user_id: req.params.user_id})
 
 	if(user.emails.includes(req.params.email)) {
+		if(user.emails.length === 1)
+			throw new EmailSchema.DeleteNotAllowedError()
 		user.emails.splice(user.emails.indexOf(req.params.email))
 		await user.save()
 	}

@@ -59,6 +59,9 @@ module.exports = {
 	InvalidActivationTokenError:
 		error("email_invalid_activation_token", 403, "The supplied email activation token is invalid or has expired"),
 
+	DeleteNotAllowedError:
+		error("delete_email_error", 405, "Cannot delete the supplied email because users should have at least one email address linked to their account"),
+
 	EmailAlreadyActivatedError:
 		error("user_email_already_active", 412, "This email is already active and cannot be activated again"),
 }
