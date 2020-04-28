@@ -68,7 +68,7 @@ EmailVerificationSchema.query.byActivationToken = async function(token) {
 
 
 /**
- * 
+ * Verify that an activation token is valid against the current instance of EmailVerification
  */
 EmailVerificationSchema.methods.verifyActivationToken = async function(token) {
 	const data = JWT.decode(JWT_ACTIVATE_TYPE, token)
