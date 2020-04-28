@@ -104,6 +104,30 @@ const UserSchema = new mongoose.Schema({
 		}
 	},
 	
+	mobilePhone: {
+		number: String,
+		status: {
+			type: String,
+			default: "unverified",
+			enum: ["verified", "unverified"],
+		},
+		api: {
+			type: "object",
+			properties: {
+				number: {
+					type: "string",
+					example: "+15144387492"
+				},
+				status: {
+					type: "string",
+					enum: ["verified", "unverified"],
+					example: "verified",
+					default: "unverified"
+				}
+			}
+		}
+	},
+
 	//rightHolders: [{type: String, ref: "RightHolder", default: []}],
 })
 
