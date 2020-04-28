@@ -12,6 +12,11 @@ const DefaultConfig = {
 		defaultTemplate: null,
 	},
 	
+	twilio: {
+		accountSid: null,
+		authToken: null,
+	},
+
 	email: {
 		from_name:  "SmartSplit",
 		from_email: "noreply@smartsplit.org",

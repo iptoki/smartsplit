@@ -269,6 +269,17 @@ UserSchema.methods.setPassword = async function(password, force = false) {
 
 
 /**
+ * Sets the user's mobile phone
+ */
+UserSchema.methods.setMobilePhone = async function(number, verified = false) {
+	this.mobilePhone = {
+		number: number,
+		status: verified ? "verified" : "unverified"
+	}
+}
+
+
+/**
  * Verifies the password of the current user
  */
 UserSchema.methods.verifyPassword = async function(password) {
@@ -338,5 +349,14 @@ UserSchema.methods.emailPasswordReset = async function(expires = "2 hours") {
 UserSchema.methods.emailPasswordChanged = async function() {
 	return await sendTemplateTo("user:password-changed", this, {}, {})
 }
+
+
+/**
+ * Sends an SMS to the user
+ */
+UserSchema.methods.sendSMS = async function(notificationType, message) {
+	return await sendSMSTo(this, message, !notificationType)
+}
+
 
 module.exports = mongoose.model("User", UserSchema)
