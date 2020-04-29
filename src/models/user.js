@@ -110,10 +110,10 @@ const UserSchema = new mongoose.Schema({
 			type: String,
 			enum: ["verified", "unverified"],
 		},
-		// verificationCode: {
-		// 	code: Number,
-		// 	createdAt: Date
-		// },
+		verificationCode: {
+			code: Number,
+			createdAt: Date
+		},
 		api: {
 			type: "object",
 			properties: {
@@ -126,20 +126,19 @@ const UserSchema = new mongoose.Schema({
 					enum: ["verified", "unverified"],
 					example: "verified",
 				},
-				default: "null"
-				// verificationCode: {
-				// 	type: "object",
-				// 	properties: {
-				// 		code: {
-				// 			type: "number",
-				// 			example: "742069"
-				// 		},
-				// 		createdAt: {
-				// 			type: "date",
-				// 			example: "2020-04-27T23:16:25.299Z",
-				// 		}
-				// 	}
-				// }
+				verificationCode: {
+					type: "object",
+					properties: {
+						code: {
+							type: "number",
+							example: "742069"
+						},
+						createdAt: {
+							type: "date",
+							example: "2020-04-27T23:16:25.299Z",
+						}
+					}
+				}
 			}
 		}
 	},
