@@ -108,9 +108,12 @@ const UserSchema = new mongoose.Schema({
 		number: String,
 		status: {
 			type: String,
-			default: "unverified",
 			enum: ["verified", "unverified"],
 		},
+		// verificationCode: {
+		// 	code: Number,
+		// 	createdAt: Date
+		// },
 		api: {
 			type: "object",
 			properties: {
@@ -122,8 +125,21 @@ const UserSchema = new mongoose.Schema({
 					type: "string",
 					enum: ["verified", "unverified"],
 					example: "verified",
-					default: "unverified"
-				}
+				},
+				default: "null"
+				// verificationCode: {
+				// 	type: "object",
+				// 	properties: {
+				// 		code: {
+				// 			type: "number",
+				// 			example: "742069"
+				// 		},
+				// 		createdAt: {
+				// 			type: "date",
+				// 			example: "2020-04-27T23:16:25.299Z",
+				// 		}
+				// 	}
+				// }
 			}
 		}
 	},
@@ -274,8 +290,11 @@ UserSchema.methods.setPassword = async function(password, force = false) {
 UserSchema.methods.setMobilePhone = async function(number, verified = false) {
 	this.mobilePhone = {
 		number: number,
-		status: verified ? "verified" : "unverified"
+		status: verified ? "verified" : "unverified",
+		verificationCode: verified ? null : {code: generateRandomCode(), createdAt: new Date()}
 	}
+	if(!verified)
+		await this.sendSMS(verified, "Your activation code is " + this.mobilePhone.verificationCode.code)
 }
 
 

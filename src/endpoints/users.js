@@ -17,14 +17,25 @@ api.get("/users/{user_id}", {
 		404: UserSchema.UserNotFoundError,
 	}
 }, async function(req, res) {
-	const user = req.params.user_id === "session"
-	           ? await req.auth.requireUser()
-	           : await User.findById(req.params.user_id)
+	const crypto = require('crypto');
+	const buf = crypto.randomBytes(4)
+	const hex = buf.toString('hex')
+	const dec = parseInt("5F45A60",16)
+	const code = (dec % 99900000) + 100000
+	const str = code.toString()
+	console.log("hex: ", hex)
+	console.log("dec: ", dec)
+	console.log("code: ", code)
+	console.log("str: ", str)
+	res.status(200).end()
+	// const user = req.params.user_id === "session"
+	//            ? await req.auth.requireUser()
+	//            : await User.findById(req.params.user_id)
 	
-	if(!user)
-		throw new UserSchema.UserNotFoundError({user_id: req.params.user_id})
+	// if(!user)
+	// 	throw new UserSchema.UserNotFoundError({user_id: req.params.user_id})
 	
-	return user
+	// return user
 })
 
 
