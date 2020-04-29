@@ -182,6 +182,19 @@ UserSchema.virtual("isActive").get(function() {
 
 
 /**
+ * Returns whether the current mobile verification code is expired or not
+ */
+UserSchema.virtual("isVerificationCodeExpired").get(function() {
+	if(!this.mobilePhone.verificationCode)
+		return false
+	const expireDate = new Date(
+		this.mobilePhone.verificationCode.createdAt.getTime() + 24*60*60*1000 /* 24h */ 
+	)
+	return expireDate < new Date()
+})
+
+
+/**
  * Returns whether this account can be activated with an account activation token
  */
 UserSchema.virtual("canActivate").get(function() {
@@ -316,6 +329,28 @@ UserSchema.methods.setMobilePhone = async function(number, verified = false) {
  */
 UserSchema.methods.verifyPassword = async function(password) {
 	return await PasswordUtil.verify(password, this.password)
+}
+
+
+/**
+ * Verifies the verification code of the user's mobile phone
+ */
+UserSchema.methods.verifyMobilePhone = async function(code) {
+	if(!this.mobilePhone.verificationCode)
+		return false
+
+	const expireDate = new Date(
+		this.mobilePhone.verificationCode.createdAt.getTime() + 24*60*60*1000 /* 24h */ 
+	)
+
+	if(expireDate < new Date() || this.mobilePhone.verificationCode.code !== code)
+		return false
+
+	this.mobilePhone.status = "verified"
+	this.mobilePhone.verificationCode = null
+	await this.save()
+
+	return true
 }
 
 

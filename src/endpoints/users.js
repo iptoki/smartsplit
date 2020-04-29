@@ -58,8 +58,8 @@ api.post("/users/", {
 	
 		await user.setEmail(req.body.email, false /* skip email check */)
 		await user.setPassword(req.body.password)
-		if(req.body.number)
-			await user.setMobilePhone(req.body.number, false)
+		if(req.body.phoneNumber)
+			await user.setMobilePhone(req.body.phoneNumber, false)
 		await user.save()
 	}
 	
@@ -195,4 +195,28 @@ api.post("/users/change-password", {
 	})
 	
 	return { accessToken: JWTAuth.createToken(user), user }
+})
+
+
+api.post("/users/verify-mobile-phone", {
+	tags: ["Users"],
+	summary: "Verify the user's mobile phone",
+	requestBody: UserSchema.verifyMobilePhone,
+	hooks: { auth: true },
+	responses: {
+		200: {description: "Mobile phone successfully verified"},
+		403: UserSchema.InvalidVerificationCodeError,
+		412: UserSchema.MobilePhoneAlreadyActivatedError,
+	}
+}, async function(req, res) {
+	const user = await req.auth.requireUser()
+
+	if(!user.mobilePhone)
+		throw new Error("User doesn't have a mobile phone")
+	if(user.mobilePhone.status === "verified")
+		throw new UserSchema.MobilePhoneAlreadyActivatedError()
+	if(! await user.verifyMobilePhone(req.body.verificationCode))
+		throw new UserSchema.InvalidVerificationCodeError()
+
+	res.status(200).end()
 })
