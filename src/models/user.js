@@ -4,6 +4,7 @@ const Config = require("../config")
 const PasswordUtil = require("../utils/password")
 const JWT = require("../utils/jwt")
 const sendTemplateTo = require("../utils/email").sendTemplateTo
+const { generateRandomCode } = require("../utils/random")
 
 const JWT_RESET_TYPE = "user:password-reset"
 const JWT_ACTIVATE_TYPE = "user:activate"
@@ -386,7 +387,10 @@ UserSchema.methods.emailPasswordChanged = async function() {
  * Sends an SMS to the user
  */
 UserSchema.methods.sendSMS = async function(notificationType, message) {
-	return await sendSMSTo(this, message, !notificationType)
+	if(notificationType === true)
+		return await sendSMSTo(this, message, false)
+	else
+		throw new Error("notificationType not implemented yet")
 }
 
 
