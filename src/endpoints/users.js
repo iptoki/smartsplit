@@ -120,8 +120,12 @@ api.patch("/users/{user_id}", {
 	if(req.body.email)
 		await user.setEmail(req.body.email)
 	
+	if(req.body.phoneNumber)
+		await user.setMobilePhone(req.body.phoneNumber, false)
+
 	if(req.body.password)
 		passwordChanged = await user.setPassword(req.body.password)
+
 	
 	for(let field of ["firstName", "lastName", "artistName", "avatarUrl", "locale"])
 		if(req.body[field])
