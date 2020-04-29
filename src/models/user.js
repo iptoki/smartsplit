@@ -5,6 +5,7 @@ const PasswordUtil = require("../utils/password")
 const JWT = require("../utils/jwt")
 const sendTemplateTo = require("../utils/email").sendTemplateTo
 const { generateRandomCode } = require("../utils/random")
+const { sendSMSTo } = require("../service/twilio")
 
 const JWT_RESET_TYPE = "user:password-reset"
 const JWT_ACTIVATE_TYPE = "user:activate"
@@ -182,19 +183,6 @@ UserSchema.virtual("isActive").get(function() {
 
 
 /**
- * Returns whether the current mobile verification code is expired or not
- */
-UserSchema.virtual("isVerificationCodeExpired").get(function() {
-	if(!this.mobilePhone.verificationCode)
-		return false
-	const expireDate = new Date(
-		this.mobilePhone.verificationCode.createdAt.getTime() + 24*60*60*1000 /* 24h */ 
-	)
-	return expireDate < new Date()
-})
-
-
-/**
  * Returns whether this account can be activated with an account activation token
  */
 UserSchema.virtual("canActivate").get(function() {
@@ -314,13 +302,18 @@ UserSchema.methods.setMobilePhone = async function(number, verified = false) {
 	if(user && user._id !== this._id)
 		throw new Error("Another user is already using this mobile phone")
 
+	const verificationCode = !verified
+	                       ? {code: generateRandomCode(), createdAt: new Date()}
+	                       : null
+
 	this.mobilePhone = {
 		number: number,
 		status: verified ? "verified" : "unverified",
-		verificationCode: verified ? null : {code: generateRandomCode(), createdAt: new Date()}
+		verificationCode: verificationCode
 	}
 	if(!verified)
 		await this.sendSMS(true, "Your activation code is " + this.mobilePhone.verificationCode.code)
+			.catch(e => console.error(e, "Error sending verification code SMS"))
 }
 
 

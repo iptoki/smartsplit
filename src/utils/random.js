@@ -6,6 +6,6 @@ const crypto = require("crypto")
  */
 module.exports.generateRandomCode = function() {
 	const buf = crypto.randomBytes(4)
-	const code = (parseInt(buf.toString('hex',16)) % 99900000) + 100000
+	const code = (parseInt(buf.toString('hex'),16) % 99900000) + 100000
 	return code.toString()
 }

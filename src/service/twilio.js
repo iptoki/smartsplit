@@ -1,6 +1,6 @@
 const Config = require("../config")
 const User = require("../models/user")
-const client = require('twilio')(Config.twilio.accountSid, Config.twilio.authToken)
+const client = null// require('twilio')(Config.twilio.accountSid, Config.twilio.authToken)
 
 
 /** 
