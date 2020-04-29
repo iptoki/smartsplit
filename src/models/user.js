@@ -299,8 +299,8 @@ UserSchema.methods.setPassword = async function(password, force = false) {
 UserSchema.methods.setMobilePhone = async function(number, verified = false) {
 	const user = await this.model("User").findOne().byMobilePhone(number)
 
-	if(user && user._id !== this._id)
-		throw new Error("Another user is already using this mobile phone")
+	if(user && (user._id !== this._id || this.mobilePhone.status === "verified"))
+		throw new Error("This phone number is already used")
 
 	const verificationCode = !verified
 	                       ? {code: generateRandomCode(), createdAt: new Date()}
