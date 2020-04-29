@@ -43,10 +43,15 @@ module.exports = {
 				format: "jwt"
 			},
 			
+			currentPassword: {
+				type: "string",
+				format: "password"
+			},
+			
 			password: {
 				type: "string",
 				format: "password"
-			}
+			},
 		}
 	}),
 	
@@ -61,6 +66,9 @@ module.exports = {
 	
 	InvalidResetToken:
 		error("user_invalid_reset_token", 403, "The supplied password reset token is not valid or has expired"),
+	
+	InvalidCurrentPassword:
+		error("user_invalid_current_password", 403, "The user's current password is incorrect"),
 	
 	InvalidActivationTokenError:
 		error("user_invalid_activation_token", 403, "The supplied account activation token is invalid or has expired"),
