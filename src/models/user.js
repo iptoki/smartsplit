@@ -336,7 +336,7 @@ UserSchema.methods.verifyMobilePhone = async function(code) {
 		this.mobilePhone.verificationCode.createdAt.getTime() + 24*60*60*1000 /* 24h */ 
 	)
 
-	if(expireDate < new Date() || this.mobilePhone.verificationCode.code !== code)
+	if(expireDate < new Date() || this.mobilePhone.verificationCode.code != code)
 		return false
 
 	this.mobilePhone.status = "verified"
