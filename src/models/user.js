@@ -226,6 +226,14 @@ UserSchema.query.byEmail = function(email) {
 
 
 /**
+ * Looks up the database for a user by mobile phone
+ */
+UserSchema.query.byMobilePhone = function(number) {
+	return this.where({"mobilePhone.number": number})
+}
+
+
+/**
  * Looks up a user by a password reset token.
  */
 UserSchema.query.byPasswordResetToken = function(token) {
@@ -287,13 +295,18 @@ UserSchema.methods.setPassword = async function(password, force = false) {
  * Sets the user's mobile phone
  */
 UserSchema.methods.setMobilePhone = async function(number, verified = false) {
+	const user = await this.model("User").findOne().byMobilePhone(number)
+
+	if(user && user._id !== this._id)
+		throw new Error("Another user is already using this mobile phone")
+
 	this.mobilePhone = {
 		number: number,
 		status: verified ? "verified" : "unverified",
 		verificationCode: verified ? null : {code: generateRandomCode(), createdAt: new Date()}
 	}
 	if(!verified)
-		await this.sendSMS(verified, "Your activation code is " + this.mobilePhone.verificationCode.code)
+		await this.sendSMS(true, "Your activation code is " + this.mobilePhone.verificationCode.code)
 }
 
 

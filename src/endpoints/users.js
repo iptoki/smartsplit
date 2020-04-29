@@ -58,6 +58,8 @@ api.post("/users/", {
 	
 		await user.setEmail(req.body.email, false /* skip email check */)
 		await user.setPassword(req.body.password)
+		if(req.body.number)
+			await user.setMobilePhone(req.body.number, false)
 		await user.save()
 	}
 	
