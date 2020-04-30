@@ -6,7 +6,7 @@ node {
 	}
 
 	stage("Création de l'image Docker") {
-		image = docker.build("smartsplit-api:${env.BUILD_ID}")
+		image = docker.build("smartsplit-proto-api:${env.BUILD_ID}")
 	}
 
 	stage("Publication de l'image Docker") {
