@@ -177,7 +177,7 @@ ProposalSchema.methods.emailInvite = async function(rightHolder, expire = "7 day
 		toEmail: rightHolder.email,
 		firstName: rightHolder.name,
 		workTitle: this.media.title,
-		callbackURL: `http://dev.smartsplit.org/proposition/vote/${token}`,
+		callbackURL: `https://www-proto.smartsplit.org/proposition/vote/${token}`,
 		splitInitiator: this.initiatorName,
 		template: isInitiator ? "splitSent" : "splitCreated"
 	}
@@ -213,7 +213,7 @@ ProposalSchema.methods.emailProposalUpdate = async function(template) {
 			toEmail: rightHolder.email,
 			firstName: rightHolder.firstName,
 			workTitle: this.media.title,
-			callbackURL: `http://dev.smartsplit.org/partager/${this.mediaId}`,
+			callbackURL: `https://www-proto.smartsplit.org/partager/${this.mediaId}`,
 			template
 		}
 		

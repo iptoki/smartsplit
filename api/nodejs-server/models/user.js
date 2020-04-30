@@ -104,7 +104,7 @@ UserSchema.methods.emailWelcome = async function() {
 		toEmail: this.email,
 		firstName: this.firstName,
 		lastName: this.lastName,
-		callbackURL: "https://www-dev.smartsplit.org/",
+		callbackURL: "https://www-proto.smartsplit.org/",
 		template: template
 	})
 }

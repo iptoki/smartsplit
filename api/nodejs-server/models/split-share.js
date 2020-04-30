@@ -82,7 +82,7 @@ SplitShareSchema.methods.emailInvite = async function(expires = "7 days") {
 			toEmail: this.sharee.email,
 			firstName: this.sharee.firstName,
 			workTitle: this.media.title,
-			callbackURL: `http://dev.smartsplit.org/partage/editeur/vote/${token}`,
+			callbackURL: `https://www-proto.smartsplit.org/partage/editeur/vote/${token}`,
 			template: "partageEditeur",
 			ayantDroit: this.rightHolder.firstName
 		}),
@@ -90,7 +90,7 @@ SplitShareSchema.methods.emailInvite = async function(expires = "7 days") {
 			toEmail: this.rightHolder.email,
 			firstName: this.rightHolder.firstName,
 			workTitle: this.media.title,
-			callbackURL: `http://dev.smartsplit.org/partager/${this.mediaId}`,
+			callbackURL: `https://www-proto.smartsplit.org/partager/${this.mediaId}`,
 			template: "partageEditeurEnvoye",
 		})
 	])
@@ -113,14 +113,14 @@ SplitShareSchema.methods.emailStatusUpdate = async function(state) {
 			toEmail: this.sharee.email,
 			firstName: this.sharee.firstName,
 			workTitle: this.media.title,
-			callbackURL: `http://dev.smartsplit.org/partage/editeur/vote/${token}`,
+			callbackURL: `https://www-proto.smartsplit.org/partage/editeur/vote/${token}`,
 			template
 		}),
 		sendEmail({
 			toEmail: this.rightHolder.email,
 			firstName: this.rightHolder.firstName,
 			workTitle: this.media.title,
-			callbackURL: `http://dev.smartsplit.org/partage/editeur/vote/${token}`,
+			callbackURL: `https://www-proto.smartsplit.org/partage/editeur/vote/${token}`,
 			template
 		})
 	])
