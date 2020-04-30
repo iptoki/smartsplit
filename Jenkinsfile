@@ -11,7 +11,7 @@ node {
 
 	stage("Publication de l'image Docker") {
 		docker.withRegistry("https://docker-registry.smartsplit.org", "SmartSplit Docker") {
-			image.push("preproduction")
+			image.push("latest")
 		}
 	}
 }
