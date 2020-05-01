@@ -202,7 +202,7 @@ api.delete("/users/{user_id}", {
 	hooks: { auth: true },
 	responses: {
 		200: {description: "Account deleted successfully"},
-		404: UserSchema.UserNotFoundError 
+		404: UserSchema.UserNotFoundError,
 		412: UserSchema.AccountAlreadyDeletedError 
 	}
 }, async function(req, res) {
