@@ -134,6 +134,33 @@ const UserSchema = new mongoose.Schema({
 		}
 	},
 
+	notifications: {
+		general_interations: {
+			type: Array,
+			default: ["email","push"]
+		},
+		administrative_messages: {
+			type: Array,
+			default: ["email","push"]
+		},
+		account_login: {
+			type: Array,
+			default: []
+		},
+		smartsplit_blog: {
+			type: Array,
+			default: []
+		},
+		smartsplit_promotions: {
+			type: Array,
+			default: []
+		},
+		partner_promotions: {
+			type: Array,
+			default: []
+		},
+	},
+	
 	//rightHolders: [{type: String, ref: "RightHolder", default: []}],
 })
 
