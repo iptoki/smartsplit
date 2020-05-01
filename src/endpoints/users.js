@@ -150,8 +150,6 @@ api.patch("/users/{user_id}", {
 		if(req.body[field])
 			user[field] = req.body[field]
 	
-	//user.avatar = require("fs").readFileSync("/home/blyat/Pictures/img.png")
-	//console.log(user.avatar)
 	await user.save()
 	
 	// Send notification if password changed and saved successfully
