@@ -28,6 +28,27 @@ api.get("/users/{user_id}", {
 })
 
 
+api.get("/users/{user_id}/avatar", {
+	tags: ["Users"],
+	parameters: [UserSchema.id],
+	summary: "Get a user's avatar",
+	hooks: { auth: true },
+	responses: {
+		404: UserSchema.UserNotFoundError,
+	}
+}, async function(req, res) {
+	const user = req.params.user_id === "session"
+	           ? await req.auth.requireUser()
+	           : await User.findById(req.params.user_id)
+	
+	if(!user)
+		throw new UserSchema.UserNotFoundError({user_id: req.params.user_id})
+	
+	res.contentType("image/jpeg") // hardcoded for the moment
+	res.send(user.avatar)
+})
+
+
 api.post("/users/", {
 	tags: ["Users"],
 	summary: "Create a new user",
@@ -129,6 +150,8 @@ api.patch("/users/{user_id}", {
 		if(req.body[field])
 			user[field] = req.body[field]
 	
+	//user.avatar = require("fs").readFileSync("/home/blyat/Pictures/img.png")
+	//console.log(user.avatar)
 	await user.save()
 	
 	// Send notification if password changed and saved successfully
