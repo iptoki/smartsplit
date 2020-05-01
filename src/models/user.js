@@ -85,6 +85,8 @@ const UserSchema = new mongoose.Schema({
 		}
 	},
 
+	avatar: Buffer,
+
 	avatarUrl: {
 		type: String,
 		api: {
@@ -263,9 +265,20 @@ UserSchema.methods.deleteAccount = async function() {
 	this.firstName     = undefined
 	this.lastName      = undefined
 	this.artistName    = undefined
-	this.avatarUrl     = undefined
+	this.avatar        = undefined
 	this.locale        = "en"
 	await this.save()
+}
+
+
+/*
+ * Sets the user's avatar
+ */
+UserSchema.methods.setAvatar = async function(avatar) {
+	if(avatar.length > 1024*1024*16 /* 16MB */)
+		throw new Error("Maximum file size is 16 MB")
+
+	this.avatar = avatar
 }
 
 

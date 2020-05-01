@@ -55,7 +55,8 @@ api.post("/users/", {
 		// Check passed, let through to resubmit the welcome email
 	} else {
 		user = new User(req.body)
-	
+		if(req.body.avatar)
+			user.setAvatar(Buffer.from(req.body.avatar, "base64"))
 		await user.setEmail(req.body.email, false /* skip email check */)
 		await user.setPassword(req.body.password)
 		await user.save()
@@ -121,6 +122,9 @@ api.patch("/users/{user_id}", {
 	if(req.body.password)
 		passwordChanged = await user.setPassword(req.body.password)
 	
+	if(req.body.avatar)
+		user.setAvatar(Buffer.from(req.body.avatar, "base64"))
+
 	for(let field of ["firstName", "lastName", "artistName", "avatarUrl", "locale"])
 		if(req.body[field])
 			user[field] = req.body[field]
