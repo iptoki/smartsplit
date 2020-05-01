@@ -84,6 +84,8 @@ const UserSchema = new mongoose.Schema({
 		}
 	},
 
+	avatar: Buffer,
+
 	avatarUrl: {
 		type: String,
 		api: {
@@ -241,6 +243,16 @@ UserSchema.methods.setPassword = async function(password, force = false) {
 	
 	this.password = await PasswordUtil.hash(password)
 	return true
+}
+
+
+/**
+ * Sets the user's avatar
+ */
+UserSchema.methods.setAvatar = async function(avatar) {
+	if(avatar.length > 1024*1024*16 /* 16MB */)
+		throw new Error("Maximum file size is 16 MB")
+	this.avatar = avatar
 }
 
 
