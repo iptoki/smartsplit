@@ -51,7 +51,8 @@ const UserSchema = new mongoose.Schema({
 			"invalid",
 			"email-verification-pending",
 			"split-invited",
-			"active"
+			"active",
+			"deleted"
 		],
 		api: {
 			type: "string",
@@ -138,6 +139,14 @@ UserSchema.virtual("$email").get(function() {
  */
 UserSchema.virtual("isActive").get(function() {
 	return this.accountStatus === "active"
+})
+
+
+/**
+ * Returns whether the current account status is deleted
+ */
+UserSchema.virtual("isDeleted").get(function() {
+	return this.accountStatus === "deleted"
 })
 
 
@@ -241,6 +250,22 @@ UserSchema.methods.setPassword = async function(password, force = false) {
 	
 	this.password = await PasswordUtil.hash(password)
 	return true
+}
+
+
+/**
+ * Delete the user's account 
+ */
+UserSchema.methods.deleteAccount = async function() {
+	this.accountStatus = "deleted"
+	this.password      = undefined
+	this.email         = undefined
+	this.firstName     = undefined
+	this.lastName      = undefined
+	this.artistName    = undefined
+	this.avatarUrl     = undefined
+	this.locale        = "en"
+	await this.save()
 }
 
 
