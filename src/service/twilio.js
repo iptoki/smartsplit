@@ -19,6 +19,8 @@ module.exports.sendSMS = async function(number, message) {
  * Sends an SMS to a user and optionally check if his mobile phone is verified
  */
 module.exports.sendSMSTo = async function(user, message, verifiedOnly = true) {
+	if(!user.mobilePhone.number)
+		throw new Error("User doesn't have a registered phone number")
 	if(verifiedOnly && user.mobilePhone.status !== "verified")
 		throw new Error("User's mobile phone must be verified")
 
