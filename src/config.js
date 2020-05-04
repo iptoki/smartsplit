@@ -13,7 +13,7 @@ const DefaultConfig = {
 	},
 	
 	email: {
-		from_name:  "SmartSplit",
+		from_name:  "Smartsplit",
 		from_email: "noreply@smartsplit.org",
 		to_name:    "Utilisateur SmartSplit",
 		to_email:   "qa@smartsplit.org",
