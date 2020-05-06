@@ -312,10 +312,13 @@ UserSchema.methods.createActivationToken = function(email, expires = "2 weeks") 
  */
 UserSchema.methods.emailWelcome = async function(email, expires = "2 weeks") {
 	const token = this.createActivationToken(email, expires)
-	console.log(token)
-	return await sendTemplateTo("user:activate-account", this, email, {}, {
-		activateAccountUrl: Config.clientUrl + "/user/activate/" + token
-	})
+
+	console.log(token) // Temporary helper
+
+	return await sendTemplateTo("user:activate-account", this, 
+		{ to: {name: this.fullName, email: email} }, 
+		{ activateAccountUrl: Config.clientUrl + "/user/activate/" + token }
+	)
 }
 
 
@@ -327,19 +330,20 @@ UserSchema.methods.emailLinkEmailAccount = async function(email, expires = "2 we
 	
 	console.log(token) // Temporary helper
 	
-	return await sendTemplateTo("user:activate-email", this, email, {}, {
-		linkEmailAccountUrl: Config.clientUrl /* TODO see with frontend */
-	})
+	return await sendTemplateTo("user:activate-email", this, 
+		{ to: {name: this.fullName, email: email} },
+		{ linkEmailAccountUrl: Config.clientUrl /* TODO see with frontend */}
+	)
 }
 
 
 /**
  * Sends the password reset email to the user
  */
-UserSchema.methods.emailPasswordReset = async function(email, expires = "2 hours") {
+UserSchema.methods.emailPasswordReset = async function(expires = "2 hours") {
 	const token = this.createPasswordResetToken(expires)
 
-	return await sendTemplateTo("user:password-reset", this, email, {}, {
+	return await sendTemplateTo("user:password-reset", this, {}, {
 		resetPasswordUrl: Config.clientUrl + "/user/change-password/" + token
 	})
 }
@@ -349,7 +353,7 @@ UserSchema.methods.emailPasswordReset = async function(email, expires = "2 hours
  * Sends the password changed notification to the user
  */
 UserSchema.methods.emailPasswordChanged = async function() {
-	return await sendTemplateTo("user:password-changed", this, this.primaryEmail, {}, {})
+	return await sendTemplateTo("user:password-changed", this, {}, {})
 }
 
 module.exports = mongoose.model("User", UserSchema)

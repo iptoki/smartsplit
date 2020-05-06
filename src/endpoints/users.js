@@ -154,7 +154,7 @@ api.post("/users/request-password-reset", {
 	if(!user)
 		throw new UserSchema.UserNotFoundError({email: req.body.email})
 	
-	await user.emailPasswordReset(req.body.email)
+	await user.emailPasswordReset()
 	res.status(200).end()
 })
 
