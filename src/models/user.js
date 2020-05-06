@@ -127,19 +127,6 @@ const UserSchema = new mongoose.Schema({
 					type: "string",
 					enum: ["verified", "unverified"],
 					example: "verified",
-				},
-				verificationCode: {
-					type: "object",
-					properties: {
-						code: {
-							type: "number",
-							example: "742069"
-						},
-						createdAt: {
-							type: "date",
-							example: "2020-04-27T23:16:25.299Z",
-						}
-					}
 				}
 			}
 		}
