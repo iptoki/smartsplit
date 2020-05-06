@@ -11,6 +11,7 @@ const EmailVerificationSchema = new mongoose.Schema({
 		type: String,
 		alias: "email",
 		lowercase: true,
+		trim: true,
 		api: {
 			type: "string",
 			format: "email",

@@ -27,6 +27,26 @@ api.get("/users/{user_id}", {
 })
 
 
+api.get("/users/{user_id}/avatar", {
+	tags: ["Users"],
+	parameters: [UserSchema.id],
+	summary: "Get a user's avatar",
+	responses: {
+		404: UserSchema.UserNotFoundError,
+	}
+}, async function(req, res) {
+	const user = req.params.user_id === "session"
+	           ? await req.auth.requireUser()
+	           : await User.findById(req.params.user_id)
+	
+	if(!user)
+		throw new UserSchema.UserNotFoundError({user_id: req.params.user_id})
+
+	res.contentType("image/jpeg") // hardcoded for the moment
+	res.send(user.avatar)
+})
+
+
 api.post("/users/", {
 	tags: ["Users"],
 	summary: "Create a new user",
@@ -53,11 +73,15 @@ api.post("/users/", {
 		
 		// Check passed, let through to resubmit the welcome email
 	} else {
-		user  = new User(req.body)
+		user = new User(req.body)
 		let email = new EmailVerification({
 			_id: req.body.email,
 			user: user._id
 		})
+
+		if(req.body.avatar)
+			user.setAvatar(Buffer.from(req.body.avatar, "base64"))
+
 		await user.setPassword(req.body.password)
 		await user.save()
 		await email.save()
@@ -124,7 +148,10 @@ api.patch("/users/{user_id}", {
 	if(req.body.password)
 		passwordChanged = await user.setPassword(req.body.password)
 	
-	for(let field of ["firstName", "lastName", "artistName", "avatarUrl", "locale"])
+	if(req.body.avatar)
+		user.setAvatar(Buffer.from(req.body.avatar, "base64"))
+
+	for(let field of ["firstName", "lastName", "artistName", "locale"])
 		if(req.body[field])
 			user[field] = req.body[field]
 	
@@ -196,4 +223,30 @@ api.post("/users/change-password", {
 	})
 	
 	return { accessToken: JWTAuth.createToken(user), user }
+})
+
+
+api.delete("/users/{user_id}", {
+	tags: ["Users"],
+	parameters: [UserSchema.id],
+	summary: "Delete the user account",
+	hooks: { auth: true },
+	responses: {
+		200: {description: "Account deleted successfully"},
+		404: UserSchema.UserNotFoundError,
+		412: UserSchema.AccountAlreadyDeletedError 
+	}
+}, async function(req, res) {
+	const user = req.params.user_id === "session"
+	           ? await req.auth.requireUser()
+	           : await User.findById(req.params.user_id)
+
+	if(!user)
+		throw new UserSchema.UserNotFoundError({user_id: req.params.user_id})      
+
+	if(user.isDeleted)
+		throw new UserSchema.AccountAlreadyDeletedError()
+
+	await user.deleteAccount()           
+	res.status(200).end()
 })
