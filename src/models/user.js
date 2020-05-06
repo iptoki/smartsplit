@@ -86,14 +86,6 @@ const UserSchema = new mongoose.Schema({
 
 	avatar: Buffer,
 
-	avatarUrl: {
-		type: String,
-		api: {
-			type: "string",
-			example: "https://myimage.jpg"
-		}
-	},
-
 	locale: {
 		type: String,
 		default: "en",
@@ -132,6 +124,16 @@ UserSchema.virtual("$email").get(function() {
 		name: this.fullName || this.email,
 		email: this.email
 	}
+})
+
+
+/**
+ * Returns the user's avatarUrl
+ */
+UserSchema.virtual("avatarUrl").get(function() {
+	if(!this.avatar)
+		return null
+	return Config.apiUrl + "/users/" + this._id + "/avatar"
 })
 
 
@@ -250,8 +252,8 @@ UserSchema.methods.setPassword = async function(password, force = false) {
  * Sets the user's avatar
  */
 UserSchema.methods.setAvatar = async function(avatar) {
-	if(avatar.length > 1024*1024*16 /* 16MB */)
-		throw new Error("Maximum file size is 16 MB")
+	if(avatar.length > 1024*1024*4 /* 4 MB */)
+		throw new Error("Maximum file size is 4 MB")
 	this.avatar = avatar
 }
 
