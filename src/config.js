@@ -3,6 +3,8 @@ const DefaultConfig = {
 	
 	clientUrl: "https://www.smartsplit.org",
 	
+	apiUrl: "https://apiv2-dev.smartsplit.org/v1",
+	
 	mongodb: {
 		uri: "mongodb://localhost/smartsplit",
 	},
@@ -18,7 +20,7 @@ const DefaultConfig = {
 	},
 
 	email: {
-		from_name:  "SmartSplit",
+		from_name:  "Smartsplit",
 		from_email: "noreply@smartsplit.org",
 		to_name:    "Utilisateur SmartSplit",
 		to_email:   "qa@smartsplit.org",

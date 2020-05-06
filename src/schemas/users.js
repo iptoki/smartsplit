@@ -93,4 +93,6 @@ module.exports = {
 	MobilePhoneAlreadyActivatedError:
 		error("user_mobile_phone_already_active", 412, "This mobile phone is already active and cannot be activated again"),
 
+	AccountAlreadyDeletedError:
+		error("user_account_already_deleted", 412, "This account is already deleted and cannot be deleted again"),
 }

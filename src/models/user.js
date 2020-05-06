@@ -53,7 +53,8 @@ const UserSchema = new mongoose.Schema({
 			"invalid",
 			"email-verification-pending",
 			"split-invited",
-			"active"
+			"active",
+			"deleted"
 		],
 		api: {
 			type: "string",
@@ -86,13 +87,7 @@ const UserSchema = new mongoose.Schema({
 		}
 	},
 
-	avatarUrl: {
-		type: String,
-		api: {
-			type: "string",
-			example: "https://myimage.jpg"
-		}
-	},
+	avatar: Buffer,
 
 	locale: {
 		type: String,
@@ -162,10 +157,28 @@ UserSchema.virtual("$email").get(function() {
 
 
 /**
+ * Returns the user's avatarUrl
+ */
+UserSchema.virtual("avatarUrl").get(function() {
+	if(!this.avatar)
+		return null
+	return Config.apiUrl + "/users/" + this._id + "/avatar"
+})
+
+
+/**
  * Returns whether the current account status is active
  */
 UserSchema.virtual("isActive").get(function() {
 	return this.accountStatus === "active"
+})
+
+
+/**
+ * Returns whether the current account status is deleted
+ */
+UserSchema.virtual("isDeleted").get(function() {
+	return this.accountStatus === "deleted"
 })
 
 
@@ -301,6 +314,33 @@ UserSchema.methods.setMobilePhone = async function(number, verified = false) {
 	if(!verified)
 		await this.sendSMS(true, "Your activation code is " + this.mobilePhone.verificationCode.code)
 			.catch(e => console.error(e, "Error sending verification code SMS"))
+}
+
+
+/**
+ * Delete the user's account 
+ */
+UserSchema.methods.deleteAccount = async function() {
+	this.accountStatus = "deleted"
+	this.password      = undefined
+	this.email         = undefined
+	this.firstName     = undefined
+	this.lastName      = undefined
+	this.artistName    = undefined
+	this.avatar        = undefined
+	this.locale        = "en"
+	await this.save()
+}
+
+
+/*
+ * Sets the user's avatar
+ */
+UserSchema.methods.setAvatar = async function(avatar) {
+	if(avatar.length > 1024*1024*4 /* 4 MB */)
+		throw new Error("Maximum file size is 4 MB")
+
+	this.avatar = avatar
 }
 
 
