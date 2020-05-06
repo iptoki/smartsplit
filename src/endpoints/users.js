@@ -42,7 +42,7 @@ api.get("/users/{user_id}/avatar", {
 	
 	if(!user)
 		throw new UserSchema.UserNotFoundError({user_id: req.params.user_id})
-	console.log(user.avatarUrl)
+
 	res.contentType("image/jpeg") // hardcoded for the moment
 	res.send(user.avatar)
 })
