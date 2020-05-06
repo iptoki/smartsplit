@@ -194,3 +194,29 @@ api.post("/users/change-password", {
 	
 	return { accessToken: JWTAuth.createToken(user), user }
 })
+
+
+api.delete("/users/{user_id}", {
+	tags: ["Users"],
+	parameters: [UserSchema.id],
+	summary: "Delete the user account",
+	hooks: { auth: true },
+	responses: {
+		200: {description: "Account deleted successfully"},
+		404: UserSchema.UserNotFoundError,
+		412: UserSchema.AccountAlreadyDeletedError 
+	}
+}, async function(req, res) {
+	const user = req.params.user_id === "session"
+	           ? await req.auth.requireUser()
+	           : await User.findById(req.params.user_id)
+
+	if(!user)
+		throw new UserSchema.UserNotFoundError({user_id: req.params.user_id})      
+
+	if(user.isDeleted)
+		throw new UserSchema.AccountAlreadyDeletedError()
+
+	await user.deleteAccount()           
+	res.status(200).end()
+})
