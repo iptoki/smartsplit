@@ -75,4 +75,7 @@ module.exports = {
 	
 	AccountAlreadyActivatedError:
 		error("user_account_already_active", 412, "This account is already active and cannot be activated again"),
+
+	AccountAlreadyDeletedError:
+		error("user_account_already_deleted", 412, "This account is already deleted and cannot be deleted again"),
 }

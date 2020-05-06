@@ -3,6 +3,8 @@ const DefaultConfig = {
 	
 	clientUrl: "https://www.smartsplit.org",
 	
+	apiUrl: "https://apiv2-dev.smartsplit.org/v1",
+	
 	mongodb: {
 		uri: "mongodb://localhost/smartsplit",
 	},
