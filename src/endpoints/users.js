@@ -32,7 +32,6 @@ api.get("/users/{user_id}/avatar", {
 	tags: ["Users"],
 	parameters: [UserSchema.id],
 	summary: "Get a user's avatar",
-	hooks: { auth: true },
 	responses: {
 		404: UserSchema.UserNotFoundError,
 	}
@@ -43,7 +42,7 @@ api.get("/users/{user_id}/avatar", {
 	
 	if(!user)
 		throw new UserSchema.UserNotFoundError({user_id: req.params.user_id})
-	
+	console.log(user.avatarUrl)
 	res.contentType("image/jpeg") // hardcoded for the moment
 	res.send(user.avatar)
 })
@@ -146,7 +145,7 @@ api.patch("/users/{user_id}", {
 	if(req.body.avatar)
 		user.setAvatar(Buffer.from(req.body.avatar, "base64"))
 
-	for(let field of ["firstName", "lastName", "artistName", "avatarUrl", "locale"])
+	for(let field of ["firstName", "lastName", "artistName", "locale"])
 		if(req.body[field])
 			user[field] = req.body[field]
 	
