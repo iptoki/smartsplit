@@ -113,7 +113,7 @@ const UserSchema = new mongoose.Schema({
 		},
 		api: {
 			type: "object",
-			properties: {
+			properties:{
 				number: {
 					type: "string",
 					example: "+15555555555"
@@ -121,9 +121,10 @@ const UserSchema = new mongoose.Schema({
 				status: {
 					type: "string",
 					enum: ["verified", "unverified"],
-					example: "verified",
+					example: "verified"
 				}
-			}
+			},
+			readOnly: true
 		}
 	},
 
