@@ -211,8 +211,8 @@ api.delete("/users/{user_id}", {
 	           ? await req.auth.requireUser()
 	           : await User.findById(req.params.user_id)
 
-    if(!user)
-    	throw new UserSchema.UserNotFoundError({user_id: req.params.user_id})      
+	if(!user)
+		throw new UserSchema.UserNotFoundError({user_id: req.params.user_id})      
 
 	if(user.isDeleted)
 		throw new UserSchema.AccountAlreadyDeletedError()
