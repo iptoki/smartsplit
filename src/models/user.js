@@ -340,12 +340,13 @@ UserSchema.methods.emailLinkEmailAccount = async function(email, expires = "2 we
 /**
  * Sends the password reset email to the user
  */
-UserSchema.methods.emailPasswordReset = async function(expires = "2 hours") {
+UserSchema.methods.emailPasswordReset = async function(email, expires = "2 hours") {
 	const token = this.createPasswordResetToken(expires)
 
-	return await sendTemplateTo("user:password-reset", this, {}, {
-		resetPasswordUrl: Config.clientUrl + "/user/change-password/" + token
-	})
+	return await sendTemplateTo("user:password-reset", this, 
+		{ to: {name: this.fullName, email: email} }, 
+		{ resetPasswordUrl: Config.clientUrl + "/user/change-password/" + token }
+	)
 }
 
 

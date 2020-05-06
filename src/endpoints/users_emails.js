@@ -44,8 +44,10 @@ api.post("/users/{user_id}/emails", {
 		409: EmailSchema.ConflictingEmailError,
 	}
 }, async function(req, res) {
-	const user = await RequestUtil.getUserWithPendingEmails(req)
+	req.body.email = normalizeEmailAddress(req.body.email)
 	
+	const user = await RequestUtil.getUserWithPendingEmails(req)
+
 	if(!user)
 		throw new UserSchema.UserNotFoundError({user_id: req.params.user_id})
 
@@ -95,6 +97,8 @@ api.post("/users/{user_id}/emails/{email}", {
 		412: EmailSchema.EmailAlreadyActivatedError
 	}
 }, async function(req, res) {
+	req.params.email = normalizeEmailAddress(req.params.email)
+
 	const user = await RequestUtil.getUserWithPendingEmails(req)
 
 	if(!user)
@@ -130,6 +134,8 @@ api.delete("/users/{user_id}/emails/{email}", {
 		404: EmailSchema.EmailNotFoundError,
 	}
 }, async function(req, res) {
+	req.params.email = normalizeEmailAddress(req.params.email)
+	
 	const user = await RequestUtil.getUserWithPendingEmails(req)
 	
 	if(!user)
@@ -142,9 +148,10 @@ api.delete("/users/{user_id}/emails/{email}", {
 		await user.save()
 	}
 	else {
-		let result = await EmailVerification.deleteOne({_id: req.params.email, user: user._id})
-		if(!result.deletedCount)
+		if(!user.pendingEmails.find(item => item.email === req.params.email))
 			throw new EmailSchema.EmailNotFoundError({user_id: user._id, email: req.params.email})
+
+		await EmailVerification.deleteOne().byEmail(req.params.email)
 	}
 	res.status(200).end()
 })

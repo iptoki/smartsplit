@@ -1,5 +1,6 @@
 const mongoose = require("mongoose")
 const JWT      = require("../utils/jwt")
+const { normalizeEmailAddress } = require("../utils/email")
 
 const JWT_ACTIVATE_TYPE = "user:activate"
 /**
@@ -42,6 +43,16 @@ const EmailVerificationSchema = new mongoose.Schema({
 EmailVerificationSchema.query.byUserId = function(user_id) {
 	return this.where({
 		user_id: user_id
+	})
+}
+
+
+/**
+ * Looks up the database for emails by email
+ */
+EmailVerificationSchema.query.byEmail = function(email) {
+	return this.where({
+		_id: normalizeEmailAddress(email)
 	})
 }
 
