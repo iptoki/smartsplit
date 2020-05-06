@@ -121,7 +121,7 @@ const UserSchema = new mongoose.Schema({
 			properties: {
 				number: {
 					type: "string",
-					example: "+15144387492"
+					example: "+15555555555"
 				},
 				status: {
 					type: "string",
