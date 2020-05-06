@@ -253,18 +253,32 @@ UserSchema.query.byActivationToken = function(token) {
 
 
 /**
- * Sets the primary email address of a user, checking for duplicates
+ * Adds an email address of a user as pending
  */
-UserSchema.methods.setEmail = async function(email, check = true) {
+UserSchema.methods.addPendingEmail = async function(email) {
 	email = normalizeEmailAddress(email)
-	if(this.emails.includes(email))
-		return
-	
-	if(check && await this.model("User").findOne({emails: email}))
-		throw new Error("Another user is already using this email address")
 
-	// Adding the email at the beginning of the array makes it the primary one
-	this.emails.unshift(email)
+	if(await this.model("User").findOne().byEmail(email))
+		throw new Error("Email already used")
+
+	let date = new Date(Date.now() - (60*60*1000))
+
+	// Throw if an entry already exists and was created less than an hour ago 
+	if(await EmailVerification.findOne({_id: email, createdAt: {$gte: date}}))
+		throw new Error("Email already used")
+	else // Delete it otherwise
+		await EmailVerification.deleteOne({_id: email})
+	
+	const emailVerif = new EmailVerification({
+		_id: email,
+		user: this._id
+	})
+	await emailVerif.save()
+
+	await user.emailLinkEmailAccount(email)
+			.catch(e => console.error(e, "Error sending email verification"))
+
+	return emailVerif
 }
 
 
@@ -339,11 +353,13 @@ UserSchema.methods.verifyPasswordResetToken = function(token) {
  * Creates an activation token to verify the user's email address
  */
 UserSchema.methods.createActivationToken = function(email, expires = "2 weeks") {
-	return JWT.create(JWT_ACTIVATE_TYPE, {
+	const token = JWT.create(JWT_ACTIVATE_TYPE, {
 		user_id: this.user_id,
 		user_password: this.password,
 		activate_email: normalizeEmailAddress(email),
 	}, expires)
+	console.log("token", token)
+	return token
 }
 
 
@@ -353,7 +369,7 @@ UserSchema.methods.createActivationToken = function(email, expires = "2 weeks") 
 UserSchema.methods.emailWelcome = async function(email, expires = "2 weeks") {
 	const token = this.createActivationToken(email, expires)
 
-	console.log(token) // Temporary helper
+	// console.log(token) // Temporary helper
 
 	return await sendTemplateTo("user:activate-account", this, 
 		{ to: {name: this.fullName, email: email} }, 

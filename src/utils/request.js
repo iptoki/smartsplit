@@ -3,7 +3,7 @@ const User = require("../models/user")
 /** 
  * Returns the User model instance from an http request
  */
-module.exports.getUser = async function(req) {
+async function getUser(req) {
 	if(!req.params.user_id)
 		throw new Error("Can't get a user without a user_id")
 	
@@ -17,7 +17,7 @@ module.exports.getUser = async function(req) {
 /** 
  * Returns the User model instance populated with pendingEmails from an http request
  */
-module.exports.getUserWithPendingEmails = async function(req) {
+async function getUserWithPendingEmails(req) {
 	user = await getUser(req)
 
     if(user)
@@ -25,3 +25,5 @@ module.exports.getUserWithPendingEmails = async function(req) {
 	
 	return user           
 }
+
+module.exports = { getUser, getUserWithPendingEmails }

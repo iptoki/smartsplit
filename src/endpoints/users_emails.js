@@ -51,30 +51,10 @@ api.post("/users/{user_id}/emails", {
 	if(!user)
 		throw new UserSchema.UserNotFoundError({user_id: req.params.user_id})
 
-	if(await User.findOne().byEmail(req.body.email))
-		throw new EmailSchema.ConflictingEmailError({email: req.body.email})
+	const email = await user.addPendingEmail(req.body.email)
 
-	let date = new Date(Date.now() - (60*60*1000))
-
-	// Throw if an entry already exists and was created less than an hour ago 
-	if(await EmailVerification.findOne({_id: req.body.email, createdAt: {$gte: date}}))
-		throw new EmailSchema.ConflictingEmailError({email: req.body.email})
-	else { // Delete it otherwise
-		await EmailVerification.deleteOne({_id: req.body.email})
-		user.pendingEmails = user.pendingEmails.filter(e => e.email !== req.body.email)
-	}
-	
-	email = new EmailVerification({
-		_id: req.body.email,
-		user: user._id
-	})
-
-	await email.save()
-
-	user.pendingEmails.push(email)
-
-	await user.emailLinkEmailAccount(req.body.email)
-			.catch(e => console.error(e, "Error sending email verification"))
+	if(!user.pendingEmails.find(item => item.email === email._id))
+		user.pendingEmails.push(email)
 
 	return user.emails.map(e => (
 		{email: e, status: "active"})

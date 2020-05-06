@@ -34,7 +34,7 @@ const EmailVerificationSchema = new mongoose.Schema({
 	createdAt: {
 		type: Date,
 		expires: "2w", // Two weeks
-		default: new Date()		
+		default: Date.now
 	},
 })
 

@@ -143,7 +143,7 @@ api.patch("/users/{user_id}", {
 	
 	// Update user data
 	if(req.body.email)
-		await user.setEmail(req.body.email)
+		await user.addPendingEmail(req.body.email)
 	
 	if(req.body.password)
 		passwordChanged = await user.setPassword(req.body.password)
