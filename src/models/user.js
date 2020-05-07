@@ -34,7 +34,8 @@ const UserSchema = new mongoose.Schema({
 			items: {
 				type: "string",
 				format: "email"
-			}
+			},
+			readOnly: true
 		}
 	},
 
@@ -255,7 +256,7 @@ UserSchema.query.byActivationToken = function(token) {
 /**
  * Adds an email address of a user as pending
  */
-UserSchema.methods.addPendingEmail = async function(email) {
+UserSchema.methods.addPendingEmail = async function(email, sendVerifEmail = true) {
 	email = normalizeEmailAddress(email)
 
 	if(await this.model("User").findOne().byEmail(email))
@@ -264,18 +265,20 @@ UserSchema.methods.addPendingEmail = async function(email) {
 	let date = new Date(Date.now() - (60*60*1000))
 
 	// Throw if an entry already exists and was created less than an hour ago 
-	if(await EmailVerification.findOne({_id: email, createdAt: {$gte: date}}))
+	let emailVerif = await EmailVerification.findOne({_id: email, createdAt: {$gte: date}})
+	if(emailVerif && emailVerif.user !== this._id)
 		throw new Error("Email already used")
 	else // Delete it otherwise
 		await EmailVerification.deleteOne({_id: email})
 	
-	const emailVerif = new EmailVerification({
+	emailVerif = new EmailVerification({
 		_id: email,
 		user: this._id
 	})
 	await emailVerif.save()
 
-	await user.emailLinkEmailAccount(email)
+	if(sendVerifEmail)
+		await user.emailLinkEmailAccount(email)
 			.catch(e => console.error(e, "Error sending email verification"))
 
 	return emailVerif

@@ -61,31 +61,39 @@ api.post("/users/", {
 	if(req.body.user_id === "")
 		delete req.body.user_id
 	
-	let user = await User.findOne().byBody(req.body)
-	
+	let user = await User.findById(req.body.user_id)
+	let email = await EmailVerification.findOne().byEmail(req.body.email).populate("user")
+
 	if(user) {
-		// If the user exists, check that the password is correct
-		if(! (await user.verifyPassword(req.body.password)))
+		if( !(await user.verifyPassword(req.body.password))) {
 			throw new UserSchema.ConflictingUserError({
 				user_id: req.body.user_id,
 				email: req.body.email
 			})
-		
-		// Check passed, let through to resubmit the welcome email
-	} else {
+		} else
+			await user.addPendingEmail(req.body.email, false)
+	}
+	else if(email){
+		if(!(await email.user.verifyPassword(req.body.password))) {
+			throw new UserSchema.ConflictingUserError({
+				user_id: req.body.user_id,
+				email: req.body.email
+			})
+		} else
+			user = email.user
+	}
+	else {
 		user = new User(req.body)
-		let email = new EmailVerification({
-			_id: req.body.email,
-			user: user._id
-		})
+
+		await user.addPendingEmail(req.body.email, false)
 
 		if(req.body.avatar)
 			user.setAvatar(Buffer.from(req.body.avatar, "base64"))
 
 		await user.setPassword(req.body.password)
 		await user.save()
-		await email.save()
 	}
+
 	await user.emailWelcome(req.body.email)
 		.catch(e => console.error(e, "Error sending welcome email"))
 
