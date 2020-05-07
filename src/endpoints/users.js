@@ -164,6 +164,9 @@ api.patch("/users/{user_id}", {
 	
 	if(req.body.avatar)
 		user.setAvatar(Buffer.from(req.body.avatar, "base64"))
+	
+	if(req.body.notifications)
+		user.notifications = JSON.parse(req.body.notifications)
 
 	for(let field of ["firstName", "lastName", "artistName", "locale"])
 		if(req.body[field])
