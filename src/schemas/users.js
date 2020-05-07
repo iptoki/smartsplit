@@ -9,7 +9,15 @@ module.exports = {
 		example: "session"
 	}),
 
-	user: api.schemaFromModel("user", User),
+	user: api.schemaFromModel("user", User, {
+		properties: {
+			email: {
+				type: "string",
+				format: "email",
+				writeOnly: true
+			}
+		}
+	}),
 
 	activateAccountSchema: api.schema("user_activate_account", {
 		type: "object",
