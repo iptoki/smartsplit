@@ -29,6 +29,7 @@ const UserSchema = new mongoose.Schema({
 	emails: {
 		type: [String],
 		lowercase: true,
+		trim: true,
 		api: {
 			type: "array",
 			items: {
