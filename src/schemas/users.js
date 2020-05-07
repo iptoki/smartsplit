@@ -14,6 +14,7 @@ module.exports = {
 			email: {
 				type: "string",
 				format: "email",
+				example: "qa@smartsplit.org",
 				writeOnly: true
 			}
 		}
