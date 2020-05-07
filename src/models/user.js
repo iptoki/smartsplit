@@ -159,6 +159,61 @@ const UserSchema = new mongoose.Schema({
 			type: Array,
 			default: []
 		},
+		
+		api: {
+			type: "object",
+			properties: {
+				general_interations: {
+					type: "array",
+					items: {
+						type: "string",
+						enum: ["email", "push", "sms"]
+					},
+					default: ["email","push"]
+				},
+				administrative_messages: {
+					type: "array",
+					items: {
+						type: "string",
+						enum: ["email", "push", "sms"]
+					},
+					default: ["email","push"]
+				},
+				account_login: {
+					type: "array",
+					items: {
+						type: "string",
+						enum: ["email", "push", "sms"]
+					},
+					default: []
+				},
+				smartsplit_blog: {
+					type: "array",
+					items: {
+						type: "string",
+						enum: ["email", "push", "sms"]
+					},
+					default: []
+				},
+				smartsplit_promotions: {
+					type: "array",
+					items: {
+						type: "string",
+						enum: ["email", "push", "sms"]
+					},
+					default: []
+				},
+				partner_promotions: {
+					type: "array",
+					items: {
+						type: "string",
+						enum: ["email", "push", "sms"]
+					},
+					default: []
+				},
+			},
+			writeOnly: true
+		}
 	},
 	
 	//rightHolders: [{type: String, ref: "RightHolder", default: []}],
