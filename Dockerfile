@@ -5,6 +5,6 @@ RUN ["yarn", "install"]
 
 FROM modules
 WORKDIR /app
-COPY . .
 EXPOSE 3001/tcp
 ENTRYPOINT ["node", "."]
+COPY . .

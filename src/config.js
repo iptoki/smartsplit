@@ -6,7 +6,7 @@ const DefaultConfig = {
 	apiUrl: "https://apiv2-dev.smartsplit.org/v1",
 	
 	mongodb: {
-		uri: "mongodb://localhost/smartsplit",
+		uri: process.env.MONGODB_PATH || "mongodb://localhost/smartsplit",
 	},
 	
 	sendgrid: {

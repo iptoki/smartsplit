@@ -73,7 +73,7 @@ const Filters = {}
  */
 Filters.object = function(data, schema) {
 	// If no properties specified, it's a free-form object
-	if(!schema.properties)
+	if(!schema.properties || !data)
 		return data
 	
 	const output = {}
