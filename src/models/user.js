@@ -3,7 +3,8 @@ const uuid = require("uuid").v4
 const Config = require("../config")
 const PasswordUtil = require("../utils/password")
 const JWT = require("../utils/jwt")
-const sendTemplateTo = require("../utils/email").sendTemplateTo
+const EmailVerification = require("../models/emailVerification")
+const { sendTemplateTo, normalizeEmailAddress } = require("../utils/email")
 
 const JWT_RESET_TYPE = "user:password-reset"
 const JWT_ACTIVATE_TYPE = "user:activate"
@@ -25,15 +26,20 @@ const UserSchema = new mongoose.Schema({
 		}
 	},
 	
-	email: {
-		type: String, // UNIQUE INDEX
+	emails: {
+		type: [String],
+		lowercase: true,
+		trim: true,
 		api: {
-			type: "string",
-			example: "example@smartsplit.org",
-			format: "email"
+			type: "array",
+			items: {
+				type: "string",
+				format: "email"
+			},
+			readOnly: true
 		}
 	},
-	
+
 	password: {
 		type: String, // bcrypt
 		api: {
@@ -102,6 +108,15 @@ const UserSchema = new mongoose.Schema({
 	//rightHolders: [{type: String, ref: "RightHolder", default: []}],
 })
 
+/**
+ * Define a virtual property that makes a reference to EmailVerification documents
+ */
+UserSchema.virtual("pendingEmails", {
+	ref: 'EmailVerification',
+	localField: "_id",
+	foreignField: "user"
+})
+
 
 /**
  * Returns the full name of the user (Firstname + Lastname)
@@ -116,14 +131,22 @@ UserSchema.virtual("fullName").get(function() {
 	return null
 })
 
+/**
+ * Returns the primary email of this user
+ */
+UserSchema.virtual("primaryEmail").get(function() {
+	if(this.emails.length)
+		return this.emails[0]
+	return null
+})
 
 /**
  * Returns an email object of {name, email} to send email to/from this user
  */
 UserSchema.virtual("$email").get(function() {
 	return {
-		name: this.fullName || this.email,
-		email: this.email
+		name: this.fullName || this.primaryEmail,
+		email: this.primaryEmail
 	}
 })
 
@@ -176,7 +199,7 @@ UserSchema.query.byBody = function(body) {
 
 	return this.where({$or: [
 		{_id: body.user_id},
-		{email: body.email.toLowerCase()}
+		{emails: normalizeEmailAddress(body.email)}
 	]})
 }
 
@@ -195,7 +218,7 @@ UserSchema.query.byActive = function() {
  * Looks up the database for a user by email address
  */
 UserSchema.query.byEmail = function(email) {
-	return this.where({email: email.toLowerCase()})
+	return this.where({emails: normalizeEmailAddress(email)})
 }
 
 
@@ -232,16 +255,34 @@ UserSchema.query.byActivationToken = function(token) {
 
 
 /**
- * Sets the primary email address of a user, checking for duplicates
+ * Adds an email address of a user as pending
  */
-UserSchema.methods.setEmail = async function(email, check = true) {
-	if(email.toLowerCase() === this.email)
-		return
-	
-	if(check && await this.model("User").findOne({email: email.toLowerCase()}))
-		throw new Error("Another user is already using this email address")
+UserSchema.methods.addPendingEmail = async function(email, sendVerifEmail = true) {
+	email = normalizeEmailAddress(email)
 
-	this.email = email.toLowerCase()
+	if(await this.model("User").findOne().byEmail(email))
+		throw new Error("Email already used")
+
+	let date = new Date(Date.now() - (60*60*1000))
+
+	// Throw if an entry already exists and was created less than an hour ago 
+	let emailVerif = await EmailVerification.findOne({_id: email, createdAt: {$gte: date}})
+	if(emailVerif && emailVerif.user !== this._id)
+		throw new Error("Email already used")
+	else // Delete it otherwise
+		await EmailVerification.deleteOne({_id: email})
+	
+	emailVerif = new EmailVerification({
+		_id: email,
+		user: this._id
+	})
+	await emailVerif.save()
+
+	if(sendVerifEmail)
+		await user.emailLinkEmailAccount(email)
+			.catch(e => console.error(e, "Error sending email verification"))
+
+	return emailVerif
 }
 
 
@@ -316,35 +357,56 @@ UserSchema.methods.verifyPasswordResetToken = function(token) {
  * Creates an activation token to verify the user's email address
  */
 UserSchema.methods.createActivationToken = function(email, expires = "2 weeks") {
-	return JWT.create(JWT_ACTIVATE_TYPE, {
+	const token = JWT.create(JWT_ACTIVATE_TYPE, {
 		user_id: this.user_id,
 		user_password: this.password,
-		activate_email: email,
+		activate_email: normalizeEmailAddress(email),
 	}, expires)
+	console.log("token", token)
+	return token
 }
 
 
 /**
  * Sends the welcome email to the user
  */
-UserSchema.methods.emailWelcome = async function(expires = "2 weeks") {
-	const token = this.createActivationToken(this.email, expires)
+UserSchema.methods.emailWelcome = async function(email, expires = "2 weeks") {
+	const token = this.createActivationToken(email, expires)
+
+	// console.log(token) // Temporary helper
+
+	return await sendTemplateTo("user:activate-account", this, 
+		{ to: {name: this.fullName, email: email} }, 
+		{ activateAccountUrl: Config.clientUrl + "/user/activate/" + token }
+	)
+}
+
+
+/**
+ * Sends an activation email to link a new email to the user account 
+ */
+UserSchema.methods.emailLinkEmailAccount = async function(email, expires = "2 weeks") {
+	const token = this.createActivationToken(email, expires)
 	
-	return await sendTemplateTo("user:activate-account", this, {}, {
-		activateAccountUrl: Config.clientUrl + "/user/activate/" + token
-	})
+	console.log(token) // Temporary helper
+	
+	return await sendTemplateTo("user:activate-email", this, 
+		{ to: {name: this.fullName, email: email} },
+		{ linkEmailAccountUrl: Config.clientUrl /* TODO see with frontend */}
+	)
 }
 
 
 /**
  * Sends the password reset email to the user
  */
-UserSchema.methods.emailPasswordReset = async function(expires = "2 hours") {
+UserSchema.methods.emailPasswordReset = async function(email, expires = "2 hours") {
 	const token = this.createPasswordResetToken(expires)
 
-	return await sendTemplateTo("user:password-reset", this, {}, {
-		resetPasswordUrl: Config.clientUrl + "/user/change-password/" + token
-	})
+	return await sendTemplateTo("user:password-reset", this, 
+		{ to: {name: this.fullName, email: email} }, 
+		{ resetPasswordUrl: Config.clientUrl + "/user/change-password/" + token }
+	)
 }
 
 

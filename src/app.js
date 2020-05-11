@@ -100,6 +100,7 @@ module.exports = {
 // Load up the endpoints
 require("./endpoints/auth")
 require("./endpoints/users")
+require("./endpoints/users_emails")
 
 // Generic error handler
 api.router.use(function(err, req, res, next) {

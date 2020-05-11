@@ -8,9 +8,18 @@ module.exports = {
 		description: "The ID of the user, or the special value \"session\" to use the currently authenticated user",
 		example: "session"
 	}),
-	
-	user: api.schemaFromModel("user", User),
-	
+
+	user: api.schemaFromModel("user", User, {
+		properties: {
+			email: {
+				type: "string",
+				format: "email",
+				example: "qa@smartsplit.org",
+				writeOnly: true
+			}
+		}
+	}),
+
 	activateAccountSchema: api.schema("user_activate_account", {
 		type: "object",
 		required: ["token"],

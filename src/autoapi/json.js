@@ -35,7 +35,7 @@ function expressRequestHandler(handler, spec) {
 }
 
 /**
- * Finds and returns the Content Object maching the returned status code from
+ * Finds and returns the Content Object matching the returned status code from
  * the Response Object
  */
 function getResponseSchema(spec, status) {
@@ -94,7 +94,7 @@ Filters.object = function(data, schema) {
  * Filters all of an array's values according to the items specification
  */
 Filters.array = function(data, schema) {
-	return data.map(item => filter(schema.items, item))
+	return data.map(item => filter(item, schema.items))
 }
 
 

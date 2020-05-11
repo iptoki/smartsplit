@@ -1,8 +1,9 @@
 const { api, errorResponse } = require("../app")
 const { body } = require("../autoapi")
 const User = require("../models/user")
+const EmailVerification = require("../models/emailVerification")
 const JWTAuth = require("../service/JWTAuth")
-
+const RequestUtil = require("../utils/request")
 const AuthSchema = require("../schemas/auth")
 const UserSchema = require("../schemas/users")
 
@@ -17,9 +18,7 @@ api.get("/users/{user_id}", {
 		404: UserSchema.UserNotFoundError,
 	}
 }, async function(req, res) {
-	const user = req.params.user_id === "session"
-	           ? await req.auth.requireUser()
-	           : await User.findById(req.params.user_id)
+	const user = await RequestUtil.getUserWithPendingEmails(req)
 	
 	if(!user)
 		throw new UserSchema.UserNotFoundError({user_id: req.params.user_id})
@@ -62,27 +61,40 @@ api.post("/users/", {
 	if(req.body.user_id === "")
 		delete req.body.user_id
 	
-	let user = await User.findOne().byBody(req.body)
-	
+	let user = await User.findById(req.body.user_id)
+	let email = await EmailVerification.findOne().byEmail(req.body.email).populate("user")
+
 	if(user) {
-		// If the user exists, check that the password is correct
-		if(! (await user.verifyPassword(req.body.password)))
+		if( !(await user.verifyPassword(req.body.password))) {
 			throw new UserSchema.ConflictingUserError({
 				user_id: req.body.user_id,
 				email: req.body.email
 			})
-		
-		// Check passed, let through to resubmit the welcome email
-	} else {
+		} else
+			await user.addPendingEmail(req.body.email, false)
+	}
+	else if(email){
+		if(!(await email.user.verifyPassword(req.body.password))) {
+			throw new UserSchema.ConflictingUserError({
+				user_id: req.body.user_id,
+				email: req.body.email
+			})
+		} else
+			user = email.user
+	}
+	else {
 		user = new User(req.body)
+
+		await user.addPendingEmail(req.body.email, false)
+
 		if(req.body.avatar)
 			user.setAvatar(Buffer.from(req.body.avatar, "base64"))
-		await user.setEmail(req.body.email, false /* skip email check */)
+
 		await user.setPassword(req.body.password)
 		await user.save()
 	}
-	
-	await user.emailWelcome()
+
+	await user.emailWelcome(req.body.email)
 		.catch(e => console.error(e, "Error sending welcome email"))
 
 	return user
@@ -99,18 +111,20 @@ api.post("/users/activate", {
 		412: UserSchema.AccountAlreadyActivatedError,
 	}
 }, async function(req, res) {
-	const user = await User.findOne().byActivationToken(req.body.token)
-	
-	if(user && user.isActive)
+	const email = await EmailVerification.findOne().byActivationToken(req.body.token)
+
+	if(email && email.user.isActive)
 		throw new UserSchema.AccountAlreadyActivatedError()
 	
-	if(!user || !user.canActivate)
+	if(!email || !email.user.canActivate)
 		throw new UserSchema.InvalidActivationTokenError()
 	
-	user.accountStatus = "active"
-	await user.save()
+	email.user.accountStatus = "active"
+	email.user.emails.push(email._id)
+	await email.user.save()
+	await EmailVerification.deleteOne({_id: email._id})
 	
-	return { accessToken: JWTAuth.createToken(user), user }
+	return { accessToken: JWTAuth.createToken(email.user), user: email.user }
 })
 
 
@@ -137,7 +151,7 @@ api.patch("/users/{user_id}", {
 	
 	// Update user data
 	if(req.body.email)
-		await user.setEmail(req.body.email)
+		await user.addPendingEmail(req.body.email)
 	
 	if(req.body.password)
 		passwordChanged = await user.setPassword(req.body.password)
@@ -175,7 +189,7 @@ api.post("/users/request-password-reset", {
 	if(!user)
 		throw new UserSchema.UserNotFoundError({email: req.body.email})
 	
-	await user.emailPasswordReset()
+	await user.emailPasswordReset(req.body.email)
 	res.status(200).end()
 })
 
