@@ -312,8 +312,13 @@ UserSchema.methods.setMobilePhone = async function(number, verified = false) {
 		status: verified ? "verified" : "unverified",
 		verificationCode: verificationCode
 	}
+	
+	const text = this.locale === "en" // TODO: i18n
+		? "Your Smartsplit activation code is "
+		: "Votre code d'activation Smartsplit est "
+	
 	if(!verified)
-		await this.sendSMS(true, "Your activation code is " + this.mobilePhone.verificationCode.code)
+		await this.sendSMS(true, text + this.mobilePhone.verificationCode.code)
 			.catch(e => console.error(e, "Error sending verification code SMS"))
 }
 

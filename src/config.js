@@ -17,6 +17,7 @@ const DefaultConfig = {
 	twilio: {
 		accountSid: null,
 		authToken: null,
+		phoneNumber: null,
 	},
 
 	email: {

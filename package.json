@@ -16,7 +16,7 @@
 		"mongoose": "^5.9.7",
 		"morgan": "^1.10.0",
 		"swagger-ui-express": "^4.1.4",
-		"twilio": "^3.42.2",
+		"twilio": "^3.43.0",
 		"uuid": "^7.0.3"
 	},
 	"scripts": {
