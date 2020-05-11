@@ -13,6 +13,37 @@ const JWT_ACTIVATE_TYPE = "user:activate"
 
 
 /**
+ * Represents a user's notification preferences in the system
+ */
+const NotificationsSchema = new mongoose.Schema({
+	general_interations: {
+		type: Array,
+		default: ["email","push"]
+	},
+	administrative_messages: {
+		type: Array,
+		default: ["email","push"]
+	},
+	account_login: {
+		type: Array,
+		default: []
+	},
+	smartsplit_blog: {
+		type: Array,
+		default: []
+	},
+	smartsplit_promotions: {
+		type: Array,
+		default: []
+	},
+	partner_promotions: {
+		type: Array,
+		default: []
+	},
+}, {_id: false})
+
+
+/**
  * Represents a user / login in the system
  */
 const UserSchema = new mongoose.Schema({
@@ -134,6 +165,63 @@ const UserSchema = new mongoose.Schema({
 		}
 	},
 
+	notifications: {
+		type: NotificationsSchema,
+		api: {
+			type: "object",
+			properties: {
+				general_interations: {
+					type: "array",
+					items: {
+						type: "string",
+						enum: ["email", "push", "sms"]
+					},
+					default: ["email","push"]
+				},
+				administrative_messages: {
+					type: "array",
+					items: {
+						type: "string",
+						enum: ["email", "push", "sms"]
+					},
+					default: ["email","push"]
+				},
+				account_login: {
+					type: "array",
+					items: {
+						type: "string",
+						enum: ["email", "push", "sms"]
+					},
+					default: []
+				},
+				smartsplit_blog: {
+					type: "array",
+					items: {
+						type: "string",
+						enum: ["email", "push", "sms"]
+					},
+					default: []
+				},
+				smartsplit_promotions: {
+					type: "array",
+					items: {
+						type: "string",
+						enum: ["email", "push", "sms"]
+					},
+					default: []
+				},
+				partner_promotions: {
+					type: "array",
+					items: {
+						type: "string",
+						enum: ["email", "push", "sms"]
+					},
+					default: []
+				},
+			},
+		}
+	},
+	
 	//rightHolders: [{type: String, ref: "RightHolder", default: []}],
 })
 
@@ -514,6 +602,17 @@ UserSchema.methods.sendSMS = async function(notificationType, message) {
 		return await sendSMSTo(this, message, false)
 	else
 		throw new Error("notificationType not implemented yet")
+}
+
+
+/*
+ * Sends a notification to the user through the medium set in the user's preferences
+ */
+UserSchema.methods.sendNotification = async function(notificationType, data) {
+	// Validation is already done in send{Medium}() functions
+	// await this.sendSMS(notificationType, data)    /* NOT IMPLEMENTED */
+	// await this.sendEmail(notificationType, data)  /* NOT IMPLEMENTED */
+	// await this.sendPush(notificationType, data)   /* NOT IMPLEMENTED */
 }
 
 

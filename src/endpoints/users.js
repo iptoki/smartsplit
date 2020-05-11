@@ -161,11 +161,10 @@ api.patch("/users/{user_id}", {
 	if(req.body.password)
 		passwordChanged = await user.setPassword(req.body.password)
 
-	
 	if(req.body.avatar)
 		user.setAvatar(Buffer.from(req.body.avatar, "base64"))
-
-	for(let field of ["firstName", "lastName", "artistName", "locale"])
+	
+	for(let field of ["firstName", "lastName", "artistName", "locale", "notifications"])
 		if(req.body[field])
 			user[field] = req.body[field]
 	
