@@ -17,6 +17,7 @@
 		"morgan": "^1.10.0",
 		"swagger-ui-dist": "^3.25.2",
 		"swagger-ui-express": "^4.1.4",
+		"twilio": "^3.43.0",
 		"uuid": "^7.0.3"
 	},
 	"scripts": {

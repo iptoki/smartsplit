@@ -91,6 +91,8 @@ api.post("/users/", {
 			user.setAvatar(Buffer.from(req.body.avatar, "base64"))
 
 		await user.setPassword(req.body.password)
+		if(req.body.phoneNumber)
+			await user.setMobilePhone(req.body.phoneNumber, false)
 		await user.save()
 	}
 
@@ -153,8 +155,12 @@ api.patch("/users/{user_id}", {
 	if(req.body.email)
 		await user.addPendingEmail(req.body.email)
 	
+	if(req.body.phoneNumber)
+		await user.setMobilePhone(req.body.phoneNumber, false)
+
 	if(req.body.password)
 		passwordChanged = await user.setPassword(req.body.password)
+
 	
 	if(req.body.avatar)
 		user.setAvatar(Buffer.from(req.body.avatar, "base64"))
@@ -234,6 +240,29 @@ api.post("/users/change-password", {
 })
 
 
+api.post("/users/verify-mobile-phone", {
+	tags: ["Users"],
+	summary: "Verify the user's mobile phone",
+	requestBody: UserSchema.verifyMobilePhone,
+	hooks: { auth: true },
+	responses: {
+		200: {description: "Mobile phone successfully verified"},
+		403: UserSchema.InvalidVerificationCodeError,
+		412: UserSchema.MobilePhoneAlreadyActivatedError,
+	}
+}, async function(req, res) {
+	const user = await req.auth.requireUser()
+
+	if(!user.mobilePhone)
+		throw new Error("User doesn't have a mobile phone")
+	if(user.mobilePhone.status === "verified")
+		throw new UserSchema.MobilePhoneAlreadyActivatedError()
+	if(! await user.verifyMobilePhone(req.body.verificationCode))
+		throw new UserSchema.InvalidVerificationCodeError()
+
+	res.status(200).end()
+})
+
 api.delete("/users/{user_id}", {
 	tags: ["Users"],
 	parameters: [UserSchema.id],
@@ -255,6 +284,7 @@ api.delete("/users/{user_id}", {
 	if(user.isDeleted)
 		throw new UserSchema.AccountAlreadyDeletedError()
 
-	await user.deleteAccount()           
+	await user.deleteAccount()
+	   
 	res.status(200).end()
 })

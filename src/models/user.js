@@ -5,6 +5,8 @@ const PasswordUtil = require("../utils/password")
 const JWT = require("../utils/jwt")
 const EmailVerification = require("../models/emailVerification")
 const { sendTemplateTo, normalizeEmailAddress } = require("../utils/email")
+const { generateRandomCode } = require("../utils/random")
+const { sendSMSTo } = require("../service/twilio")
 
 const JWT_RESET_TYPE = "user:password-reset"
 const JWT_ACTIVATE_TYPE = "user:activate"
@@ -105,6 +107,33 @@ const UserSchema = new mongoose.Schema({
 		}
 	},
 	
+	mobilePhone: {
+		number: String,
+		status: {
+			type: String,
+			enum: ["verified", "unverified"],
+		},
+		verificationCode: {
+			code: Number,
+			createdAt: Date
+		},
+		api: {
+			type: "object",
+			properties:{
+				number: {
+					type: "string",
+					example: "+15555555555"
+				},
+				status: {
+					type: "string",
+					enum: ["verified", "unverified"],
+					example: "verified"
+				}
+			},
+			readOnly: true
+		}
+	},
+
 	//rightHolders: [{type: String, ref: "RightHolder", default: []}],
 })
 
@@ -223,6 +252,14 @@ UserSchema.query.byEmail = function(email) {
 
 
 /**
+ * Looks up the database for a user by mobile phone
+ */
+UserSchema.query.byMobilePhone = function(number) {
+	return this.where({"mobilePhone.number": number})
+}
+
+
+/**
  * Looks up a user by a password reset token.
  */
 UserSchema.query.byPasswordResetToken = function(token) {
@@ -299,6 +336,35 @@ UserSchema.methods.setPassword = async function(password, force = false) {
 
 
 /**
+ * Sets the user's mobile phone
+ */
+UserSchema.methods.setMobilePhone = async function(number, verified = false) {
+	const user = await this.model("User").findOne().byMobilePhone(number)
+
+	if(user && (user._id !== this._id || this.mobilePhone.status === "verified"))
+		throw new Error("This phone number is already used")
+
+	const verificationCode = !verified
+	                       ? {code: generateRandomCode(), createdAt: new Date()}
+	                       : null
+
+	this.mobilePhone = {
+		number: number,
+		status: verified ? "verified" : "unverified",
+		verificationCode: verificationCode
+	}
+	
+	const text = this.locale === "en" // TODO: i18n
+		? "Your Smartsplit activation code is "
+		: "Votre code d'activation Smartsplit est "
+	
+	if(!verified)
+		await this.sendSMS(true, text + this.mobilePhone.verificationCode.code)
+			.catch(e => console.error(e, "Error sending verification code SMS"))
+}
+
+
+/**
  * Delete the user's account 
  */
 UserSchema.methods.deleteAccount = async function() {
@@ -330,6 +396,28 @@ UserSchema.methods.setAvatar = async function(avatar) {
  */
 UserSchema.methods.verifyPassword = async function(password) {
 	return await PasswordUtil.verify(password, this.password)
+}
+
+
+/**
+ * Verifies the verification code of the user's mobile phone
+ */
+UserSchema.methods.verifyMobilePhone = async function(code) {
+	if(!this.mobilePhone.verificationCode)
+		return false
+
+	const expireDate = new Date(
+		this.mobilePhone.verificationCode.createdAt.getTime() + 24*60*60*1000 /* 24h */ 
+	)
+
+	if(expireDate < new Date() || this.mobilePhone.verificationCode.code != code)
+		return false
+
+	this.mobilePhone.status = "verified"
+	this.mobilePhone.verificationCode = null
+	await this.save()
+
+	return true
 }
 
 
@@ -416,5 +504,17 @@ UserSchema.methods.emailPasswordReset = async function(email, expires = "2 hours
 UserSchema.methods.emailPasswordChanged = async function() {
 	return await sendTemplateTo("user:password-changed", this, {}, {})
 }
+
+
+/**
+ * Sends an SMS to the user
+ */
+UserSchema.methods.sendSMS = async function(notificationType, message) {
+	if(notificationType === true)
+		return await sendSMSTo(this, message, false)
+	else
+		throw new Error("notificationType not implemented yet")
+}
+
 
 module.exports = mongoose.model("User", UserSchema)
