@@ -544,4 +544,15 @@ UserSchema.methods.sendSMS = async function(notificationType, message) {
 }
 
 
+/*
+ * Sends a notification to the user through the medium set in the user's preferences
+ */
+UserSchema.methods.sendNotification = async function(notificationType, data) {
+	// Validation is already done in send{Medium}() functions
+	// await this.sendSMS(notificationType, data)    /* NOT IMPLEMENTED */
+	// await this.sendEmail(notificationType, data)  /* NOT IMPLEMENTED */
+	// await this.sendPush(notificationType, data)   /* NOT IMPLEMENTED */
+}
+
+
 module.exports = mongoose.model("User", UserSchema)
