@@ -11,7 +11,37 @@ const { sendSMSTo } = require("../service/twilio")
 const JWT_RESET_TYPE = "user:password-reset"
 const JWT_ACTIVATE_TYPE = "user:activate"
 
-const mediumEnum = ["email", "push", "sms"]
+
+/**
+ * Represents a user's notification preferences in the system
+ */
+const NotificationsSchema = new mongoose.Schema({
+	general_interations: {
+		type: Array,
+		default: ["email","push"]
+	},
+	administrative_messages: {
+		type: Array,
+		default: ["email","push"]
+	},
+	account_login: {
+		type: Array,
+		default: []
+	},
+	smartsplit_blog: {
+		type: Array,
+		default: []
+	},
+	smartsplit_promotions: {
+		type: Array,
+		default: []
+	},
+	partner_promotions: {
+		type: Array,
+		default: []
+	},
+}, {_id: false})
+
 
 /**
  * Represents a user / login in the system
@@ -136,39 +166,7 @@ const UserSchema = new mongoose.Schema({
 	},
 
 	notifications: {
-		general_interations: {
-			type: [String],
-			enum: mediumEnum,
-			default: ["email","push"]
-		},
-		administrative_messages: {
-			type: [String],
-			enum: mediumEnum,
-			default: ["email","push"]
-		},
-		
-		account_login: {
-			type: Array,
-			default: []
-		},
-		smartsplit_blog: {
-			type: Array,
-			default: []
-		},
-		smartsplit_promotions: {
-			type: Array,
-			default: []
-		},
-		partner_promotions: {
-			type: Array,
-			default: []
-		},
-		
-		account_login:         { type: [String], enum: mediumEnum },
-		smartsplit_blog:       { type: [String], enum: mediumEnum },
-		smartsplit_promotions: { type: [String], enum: mediumEnum },
-		partner_promotions:    { type: [String], enum: mediumEnum },
-		
+		type: NotificationsSchema,
 		api: {
 			type: "object",
 			properties: {
@@ -176,7 +174,7 @@ const UserSchema = new mongoose.Schema({
 					type: "array",
 					items: {
 						type: "string",
-						enum: mediumEnum
+						enum: ["email", "push", "sms"]
 					},
 					default: ["email","push"]
 				},
@@ -184,7 +182,7 @@ const UserSchema = new mongoose.Schema({
 					type: "array",
 					items: {
 						type: "string",
-						enum: mediumEnum
+						enum: ["email", "push", "sms"]
 					},
 					default: ["email","push"]
 				},
@@ -192,7 +190,7 @@ const UserSchema = new mongoose.Schema({
 					type: "array",
 					items: {
 						type: "string",
-						enum: mediumEnum
+						enum: ["email", "push", "sms"]
 					},
 					default: []
 				},
@@ -200,7 +198,7 @@ const UserSchema = new mongoose.Schema({
 					type: "array",
 					items: {
 						type: "string",
-						enum: mediumEnum
+						enum: ["email", "push", "sms"]
 					},
 					default: []
 				},
@@ -208,7 +206,7 @@ const UserSchema = new mongoose.Schema({
 					type: "array",
 					items: {
 						type: "string",
-						enum: mediumEnum
+						enum: ["email", "push", "sms"]
 					},
 					default: []
 				},
@@ -216,12 +214,11 @@ const UserSchema = new mongoose.Schema({
 					type: "array",
 					items: {
 						type: "string",
-						enum: mediumEnum
+						enum: ["email", "push", "sms"]
 					},
 					default: []
 				},
 			},
-			writeOnly: true
 		}
 	},
 	
