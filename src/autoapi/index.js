@@ -20,7 +20,7 @@ class AutoAPI {
 		defs.schemas         = {...defs.schemas}
 		defs.responses       = {...defs.responses}
 		defs.parameters      = {...defs.parameters}
-		defs.example         = {...defs.examples}
+		defs.examples        = {...defs.examples}
 		defs.requestBodies   = {...defs.examples}
 		defs.headers         = {...defs.headers}
 		defs.securitySchemes = {...defs.securitySchemes}
