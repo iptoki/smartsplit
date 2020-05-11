@@ -90,7 +90,10 @@ api.post("/users/{user_id}/emails/{email}", {
 	const email = user.pendingEmails.find(item => item.email === req.params.email)
 
 	if(!email)
-		throw new EmailSchema.EmailNotFoundError({user_id: user._id, email: req.params.email})
+		throw new EmailSchema.EmailNotFoundError({
+			user_id: user._id,
+			email: req.params.email
+		})
 
 	if(! await email.verifyActivationToken(req.body.token))
 		throw new EmailSchema.InvalidActivationTokenError()
@@ -124,12 +127,16 @@ api.delete("/users/{user_id}/emails/{email}", {
 	if(user.emails.includes(req.params.email)) {
 		if(user.emails.length === 1)
 			throw new EmailSchema.DeleteNotAllowedError()
-		user.emails.splice(user.emails.indexOf(req.params.email))
+		
+		user.emails.splice(user.emails.indexOf(req.params.email), 1)
 		await user.save()
 	}
 	else {
 		if(!user.pendingEmails.find(item => item.email === req.params.email))
-			throw new EmailSchema.EmailNotFoundError({user_id: user._id, email: req.params.email})
+			throw new EmailSchema.EmailNotFoundError({
+				user_id: user._id,
+				email: req.params.email
+			})
 
 		await EmailVerification.deleteOne().byEmail(req.params.email)
 	}
