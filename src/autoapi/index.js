@@ -35,7 +35,7 @@ class AutoAPI {
 	/**
 	 * Declares and document a route
 	 */
-	route(method, path, spec, handler) {
+	route(method, path, spec, ...handlers) {
 		const { hooks, ...fltSpec } = spec
 		
 		if(path in this.paths === false)
@@ -55,7 +55,7 @@ class AutoAPI {
 		
 		this.router[method].call(this.router,
 			path.replace(/\{([^}]+?)\}/g, ":$1"),
-			JsonAPI.expressRequestHandler(handler, fltSpec)
+			JsonAPI.expressRequestHandler(pipeline(...handlers), fltSpec)
 		)
 	}
 	
@@ -312,6 +312,23 @@ class AutoAPI {
 		const AutoError = AutoAPI.error(status, description, schema, defdata)
 		AutoError.$response = this.response(id, AutoError.$schema)
 		return AutoError
+	}
+}
+
+
+/**
+ * Creates a pipeline of functions, where the output of one goes to the
+ * input of the next one
+ */
+function pipeline(...handlers) {
+	return async function(...args) {
+		let data = args
+		
+		for(let handler of handlers) {
+			data = await handler(...(Array.isArray(data) ? data : [data]))
+		}
+		
+		return data
 	}
 }
 
