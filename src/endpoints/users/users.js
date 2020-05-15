@@ -1,11 +1,7 @@
-const { api, errorResponse } = require("../../app")
-const { body }               = require("../../autoapi")
-const User                   = require("../../models/user")
-const EmailVerification      = require("../../models/emailVerification")
-const JWTAuth                = require("../../service/JWTAuth")
-const RequestUtil            = require("../../utils/request")
-const AuthSchema             = require("../../schemas/auth")
-const UserSchema             = require("../../schemas/users")
+const User              = require("../../models/user")
+const EmailVerification = require("../../models/emailVerification")
+const JWTAuth           = require("../../service/JWTAuth")
+const UserSchema        = require("../../schemas/users")
 
 
 async function getUser({ req, res, user }) {

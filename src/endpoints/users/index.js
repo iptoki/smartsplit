@@ -3,6 +3,7 @@ const { body }               = require("../../autoapi")
 const middlewares            = require("../../middlewares/users")
 const AuthSchema             = require("../../schemas/auth")
 const UserSchema             = require("../../schemas/users")
+const EmailSchema            = require("../../schemas/emails")
 const UserController         = require("./users")
 const EmailController        = require("./emails")
 
@@ -16,7 +17,7 @@ api.get("/users/{user_id}", {
 			404: UserSchema.UserNotFoundError,
 		},
 	}, 
-	middlewares.loadUser, 
+	middlewares.loadUserWithPendingEmails, 
 	UserController.getUser
 )
 
@@ -146,58 +147,70 @@ api.delete("/users/{user_id}",
 )
 
 
-// api.get("/users/{user_id}/emails", {
-// 	tags: ["Emails"],
-// 	parameters: [UserSchema.id],
-// 	summary: "Get all the pending and activated emails of a user",
-// 	hooks: { auth: true },
-// 	responses: {
-// 		200: EmailSchema.emails,
-// 		404: UserSchema.UserNotFoundError,
-// 	},
-// 	EmailController.getUserEmails
-// })
+api.get("/users/{user_id}/emails", 
+	{
+		tags: ["Emails"],
+		parameters: [UserSchema.id],
+		summary: "Get all the pending and activated emails of a user",
+		hooks: { auth: true },
+		responses: {
+			200: EmailSchema.emails,
+			404: UserSchema.UserNotFoundError,
+		}
+	},
+	middlewares.loadUserWithPendingEmails,
+	EmailController.getUserEmails
+)
 
 
-// api.post("/users/{user_id}/emails", {
-// 	tags: ["Emails"],
-// 	parameters: [UserSchema.id],
-// 	summary: "Link a new email as pending in a user account",
-// 	hooks: { auth: true },
-// 	requestBody: EmailSchema.createEmail,
-// 	responses: {
-// 		200: EmailSchema.emails,
-// 		404: UserSchema.UserNotFoundError,
-// 		409: EmailSchema.ConflictingEmailError,
-// 	},
-// 	EmailController.createUserEmail
-// })
+api.post("/users/{user_id}/emails", 
+	{
+		tags: ["Emails"],
+		parameters: [UserSchema.id],
+		summary: "Link a new email as pending in a user account",
+		hooks: { auth: true },
+		requestBody: EmailSchema.createEmail,
+		responses: {
+			200: EmailSchema.emails,
+			404: UserSchema.UserNotFoundError,
+			409: EmailSchema.ConflictingEmailError,
+		}
+	},
+	middlewares.loadUserWithPendingEmails,
+	EmailController.createUserEmail
+)
 
 
-// api.post("/users/{user_id}/emails/{email}", {
-// 	tags: ["Emails"],
-// 	parameters: [UserSchema.id, EmailSchema.email],
-// 	summary: "Activate an email in the user profile",
-// 	hooks: { auth: true },
-// 	requestBody: EmailSchema.activateEmailSchema,
-// 	responses: {
-// 		200: { description: "Email successfully activated" },
-// 		404: EmailSchema.EmailNotFoundError,
-// 		409: EmailSchema.InvalidActivationTokenError,
-// 		412: EmailSchema.EmailAlreadyActivatedError
-// 	},
-// 	EmailController.activateUserEmail
-// })
+api.post("/users/{user_id}/emails/{email}", 
+	{
+		tags: ["Emails"],
+		parameters: [UserSchema.id, EmailSchema.email],
+		summary: "Activate an email in the user profile",
+		hooks: { auth: true },
+		requestBody: EmailSchema.activateEmailSchema,
+		responses: {
+			200: { description: "Email successfully activated" },
+			404: EmailSchema.EmailNotFoundError,
+			409: EmailSchema.InvalidActivationTokenError,
+			412: EmailSchema.EmailAlreadyActivatedError
+		}
+	},
+	middlewares.loadUserWithPendingEmails,
+	EmailController.activateUserEmail
+)
 
 
-// api.delete("/users/{user_id}/emails/{email}", {
-// 	tags: ["Emails"],
-// 	parameters: [UserSchema.id, EmailSchema.email],
-// 	summary: "Delete an email from a user account",
-// 	hooks: { auth: true },
-// 	responses: {
-// 		200: { description: "Email successfully deleted" },
-// 		404: EmailSchema.EmailNotFoundError,
-// 	},
-// 	EmailController.deleteUserEmail
-// })
+api.delete("/users/{user_id}/emails/{email}", 
+	{
+		tags: ["Emails"],
+		parameters: [UserSchema.id, EmailSchema.email],
+		summary: "Delete an email from a user account",
+		hooks: { auth: true },
+		responses: {
+			200: { description: "Email successfully deleted" },
+			404: EmailSchema.EmailNotFoundError,
+		}
+	},
+	middlewares.loadUserWithPendingEmails,
+	EmailController.deleteUserEmail
+)

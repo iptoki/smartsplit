@@ -30,6 +30,7 @@ async function requireAdmin(req, res) {
 	return { req, res, admin: await req.auth.requireAdmin() }
 }
 
+
 module.exports = {
 	loadUser,
 	loadUserWithPendingEmails,
