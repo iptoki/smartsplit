@@ -125,7 +125,7 @@ api.post("/users/verify-mobile-phone",
 			412: UserSchema.MobilePhoneAlreadyActivatedError,
 		}
 	},
-	middlewares.loadUser,
+	middlewares.requireUser,
 	UserController.verifyUserMobilePhone
 )
 

@@ -151,7 +151,7 @@ async function verifyUserMobilePhone({req, res, user}) {
 	if(! await user.verifyMobilePhone(req.body.verificationCode))
 		throw new UserSchema.InvalidVerificationCodeError()
 
-	res.status(200).end()
+	res.status(204).end()
 }
 
 async function deleteUserAccount({req, res, user}) {
@@ -160,7 +160,7 @@ async function deleteUserAccount({req, res, user}) {
 
 	await user.deleteAccount()
 	   
-	res.status(200).end()
+	res.status(204).end()
 }
 
 module.exports = {
