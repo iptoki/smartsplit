@@ -74,6 +74,18 @@ module.exports.expressMiddleware = function(req, res, next) {
 				return User.findById(req.auth.data.user_id)
 		}
 	})
+
+	/** 
+	 * Returns the User model instance of an admin, if applicable)
+	 */
+	Object.defineProperty(req.auth, "admin", {
+		get: function() {
+			if(!req.auth.data || !req.auth.data.user_id)
+				return Promise.resolve(null)
+			else
+				return User.findById(req.auth.data.user_id)
+		}
+	})
 	
 	/**
 	 * Requires the request to contain a user, and returns the User model
@@ -91,6 +103,22 @@ module.exports.expressMiddleware = function(req, res, next) {
 		return user
 	}
 	
+	/**
+	 * Requires the request to contain a user with administrator priviledges, and returns the User model
+	 * @throws AuthError if there is no authenticated admin
+	 */
+	req.auth.requireAdmin = async function() {
+		const admin = await req.auth.admin
+		
+		if(!admin || admin.password !== req.auth.data.user_password)
+			throw new AuthError(401, {
+				code: "AUTH:INVALID_AUTH_TOKEN",
+				message: "This request requires an authenticated admin"
+			})
+		
+		return admin
+	}
+
 	/**
 	 * Requires the request to contain a user that has access to at least one
 	 * of the right holders received as arguments, returning the one that matched
