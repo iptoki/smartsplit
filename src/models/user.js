@@ -407,7 +407,47 @@ UserSchema.methods.addPendingEmail = async function(email, sendVerifEmail = true
 		await user.emailLinkEmailAccount(email)
 			.catch(e => console.error(e, "Error sending email verification"))
 
+	if(Array.isArray(user.pendingEmails) && !user.pendingEmails.find(item => item.email === emailVerif._id))
+		this.pendingEmails.push(email)
+
 	return emailVerif
+}
+
+
+/**
+ * Remove a pending email address of the user
+ */
+UserSchema.methods.removePendingEmail = async function(email) {
+	email = normalizeEmailAddress(email)
+
+	if(!user.pendingEmails.find(e => e.email === email))
+		return false
+
+	await EmailVerification.deleteOne().byEmailUserId(email, this._id)
+
+	if(Array.isArray(this.pendingEmails))
+		this.pendingEmails.filter(e => e.email === email)
+
+	return true
+}
+
+
+/**
+ * Remove an email address of the user
+ */
+UserSchema.methods.removeEmail = async function(email) {
+	email = normalizeEmailAddress(email)
+
+	if(!user.emails.includes(email))
+		return false
+
+	if(user.emails.length === 1)
+		throw new EmailSchema.DeleteNotAllowedError()
+	
+	user.emails.splice(user.emails.indexOf(email), 1)
+	await user.save()
+
+	return true
 }
 
 

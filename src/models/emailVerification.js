@@ -59,6 +59,17 @@ EmailVerificationSchema.query.byEmail = function(email) {
 
 
 /**
+ * Looks up the database for emails by email and user id
+ */
+EmailVerificationSchema.query.byEmailUserId = function(email, user_id) {
+	return this.where({
+		_id: normalizeEmailAddress(email),
+		user: user_id
+	})
+}
+
+
+/**
  * Looks up an email by activation token.
  */
 EmailVerificationSchema.query.byActivationToken = async function(token) {
