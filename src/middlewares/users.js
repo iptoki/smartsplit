@@ -12,12 +12,13 @@ async function loadUser(req, res) {
 
 	if(!user)
 		throw new UserSchema.UserNotFoundError({ user_id: req.params.user_id })
-
+	
+	this.user = user
 	return { req, res, user }
 }
 
 async function loadUserWithPendingEmails(req, res) {
-	const data = loadUser(req, res)
+	const data = await loadUser.call(this, req, res)
 	await data.user.populate('pendingEmails').execPopulate()
 	return data
 }

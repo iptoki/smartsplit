@@ -323,9 +323,16 @@ class AutoAPI {
 function pipeline(...handlers) {
 	return async function(...args) {
 		let data = args
+		const thisArg = {
+			req: args[0],
+			res: args[1]
+		}
 		
 		for(let handler of handlers) {
-			data = await handler(...(Array.isArray(data) ? data : [data]))
+			if(!Array.isArray(data))
+				data = [data]
+				
+			data = await handler.apply(thisArg, data)
 		}
 		
 		return data

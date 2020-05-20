@@ -4,8 +4,8 @@ const JWTAuth           = require("../../service/JWTAuth")
 const UserSchema        = require("../../schemas/users")
 
 
-async function getUser({ req, res, user }) {
-	return user
+async function getUser() {
+	return this.user
 }
 
 
