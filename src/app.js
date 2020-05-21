@@ -99,6 +99,7 @@ module.exports = {
 
 // Load up the endpoints
 require("./endpoints/auth")
+require("./endpoints/lists")
 require("./endpoints/users/index")
 
 // Generic error handler

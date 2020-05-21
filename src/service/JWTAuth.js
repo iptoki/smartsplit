@@ -140,3 +140,12 @@ module.exports.authorizeUserAccess = async function() {
 		})
 	}
 }
+
+module.exports.loadAuthUser = async function() {
+	try {
+		return await requireUser.call(this)
+	} catch(e) {
+		if(! (e instanceof AuthError))
+			throw e
+	}
+}

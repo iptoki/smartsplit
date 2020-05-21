@@ -41,7 +41,7 @@ api.get("/auth/check", {
 	}
 }, async function(req, res) {
 	try {
-		await req.auth.requireUser()
+		await JWTAuth.requireUser.call(this, req, res)
 		return true
 	} catch(e) {
 		if(e instanceof JWTAuth.Error)
@@ -59,11 +59,9 @@ api.get("/auth/refresh", {
 	responses: {
 		200: AuthSchema.sessionInfo
 	}
-}, async function(req, res) {
-	const user = await req.auth.requireUser()
-	
+}, JWTAuth.requireUser, async function() {
 	return {
-		accessToken: JWTAuth.createToken(user),
-		user: user
+		accessToken: JWTAuth.createToken(this.authUser),
+		user: this.authUser
 	}
 })
