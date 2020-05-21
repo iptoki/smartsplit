@@ -127,13 +127,13 @@ async function changeUserPassword() {
 
 
 async function verifyUserMobilePhone() {
-	if(!this.user.mobilePhone)
+	if(!this.authUser.mobilePhone)
 		throw new Error("User doesn't have a mobile phone")
 
-	if(this.user.mobilePhone.status === "verified")
+	if(this.authUser.mobilePhone.status === "verified")
 		throw new UserSchema.MobilePhoneAlreadyActivatedError()
 
-	if(! await this.user.verifyMobilePhone(this.req.body.verificationCode))
+	if(! await this.authUser.verifyMobilePhone(this.req.body.verificationCode))
 		throw new UserSchema.InvalidVerificationCodeError()
 
 	this.res.status(204).end()
