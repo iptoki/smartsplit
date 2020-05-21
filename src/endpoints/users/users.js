@@ -17,14 +17,17 @@ async function createUser() {
 	let user
 	let email = await EmailVerification.findOne().byEmail(this.req.body.email).populate("user")
 
-	if(email){
-		if(!(await email.user.verifyPassword(this.req.body.password) || email.user.isActive))
+	if(email) {
+		if(!email.user)
+			email.remove()
+		else if(!(await email.user.verifyPassword(this.req.body.password) || email.user.isActive))
 			throw new UserSchema.ConflictingUserError({ email: this.req.body.email })
-
-		user = email.user
+		else
+			user = email.user
 	}
-	else {
-		user = new User(this.req.body)
+	
+	if(!user) {
+		user = new User({...this.req.body, user_id: email && email.user_id})
 
 		await user.addPendingEmail(this.req.body.email, false)
 		await user.setPassword(this.req.body.password)
