@@ -1,39 +1,27 @@
 const User = require("../models/user")
 const UserSchema = require("../schemas/users")
+const { requireUser } = require("../service/JWTAuth")
 
-async function loadUser(req, res) {
-	let user
-
-	if(req.params.user_id){
-		user = req.params.user_id === "session"
-	         ? await req.auth.requireUser()
-	         : await User.findById(req.params.user_id)
-	}
+async function loadUser() {
+	const user = this.req.params.user_id === "session"
+	           ? await requireUser.call(this)
+	           : await User.findById(this.req.params.user_id)
 
 	if(!user)
-		throw new UserSchema.UserNotFoundError({ user_id: req.params.user_id })
+		throw new UserSchema.UserNotFoundError({user_id: this.req.params.user_id})
 
-	return { req, res, user }
+	this.user = user
+	return user
 }
 
-async function loadUserWithPendingEmails(req, res) {
-	const data = loadUser(req, res)
-	await data.user.populate('pendingEmails').execPopulate()
-	return data
-}
-
-async function requireUser(req, res) {
-	return { req, res, user: await req.auth.requireUser() }
-}
-
-async function requireAdmin(req, res) {
-	return { req, res, admin: await req.auth.requireAdmin() }
+async function loadUserWithPendingEmails() {
+	await loadUser.call(this)
+	await this.user.populate("pendingEmails").execPopulate()
+	return this.user
 }
 
 
 module.exports = {
 	loadUser,
 	loadUserWithPendingEmails,
-	requireUser,
-	requireAdmin,
 }
