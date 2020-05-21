@@ -1,9 +1,8 @@
 const mongoose = require("mongoose")
 const uuid = require("uuid").v4
-const Config = require("../config")
 
 /**
- * Represents a generic administrator modifiable list in the system
+ * Represents a generic modifiable list in the system
  */
 const ListSchema = new mongoose.Schema({
 	_id: {
