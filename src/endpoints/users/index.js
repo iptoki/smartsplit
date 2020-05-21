@@ -17,7 +17,7 @@ api.get("/users/{user_id}", {
 			200: UserSchema.user,
 			404: UserSchema.UserNotFoundError,
 		},
-	}, 
+	},
 	middlewares.loadUserWithPendingEmails
 )
 

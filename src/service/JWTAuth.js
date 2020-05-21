@@ -83,7 +83,7 @@ module.exports.expressMiddleware = function(req, res, next) {
 			if(!req.auth.data || !req.auth.data.user_id)
 				return Promise.resolve(null)
 			else
-				return User.findById(req.auth.data.user_id)
+				return User.findOne({_id: req.auth.data.user_id, "permissions.admin": true})
 		}
 	})
 	
