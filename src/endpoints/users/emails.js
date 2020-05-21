@@ -3,60 +3,63 @@ const EmailSchema               = require("../../schemas/emails")
 const { normalizeEmailAddress } = require("../../utils/email")
 
 
-async function getUserEmails({req, res, user}) {
-	return user.emails.map(e => (
+async function getUserEmails() {
+	return this.user.emails.map(e => (
 		{email: e, status: "active"})
-	).concat(user.pendingEmails.map(e => (
+	).concat(this.user.pendingEmails.map(e => (
 		{email: e.email, status: "pending"})
 	))
 }
 
 
-async function createUserEmail({req, res, user}) {
-	const email = await user.addPendingEmail(req.body.email)
+async function createUserEmail() {
+	const email = await this.user.addPendingEmail(this.req.body.email)
 
-	return user.emails.map(e => (
+	return this.user.emails.map(e => (
 		{email: e, status: "active"})
-	).concat(user.pendingEmails.map(e => (
+	).concat(this.user.pendingEmails.map(e => (
 		{email: e.email, status: "pending"})
 	))
 }
 
 
-async function activateUserEmail({req, res, user}) {
-	const email = user.pendingEmails.find(
-		item => item.email === normalizeEmailAddress(req.params.email)
+async function activateUserEmail() {
+	if(this.user.emails.includes(normalizeEmailAddress(this.req.params.email)))
+		throw new EmailSchema.EmailAlreadyActivatedError({email: this.req.params.email})
+
+	const email = this.user.pendingEmails.find(
+		item => item.email === normalizeEmailAddress(this.req.params.email)
 	)
 
 	if(!email)
 		throw new EmailSchema.EmailNotFoundError({
-			user_id: user._id,
-			email: req.params.email
+			user_id: this.user._id,
+			email: this.req.params.email
 		})
 
-	if(! await email.verifyActivationToken(req.body.token))
+	if(! await email.verifyActivationToken(this.req.body.token))
 		throw new EmailSchema.InvalidActivationTokenError()
 
 	await EmailVerification.deleteOne({_id: email._id})
 
-	user.emails.push(email._id)
-	await user.save()
+	this.user.emails.push(email._id)
+	await this.user.save()
 
-	res.status(204).end()
+	this.res.status(204).end()
 }
 
 
-async function deleteUserEmail({req, res, user}) {
-	if(! await user.removeEmail(req.body.email)) {
-		if(! await user.removePendingEmail(req.body.email)) {
+async function deleteUserEmail() {
+	if(! await this.user.removeEmail(this.req.params.email)) {
+		if(! await this.user.removePendingEmail(this.req.params.email)) {
 			throw new EmailSchema.EmailNotFoundError({
-				user_id: user._id,
-				email: req.params.email
+				user_id: this.user._id,
+				email: this.req.params.email
 			})
 		}
 	} 
 	
-	res.status(204).end()
+	this.res.status(204).end()
 }
 
 

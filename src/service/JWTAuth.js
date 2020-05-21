@@ -87,59 +87,56 @@ module.exports.expressMiddleware = function(req, res, next) {
 		}
 	})
 	
-	/**
-	 * Requires the request to contain a user, and returns the User model
-	 * @throws AuthError if there is no authenticated user
-	 */
-	req.auth.requireUser = async function() {
-		const user = await req.auth.user
-		
-		if(!user || user.password !== req.auth.data.user_password)
-			throw new AuthError(401, {
-				code: "AUTH:INVALID_AUTH_TOKEN",
-				message: "This request requires an authenticated user"
-			})
-		
-		return user
-	}
-	
-	/**
-	 * Requires the request to contain a user with administrator priviledges, and returns the User model
-	 * @throws AuthError if there is no authenticated admin
-	 */
-	req.auth.requireAdmin = async function() {
-		const admin = await req.auth.admin
-		
-		if(!admin || admin.password !== req.auth.data.user_password)
-			throw new AuthError(401, {
-				code: "AUTH:INVALID_AUTH_TOKEN",
-				message: "This request requires an authenticated admin"
-			})
-		
-		return admin
-	}
+	next("route")
+}
 
-	/**
-	 * Requires the request to contain a user that has access to at least one
-	 * of the right holders received as arguments, returning the one that matched
-	 */
-	req.auth.requireRightHolder = function(...rightHolderIds) {
-		req.auth.requireUser()
-		
-		const userRHs = req.auth.data.rightHolders
-		
-		for(rightHolderId of rightHolderIds) {
-			if(userRHs.includes(rightHolderId))
-				return rightHolderId
-		}
-		
-		throw new AuthError(403, {
-			code: "AUTH:MISSING_RIGHTHOLDER",
-			message: "The current user doesn't have access to any of the required right holders",
-			user_id: req.auth.data.user_id,
-			rightHolderIds: rightHolderIds
+/**
+ * Requires the request to contain an authenticated user, and returns the User model
+ * @throws AuthError if there is no authenticated user
+ */
+module.exports.requireUser = async function() {
+	const user = await this.req.auth.user
+
+	if(!user || user.password !== this.req.auth.data.user_password)
+		throw new AuthError(401, {
+			code: "AUTH:INVALID_AUTH_TOKEN",
+			message: "This request requires an authenticated user"
+		})
+
+	this.authUser = user
+	if(this.req.params.user_id === "session")
+		this.req.params.user_id = user._id
+
+	return user
+}
+
+/**
+ * Requires the request to contain a user with administrator priviledges, and returns the User model
+ * @throws AuthError if there is no authenticated admin
+ */
+module.exports.requireAdmin = async function() {
+	const admin = await this.req.auth.admin
+	
+	if(!admin || admin.password !== this.req.auth.data.user_password)
+		throw new AuthError(401, {
+			code: "AUTH:INVALID_AUTH_TOKEN",
+			message: "This request requires an authenticated admin"
+		})
+
+	this.authUser = admin
+	return admin
+}
+
+module.exports.authorizeUserAccess = async function() {
+	if(! (
+			this.req.params.user_id === this.authUser._id || 
+		  	this.authUser.isAdmin || 
+		  	this.authUser.hasAccessToUser(this.req.params.user_id)
+		 )
+	) {
+		throw new AuthError(401, {
+			code: "AUTH: PERMISSION_DENIED",
+			message: "The authorized user is not allowed to access this user"
 		})
 	}
-	
-	next("route")
 }

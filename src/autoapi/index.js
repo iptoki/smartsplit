@@ -327,7 +327,6 @@ function pipeline(...handlers) {
 			req: args[0],
 			res: args[1]
 		}
-		
 		for(let handler of handlers) {
 			if(!Array.isArray(data))
 				data = [data]

@@ -4,6 +4,7 @@ const middlewares            = require("../../middlewares/users")
 const AuthSchema             = require("../../schemas/auth")
 const UserSchema             = require("../../schemas/users")
 const EmailSchema            = require("../../schemas/emails")
+const JWTAuth                = require("../../service/JWTAuth")
 const UserController         = require("./users")
 const EmailController        = require("./emails")
 
@@ -17,8 +18,7 @@ api.get("/users/{user_id}", {
 			404: UserSchema.UserNotFoundError,
 		},
 	}, 
-	middlewares.loadUserWithPendingEmails, 
-	UserController.getUser
+	middlewares.loadUserWithPendingEmails
 )
 
 
@@ -79,7 +79,9 @@ api.patch("/users/{user_id}",
 			403: UserSchema.UserForbidden
 		}
 	},
-	middlewares.requireUser,
+	JWTAuth.requireUser,
+	JWTAuth.authorizeUserAccess,
+	middlewares.loadUser,
 	UserController.updateUser
 )
 
@@ -126,7 +128,7 @@ api.post("/users/verify-mobile-phone",
 			412: UserSchema.MobilePhoneAlreadyActivatedError,
 		}
 	},
-	middlewares.requireUser,
+	JWTAuth.requireUser,
 	UserController.verifyUserMobilePhone
 )
 
@@ -142,6 +144,8 @@ api.delete("/users/{user_id}",
 			412: UserSchema.AccountAlreadyDeletedError 
 		}
 	},
+	JWTAuth.requireUser,
+	JWTAuth.authorizeUserAccess,
 	middlewares.loadUser,
 	UserController.deleteUserAccount
 )
@@ -158,6 +162,8 @@ api.get("/users/{user_id}/emails",
 			404: UserSchema.UserNotFoundError,
 		}
 	},
+	JWTAuth.requireUser,
+	JWTAuth.authorizeUserAccess,
 	middlewares.loadUserWithPendingEmails,
 	EmailController.getUserEmails
 )
@@ -176,6 +182,8 @@ api.post("/users/{user_id}/emails",
 			409: EmailSchema.ConflictingEmailError,
 		}
 	},
+	JWTAuth.requireUser,
+	JWTAuth.authorizeUserAccess,
 	middlewares.loadUserWithPendingEmails,
 	EmailController.createUserEmail
 )
@@ -211,6 +219,8 @@ api.delete("/users/{user_id}/emails/{email}",
 			404: EmailSchema.EmailNotFoundError,
 		}
 	},
+	JWTAuth.requireUser,
+	JWTAuth.authorizeUserAccess,
 	middlewares.loadUserWithPendingEmails,
 	EmailController.deleteUserEmail
 )

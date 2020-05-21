@@ -44,6 +44,15 @@ const NotificationsSchema = new mongoose.Schema({
 
 
 /**
+ * Represents a user's permission set in the system
+ */
+const PermissionSchema = new mongoose.Schema({
+	admin: Boolean,
+	users: [String]
+}, {_id: false})
+
+
+/**
  * Represents a user / login in the system
  */
 const UserSchema = new mongoose.Schema({
@@ -219,9 +228,30 @@ const UserSchema = new mongoose.Schema({
 					default: []
 				},
 			},
-		}
+		},
 	},
 	
+	permissions: {
+		type: PermissionSchema,
+		default: {},
+		api: {
+			type: "object",
+			properties: {
+				admin: {
+					type: "boolean"
+				},
+				users: {
+					type: "array",
+					items: {
+						type: "string",
+						format: "uuid"
+					}
+				}
+			},
+			readOnly: true
+		}
+	}
+
 	//rightHolders: [{type: String, ref: "RightHolder", default: []}],
 })
 
@@ -275,6 +305,14 @@ UserSchema.virtual("avatarUrl").get(function() {
 	if(!this.avatar)
 		return null
 	return Config.apiUrl + "/users/" + this._id + "/avatar"
+})
+
+
+/**
+ * Returns whether the current user is an administrator
+ */
+UserSchema.virtual("isAdmin").get(function() {
+	return this.permissions.admin
 })
 
 
@@ -382,6 +420,16 @@ UserSchema.query.byActivationToken = function(token) {
 /**
  * Adds an email address of a user as pending
  */
+UserSchema.methods.hasAccessToUser = function(user_id) {
+	if(Array.isArray(this.permissions.users) && this.permissions.users.includes(user_id))
+		return true
+
+	return false
+}
+
+/**
+ * Adds an email address of a user as pending
+ */
 UserSchema.methods.addPendingEmail = async function(email, sendVerifEmail = true) {
 	email = normalizeEmailAddress(email)
 
@@ -404,11 +452,11 @@ UserSchema.methods.addPendingEmail = async function(email, sendVerifEmail = true
 	await emailVerif.save()
 
 	if(sendVerifEmail)
-		await user.emailLinkEmailAccount(email)
+		await this.emailLinkEmailAccount(email)
 			.catch(e => console.error(e, "Error sending email verification"))
 
-	if(Array.isArray(user.pendingEmails) && !user.pendingEmails.find(item => item.email === emailVerif._id))
-		this.pendingEmails.push(email)
+	if(Array.isArray(this.pendingEmails) && !this.pendingEmails.find(item => item.email === emailVerif._id))
+		this.pendingEmails.push(emailVerif)
 
 	return emailVerif
 }
@@ -420,7 +468,7 @@ UserSchema.methods.addPendingEmail = async function(email, sendVerifEmail = true
 UserSchema.methods.removePendingEmail = async function(email) {
 	email = normalizeEmailAddress(email)
 
-	if(!user.pendingEmails.find(e => e.email === email))
+	if(!this.pendingEmails.find(e => e.email === email))
 		return false
 
 	await EmailVerification.deleteOne().byEmailUserId(email, this._id)
@@ -438,14 +486,14 @@ UserSchema.methods.removePendingEmail = async function(email) {
 UserSchema.methods.removeEmail = async function(email) {
 	email = normalizeEmailAddress(email)
 
-	if(!user.emails.includes(email))
+	if(!this.emails.includes(email))
 		return false
 
-	if(user.emails.length === 1)
+	if(this.emails.length === 1)
 		throw new EmailSchema.DeleteNotAllowedError()
 	
-	user.emails.splice(user.emails.indexOf(email), 1)
-	await user.save()
+	this.emails.splice(this.emails.indexOf(email), 1)
+	await this.save()
 
 	return true
 }
