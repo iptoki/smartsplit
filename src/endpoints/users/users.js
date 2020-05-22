@@ -27,7 +27,11 @@ async function createUser() {
 	}
 	
 	if(!user) {
-		user = new User({...this.req.body, user_id: email && email.user_id})
+		user = new User({
+			...this.req.body,
+			user_id: undefined,
+			accountStatus: undefined,
+		})
 
 		await user.addPendingEmail(this.req.body.email, false)
 		await user.setPassword(this.req.body.password)
