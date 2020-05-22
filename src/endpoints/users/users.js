@@ -4,6 +4,26 @@ const JWTAuth           = require("../../service/JWTAuth")
 const UserSchema        = require("../../schemas/users")
 
 
+async function loadUser() {
+	const user = this.req.params.user_id === "session"
+	           ? await JWTAuth.requireUser.call(this)
+	           : await User.findById(this.req.params.user_id)
+
+	if(!user)
+		throw new UserSchema.UserNotFoundError({user_id: this.req.params.user_id})
+
+	this.user = user
+	return user
+}
+
+
+async function loadUserWithPendingEmails() {
+	await loadUser.call(this)
+	await this.user.populate("pendingEmails").execPopulate()
+	return this.user
+}
+
+
 async function getUserAvatar() {
 	this.res.contentType("image/jpeg") // hardcoded for the moment
 	this.res.send(this.user.avatar)

@@ -1,6 +1,5 @@
 const { api, errorResponse } = require("../../app")
 const { body }               = require("../../autoapi")
-const middlewares            = require("../../middlewares/users")
 const AuthSchema             = require("../../schemas/auth")
 const UserSchema             = require("../../schemas/users")
 const EmailSchema            = require("../../schemas/emails")
@@ -18,7 +17,7 @@ api.get("/users/{user_id}", {
 			404: UserSchema.UserNotFoundError,
 		},
 	},
-	middlewares.loadUserWithPendingEmails
+	UserController.loadUserWithPendingEmails
 )
 
 
@@ -31,7 +30,7 @@ api.get("/users/{user_id}/avatar",
 			404: UserSchema.UserNotFoundError,
 		}
 	},
-	middlewares.loadUser,
+	UserController.loadUser,
 	UserController.getUserAvatar
 )
 
@@ -81,7 +80,7 @@ api.patch("/users/{user_id}",
 	},
 	JWTAuth.requireUser,
 	JWTAuth.authorizeUserAccess,
-	middlewares.loadUser,
+	UserController.loadUser,
 	UserController.updateUser
 )
 
@@ -146,7 +145,7 @@ api.delete("/users/{user_id}",
 	},
 	JWTAuth.requireUser,
 	JWTAuth.authorizeUserAccess,
-	middlewares.loadUser,
+	UserController.loadUser,
 	UserController.deleteUserAccount
 )
 
@@ -164,7 +163,7 @@ api.get("/users/{user_id}/emails",
 	},
 	JWTAuth.requireUser,
 	JWTAuth.authorizeUserAccess,
-	middlewares.loadUserWithPendingEmails,
+	UserController.loadUserWithPendingEmails,
 	EmailController.getUserEmails
 )
 
@@ -184,7 +183,7 @@ api.post("/users/{user_id}/emails",
 	},
 	JWTAuth.requireUser,
 	JWTAuth.authorizeUserAccess,
-	middlewares.loadUserWithPendingEmails,
+	UserController.loadUserWithPendingEmails,
 	EmailController.createUserEmail
 )
 
@@ -203,7 +202,7 @@ api.post("/users/{user_id}/emails/{email}",
 			412: EmailSchema.EmailAlreadyActivatedError
 		}
 	},
-	middlewares.loadUserWithPendingEmails,
+	UserController.loadUserWithPendingEmails,
 	EmailController.activateUserEmail
 )
 
@@ -221,6 +220,6 @@ api.delete("/users/{user_id}/emails/{email}",
 	},
 	JWTAuth.requireUser,
 	JWTAuth.authorizeUserAccess,
-	middlewares.loadUserWithPendingEmails,
+	UserController.loadUserWithPendingEmails,
 	EmailController.deleteUserEmail
 )
