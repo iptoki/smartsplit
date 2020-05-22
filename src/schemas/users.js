@@ -90,8 +90,8 @@ module.exports = {
 	UserNotFoundError:
 		error("user_not_found", 404, "User not found"),
 	
-	UserForbidden:
-		error("user_forbidden", 403, "The currently authorized user is not allowed to access this user"),
+	UserForbiddenError:
+		error("user_forbidden", 403, "The currently authorized user is not allowed to perform this operation"),
 	
 	InvalidResetToken:
 		error("user_invalid_reset_token", 403, "The supplied password reset token is not valid or has expired"),

@@ -176,6 +176,8 @@ async function deleteUserAccount() {
 }
 
 module.exports = {
+	loadUser,
+	loadUserWithPendingEmails,
 	getUserAvatar,
 	createUser,
 	activateUserAccount,

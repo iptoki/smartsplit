@@ -75,7 +75,7 @@ api.patch("/users/{user_id}",
 		hooks: { auth: true },
 		responses: {
 			200: UserSchema.user,
-			403: UserSchema.UserForbidden
+			403: UserSchema.UserForbiddenError
 		}
 	},
 	JWTAuth.requireUser,

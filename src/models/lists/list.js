@@ -1,9 +1,5 @@
 const mongoose = require("mongoose")
-const uuid = require("uuid").v4
-
-const LISTE_TYPES = [
-
-]
+const uuid     = require("uuid").v4
 
 
 /**
@@ -15,18 +11,12 @@ const ListSchema = new mongoose.Schema({
 		default: uuid,
 		api: {
 			type: "string",
-			format: "uuid",
 			example: "e87b56fe-1ce0-4ec7-8393-e18dc7415041",
-			readOnly: true
 		}
 	},
 
 	users: {
-		type: [{
-			type: String,
-			ref: "User",
-			select: false
-		}],
+		type: mongoose.Mixed,
 		api: {
 			oneOf: [
 				{ const: "false" },
@@ -45,7 +35,6 @@ const ListSchema = new mongoose.Schema({
 	adminReview: {
 		type: String,
 		default: null,
-		select: false,
 		api: {
 			type: "string",
 			default: null,
@@ -61,19 +50,26 @@ ListSchema.query.publicOnly = function() {
 
 
 ListSchema.query.byUserId = function(user_id) {
-	return this.where({users: user_id})
+	return this.where({users: {
+		$in: [false, user_id]
+	}})
 }
 
 
-ListSchema.statics.getListModel = async function(type) {
-	if(!LISTE_TYPES.includes(type))
+ListSchema.statics.getListModel = function(type) {
+	if(!LISTE_TYPES[type])
 		throw new Error("Type `" + type + "` is not a valid list type")
 
 	return LISTE_TYPES[type]
 }
 
 
-ListSchema.methods.setFields = async function(body) {
+ListSchema.statics.getFields = function() {
+	return ["users", "adminReview"]
+}
+
+
+ListSchema.methods.setFields = function(body) {
 	for(let field in ["users", "adminReview"]) {
 		if(body[field])
 			this[field] = body[field]
@@ -81,3 +77,7 @@ ListSchema.methods.setFields = async function(body) {
 }
 
 module.exports = mongoose.model("List", ListSchema)
+
+const LISTE_TYPES = {
+	
+}

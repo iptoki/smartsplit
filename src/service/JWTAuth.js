@@ -12,13 +12,11 @@ class AuthError extends AutoAPI.Error {
 	}
 }
 
-module.exports.Error = AuthError
-
 
 /** 
  * Creates an access token for a user
  */
-const createToken = module.exports.createToken = function(user, expires = "3 hours") {
+const createToken = function(user, expires = "3 hours") {
 	return JWT.create("session", {
 		user_id: user.user_id,
 		user_password: user.password,
@@ -30,7 +28,7 @@ const createToken = module.exports.createToken = function(user, expires = "3 hou
 /**
  * Decodes an access token and returns its contents
  */
-const decodeToken = module.exports.decodeToken = function(token) {
+const decodeToken = function(token) {
 	return JWT.decode("session", token)
 }
 
@@ -41,7 +39,7 @@ const decodeToken = module.exports.decodeToken = function(token) {
  * 
  * TODO: Maybe the OpenAPI integration can handle this for most cases?
  */
-module.exports.expressMiddleware = function(req, res, next) {
+const expressMiddleware = function(req, res, next) {
 	let tokenData = undefined
 	req.auth = {}
 	
@@ -94,7 +92,7 @@ module.exports.expressMiddleware = function(req, res, next) {
  * Requires the request to contain an authenticated user, and returns the User model
  * @throws AuthError if there is no authenticated user
  */
-module.exports.requireUser = async function() {
+const requireUser = async function() {
 	const user = await this.req.auth.user
 
 	if(!user || user.password !== this.req.auth.data.user_password)
@@ -114,7 +112,7 @@ module.exports.requireUser = async function() {
  * Requires the request to contain a user with administrator priviledges, and returns the User model
  * @throws AuthError if there is no authenticated admin
  */
-module.exports.requireAdmin = async function() {
+const requireAdmin = async function() {
 	const admin = await this.req.auth.admin
 	
 	if(!admin || admin.password !== this.req.auth.data.user_password)
@@ -127,7 +125,7 @@ module.exports.requireAdmin = async function() {
 	return admin
 }
 
-module.exports.authorizeUserAccess = async function() {
+const authorizeUserAccess = async function() {
 	if(! (
 			this.req.params.user_id === this.authUser._id || 
 		  	this.authUser.isAdmin || 
@@ -141,11 +139,23 @@ module.exports.authorizeUserAccess = async function() {
 	}
 }
 
-module.exports.loadAuthUser = async function() {
+const loadAuthUser = async function() {
 	try {
 		return await requireUser.call(this)
 	} catch(e) {
 		if(! (e instanceof AuthError))
 			throw e
 	}
+}
+
+
+module.exports = {
+	createToken,
+	decodeToken,
+	expressMiddleware,
+	requireUser,
+	requireAdmin,
+	authorizeUserAccess,
+	loadAuthUser,
+	Error: AuthError
 }

@@ -1,6 +1,8 @@
 const { api, error } = require("../app")
 const JWTAuth        = require("../service/JWTAuth")
 const List           = require("../models/lists/list")
+const ListSchema     = require("../schemas/lists")
+const UserSchema     = require("../schemas/users")
 
 
 /************************ Routes ************************/
@@ -26,7 +28,7 @@ api.patch("/entities/{entity_id}", {
 	summary: "Update by id an entity of the selected list",
 	parameters: [],
 	responses: {},
-}, JWTAuth.requireUser, updateListEntity)
+}, JWTAuth.requireUser, loadListEntity, updateListEntity)
 
 
 api.delete("/entities/{entity_id}", {
@@ -34,7 +36,7 @@ api.delete("/entities/{entity_id}", {
 	summary: "Delete by id an entity of the selected list",
 	parameters: [],
 	responses: {},
-}, JWTAuth.requireUser, deleteListEntity)
+}, JWTAuth.requireUser, loadListEntity, deleteListEntity)
 
 
 /************************ Handlers ************************/
@@ -43,39 +45,28 @@ async function getList() {
 	let query = List.find({type: this.req.params.list_type})
 
 	if(!this.authUser)
-		query = query.publicOnly()
-	else if(this.authUser.isAdmin)
-		query = query.select("+users +adminReview")
-	else
-		query = query.byUserId(this.authUser._id).select("+users")
+		query = query.publicOnly().select("-users -adminReview")
+	else if(!this.authUser.isAdmin)
+		query = query.byUserId(this.authUser._id).select("-users -adminReview")
 
 	return await query.exec()
 }
 
 async function createListEntity() {
-	if(this.req.params.admin && !this.authUser.isAmin)
-		error("user_forbiden", 403, "This request requires an authenticated user with administrator privileges")
+	if(this.req.query.admin === true && !this.authUser.isAdmin)
+		throw new UserSchema.UserForbiddenError({user_id: this.authUser._id})
 
-	const base = this.req.params.admin ? {users: false} : {users: [this.authUser._id]}
+	const base = this.req.query.admin === true ?
+		{users: false} : {users: [this.authUser._id]}
 
 	const listModel = List.getListModel(this.req.params.list_type)
-	const entity = new listModel({base, ... this.req.body})
+	const entity = new listModel({...base, ...this.req.body})
 	await entity.save()
 
 	this.res.status(201).end()
 }
 
 async function updateListEntity() {
-	const entity = List.findById(this.req.params.entity_id)
-
-	if(!entity)
-		error("list_entity_not_found", 404, "Entity not found")
-
-	if(!this.authUser.isAmin && ( 
-		( Array.isArray(entity.users) && !entity.users.includes(this.authUser._id) ) || entity.users === false 
-	))
-		error("user_forbiden", 403, "The authenticated user is not allowed to access this entity")
-
 	if(!this.authUser.isAdmin) {
 		delete this.req.body.adminReview
 		delete this.req.body.users
@@ -86,18 +77,22 @@ async function updateListEntity() {
 	this.res.status(204).end()
 }
 
-async function deleteListEntity() {
-	const entity = List.findById(this.req.params.entity_id)
+async function deleteListEntity(entity) {
+	await entity.remove()
+	this.res.status(204).end()
+}
+
+
+async function loadListEntity() {
+	const entity = await List.findById(this.req.params.entity_id)
 
 	if(!entity)
-		error("list_entity_not_found", 404, "Entity not found")
+		throw new ListSchema.ListEntityNotFoundError({entity_id: this.req.params.entity_id})
 
-	if(!this.authUser.isAmin && ( 
-		( Array.isArray(entity.users) && !entity.users.includes(this.authUser._id) ) || entity.users === false 
+	if(!this.authUser.isAdmin && ( 
+		entity.users === false || ( Array.isArray(entity.users) && !entity.users.includes(this.authUser._id) ) 
 	))
-		error("user_forbiden", 403, "The authenticated user is not allowed to access this entity")
+		throw new UserSchema.UserForbiddenError({user_id: this.authUser._id})
 
-	await entity.remove()
-
-	this.res.status(204).end()
+	return entity
 }
