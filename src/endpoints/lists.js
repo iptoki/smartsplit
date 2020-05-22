@@ -2,12 +2,44 @@ const { api, error } = require("../app")
 const JWTAuth        = require("../service/JWTAuth")
 const List           = require("../models/lists/list")
 
+
+/************************ Routes ************************/
+
 api.get("/entities/{list_type}", {
 	tags: ["Lists"],
 	summary: "Get the list of the specified type",
 	parameters: [],
 	responses: {},
-}, JWTAuth.loadAuthUser, async function() {
+}, JWTAuth.loadAuthUser, getList)
+
+
+api.post("/entities/{list_type}/", {
+	tags: ["Lists"],
+	summary: "Create a new entity in the selected list",
+	parameters: [],
+	responses: {},
+}, JWTAuth.requireUser, createListEntity)
+
+
+api.patch("/entities/{entity_id}", {
+	tags: ["Lists"],
+	summary: "Update by id an entity of the selected list",
+	parameters: [],
+	responses: {},
+}, JWTAuth.requireUser, updateListEntity)
+
+
+api.delete("/entities/{entity_id}", {
+	tags: ["Lists"],
+	summary: "Delete by id an entity of the selected list",
+	parameters: [],
+	responses: {},
+}, JWTAuth.requireUser, deleteListEntity)
+
+
+/************************ Handlers ************************/
+
+async function getList() {
 	let conditions = {type: this.req.params.list_type}
 
 	let query = List.find({type: this.req.params.list_type})
@@ -20,15 +52,9 @@ api.get("/entities/{list_type}", {
 		query = query.byUserId(this.authUser._id).select("+users")
 
 	return await query.exec()
-})
+}
 
-
-api.post("/entities/{list_type}/", {
-	tags: ["Lists"],
-	summary: "Create a new entity in the selected list",
-	parameters: [],
-	responses: {},
-}, JWTAuth.requireUser, async function() {
+async function createListEntity() {
 	if(this.req.params.admin && !this.authUser.isAmin)
 		error("user_forbiden", 403, "This request requires an authenticated user with administrator privileges")
 
@@ -39,15 +65,9 @@ api.post("/entities/{list_type}/", {
 	await entity.save()
 
 	this.res.status(201).end()
-})
+}
 
-
-api.patch("/entities/{entity_id}", {
-	tags: ["Lists"],
-	summary: "Update by id an entity of the selected list",
-	parameters: [],
-	responses: {},
-}, JWTAuth.requireUser, async function() {
+async function updateListEntity() {
 	const entity = List.findById(this.req.params.entity_id)
 
 	if(!entity)
@@ -66,15 +86,9 @@ api.patch("/entities/{entity_id}", {
 	await entity.setFields(this.req.body)
 
 	this.res.status(204).end()
-})
+}
 
-
-api.delete("/entities/{entity_id}", {
-	tags: ["Lists"],
-	summary: "Delete by id an entity of the selected list",
-	parameters: [],
-	responses: {},
-}, JWTAuth.requireUser, async function() {
+async function deleteListEntity() {
 	const entity = List.findById(this.req.params.entity_id)
 
 	if(!entity)
@@ -88,4 +102,4 @@ api.delete("/entities/{entity_id}", {
 	await entity.remove()
 
 	this.res.status(204).end()
-})
+}
