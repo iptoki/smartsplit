@@ -56,6 +56,9 @@ async function createListEntity() {
 	if(this.req.query.admin === true && !this.authUser.isAdmin)
 		throw new UserSchema.UserForbiddenError({user_id: this.authUser._id})
 
+	if(!this.authUser.isAdmin && this.req.params.list_type === "distributionServiceProvider")
+		throw new UserSchema.UserForbiddenError({user_id: this.authUser._id})
+	
 	const base = this.req.query.admin === true ?
 		{users: false} : {users: [this.authUser._id]}
 
@@ -90,7 +93,9 @@ async function loadListEntity() {
 		throw new ListSchema.ListEntityNotFoundError({entity_id: this.req.params.entity_id})
 
 	if(!this.authUser.isAdmin && ( 
-		entity.users === false || ( Array.isArray(entity.users) && !entity.users.includes(this.authUser._id) ) 
+		entity.users === false || 
+		entity.type === "distributionServiceProvider" ||
+		( Array.isArray(entity.users) && !entity.users.includes(this.authUser._id) ) 
 	))
 		throw new UserSchema.UserForbiddenError({user_id: this.authUser._id})
 
