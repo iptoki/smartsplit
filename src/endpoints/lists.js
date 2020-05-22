@@ -40,8 +40,6 @@ api.delete("/entities/{entity_id}", {
 /************************ Handlers ************************/
 
 async function getList() {
-	let conditions = {type: this.req.params.list_type}
-
 	let query = List.find({type: this.req.params.list_type})
 
 	if(!this.authUser)
