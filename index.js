@@ -18,8 +18,8 @@ const api = require("./src/app").api
 const app = express()
 app.use(require("cors")({maxAge: 30*60}))
 app.use(require("morgan")("short"))
-app.use(express.json({strict: false}))
-app.use(express.urlencoded({extended: false}))
+app.use(express.json({strict: false, limit: Config.http.entityMaxSize}))
+app.use(express.urlencoded({extended: false, limit: Config.http.entityMaxSize}))
 
 app.use("/docs", Swagger.serve, Swagger.setup(api.oapi))
 app.get("/spec", function(req, res) {

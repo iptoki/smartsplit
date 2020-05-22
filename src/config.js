@@ -33,6 +33,10 @@ const DefaultConfig = {
 		port: process.env.API_PORT || 3001,
 		host: undefined,
 	},
+	
+	http: {
+		entityMaxSize: 16*1024*1024, // 16MB
+	},
 }
 
 try {
