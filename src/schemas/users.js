@@ -18,6 +18,12 @@ module.exports = {
 				writeOnly: true
 			},
 			
+			avatarUrl: {
+				type: "string",
+				example: "https://api.smartsplit.org/users/0d0cb6f9-c1e6-49e0-acbf-1ca4ace07d1c/avatar",
+				readOnly: true
+			},
+			
 			phoneNumber: {
 				type: "string",
 				writeOnly: true,
