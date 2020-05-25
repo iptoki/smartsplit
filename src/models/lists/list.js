@@ -79,5 +79,6 @@ ListSchema.methods.setFields = function(body) {
 module.exports = mongoose.model("List", ListSchema)
 
 const LISTE_TYPES = {
-	contentLangs: require("./contentLangsList")
+	contentLangs: require("./contentLangsList"),
+	distributionServiceProvider: require("./distributionServiceProviderList")
 }
