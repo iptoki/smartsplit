@@ -56,9 +56,9 @@ ListSchema.query.byUserId = function(user_id) {
 }
 
 ListSchema.statics.getListModel = function(type) {
-	console.log("model this", this.discriminators)
 	if(!this.discriminators[type])
 		throw new Error("Type `" + type + "` is not a valid list type")
+
 	return this.discriminators[type]
 }
 

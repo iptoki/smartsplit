@@ -79,4 +79,4 @@ DigitalDistributorsList.methods.setFields = function(body) {
 	}
 }
 
-module.exports = List.discriminator("digital-distibutors", DigitalDistributorsList)
+module.exports = List.discriminator("digital-distributors", DigitalDistributorsList)

@@ -65,7 +65,7 @@ async function createListEntity() {
 	if(this.req.query.admin === true && !this.authUser.isAdmin)
 		throw new UserSchema.UserForbiddenError({user_id: this.authUser._id})
 
-	if(!this.authUser.isAdmin && this.req.params.list_type === "digital-distibutors")
+	if(!this.authUser.isAdmin && this.req.params.list_type === "digital-distributors")
 		throw new UserSchema.UserForbiddenError({user_id: this.authUser._id})
 	
 	const base = this.req.query.admin === true ?
@@ -81,7 +81,7 @@ async function createListEntity() {
 }
 
 async function updateListEntity() {
-	if(!this.authUser.isAdmin && this.req.params.list_type === "digital-distibutors")
+	if(!this.authUser.isAdmin && this.req.params.list_type === "digital-distributors")
 		throw new UserSchema.UserForbiddenError({user_id: this.authUser._id})
 
 	if(!this.authUser.isAdmin) {
@@ -97,7 +97,7 @@ async function updateListEntity() {
 }
 
 async function deleteListEntity(entity) {
-	if(!this.authUser.isAdmin && this.req.params.list_type === "digital-distibutors")
+	if(!this.authUser.isAdmin && this.req.params.list_type === "digital-distributors")
 		throw new UserSchema.UserForbiddenError({user_id: this.authUser._id})
 
 	await entity.remove()
