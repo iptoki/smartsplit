@@ -57,10 +57,10 @@ ListSchema.query.byUserId = function(user_id) {
 
 
 ListSchema.statics.getListModel = function(type) {
-	if(!LISTE_TYPES[type])
+	if(!this.discriminators[type])
 		throw new Error("Type `" + type + "` is not a valid list type")
 
-	return LISTE_TYPES[type]
+	return this.discriminators[type]
 }
 
 
@@ -77,8 +77,3 @@ ListSchema.methods.setFields = function(body) {
 }
 
 module.exports = mongoose.model("List", ListSchema)
-
-const LISTE_TYPES = {
-	contentLangs: require("./contentLangsList"),
-	distributionServiceProvider: require("./distributionServiceProviderList")
-}

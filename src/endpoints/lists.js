@@ -1,4 +1,4 @@
-const { api, error } = require("../app")
+const { api }        = require("../app")
 const JWTAuth        = require("../service/JWTAuth")
 const List           = require("../models/lists/list")
 const ListSchema     = require("../schemas/lists")
