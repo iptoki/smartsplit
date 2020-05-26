@@ -12,7 +12,7 @@ api.get("/entities/{list_type}/", {
 	summary: "Get the list of the specified type",
 	parameters: [],
 	responses: {},
-}, JWTAuth.loadAuthUser, loadListEntity)
+}, JWTAuth.loadAuthUser, getList)
 
 
 api.get("/entities/{entity_id}/", {
@@ -20,7 +20,7 @@ api.get("/entities/{entity_id}/", {
 	summary: "Get the entity by ID",
 	parameters: [],
 	responses: {},
-}, JWTAuth.loadAuthUser, getList)
+}, JWTAuth.loadAuthUser, loadListEntity, filterEntityFields)
 
 
 api.post("/entities/{list_type}/", {
@@ -28,7 +28,7 @@ api.post("/entities/{list_type}/", {
 	summary: "Create a new entity in the selected list",
 	parameters: [],
 	responses: {},
-}, JWTAuth.requireUser, createListEntity)
+}, JWTAuth.requireUser, createListEntity, filterEntityFields)
 
 
 api.patch("/entities/{entity_id}", {
@@ -36,7 +36,7 @@ api.patch("/entities/{entity_id}", {
 	summary: "Update by id an entity of the selected list",
 	parameters: [],
 	responses: {},
-}, JWTAuth.requireUser, loadListEntity, updateListEntity)
+}, JWTAuth.requireUser, loadListEntity, updateListEntity, filterEntityFields)
 
 
 api.delete("/entities/{entity_id}", {
@@ -53,11 +53,12 @@ async function getList() {
 	let query = List.find({type: this.req.params.list_type})
 
 	if(!this.authUser)
-		query = query.publicOnly().select("-users -adminReview")
+		query = query.publicOnly()
 	else if(!this.authUser.isAdmin)
-		query = query.byUserId(this.authUser._id).select("-users -adminReview")
+		query = query.byUserId(this.authUser._id)
 
-	return await query.exec()
+	const entities = await query.exec()
+	return entities.map(e => filterEntityFields.call(this, e))
 }
 
 async function createListEntity() {
@@ -98,7 +99,7 @@ async function updateListEntity() {
 async function deleteListEntity(entity) {
 	if(!this.authUser.isAdmin && this.req.params.list_type === "digital-distibutors")
 		throw new UserSchema.UserForbiddenError({user_id: this.authUser._id})
-	
+
 	await entity.remove()
 	this.res.status(204).end()
 }
@@ -117,4 +118,16 @@ async function loadListEntity() {
 		throw new UserSchema.UserForbiddenError({user_id: this.authUser._id})
 
 	return entity
+}
+
+
+function filterEntityFields(entity) {
+	let filtered = entity.toObject()
+
+	if(!this.authUser.isAdmin){
+		delete filtered.users
+		delete filtered.adminReview
+	}
+
+	return filtered
 }
