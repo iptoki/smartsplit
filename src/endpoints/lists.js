@@ -66,7 +66,9 @@ async function createListEntity() {
 	const entity = new listModel({...base, ...this.req.body})
 	await entity.save()
 
-	this.res.status(201).end()
+	this.res.status(201)
+
+	return entity
 }
 
 async function updateListEntity() {
@@ -77,7 +79,9 @@ async function updateListEntity() {
 
 	await entity.setFields(this.req.body)
 
-	this.res.status(204).end()
+	this.res.status(204)
+
+	return entity
 }
 
 async function deleteListEntity(entity) {
