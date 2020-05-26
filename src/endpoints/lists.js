@@ -98,7 +98,7 @@ async function loadListEntity() {
 
 	if(!this.authUser.isAdmin && ( 
 		entity.users === false || 
-		entity.type === "distributionServiceProvider" ||
+		entity.type === "digital-distributors" ||
 		( Array.isArray(entity.users) && !entity.users.includes(this.authUser._id) ) 
 	))
 		throw new UserSchema.UserForbiddenError({user_id: this.authUser._id})

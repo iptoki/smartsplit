@@ -5,7 +5,7 @@ const LocaleSchema = require("./locale")
 /**
  * Represents a list of distribution service providers in the system
  */
-const DistributionServiceProviderListSchema = new mongoose.Schema({
+const DigitalDistributorsList = new mongoose.Schema({
 	name: {
 		type: String,
 		api: {
@@ -71,7 +71,7 @@ const DistributionServiceProviderListSchema = new mongoose.Schema({
 	},
 }, {discriminatorKey: "type"})
 
-DistributionServiceProviderListSchema.methods.setFields = function(body) {
+DigitalDistributorsList.methods.setFields = function(body) {
 	const fields = ["name","icon","localizedName","domains","markets","streaming","download","other","blockchain"]
 	for(let field in fields.concat(List.getFields())) {
 		if(body[field])
@@ -79,4 +79,4 @@ DistributionServiceProviderListSchema.methods.setFields = function(body) {
 	}
 }
 
-module.exports = List.discriminator("distributionServiceProvider", DistributionServiceProviderListSchema)
+module.exports = List.discriminator("digital-distibutors", DigitalDistributorsList)
