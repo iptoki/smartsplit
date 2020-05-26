@@ -7,9 +7,17 @@ const UserSchema     = require("../schemas/users")
 
 /************************ Routes ************************/
 
-api.get("/entities/{list_type}", {
+api.get("/entities/{list_type}/", {
 	tags: ["Lists"],
 	summary: "Get the list of the specified type",
+	parameters: [],
+	responses: {},
+}, JWTAuth.loadAuthUser, loadListEntity)
+
+
+api.get("/entities/{entity_id}/", {
+	tags: ["Lists"],
+	summary: "Get the entity by ID",
 	parameters: [],
 	responses: {},
 }, JWTAuth.loadAuthUser, getList)
@@ -56,7 +64,7 @@ async function createListEntity() {
 	if(this.req.query.admin === true && !this.authUser.isAdmin)
 		throw new UserSchema.UserForbiddenError({user_id: this.authUser._id})
 
-	if(!this.authUser.isAdmin && this.req.params.list_type === "distributionServiceProvider")
+	if(!this.authUser.isAdmin && this.req.params.list_type === "digital-distibutors")
 		throw new UserSchema.UserForbiddenError({user_id: this.authUser._id})
 	
 	const base = this.req.query.admin === true ?
@@ -72,6 +80,9 @@ async function createListEntity() {
 }
 
 async function updateListEntity() {
+	if(!this.authUser.isAdmin && this.req.params.list_type === "digital-distibutors")
+		throw new UserSchema.UserForbiddenError({user_id: this.authUser._id})
+
 	if(!this.authUser.isAdmin) {
 		delete this.req.body.adminReview
 		delete this.req.body.users
@@ -85,6 +96,9 @@ async function updateListEntity() {
 }
 
 async function deleteListEntity(entity) {
+	if(!this.authUser.isAdmin && this.req.params.list_type === "digital-distibutors")
+		throw new UserSchema.UserForbiddenError({user_id: this.authUser._id})
+	
 	await entity.remove()
 	this.res.status(204).end()
 }
@@ -98,7 +112,6 @@ async function loadListEntity() {
 
 	if(!this.authUser.isAdmin && ( 
 		entity.users === false || 
-		entity.type === "digital-distributors" ||
 		( Array.isArray(entity.users) && !entity.users.includes(this.authUser._id) ) 
 	))
 		throw new UserSchema.UserForbiddenError({user_id: this.authUser._id})
