@@ -73,10 +73,16 @@ async function createListEntity() {
 
 	const listModel = List.getListModel(this.req.params.list_type)
 	const entity = new listModel({...base, ...this.req.body})
-	await entity.save()
+	
+	try {
+		await entity.save()
+	} catch(e) {
+		if(e && e.code === 11000)
+			throw new ListSchema.ConflictingListEntityError({_id: this.req.body._id})
+		throw e
+	}
 
 	this.res.status(201)
-
 	return entity
 }
 
@@ -92,7 +98,6 @@ async function updateListEntity() {
 	await entity.setFields(this.req.body)
 
 	this.res.status(204)
-
 	return entity
 }
 
