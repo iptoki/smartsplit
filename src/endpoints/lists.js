@@ -72,6 +72,9 @@ async function createListEntity() {
 		{users: false} : {users: [this.authUser._id]}
 
 	const listModel = List.getListModel(this.req.params.list_type)
+	if(!listModel)
+		throw new ListSchema.ListNotFoundError({list: this.req.params.list_type})
+	
 	const entity = new listModel({...base, ...this.req.body})
 	
 	try {
