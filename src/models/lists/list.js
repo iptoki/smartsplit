@@ -8,6 +8,7 @@ const uuid     = require("uuid").v4
 const ListSchema = new mongoose.Schema({
 	_id: {
 		type: String,
+		alias: "entity_id",
 		default: uuid,
 		api: {
 			type: "string",
