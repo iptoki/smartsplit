@@ -6,7 +6,17 @@ const LocaleSchema = require("./locale")
  * Represents a generic modifiable list in the system
  */
 const contentLanguagesList = new mongoose.Schema({
-	name: LocaleSchema,
+	name: {
+		type: LocaleSchema,
+		api: {
+			type: "object",
+			properties: {
+				fr: { type: "string" },
+				en: { type: "string" },
+			}
+		}
+	},
+	
 	altNames: {
 		type: [String],
 		api: {

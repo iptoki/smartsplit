@@ -20,7 +20,16 @@ const DigitalDistributorsList = new mongoose.Schema({
 		}
 	},
 
-	localizedName: LocaleSchema,
+	localizedName: {
+		type: LocaleSchema,
+		api: {
+			type: "object",
+			properties: {
+				fr: { type: "string" },
+				en: { type: "string" },
+			}
+		}
+	},
 
 	domains: {
 		type: [String],

@@ -1,8 +1,9 @@
-const { api }        = require("../app")
-const JWTAuth        = require("../service/JWTAuth")
-const List           = require("../models/lists/list")
-const ListSchema     = require("../schemas/lists")
-const UserSchema     = require("../schemas/users")
+const { api }    = require("../app")
+const { filter } = require("../autoapi/json")
+const JWTAuth    = require("../service/JWTAuth")
+const List       = require("../models/lists/list")
+const ListSchema = require("../schemas/lists")
+const UserSchema = require("../schemas/users")
 
 
 /************************ Routes ************************/
@@ -10,15 +11,15 @@ const UserSchema     = require("../schemas/users")
 api.get("/entities/{list_type}/", {
 	tags: ["Lists"],
 	summary: "Get the list of the specified type",
-	parameters: [],
+	parameters: [ListSchema.list_type],
 	responses: {},
 }, JWTAuth.loadAuthUser, getList)
 
 
-api.get("/entities/{entity_id}/", {
+api.get("/entities/{entity_id}", {
 	tags: ["Lists"],
 	summary: "Get the entity by ID",
-	parameters: [],
+	parameters: [ListSchema.entity_id],
 	responses: {},
 }, JWTAuth.loadAuthUser, loadListEntity, filterEntityFields)
 
@@ -68,13 +69,13 @@ async function createListEntity() {
 	if(!this.authUser.isAdmin && this.req.params.list_type === "digital-distributors")
 		throw new UserSchema.UserForbiddenError({user_id: this.authUser._id})
 	
-	const base = this.req.query.admin === true ?
+	const base = this.req.query.admin === true || this.req.params.list_type === "digital-distributors" ?
 		{users: false} : {users: [this.authUser._id]}
 
 	const listModel = List.getListModel(this.req.params.list_type)
 	if(!listModel)
 		throw new ListSchema.ListNotFoundError({list: this.req.params.list_type})
-	
+
 	const entity = new listModel({...base, ...this.req.body})
 	
 	try {
@@ -100,7 +101,6 @@ async function updateListEntity() {
 
 	await entity.setFields(this.req.body)
 
-	this.res.status(204)
 	return entity
 }
 
@@ -119,20 +119,25 @@ async function loadListEntity() {
 	if(!entity)
 		throw new ListSchema.ListEntityNotFoundError({entity_id: this.req.params.entity_id})
 
-	if(!this.authUser.isAdmin && ( 
+	if(!this.authUser || (!this.authUser.isAdmin && ( 
 		entity.users === false || 
 		( Array.isArray(entity.users) && !entity.users.includes(this.authUser._id) ) 
-	))
-		throw new UserSchema.UserForbiddenError({user_id: this.authUser._id})
+	)))
+		throw new UserSchema.UserForbiddenError()
 
 	return entity
 }
 
 
 function filterEntityFields(entity) {
-	let filtered = entity.toObject()
+	if(!List.discriminators[entity.type])
+		return null
 
-	if(!this.authUser.isAdmin){
+	const spec = api.schemaFromModel(entity.type, List.discriminators[entity.type])
+	const filtered = filter(entity, spec)
+
+	if(!this.authUser || !this.authUser.isAdmin){
+		delete filtered._id
 		delete filtered.users
 		delete filtered.adminReview
 	}

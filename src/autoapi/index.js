@@ -29,7 +29,7 @@ class AutoAPI {
 		
 		// Other internals
 		this.hooks = {}
-		this.router = express.Router()
+		this.router = express.Router({strict: true})
 	}
 	
 	/**

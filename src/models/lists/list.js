@@ -19,7 +19,7 @@ const ListSchema = new mongoose.Schema({
 		type: mongoose.Mixed,
 		api: {
 			oneOf: [
-				{ const: "false" },
+				{ const: false },
 				{
 					type: "array",
 					items: {
