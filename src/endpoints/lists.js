@@ -137,7 +137,6 @@ function filterEntityFields(entity) {
 	const filtered = filter(entity, spec)
 
 	if(!this.authUser || !this.authUser.isAdmin){
-		delete filtered._id
 		delete filtered.users
 		delete filtered.adminReview
 	}
