@@ -78,3 +78,4 @@ module.exports = mongoose.model("List", ListSchema)
 
 require("./content-languages")
 require("./digital-distributors")
+require("./musical-genres")
