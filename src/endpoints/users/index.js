@@ -150,7 +150,7 @@ api.delete("/users/{user_id}",
 )
 
 
-api.get("/users/{user_id}/emails", 
+api.get("/users/{user_id}/emails/", 
 	{
 		tags: ["Emails"],
 		parameters: [UserSchema.id],
@@ -168,7 +168,7 @@ api.get("/users/{user_id}/emails",
 )
 
 
-api.post("/users/{user_id}/emails", 
+api.post("/users/{user_id}/emails/", 
 	{
 		tags: ["Emails"],
 		parameters: [UserSchema.id],
