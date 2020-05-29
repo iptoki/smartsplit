@@ -4,17 +4,17 @@
  */
 module.exports = {
 	// clientUrl: "https://www.smartsplit.org",
-	
+
 	// mongodb: {
 	// 	uri: "mongodb://localhost/smartsplit",
 	// },
-	
+
 	// sendgrid: {
 	// 	apikey: null
 	// },
-	
+
 	jwt_secret: "set this to something random",
-	
+
 	// listen: {
 	// 	port: 3001,
 	// 	host: "::1"

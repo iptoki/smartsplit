@@ -1,6 +1,6 @@
 /**
  * Error class for handling errors in the API
- * 
+ *
  * Adds status and data arguments to return errors in JSON format
  */
 class APIError extends Error {

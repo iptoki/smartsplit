@@ -1,2290 +1,2298 @@
 [
-  {
-    "name": "24-7 Entertainment",
-    "markets": ["Europe"],
-    "streaming": false,
-    "download": false,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "3 Mobile",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "7digital",
-    "markets": true,
-    "streaming": true,
-    "download": true,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "8Tracks",
-    "markets": ["US", "CA"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "AccuRadio",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Acfun",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Addictech",
-    "markets": true,
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Airtel Music Store",
-    "markets": ["India"],
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Akazoo",
-    "markets": ["Europe", "Asia"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "ALDI life Musik",
-    "markets": ["Europe"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "AllMusic",
-    "markets": true,
-    "streaming": false,
-    "download": false,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "Altice Music",
-    "markets": ["Dominican Republic"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Amazon Music",
-    "markets": true,
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Amped",
-    "markets": ["Singapore"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Anghami",
-    "markets": ["Middle East", "North Africa"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Aniuta",
-    "markets": ["Japan"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "APP Pop Music Museum",
-    "markets": true,
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Apple Music",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Artist Xite",
-    "markets": true,
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "AT&T Unlimited",
-    "markets": ["US"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Audius",
-    "markets": true,
-    "streaming": false,
-    "download": false,
-    "other": false,
-    "blockchain": true
-  },
-  {
-    "name": "AWA",
-    "markets": ["Japan"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Bandcamp",
-    "markets": true,
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "BCM Music Systems",
-    "markets": ["Netherlands"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Beat.no",
-    "markets": ["Norway"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Beatport (Music Store)",
-    "markets": true,
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Beeline Music Box",
-    "markets": ["Laos"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Bell Mobility",
-    "markets": ["Canada"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Bilibili",
-    "markets": ["Asia"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Bitsong",
-    "markets": true,
-    "streaming": false,
-    "download": false,
-    "other": false,
-    "blockchain": true
-  },
-  {
-    "name": "BlackPlanet Radio",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Bleep",
-    "markets": true,
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Blockpool",
-    "markets": true,
-    "streaming": false,
-    "download": false,
-    "other": false,
-    "blockchain": true
-  },
-  {
-    "name": "Blokur",
-    "markets": true,
-    "streaming": false,
-    "download": false,
-    "other": false,
-    "blockchain": true
-  },
-  {
-    "name": "Boomkat",
-    "markets": ["UK"],
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Boomplay Music",
-    "markets": ["Africa"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Bouygues Telecom",
-    "markets": ["France"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Bsnl",
-    "markets": ["India"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Bugs",
-    "markets": ["Korea"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Celcom (Yonder Music)",
-    "markets": ["Malaysia"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Chilltrax",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "China Unicom (Wo Music)",
-    "markets": ["Asia"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Choon",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": true
-  },
-  {
-    "name": "Claro Música",
-    "markets": ["Latin America"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Classical Archives",
-    "markets": true,
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "CLiGGO Music",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "D-Hits (NTT DoCoMo)",
-    "markets": ["Japan"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Dailymotion",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Dash Radio",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "DatPiff",
-    "markets": true,
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Deezer",
-    "markets": true,
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Deluxe Music TV",
-    "markets": ["Germany"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Digi",
-    "markets": ["Malaysia"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Digimarc",
-    "markets": true,
-    "streaming": false,
-    "download": false,
-    "other": false,
-    "blockchain": true
-  },
-  {
-    "name": "Digitally Imported (DI)",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "DigitalTunes",
-    "markets": true,
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Discogs",
-    "markets": true,
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Douban Music",
-    "markets": ["Asia"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Dwango",
-    "markets": ["Japan"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Dynamic Media",
-    "markets": ["US"],
-    "streaming": true,
-    "download": false,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "E-Onkyo Music",
-    "markets": ["Japan"],
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Earbits",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "eBay Digital Music Center",
-    "markets": true,
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "eClassical",
-    "markets": true,
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Electric Jukebox (ROXI)",
-    "markets": ["UK"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "eMusic",
-    "markets": true,
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": true
-  },
-  {
-    "name": "ESPNRadio",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Ex Libris",
-    "markets": true,
-    "streaming": false,
-    "download": false,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "ExpertMusic",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Fan Label",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "FaRao PRO",
-    "markets": ["Japan"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "FETnet",
-    "markets": ["Asia"],
-    "streaming": false,
-    "download": true,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "Fit Radio",
-    "markets": ["US"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "FluxFM",
-    "markets": ["Germany"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Fnac",
-    "markets": ["France"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "friDay Music",
-    "markets": ["Taiwan"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Gaana",
-    "markets": ["India"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Genie Music",
-    "markets": ["Korea"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Gmobile (DoReMi)",
-    "markets": ["Mongolia"],
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Gmobile Music Portal",
-    "markets": ["Vietnam"],
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Google Play Music",
-    "markets": true,
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Gracenote",
-    "markets": true,
-    "streaming": false,
-    "download": false,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "GreatIndieMusic.com",
-    "markets": true,
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Groovers",
-    "markets": ["Japan"],
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Groovy",
-    "markets": ["Japan"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "HDtracks",
-    "markets": true,
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "HeartMusic",
-    "markets": ["Taiwan"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Hellojunenet",
-    "markets": ["Asia"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "HMV Digital",
-    "markets": false,
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Hmv Play (Soliton)",
-    "markets": ["Hong Kong"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "hoopla",
-    "markets": ["US", "CA"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Huawei Music",
-    "markets": ["China", "South Africa"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Hungama",
-    "markets": ["India"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "I Like Music",
-    "markets": ["UK"],
-    "streaming": true,
-    "download": true,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "IcelandicMusic.com",
-    "markets": ["Iceland"],
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Idea Music",
-    "markets": ["India"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "iHeartRadio",
-    "markets": ["US", "Canada", "Australia", "New Zealand"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "iMusic",
-    "markets": ["Armenia"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "iMusica",
-    "markets": ["Latin America"],
-    "streaming": true,
-    "download": true,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "iNDIEVOX",
-    "markets": ["Asia"],
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Inmusik",
-    "markets": true,
-    "streaming": false,
-    "download": false,
-    "other": false,
-    "blockchain": true
-  },
-  {
-    "name": "InProdicon",
-    "markets": true,
-    "streaming": false,
-    "download": false,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "iQiyi",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "iTunes",
-    "markets": true,
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Jamendo",
-    "markets": true,
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Jango",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "JAZZRADIO.com",
-    "markets": ["France"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "JD Music (JingDong)",
-    "markets": ["Asia"],
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Jeou Tai (Jiutai Satellite Music Channel)",
-    "markets": ["Taiwan"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Jinli Radio",
-    "markets": ["China"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "JioMusic",
-    "markets": ["India"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Joox",
-    "markets": ["Asia", "South Africa"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Jriver",
-    "markets": true,
-    "streaming": false,
-    "download": false,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "Juke",
-    "markets": ["Germany"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Juno Download",
-    "markets": true,
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Kakao Music",
-    "markets": ["Korea"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Kanjian",
-    "markets": true,
-    "streaming": true,
-    "download": true,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "Kdigital",
-    "markets": ["Asia", "Middle East"],
-    "streaming": false,
-    "download": false,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "KKBox",
-    "markets": ["Asia"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Kuack Media Group",
-    "markets": ["Latin America", "Caribbean"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "KuGou",
-    "markets": ["Asia"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Kuwo",
-    "markets": ["Asia"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Langit Music",
-    "markets": ["Indonesia"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Last.fm (Scrobbling)",
-    "markets": true,
-    "streaming": false,
-    "download": false,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "LeTV Music",
-    "markets": ["China"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Line Music",
-    "markets": ["Japan", "Thailand"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "LiveWire",
-    "markets": true,
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Magnatune",
-    "markets": true,
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Maxis Music Unlimited",
-    "markets": ["Malaysia"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "mbox",
-    "markets": true,
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Media Markt",
-    "markets": ["Europe"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Mediachain",
-    "markets": true,
-    "streaming": false,
-    "download": false,
-    "other": false,
-    "blockchain": true
-  },
-  {
-    "name": "MediaNet",
-    "markets": ["US", "CA", "UK"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Melon",
-    "markets": ["Korea"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "MelOn Indonesia (IndiHome Musik / Musikka Rasaku)",
-    "markets": ["Indonesia"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Meteli (Mikseri)",
-    "markets": ["Finland"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Mi Music",
-    "markets": ["India"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Migu Music",
-    "markets": ["Asia"],
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "mJams",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Mnet (Mwave)",
-    "markets": ["Korea"],
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Mobicom (HiTONE)",
-    "markets": ["Mongolia"],
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Mobifone",
-    "markets": ["Vietnam"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "MobileStreams",
-    "markets": true,
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "MOOV",
-    "markets": ["Hong Kong", "Vietnam"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Mora",
-    "markets": ["Japan"],
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Movistar Musica",
-    "markets": ["Peru"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "MPT",
-    "markets": ["Myanmar"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "MTV",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Music Choice",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Music Nepal",
-    "markets": ["Nepal"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Music.jp",
-    "markets": ["Japan"],
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Musica Online",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Musical.ly",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Musiclife",
-    "markets": true,
-    "streaming": false,
-    "download": false,
-    "other": false,
-    "blockchain": true
-  },
-  {
-    "name": "Musicoin",
-    "markets": true,
-    "streaming": false,
-    "download": false,
-    "other": false,
-    "blockchain": true
-  },
-  {
-    "name": "Musicovery (Recommendations)",
-    "markets": true,
-    "streaming": false,
-    "download": false,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "My Mixtapez",
-    "markets": true,
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Mycelia",
-    "markets": true,
-    "streaming": false,
-    "download": false,
-    "other": false,
-    "blockchain": true
-  },
-  {
-    "name": "MyMusic (ezPeer)",
-    "markets": ["Asia"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "MySpace",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "MyTuner Radio",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Napster",
-    "markets": true,
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Naver Music",
-    "markets": ["Korea"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Naxos Music Library",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Naxos Music Library Jazz",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Naxos Music Library World",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Ncell Music Station",
-    "markets": ["Nepal"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "NetEase Cloud Music (163 Music)",
-    "markets": ["China"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Netmusik",
-    "markets": ["Denmark"],
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Neurotic Media",
-    "markets": ["US", "CA"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "NextRadio",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "NhacCuaTui (NCT)",
-    "markets": ["Vietnam"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Nimbit",
-    "markets": true,
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "NMusic SA",
-    "markets": ["Portugal"],
-    "streaming": true,
-    "download": false,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "NoiseTrade",
-    "markets": true,
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Nowdio",
-    "markets": ["Germany"],
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "ODMedia",
-    "markets": ["Europe", "Russia"],
-    "streaming": true,
-    "download": true,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "Official Charts Company (OCC)",
-    "markets": ["UK", "Ireland"],
-    "streaming": false,
-    "download": false,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "One Music PH",
-    "markets": ["Philippines"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "OneMusic",
-    "markets": true,
-    "streaming": true,
-    "download": true,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "Onkyo Music",
-    "markets": ["US", "UK", "Germany"],
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Open Music Initiative",
-    "markets": true,
-    "streaming": false,
-    "download": false,
-    "other": false,
-    "blockchain": true
-  },
-  {
-    "name": "Orange",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Pandora",
-    "markets": ["US","Australia","New Zealand"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Pasito Tunes",
-    "markets": true,
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Patari.pk",
-    "markets": true,
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "PCMusic",
-    "markets": ["US", "CA"],
-    "streaming": true,
-    "download": false,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "Play.com",
-    "markets": ["UK"],
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Play.fm",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "PlayNetwork",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "PlayStation Music",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "PonoMusic",
-    "markets": ["US", "CA"],
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "PreDanz",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Psonar",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Qianqian Music",
-    "markets": ["Asia"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Qobuz",
-    "markets": ["Europe", "US"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "QQ Music",
-    "markets": ["Asia"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Qsic",
-    "markets": ["Australia"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Radical.fm",
-    "markets": ["US"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Radiko",
-    "markets": ["Japan"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Radio 538",
-    "markets": ["Netherlands"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Radio Danz",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Radio Disney",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "radioPup",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "RadioTunes",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Raku",
-    "markets": ["Malaysia"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Rakuten Music",
-    "markets": ["Japan"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "RealNetworks",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "RecoChoku",
-    "markets": ["Japan"],
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "RecoChoku Best",
-    "markets": ["Japan"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Resonate",
-    "markets": ["Israel"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "ROCKRADIO",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Saavn",
-    "markets": ["India"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "SFR Muzik",
-    "markets": ["France"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Shazam",
-    "markets": true,
-    "streaming": false,
-    "download": false,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "Simfy Africa",
-    "markets": ["Africa"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Siminn",
-    "markets": ["Iceland"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Sina Video",
-    "markets": ["Taiwan"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Singtel Music",
-    "markets": ["Singapore"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "SiriusXM",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Skytel Hi-Fi Music",
-    "markets": ["Mongolia"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Slacker Radio",
-    "markets": ["US", "CA"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Smackathon",
-    "markets": true,
-    "streaming": false,
-    "download": false,
-    "other": false,
-    "blockchain": true
-  },
-  {
-    "name": "Smart Music",
-    "markets": ["Cambodia", "Philippines"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "SomaFM",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "SongCast",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Soribada",
-    "markets": ["Korea"],
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Sounday",
-    "markets": ["Italy"],
-    "streaming": false,
-    "download": false,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "SoundCloud",
-    "markets": true,
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Spinlet",
-    "markets": ["Africa"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Spinrilla",
-    "markets": true,
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Spotify",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Starhub Music Anywhere",
-    "markets": ["Singapore"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Stingray Music",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Streamsquid",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Synacor",
-    "markets": true,
-    "streaming": false,
-    "download": false,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "T-Mobile Music Freedom",
-    "markets": true,
-    "streaming": false,
-    "download": false,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "Taiwan Mobile Music",
-    "markets": ["Taiwan"],
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "TargetMusic",
-    "markets": ["Netherlands", "Belgium", "Luxembourg"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Tata DoCoMo",
-    "markets": ["India"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Telefonica",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Telenor",
-    "markets": ["Asia", "Scandinavia"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Telia Sonera",
-    "markets": ["Europe"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Telstra Mobile Music Service",
-    "markets": ["Australia"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "TELUS Mobility",
-    "markets": ["Canada"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Tencent Video",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "The Licensing Agency (TLA)",
-    "markets": true,
-    "streaming": true,
-    "download": true,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "TIDAL",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Tonlist",
-    "markets": ["Iceland"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Tonspion",
-    "markets": ["Germany"],
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Top100 (Mars Music Network)",
-    "markets": ["Asia"],
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "TouchTunes",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "Trackitdown",
-    "markets": ["UK"],
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Tradebit",
-    "markets": true,
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": true,
-    "markets": ["Thailand"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "TuneIn",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "U Mobile Music Onz",
-    "markets": ["Malaysia"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Ujo",
-    "markets": true,
-    "streaming": false,
-    "download": false,
-    "other": false,
-    "blockchain": true
-  },
-  {
-    "name": "Ultimate Music",
-    "markets": ["China"],
-    "streaming": true,
-    "download": true,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "United Media Agency (UMA)",
-    "markets": ["Russia", "CIS"],
-    "streaming": true,
-    "download": true,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "Verizon (Music Tones)",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "VerveLife",
-    "markets": true,
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Vevo",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Viberate",
-    "markets": true,
-    "streaming": false,
-    "download": false,
-    "other": false,
-    "blockchain": true
-  },
-  {
-    "name": "VidZone WAP",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Viettel Imusik",
-    "markets": ["Cameroon", "Dong", "Timor", "Haiti", "Mozambique", "Tanzania", "Vietnam"],
-    "streaming": true,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Vigo Video",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "vinaphone Chacha",
-    "markets": ["Vietnam"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Vodafone",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Voise",
-    "markets": true,
-    "streaming": false,
-    "download": false,
-    "other": false,
-    "blockchain": true
-  },
-  {
-    "name": "Volup",
-    "markets": ["Indonesia"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Weltbild",
-    "markets": ["Germany"],
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "WEYV",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Whatpeopleplay",
-    "markets": ["Germany"],
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Xiami Music",
-    "markets": ["Asia"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "XOX ONEMUSIC",
-    "markets": ["Malaysia"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Yandex.Music",
-    "markets": ["Russia", "Ukraine", "Belarus", "Kazakhstan"],
-    "streaming":true,
-    "download":false,
-    "other":false,
-    "blockchain": false
-  },
-  {
-    "name": "YinYue Tai",
-    "markets": ["China"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "YouKu Music",
-    "markets": ["China"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "youSee Musik",
-    "markets": ["Denmark"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "YouTube",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "YouTube Music",
-    "markets": true,
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "YouTube Premium",
-    "markets": true,
-    "streaming": false,
-    "download": false,
-    "other": true,
-    "blockchain": false
-  },
-  {
-    "name": "zazell",
-    "markets": ["Netherlands"],
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Zunior",
-    "markets": ["Canada"],
-    "streaming": false,
-    "download": true,
-    "other": false,
-    "blockchain": false
-  },
-  {
-    "name": "Zvooq (Zvuk)",
-    "markets": ["Russia", "CIS"],
-    "streaming": true,
-    "download": false,
-    "other": false,
-    "blockchain": false
-  }
+	{
+		"name": "24-7 Entertainment",
+		"markets": ["Europe"],
+		"streaming": false,
+		"download": false,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "3 Mobile",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "7digital",
+		"markets": true,
+		"streaming": true,
+		"download": true,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "8Tracks",
+		"markets": ["US", "CA"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "AccuRadio",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Acfun",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Addictech",
+		"markets": true,
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Airtel Music Store",
+		"markets": ["India"],
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Akazoo",
+		"markets": ["Europe", "Asia"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "ALDI life Musik",
+		"markets": ["Europe"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "AllMusic",
+		"markets": true,
+		"streaming": false,
+		"download": false,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "Altice Music",
+		"markets": ["Dominican Republic"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Amazon Music",
+		"markets": true,
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Amped",
+		"markets": ["Singapore"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Anghami",
+		"markets": ["Middle East", "North Africa"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Aniuta",
+		"markets": ["Japan"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "APP Pop Music Museum",
+		"markets": true,
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Apple Music",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Artist Xite",
+		"markets": true,
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "AT&T Unlimited",
+		"markets": ["US"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Audius",
+		"markets": true,
+		"streaming": false,
+		"download": false,
+		"other": false,
+		"blockchain": true
+	},
+	{
+		"name": "AWA",
+		"markets": ["Japan"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Bandcamp",
+		"markets": true,
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "BCM Music Systems",
+		"markets": ["Netherlands"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Beat.no",
+		"markets": ["Norway"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Beatport (Music Store)",
+		"markets": true,
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Beeline Music Box",
+		"markets": ["Laos"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Bell Mobility",
+		"markets": ["Canada"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Bilibili",
+		"markets": ["Asia"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Bitsong",
+		"markets": true,
+		"streaming": false,
+		"download": false,
+		"other": false,
+		"blockchain": true
+	},
+	{
+		"name": "BlackPlanet Radio",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Bleep",
+		"markets": true,
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Blockpool",
+		"markets": true,
+		"streaming": false,
+		"download": false,
+		"other": false,
+		"blockchain": true
+	},
+	{
+		"name": "Blokur",
+		"markets": true,
+		"streaming": false,
+		"download": false,
+		"other": false,
+		"blockchain": true
+	},
+	{
+		"name": "Boomkat",
+		"markets": ["UK"],
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Boomplay Music",
+		"markets": ["Africa"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Bouygues Telecom",
+		"markets": ["France"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Bsnl",
+		"markets": ["India"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Bugs",
+		"markets": ["Korea"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Celcom (Yonder Music)",
+		"markets": ["Malaysia"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Chilltrax",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "China Unicom (Wo Music)",
+		"markets": ["Asia"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Choon",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": true
+	},
+	{
+		"name": "Claro Música",
+		"markets": ["Latin America"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Classical Archives",
+		"markets": true,
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "CLiGGO Music",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "D-Hits (NTT DoCoMo)",
+		"markets": ["Japan"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Dailymotion",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Dash Radio",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "DatPiff",
+		"markets": true,
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Deezer",
+		"markets": true,
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Deluxe Music TV",
+		"markets": ["Germany"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Digi",
+		"markets": ["Malaysia"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Digimarc",
+		"markets": true,
+		"streaming": false,
+		"download": false,
+		"other": false,
+		"blockchain": true
+	},
+	{
+		"name": "Digitally Imported (DI)",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "DigitalTunes",
+		"markets": true,
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Discogs",
+		"markets": true,
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Douban Music",
+		"markets": ["Asia"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Dwango",
+		"markets": ["Japan"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Dynamic Media",
+		"markets": ["US"],
+		"streaming": true,
+		"download": false,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "E-Onkyo Music",
+		"markets": ["Japan"],
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Earbits",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "eBay Digital Music Center",
+		"markets": true,
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "eClassical",
+		"markets": true,
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Electric Jukebox (ROXI)",
+		"markets": ["UK"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "eMusic",
+		"markets": true,
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": true
+	},
+	{
+		"name": "ESPNRadio",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Ex Libris",
+		"markets": true,
+		"streaming": false,
+		"download": false,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "ExpertMusic",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Fan Label",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "FaRao PRO",
+		"markets": ["Japan"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "FETnet",
+		"markets": ["Asia"],
+		"streaming": false,
+		"download": true,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "Fit Radio",
+		"markets": ["US"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "FluxFM",
+		"markets": ["Germany"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Fnac",
+		"markets": ["France"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "friDay Music",
+		"markets": ["Taiwan"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Gaana",
+		"markets": ["India"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Genie Music",
+		"markets": ["Korea"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Gmobile (DoReMi)",
+		"markets": ["Mongolia"],
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Gmobile Music Portal",
+		"markets": ["Vietnam"],
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Google Play Music",
+		"markets": true,
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Gracenote",
+		"markets": true,
+		"streaming": false,
+		"download": false,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "GreatIndieMusic.com",
+		"markets": true,
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Groovers",
+		"markets": ["Japan"],
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Groovy",
+		"markets": ["Japan"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "HDtracks",
+		"markets": true,
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "HeartMusic",
+		"markets": ["Taiwan"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Hellojunenet",
+		"markets": ["Asia"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "HMV Digital",
+		"markets": false,
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Hmv Play (Soliton)",
+		"markets": ["Hong Kong"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "hoopla",
+		"markets": ["US", "CA"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Huawei Music",
+		"markets": ["China", "South Africa"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Hungama",
+		"markets": ["India"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "I Like Music",
+		"markets": ["UK"],
+		"streaming": true,
+		"download": true,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "IcelandicMusic.com",
+		"markets": ["Iceland"],
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Idea Music",
+		"markets": ["India"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "iHeartRadio",
+		"markets": ["US", "Canada", "Australia", "New Zealand"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "iMusic",
+		"markets": ["Armenia"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "iMusica",
+		"markets": ["Latin America"],
+		"streaming": true,
+		"download": true,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "iNDIEVOX",
+		"markets": ["Asia"],
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Inmusik",
+		"markets": true,
+		"streaming": false,
+		"download": false,
+		"other": false,
+		"blockchain": true
+	},
+	{
+		"name": "InProdicon",
+		"markets": true,
+		"streaming": false,
+		"download": false,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "iQiyi",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "iTunes",
+		"markets": true,
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Jamendo",
+		"markets": true,
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Jango",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "JAZZRADIO.com",
+		"markets": ["France"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "JD Music (JingDong)",
+		"markets": ["Asia"],
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Jeou Tai (Jiutai Satellite Music Channel)",
+		"markets": ["Taiwan"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Jinli Radio",
+		"markets": ["China"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "JioMusic",
+		"markets": ["India"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Joox",
+		"markets": ["Asia", "South Africa"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Jriver",
+		"markets": true,
+		"streaming": false,
+		"download": false,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "Juke",
+		"markets": ["Germany"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Juno Download",
+		"markets": true,
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Kakao Music",
+		"markets": ["Korea"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Kanjian",
+		"markets": true,
+		"streaming": true,
+		"download": true,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "Kdigital",
+		"markets": ["Asia", "Middle East"],
+		"streaming": false,
+		"download": false,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "KKBox",
+		"markets": ["Asia"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Kuack Media Group",
+		"markets": ["Latin America", "Caribbean"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "KuGou",
+		"markets": ["Asia"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Kuwo",
+		"markets": ["Asia"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Langit Music",
+		"markets": ["Indonesia"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Last.fm (Scrobbling)",
+		"markets": true,
+		"streaming": false,
+		"download": false,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "LeTV Music",
+		"markets": ["China"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Line Music",
+		"markets": ["Japan", "Thailand"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "LiveWire",
+		"markets": true,
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Magnatune",
+		"markets": true,
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Maxis Music Unlimited",
+		"markets": ["Malaysia"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "mbox",
+		"markets": true,
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Media Markt",
+		"markets": ["Europe"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Mediachain",
+		"markets": true,
+		"streaming": false,
+		"download": false,
+		"other": false,
+		"blockchain": true
+	},
+	{
+		"name": "MediaNet",
+		"markets": ["US", "CA", "UK"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Melon",
+		"markets": ["Korea"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "MelOn Indonesia (IndiHome Musik / Musikka Rasaku)",
+		"markets": ["Indonesia"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Meteli (Mikseri)",
+		"markets": ["Finland"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Mi Music",
+		"markets": ["India"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Migu Music",
+		"markets": ["Asia"],
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "mJams",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Mnet (Mwave)",
+		"markets": ["Korea"],
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Mobicom (HiTONE)",
+		"markets": ["Mongolia"],
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Mobifone",
+		"markets": ["Vietnam"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "MobileStreams",
+		"markets": true,
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "MOOV",
+		"markets": ["Hong Kong", "Vietnam"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Mora",
+		"markets": ["Japan"],
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Movistar Musica",
+		"markets": ["Peru"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "MPT",
+		"markets": ["Myanmar"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "MTV",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Music Choice",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Music Nepal",
+		"markets": ["Nepal"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Music.jp",
+		"markets": ["Japan"],
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Musica Online",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Musical.ly",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Musiclife",
+		"markets": true,
+		"streaming": false,
+		"download": false,
+		"other": false,
+		"blockchain": true
+	},
+	{
+		"name": "Musicoin",
+		"markets": true,
+		"streaming": false,
+		"download": false,
+		"other": false,
+		"blockchain": true
+	},
+	{
+		"name": "Musicovery (Recommendations)",
+		"markets": true,
+		"streaming": false,
+		"download": false,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "My Mixtapez",
+		"markets": true,
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Mycelia",
+		"markets": true,
+		"streaming": false,
+		"download": false,
+		"other": false,
+		"blockchain": true
+	},
+	{
+		"name": "MyMusic (ezPeer)",
+		"markets": ["Asia"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "MySpace",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "MyTuner Radio",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Napster",
+		"markets": true,
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Naver Music",
+		"markets": ["Korea"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Naxos Music Library",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Naxos Music Library Jazz",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Naxos Music Library World",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Ncell Music Station",
+		"markets": ["Nepal"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "NetEase Cloud Music (163 Music)",
+		"markets": ["China"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Netmusik",
+		"markets": ["Denmark"],
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Neurotic Media",
+		"markets": ["US", "CA"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "NextRadio",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "NhacCuaTui (NCT)",
+		"markets": ["Vietnam"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Nimbit",
+		"markets": true,
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "NMusic SA",
+		"markets": ["Portugal"],
+		"streaming": true,
+		"download": false,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "NoiseTrade",
+		"markets": true,
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Nowdio",
+		"markets": ["Germany"],
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "ODMedia",
+		"markets": ["Europe", "Russia"],
+		"streaming": true,
+		"download": true,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "Official Charts Company (OCC)",
+		"markets": ["UK", "Ireland"],
+		"streaming": false,
+		"download": false,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "One Music PH",
+		"markets": ["Philippines"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "OneMusic",
+		"markets": true,
+		"streaming": true,
+		"download": true,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "Onkyo Music",
+		"markets": ["US", "UK", "Germany"],
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Open Music Initiative",
+		"markets": true,
+		"streaming": false,
+		"download": false,
+		"other": false,
+		"blockchain": true
+	},
+	{
+		"name": "Orange",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Pandora",
+		"markets": ["US", "Australia", "New Zealand"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Pasito Tunes",
+		"markets": true,
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Patari.pk",
+		"markets": true,
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "PCMusic",
+		"markets": ["US", "CA"],
+		"streaming": true,
+		"download": false,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "Play.com",
+		"markets": ["UK"],
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Play.fm",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "PlayNetwork",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "PlayStation Music",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "PonoMusic",
+		"markets": ["US", "CA"],
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "PreDanz",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Psonar",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Qianqian Music",
+		"markets": ["Asia"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Qobuz",
+		"markets": ["Europe", "US"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "QQ Music",
+		"markets": ["Asia"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Qsic",
+		"markets": ["Australia"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Radical.fm",
+		"markets": ["US"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Radiko",
+		"markets": ["Japan"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Radio 538",
+		"markets": ["Netherlands"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Radio Danz",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Radio Disney",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "radioPup",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "RadioTunes",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Raku",
+		"markets": ["Malaysia"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Rakuten Music",
+		"markets": ["Japan"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "RealNetworks",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "RecoChoku",
+		"markets": ["Japan"],
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "RecoChoku Best",
+		"markets": ["Japan"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Resonate",
+		"markets": ["Israel"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "ROCKRADIO",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Saavn",
+		"markets": ["India"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "SFR Muzik",
+		"markets": ["France"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Shazam",
+		"markets": true,
+		"streaming": false,
+		"download": false,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "Simfy Africa",
+		"markets": ["Africa"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Siminn",
+		"markets": ["Iceland"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Sina Video",
+		"markets": ["Taiwan"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Singtel Music",
+		"markets": ["Singapore"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "SiriusXM",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Skytel Hi-Fi Music",
+		"markets": ["Mongolia"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Slacker Radio",
+		"markets": ["US", "CA"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Smackathon",
+		"markets": true,
+		"streaming": false,
+		"download": false,
+		"other": false,
+		"blockchain": true
+	},
+	{
+		"name": "Smart Music",
+		"markets": ["Cambodia", "Philippines"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "SomaFM",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "SongCast",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Soribada",
+		"markets": ["Korea"],
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Sounday",
+		"markets": ["Italy"],
+		"streaming": false,
+		"download": false,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "SoundCloud",
+		"markets": true,
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Spinlet",
+		"markets": ["Africa"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Spinrilla",
+		"markets": true,
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Spotify",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Starhub Music Anywhere",
+		"markets": ["Singapore"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Stingray Music",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Streamsquid",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Synacor",
+		"markets": true,
+		"streaming": false,
+		"download": false,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "T-Mobile Music Freedom",
+		"markets": true,
+		"streaming": false,
+		"download": false,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "Taiwan Mobile Music",
+		"markets": ["Taiwan"],
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "TargetMusic",
+		"markets": ["Netherlands", "Belgium", "Luxembourg"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Tata DoCoMo",
+		"markets": ["India"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Telefonica",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Telenor",
+		"markets": ["Asia", "Scandinavia"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Telia Sonera",
+		"markets": ["Europe"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Telstra Mobile Music Service",
+		"markets": ["Australia"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "TELUS Mobility",
+		"markets": ["Canada"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Tencent Video",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "The Licensing Agency (TLA)",
+		"markets": true,
+		"streaming": true,
+		"download": true,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "TIDAL",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Tonlist",
+		"markets": ["Iceland"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Tonspion",
+		"markets": ["Germany"],
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Top100 (Mars Music Network)",
+		"markets": ["Asia"],
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "TouchTunes",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "Trackitdown",
+		"markets": ["UK"],
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Tradebit",
+		"markets": true,
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": true,
+		"markets": ["Thailand"],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "TuneIn",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "U Mobile Music Onz",
+		"markets": ["Malaysia"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Ujo",
+		"markets": true,
+		"streaming": false,
+		"download": false,
+		"other": false,
+		"blockchain": true
+	},
+	{
+		"name": "Ultimate Music",
+		"markets": ["China"],
+		"streaming": true,
+		"download": true,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "United Media Agency (UMA)",
+		"markets": ["Russia", "CIS"],
+		"streaming": true,
+		"download": true,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "Verizon (Music Tones)",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "VerveLife",
+		"markets": true,
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Vevo",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Viberate",
+		"markets": true,
+		"streaming": false,
+		"download": false,
+		"other": false,
+		"blockchain": true
+	},
+	{
+		"name": "VidZone WAP",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Viettel Imusik",
+		"markets": [
+			"Cameroon",
+			"Dong",
+			"Timor",
+			"Haiti",
+			"Mozambique",
+			"Tanzania",
+			"Vietnam"
+		],
+		"streaming": true,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Vigo Video",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "vinaphone Chacha",
+		"markets": ["Vietnam"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Vodafone",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Voise",
+		"markets": true,
+		"streaming": false,
+		"download": false,
+		"other": false,
+		"blockchain": true
+	},
+	{
+		"name": "Volup",
+		"markets": ["Indonesia"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Weltbild",
+		"markets": ["Germany"],
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "WEYV",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Whatpeopleplay",
+		"markets": ["Germany"],
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Xiami Music",
+		"markets": ["Asia"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "XOX ONEMUSIC",
+		"markets": ["Malaysia"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Yandex.Music",
+		"markets": ["Russia", "Ukraine", "Belarus", "Kazakhstan"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "YinYue Tai",
+		"markets": ["China"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "YouKu Music",
+		"markets": ["China"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "youSee Musik",
+		"markets": ["Denmark"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "YouTube",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "YouTube Music",
+		"markets": true,
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "YouTube Premium",
+		"markets": true,
+		"streaming": false,
+		"download": false,
+		"other": true,
+		"blockchain": false
+	},
+	{
+		"name": "zazell",
+		"markets": ["Netherlands"],
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Zunior",
+		"markets": ["Canada"],
+		"streaming": false,
+		"download": true,
+		"other": false,
+		"blockchain": false
+	},
+	{
+		"name": "Zvooq (Zvuk)",
+		"markets": ["Russia", "CIS"],
+		"streaming": true,
+		"download": false,
+		"other": false,
+		"blockchain": false
+	}
 ]
