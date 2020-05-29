@@ -297,9 +297,9 @@ cors@^2.8.5:
     vary "^1"
 
 dayjs@^1.8.21:
-  version "1.8.27"
-  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.8.27.tgz#a8ae63ee990af28c05c430f0e160ae835a0fbbf8"
-  integrity sha512-Jpa2acjWIeOkg8KURUHICk0EqnEFSSF5eMEscsOgyJ92ZukXwmpmRkPSUka7KHSfbj5eKH30ieosYip+ky9emQ==
+  version "1.8.28"
+  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.8.28.tgz#37aa6201df483d089645cb6c8f6cef6f0c4dbc07"
+  integrity sha512-ccnYgKC0/hPSGXxj7Ju6AV/BP4HUkXC2u15mikXT5mX9YorEaoi1bEKOmAqdkJHN4EEkmAf97SpH66Try5Mbeg==
 
 debug@2.6.9:
   version "2.6.9"
@@ -762,9 +762,9 @@ mongoose-legacy-pluralize@1.0.2:
   integrity sha512-Yo/7qQU4/EyIS8YDFSeenIvXxZN+ld7YdV9LqFVQJzTLye8unujAWPZ4NWKfFA+RNjh+wvTWKY9Z3E5XM6ZZiQ==
 
 mongoose@^5.9.7:
-  version "5.9.15"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-5.9.15.tgz#935e157d1429c0702b71c5ecf0e6801faa771091"
-  integrity sha512-dGIDqaQkAJoLl7lsRLy70mDg+VcL1IPOHr/0f23MLF45PtnM5exRdmienfyVjdrSVGgTus+1sMUKef6vSnrDZg==
+  version "5.9.16"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-5.9.16.tgz#6aa688a6b7b444d10f60ac539b92556cae20475e"
+  integrity sha512-b4HNndgh+dacoLE/2SBF3iBBofeaKL+aGVZH7jnPRc2RXRCplX4sfH5sgoz03ryCSXJ+RQNIfqKAADt/ZBzPDA==
   dependencies:
     bson "^1.1.4"
     kareem "2.3.1"
@@ -1230,9 +1230,9 @@ supports-color@^5.3.0:
     has-flag "^3.0.0"
 
 swagger-ui-dist@^3.18.1, swagger-ui-dist@^3.25.2:
-  version "3.25.4"
-  resolved "https://registry.yarnpkg.com/swagger-ui-dist/-/swagger-ui-dist-3.25.4.tgz#045fdcc37d4b756c00bc228eec82153014474f00"
-  integrity sha512-IiupbwT2znZ/BXDgSv9gIaxTL+oVSvhaSe5K4NxSCxRe6bTFK/Q4JwOGzYLep5I2h460xSbwdIuUUblNDolTNg==
+  version "3.25.5"
+  resolved "https://registry.yarnpkg.com/swagger-ui-dist/-/swagger-ui-dist-3.25.5.tgz#57a17c9b45851370a9a76c1659f21d4f14a9f3d2"
+  integrity sha512-JZ6dVQS2nPgVYW0+JIIxm84vvFbR/ole6xYJG2DcSdejDLt8ARqIhbZ4InL7RVsLdXpPirUMb7hf2z4Fzqesyw==
 
 swagger-ui-express@^4.1.4:
   version "4.1.4"
@@ -1260,9 +1260,9 @@ toidentifier@1.0.0:
   integrity sha512-yaOH/Pk/VEhBWWTlhI+qXxDFXlejDGcQipMlyxda9nthulaxLZUNcUqFxokp0vcYnvteJln5FNQDRrxj3YcbVw==
 
 twilio@^3.43.0:
-  version "3.43.1"
-  resolved "https://registry.yarnpkg.com/twilio/-/twilio-3.43.1.tgz#bcf1c434fc312f95f423e48877f025432b642e89"
-  integrity sha512-vULKUCWY712Jv6Jb3VRceneuvcdO0JZ9adTofiDo3Ks/z58WKlj8vHawsjiZxsKAHnuBSGnhL3WKxQoUj/xmHQ==
+  version "3.44.0"
+  resolved "https://registry.yarnpkg.com/twilio/-/twilio-3.44.0.tgz#ba3f21b1352bd51af9f00485eda410922c4d6fb5"
+  integrity sha512-h1WoppDsBtHUOZuNxKhCd8N91HvdCIy5/aKCRDOzvYIZNbt2H0Zm+oac5jVyeOYd5O8Ifb0rlu566HfgNHdQBA==
   dependencies:
     "@types/express" "^4.17.3"
     axios "^0.19.2"
