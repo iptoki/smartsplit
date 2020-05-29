@@ -640,7 +640,7 @@ UserSchema.methods.emailWelcome = async function(email, expires = "2 weeks") {
 	// console.log(token) // Temporary helper
 
 	return await sendTemplateTo("user:activate-account", this, 
-		{ to: {name: this.fullName, email: email} }, 
+		{ to: {name: email, email: email} }, 
 		{ activateAccountUrl: Config.clientUrl + "/user/activate/" + token }
 	)
 }
