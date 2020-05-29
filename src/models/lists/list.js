@@ -8,6 +8,7 @@ const uuid     = require("uuid").v4
 const ListSchema = new mongoose.Schema({
 	_id: {
 		type: String,
+		alias: "entity_id",
 		default: uuid,
 		api: {
 			type: "string",
@@ -19,7 +20,7 @@ const ListSchema = new mongoose.Schema({
 		type: mongoose.Mixed,
 		api: {
 			oneOf: [
-				{ const: "false" },
+				{ const: false },
 				{
 					type: "array",
 					items: {
@@ -55,14 +56,12 @@ ListSchema.query.byUserId = function(user_id) {
 	}})
 }
 
-
 ListSchema.statics.getListModel = function(type) {
-	if(!LISTE_TYPES[type])
-		throw new Error("Type `" + type + "` is not a valid list type")
+	if(!this.discriminators[type])
+		return null
 
-	return LISTE_TYPES[type]
+	return this.discriminators[type]
 }
-
 
 ListSchema.statics.getFields = function() {
 	return ["users", "adminReview"]
@@ -78,7 +77,7 @@ ListSchema.methods.setFields = function(body) {
 
 module.exports = mongoose.model("List", ListSchema)
 
-const LISTE_TYPES = {
-	contentLangs: require("./contentLangsList"),
-	distributionServiceProvider: require("./distributionServiceProviderList")
-}
+require("./content-languages")
+require("./digital-distributors")
+require("./musical-genres")
+require("./instruments")

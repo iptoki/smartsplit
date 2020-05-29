@@ -312,7 +312,7 @@ UserSchema.virtual("avatarUrl").get(function() {
  * Returns whether the current user is an administrator
  */
 UserSchema.virtual("isAdmin").get(function() {
-	return this.permissions.admin
+	return this.permissions.admin === true
 })
 
 
