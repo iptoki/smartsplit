@@ -1465,7 +1465,7 @@
   },
   {
     "name": "Pandora",
-    "markets": ["US","Australia","New Zealand"],
+    "markets": ["US", "Australia", "New Zealand"],
     "streaming": true,
     "download": false,
     "other": false,
@@ -2121,7 +2121,15 @@
   },
   {
     "name": "Viettel Imusik",
-    "markets": ["Cameroon", "Dong", "Timor", "Haiti", "Mozambique", "Tanzania", "Vietnam"],
+    "markets": [
+      "Cameroon",
+      "Dong",
+      "Timor",
+      "Haiti",
+      "Mozambique",
+      "Tanzania",
+      "Vietnam"
+    ],
     "streaming": true,
     "download": true,
     "other": false,
@@ -2210,9 +2218,9 @@
   {
     "name": "Yandex.Music",
     "markets": ["Russia", "Ukraine", "Belarus", "Kazakhstan"],
-    "streaming":true,
-    "download":false,
-    "other":false,
+    "streaming": true,
+    "download": false,
+    "other": false,
     "blockchain": false
   },
   {

@@ -1,26 +1,28 @@
 {
-	"name": "smartsplit-server",
-	"version": "1.0.0",
-	"description": "Serveur API pour SmartSplit",
-	"main": "index.js",
-	"author": "SmartSplit <info@smartsplit.org>",
-	"license": "GPLv3",
-	"private": true,
-	"dependencies": {
-		"@sendgrid/mail": "^7.0.0",
-		"bcrypt": "^4.0.1",
-		"cors": "^2.8.5",
-		"express": "^4.17.1",
-		"express-async-errors": "^3.1.1",
-		"jsonwebtoken": "^8.5.1",
-		"mongoose": "^5.9.7",
-		"morgan": "^1.10.0",
-		"swagger-ui-dist": "^3.25.2",
-		"swagger-ui-express": "^4.1.4",
-		"twilio": "^3.43.0",
-		"uuid": "^7.0.3"
-	},
-	"scripts": {
-		"start": "node ."
-	}
+  "name": "smartsplit-server",
+  "version": "1.0.0",
+  "description": "Serveur API pour SmartSplit",
+  "main": "index.js",
+  "author": "SmartSplit <info@smartsplit.org>",
+  "license": "GPLv3",
+  "private": true,
+  "dependencies": {
+    "@sendgrid/mail": "^7.0.0",
+    "bcrypt": "^4.0.1",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "express-async-errors": "^3.1.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.9.7",
+    "morgan": "^1.10.0",
+    "prettier": "^2.0.5",
+    "swagger-ui-dist": "^3.25.2",
+    "swagger-ui-express": "^4.1.4",
+    "twilio": "^3.43.0",
+    "uuid": "^7.0.3"
+  },
+  "scripts": {
+    "start": "node .",
+    "format": "prettier --write src/ *.js *.json"
+  }
 }
