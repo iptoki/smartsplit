@@ -120,7 +120,7 @@ async function createListEntity() {
 	return entity
 }
 
-async function updateListEntity() {
+async function updateListEntity(entity) {
 	if (
 		!this.authUser.isAdmin &&
 		this.req.params.list_type === "digital-distributors"
