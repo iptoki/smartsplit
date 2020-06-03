@@ -31,11 +31,10 @@ const contentLanguagesList = new mongoose.Schema(
 	{ discriminatorKey: "type" }
 )
 
-contentLanguagesList.methods.setFields = async function (body) {
+contentLanguagesList.methods.setFields = function (body) {
 	for (let field of ["name", "altNames", ...List.getFields()]) {
 		if (body[field]) this[field] = body[field]
 	}
-	await this.save()
 }
 
 module.exports = List.discriminator("content-languages", contentLanguagesList)

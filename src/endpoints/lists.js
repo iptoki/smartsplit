@@ -132,8 +132,9 @@ async function updateListEntity(entity) {
 		delete this.req.body.users
 	}
 
-	await entity.setFields(this.req.body)
-
+	entity.setFields(this.req.body)
+	await entity.save()
+	
 	return entity
 }
 
