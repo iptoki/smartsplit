@@ -92,7 +92,7 @@ const WorkpieceSchema = new mongoose.Schema({
 		},
 	},
 
-	title : {
+	title: {
 		type: String,
 		api: {
 			type: "string",
