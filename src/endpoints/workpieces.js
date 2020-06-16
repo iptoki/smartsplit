@@ -1,7 +1,9 @@
 const { api } = require("../app")
 const JWTAuth = require("../service/JWTAuth")
+const User = require("../models/user")
 const Workpiece = require("../models/workpiece")
 const WorkpieceSchema = require("../schemas/workpieces")
+const UserSchema = require("../schemas/users")
 
 /************************ Routes ************************/
 
@@ -147,7 +149,7 @@ api.post(
 		},
 	},
 	JWTAuth.loadAuthUser,
-	loadWorkpieceAsRightHolder,
+	loadWorkpiece,
 	swapRightSplitUser
 )
 
@@ -252,6 +254,7 @@ async function deleteRightSplit(workpiece) {
 			workpiece_id: workpiece._id
 		})
 
+	workpiece.archivedSplits.push(workpiece.rightSplit)
 	delete workpiece.rightSplit
 	await workpiece.save()
 
@@ -304,5 +307,23 @@ async function voteRightSplit(workpiece) {
 }
 
 async function swapRightSplitUser(workpiece) {
+	const user = User.findOne().byRightSplitToken(this.req.body.token)
 
+	const index = workpiece.rightHolders.indexOf(user._id)
+	if(index === -1)
+		throw new UserSchema.UserForbbidenError()
+
+	workpiece.rightHolders[index] = this.authUser._id
+
+	for(splitType of ["copyright", "interpretation", "recording"]) {
+		for(entry of workpiece.rightSplit[splitType]) {
+			if(entry.rightHolder === user._id){
+				entry.rightHolder = this.authUser._id 
+				break
+			}
+		}
+	}
+
+	await workpiece.save()
+	this.res.status(204).end()
 }

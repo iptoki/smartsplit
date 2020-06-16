@@ -10,6 +10,7 @@ const { sendSMSTo } = require("../service/twilio")
 
 const JWT_RESET_TYPE = "user:password-reset"
 const JWT_ACTIVATE_TYPE = "user:activate"
+const JWT_SPLIT_TYPE = "right-split"
 
 /**
  * Represents a user's notification preferences in the system
@@ -394,6 +395,20 @@ UserSchema.query.byPasswordResetToken = function (token) {
  */
 UserSchema.query.byActivationToken = function (token) {
 	const data = JWT.decode(JWT_ACTIVATE_TYPE, token)
+
+	if (!data) return this.where({ _id: false }).skip(1).limit(0)
+	else
+		return this.where({
+			_id: data.user_id,
+			password: data.user_password,
+		})
+}
+
+/**
+ * Looks up a user by an account activation token.
+ */
+UserSchema.query.byRightSplitToken = function (token) {
+	const data = JWT.decode(JWT_SPLIT_TYPE, token)
 
 	if (!data) return this.where({ _id: false }).skip(1).limit(0)
 	else
