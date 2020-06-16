@@ -38,7 +38,9 @@ const rightSplitAPISpec = {
 	properties: {
 		_state: {
 			type: "string",
-			example: "accepted"
+			enum: ["draft","voting","accepted","rejected"],
+			example: "accepted",
+			readOnly: true,
 		},
 		copyright: {
 			type: "array",
@@ -72,7 +74,10 @@ const splitSchema = new mongoose.Schema({
 
 
 const rightSplitSchema = new mongoose.Schema({
-	_state: String,
+	_state: {
+		type: String,
+		enum: ["draft","voting","accepted","rejected"],
+	},
 	copyright: [splitSchema],
 	interpretation: [splitSchema],
 	recording: [splitSchema],
@@ -151,3 +156,28 @@ const WorkpieceSchema = new mongoose.Schema({
 	},
 
 }, { timestamps: true })
+
+
+WorkpieceSchema.methods.setRightSplit = function (body) {
+	const rightSplit = {
+		_state: "draft",
+		copyright: [],
+		interpretation: [],
+		recording: [],
+	}
+	for(splitType of ["copyright", "interpretation", "recording"]) {
+		for(entry of body[splitType]) {
+			if(!this.rightHolders.includes(entry.rightHolder))
+				throw new Error(
+					"Right holder `" + entry.rightHolder + "` is not in the workpiece's right holder list"
+				)
+			rightSplit[splitType].push({
+				rightHolder: entry.rightHolder,
+				roles: entry.roles,
+				vote: "undecided",
+				shares: entry.shares,
+			})
+		}
+	}
+	this.rightSplit = rightSplit
+}

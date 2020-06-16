@@ -188,11 +188,11 @@ async function createWorkpiece() {
 }
 
 async function updateWorkpiece(workpiece) {
-	for(field of ["title", "rightHolders", "entityTags", "rightSplit"])
+	for(field of ["title", "rightHolders", "entityTags"])
 		if(this.req.body[field])
 			workpiece[field] = this.req.body[field]
 	await workpiece.save()
-	
+
 	return workpiece
 }
 
@@ -202,28 +202,38 @@ async function deleteWorkpiece(workpiece) {
 }
 
 async function createRightSplit(workpiece) {
-	if(workpiece.rightSplit)
+	if(workpiece.rightSplit) {
+		if(["voting", "accepted"].includes(workpiece.rightSplit._state))
+			throw new WorkpieceSchema.RightSplitError({
+				workpiece_id: workpiece._id
+			})
 		workpiece.archivedSplits.push(workpiece.rightSplit)
+	}
 	
-	await workpiece.setRightSplit(this.req.body)
+	workpiece.setRightSplit(this.req.body)
 	await workpiece.save()
 
 	return workpiece.rightSplit
 }
 
 async function updateRightSplit(workpiece) {
-	if(workpiece.rightSplit.status === "accepted")
-		throw new WorkpieceSchema.RightSplitAlreadyDoneError({
+	if(workpiece.rightSplit._state !== "draft")
+		throw new WorkpieceSchema.RightSplitError({
 			workpiece_id: workpiece._id
 		})
 	
-	await workpiece.setRightSplit(this.req.body)
+	workpiece.setRightSplit(this.req.body)
 	await workpiece.save()
 
 	return workpiece.rightSplit
 }
 
 async function deleteRightSplit(workpiece) {
+	if(workpiece.rightSplit._state !== "draft")
+		throw new WorkpieceSchema.RightSplitError({
+			workpiece_id: workpiece._id
+		})
+
 	delete workpiece.rightSplit
 	await workpiece.save()
 	this.res.status(204).end()
@@ -234,8 +244,8 @@ async function submitRightSplit(workpiece) {
 }
 
 async function voteRightSplit(workpiece) {
-	if(workpiece.rightSplit.status === "accepted")
-		throw new WorkpieceSchema.RightSplitAlreadyDoneError({
+	if(workpiece.rightSplit._state !== "voting")
+		throw new WorkpieceSchema.RightSplitError({
 			workpiece_id: workpiece._id
 		})
 
@@ -247,17 +257,14 @@ async function voteRightSplit(workpiece) {
 			if(entry.rightHolder === this.authUser._id && this.req.body[splitType]) {
 				entry.vote = this.req.body[splitType]
 				if(this.req.body[splitType] === "refused")
-					workpiece.rightSplit.status = "refused"
+					workpiece.rightSplit._state = "refused"
 			}
 		}
 	}
 
-	if(workpiece.rightSplit.status === "refused") {
-		workpiece.archivedSplits.push(workpiece.rightSplit)
-		delete workpiece.rightSplit
-	} 
 	else if(accepted)
-		workpiece.status = "accepted"
+		workpiece._state = "accepted"
+		// TODO send email?
 
 	await workpiece.save()
 	this.res.status(204).end()
