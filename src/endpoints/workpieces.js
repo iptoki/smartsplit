@@ -42,7 +42,7 @@ api.patch(
 		},
 	},
 	JWTAuth.loadAuthUser,
-	loadWorkpiece,
+	loadWorkpieceAsOwner,
 	updateWorkpiece,
 )
 
@@ -57,7 +57,7 @@ api.delete(
 		},
 	},
 	JWTAuth.loadAuthUser,
-	loadWorkpiece,
+	loadWorkpieceAsOwner,
 	deleteWorkpiece,
 )
 
@@ -72,7 +72,7 @@ api.post(
 		},
 	},
 	JWTAuth.loadAuthUser,
-	loadWorkpiece,
+	loadWorkpieceAsOwner,
 	createRightSplit,
 )
 
@@ -87,7 +87,7 @@ api.patch(
 		},
 	},
 	JWTAuth.loadAuthUser,
-	loadWorkpiece,
+	loadWorkpieceAsOwner,
 	updateRightSplit,
 )
 
@@ -102,7 +102,7 @@ api.delete(
 		},
 	},
 	JWTAuth.loadAuthUser,
-	loadWorkpiece,
+	loadWorkpieceAsOwner,
 	deleteRightSplit,
 )
 
@@ -117,7 +117,7 @@ api.post(
 		},
 	},
 	JWTAuth.loadAuthUser,
-	loadWorkpiece,
+	loadWorkpieceAsOwner,
 	submitRightSplit,
 )
 
@@ -132,7 +132,7 @@ api.post(
 		},
 	},
 	JWTAuth.loadAuthUser,
-	loadWorkpiece,
+	loadWorkpieceAsRightHolder,
 	voteRightSplit
 )
 
@@ -147,7 +147,7 @@ api.post(
 		},
 	},
 	JWTAuth.loadAuthUser,
-	loadWorkpiece,
+	loadWorkpieceAsRightHolder,
 	swapRightSplitUser
 )
 
@@ -162,7 +162,7 @@ api.patch(
 		},
 	},
 	JWTAuth.loadAuthUser,
-	loadWorkpiece,
+	loadWorkpieceAsOwner,
 )
 
 
@@ -175,7 +175,25 @@ async function loadWorkpiece() {
 		throw new WorkpieceSchema.WorkpieceNotFoundError({
 			workpiece_id: this.req.params.workpiece_id
 		})
+	
+	return workpiece
+}
 
+async function loadWorkpieceAsOwner() {
+	const workpiece = loadWorkpiece.call(this)
+
+	if(workpiece.owner !== this.authUser._id)
+		throw new UserSchema.UserForbbidenError(user_id: this.authUser._id)
+
+	return workpiece
+}
+
+async function loadWorkpieceAsRightHolder() {
+	const workpiece = loadWorkpiece.call(this)
+
+	if(!workpiece.rightHolders.includes(this.authUser._id))
+		throw new UserSchema.UserForbbidenError(user_id: this.authUser._id)
+	
 	return workpiece
 }
 
@@ -236,11 +254,24 @@ async function deleteRightSplit(workpiece) {
 
 	delete workpiece.rightSplit
 	await workpiece.save()
+
 	this.res.status(204).end()
 }
 
 async function submitRightSplit(workpiece) {
+	if(workpiece.rightSplit._state !== "draft")
+		throw new WorkpieceSchema.RightSplitError({
+			workpiece_id: workpiece._id
+		})
 
+	workpiece.rightSplit._state = "voting"
+	await workpiece.save()
+
+	await workpiece.populate(rightHolders).execPopulate()
+	for(user of workpiece.rightHolders)
+		await user.emailRightSplitVoting()
+	
+	this.res.status(204).end()
 }
 
 async function voteRightSplit(workpiece) {
@@ -262,10 +293,12 @@ async function voteRightSplit(workpiece) {
 		}
 	}
 
-	else if(accepted)
+	else if(accepted) {
 		workpiece._state = "accepted"
-		// TODO send email?
-
+		await workpiece.populate(rightHolders).execPopulate()
+		for(user of workpiece.rightHolders)
+			await user.emailRightSplitAccepted()
+	}
 	await workpiece.save()
 	this.res.status(204).end()
 }

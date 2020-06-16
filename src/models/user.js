@@ -688,6 +688,20 @@ UserSchema.methods.emailPasswordChanged = async function () {
 }
 
 /**
+ * Sends the right split created notification to the user
+ */
+UserSchema.methods.emailRightSplitVoting = async function (expires = "2 weeks") {
+	return await sendTemplateTo("right-split:created", this, {}, {})
+}
+
+/**
+ * Sends the right split completed and accepted notification to the user
+ */
+UserSchema.methods.emailRightSplitAccepted = async function (expires = "2 weeks") {
+	return await sendTemplateTo("right-split:accepted", this, {}, {})
+}
+
+/**
  * Sends an SMS to the user
  */
 UserSchema.methods.sendSMS = async function (notificationType, message) {

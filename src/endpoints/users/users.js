@@ -4,6 +4,7 @@ const JWTAuth = require("../../service/JWTAuth")
 const UserSchema = require("../../schemas/users")
 
 async function loadUser() {
+	console.log(this.req)
 	const user =
 		this.req.params.user_id === "session"
 			? await JWTAuth.requireUser.call(this)

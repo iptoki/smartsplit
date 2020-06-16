@@ -32,6 +32,16 @@ const TemplateMap = {
 		en: "d-ffa0d437e03441b5bea6a233de349558",
 		fr: "d-8d0b9acf81e2475a8ab133da07ae3df3",
 	},
+
+	"right-split:created": {
+		en: "d-cf37277440d64095abac9531ba6457ea",
+		fr: "d-3609f460f0ab47bfbda87043388cfd03",
+	},
+
+	"right-split:accepted": {
+		en: "d-96d430a6f14d4268960e1403c1085276",
+		fr: "d-992b19e8e96744e4b5b978f097584d00",
+	},
 }
 
 /**
