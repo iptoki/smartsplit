@@ -126,6 +126,7 @@ const WorkpieceSchema = new mongoose.Schema({
 				format: "uuid",
 				example: "e87b56fe-1ce0-4ec7-8393-e18dc7415041",
 			},
+			readOnly: true,
 		},
 	},
 
@@ -159,19 +160,18 @@ const WorkpieceSchema = new mongoose.Schema({
 
 
 WorkpieceSchema.methods.setRightSplit = function (body) {
-	const rightSplit = {
+	this.rightSplit = {
 		_state: "draft",
 		copyright: [],
 		interpretation: [],
 		recording: [],
 	}
+	this.rightHolders = []
 	for(splitType of ["copyright", "interpretation", "recording"]) {
 		for(entry of body[splitType]) {
 			if(!this.rightHolders.includes(entry.rightHolder))
-				throw new Error(
-					"Right holder `" + entry.rightHolder + "` is not in the workpiece's right holder list"
-				)
-			rightSplit[splitType].push({
+				this.rightHolders.push(entry.rightHolder)
+			this.rightSplit[splitType].push({
 				rightHolder: entry.rightHolder,
 				roles: entry.roles,
 				vote: "undecided",
@@ -179,5 +179,4 @@ WorkpieceSchema.methods.setRightSplit = function (body) {
 			})
 		}
 	}
-	this.rightSplit = rightSplit
 }

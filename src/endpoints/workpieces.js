@@ -153,21 +153,6 @@ api.post(
 	swapRightSplitUser
 )
 
-api.patch(
-	"/workpieces/{workpiece_id}/rightHolders",
-	{
-		tags: ["Workpieces"],
-		summary: "Update the rightHolders of a workpiece by ID",
-		parameters: [WorkpieceSchema.workpiece_id],
-		responses: {
-			404: WorkpieceSchema.WorkpieceNotFoundError
-		},
-	},
-	JWTAuth.loadAuthUser,
-	loadWorkpieceAsOwner,
-)
-
-
 /*********************** Handlers ***********************/
 
 async function loadWorkpiece() {
@@ -208,7 +193,7 @@ async function createWorkpiece() {
 }
 
 async function updateWorkpiece(workpiece) {
-	for(field of ["title", "rightHolders", "entityTags"])
+	for(field of ["title", "entityTags"])
 		if(this.req.body[field])
 			workpiece[field] = this.req.body[field]
 	await workpiece.save()
