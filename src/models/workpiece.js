@@ -1,5 +1,7 @@
 const mongoose = require("mongoose")
 const uuid = require("uuid").v4
+const User = require("./user")
+const UserSchema = require("../schemas/users")
 
 const splitAPISpec = {
 	type: "object",
@@ -48,7 +50,7 @@ const rightSplitAPISpec = {
 		},
 		interpretation: {
 			type: "array",
-			items: splitAPISpecm
+			items: splitAPISpec,
 		},
 		recording: {
 			type: "array",
@@ -159,7 +161,7 @@ const WorkpieceSchema = new mongoose.Schema({
 }, { timestamps: true })
 
 
-WorkpieceSchema.methods.setRightSplit = function (body) {
+WorkpieceSchema.methods.setRightSplit = async function (body) {
 	this.rightSplit = {
 		_state: "draft",
 		copyright: [],
@@ -167,10 +169,15 @@ WorkpieceSchema.methods.setRightSplit = function (body) {
 		recording: [],
 	}
 	this.rightHolders = []
+
 	for(splitType of ["copyright", "interpretation", "recording"]) {
 		for(entry of body[splitType]) {
+			if(! await User.exists({_id: entry.rightHolder}))
+				throw new UserSchema.UserNotFoundError({user_id: entry.rightHolder})
+
 			if(!this.rightHolders.includes(entry.rightHolder))
 				this.rightHolders.push(entry.rightHolder)
+
 			this.rightSplit[splitType].push({
 				rightHolder: entry.rightHolder,
 				roles: entry.roles,
@@ -180,3 +187,5 @@ WorkpieceSchema.methods.setRightSplit = function (body) {
 		}
 	}
 }
+
+module.exports = mongoose.model("Workpiece", WorkpieceSchema)

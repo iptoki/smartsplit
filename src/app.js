@@ -94,6 +94,7 @@ module.exports = {
 // Load up the endpoints
 require("./endpoints/auth")
 require("./endpoints/lists")
+require("./endpoints/workpieces")
 require("./endpoints/users/index")
 
 // Generic error handler
