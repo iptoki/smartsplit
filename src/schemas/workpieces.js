@@ -11,8 +11,6 @@ module.exports = {
 
 	workpiece: api.schemaFromModel("workpiece", Workpiece),
 	
-	workpiece: api.schemaFromModel("workpiece", Workpiece),
-
 	WorkpieceNotFoundError: error("workpiece_not_found", 404, "Workpiece not found"),
 
 	ConflictingRightSplitStateError: error(
