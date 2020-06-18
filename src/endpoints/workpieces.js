@@ -14,7 +14,8 @@ api.get(
 		summary: "Get a workpiece by ID",
 		parameters: [WorkpieceSchema.workpiece_id],
 		responses: {
-			404: WorkpieceSchema.WorkpieceNotFoundError
+			200: WorkpieceSchema.workpiece,
+			404: WorkpieceSchema.WorkpieceNotFoundError,
 		},
 	},
 	JWTAuth.loadAuthUser,
@@ -27,7 +28,9 @@ api.post(
 		tags: ["Workpieces"],
 		summary: "Create a new workpiece in the system",
 		parameters: [],
-		responses: {},
+		responses: {
+			200: WorkpieceSchema.workpiece,
+		},
 	},
 	JWTAuth.loadAuthUser,
 	createWorkpiece,
@@ -40,7 +43,8 @@ api.patch(
 		summary: "Update a workpiece by ID",
 		parameters: [WorkpieceSchema.workpiece_id],
 		responses: {
-			404: WorkpieceSchema.WorkpieceNotFoundError
+			200: WorkpieceSchema.workpiece,
+			404: WorkpieceSchema.WorkpieceNotFoundError,
 		},
 	},
 	JWTAuth.loadAuthUser,
@@ -55,7 +59,7 @@ api.delete(
 		summary: "Delete from the system a workpiece by ID",
 		parameters: [WorkpieceSchema.workpiece_id],
 		responses: {
-			404: WorkpieceSchema.WorkpieceNotFoundError
+			404: WorkpieceSchema.WorkpieceNotFoundError,
 		},
 	},
 	JWTAuth.loadAuthUser,
@@ -79,7 +83,7 @@ api.post(
 	createRightSplit,
 )
 
-api.patch(
+api.put(
 	"/workpieces/{workpiece_id}/rightSplit",
 	{
 		tags: ["Workpieces"],
@@ -181,7 +185,7 @@ async function loadWorkpieceAsOwner() {
 }
 
 async function loadWorkpieceAsRightHolder() {
-	const workpiece = loadWorkpiece.call(this)
+	const workpiece = await loadWorkpiece.call(this)
 
 	if(!workpiece.rightHolders.includes(this.authUser._id))
 		throw new UserSchema.UserForbiddenError({user_id: this.authUser._id})
@@ -263,11 +267,11 @@ async function submitRightSplit(workpiece) {
 		})
 
 	workpiece.rightSplit._state = "voting"
-	await workpiece.save()
 
-	await workpiece.populate(rightHolders).execPopulate()
+	await workpiece.populate("rightHolders").execPopulate()
 	for(user of workpiece.rightHolders)
 		await user.emailRightSplitVoting()
+	await workpiece.save()
 	
 	this.res.status(204).end()
 }
@@ -282,19 +286,20 @@ async function voteRightSplit(workpiece) {
 	let accepted = true
 	for(type of ["copyright", "interpretation", "recording"]) {
 		for(entry of workpiece.rightSplit[type]) {
-			if(entry.vote !== "accepted") 
-				accepted = false
 			if(entry.rightHolder === this.authUser._id && this.req.body[type]) {
+				if(entry.vote !== "undecided")
+					throw new WorkpieceSchema.VoteAlreadySubmitedError()
 				entry.vote = this.req.body[type]
-				if(this.req.body[type] === "refused")
-					workpiece.rightSplit._state = "refused"
+				if(this.req.body[type] === "rejected")
+					workpiece.rightSplit._state = "rejected"
 			}
+			if(entry.vote !== "accepted")
+				accepted = false
 		}
 	}
-
 	if(accepted) {
-		workpiece._state = "accepted"
-		await workpiece.populate(rightHolders).execPopulate()
+		workpiece.rightSplit._state = "accepted"
+		await workpiece.populate("rightHolders").execPopulate()
 		for(user of workpiece.rightHolders)
 			await user.emailRightSplitAccepted()
 	}

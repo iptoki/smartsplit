@@ -170,18 +170,18 @@ WorkpieceSchema.methods.setRightSplit = async function (body) {
 	}
 	this.rightHolders = []
 
-	for(splitType of ["copyright", "interpretation", "recording"]) {
-		for(entry of body[splitType]) {
+	for(type of ["copyright", "interpretation", "recording"]) {
+		for(entry of body[type]) {
 			if(! await User.exists({_id: entry.rightHolder}))
 				throw new UserSchema.UserNotFoundError({user_id: entry.rightHolder})
 
 			if(!this.rightHolders.includes(entry.rightHolder))
 				this.rightHolders.push(entry.rightHolder)
 
-			this.rightSplit[splitType].push({
+			this.rightSplit[type].push({
 				rightHolder: entry.rightHolder,
 				roles: entry.roles,
-				vote: "undecided",
+				vote: this.owner === entry.rightHolder ? "accepted" : "undecided",
 				shares: entry.shares,
 			})
 		}

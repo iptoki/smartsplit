@@ -1,4 +1,5 @@
 const { api, error } = require("../app")
+const Workpiece = require("../models/workpiece")
 
 module.exports = {
 	workpiece_id: api.param("workpiece_id", {
@@ -8,6 +9,10 @@ module.exports = {
 		example: "e87b56ee-1ca0-4ec7-8393-e18dc7415041",
 	}),
 
+	workpiece: api.schemaFromModel("workpiece", Workpiece),
+	
+	workpiece: api.schemaFromModel("workpiece", Workpiece),
+
 	WorkpieceNotFoundError: error("workpiece_not_found", 404, "Workpiece not found"),
 
 	ConflictingRightSplitStateError: error(
@@ -15,4 +20,9 @@ module.exports = {
 		409,
 		"The current state of the right split does not allow this kind of operation"
 	),
+
+	VoteAlreadySubmitedError: error(
+		"vote_already_submited",
+		412,
+		"This right holder's vote has already been submited and cannot be submited again"),
 }
