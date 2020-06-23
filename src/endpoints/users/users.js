@@ -14,19 +14,18 @@ async function loadUser() {
 			user_id: this.req.params.user_id,
 		})
 
-	this.user = user
 	return user
 }
 
 async function loadUserWithPendingEmails() {
-	await loadUser.call(this)
-	await this.user.populate("pendingEmails").execPopulate()
-	return this.user
+	const user = await loadUser.call(this)
+	await user.populate("pendingEmails").execPopulate()
+	return user
 }
 
-async function getUserAvatar() {
+async function getUserAvatar(user) {
 	this.res.contentType("image/jpeg") // hardcoded for the moment
-	this.res.send(this.user.avatar)
+	this.res.send(user.avatar)
 }
 
 async function createUser() {
@@ -39,7 +38,7 @@ async function createUser() {
 		.populate("user")
 
 	if (email) {
-		if (!email.user) email.remove()
+		if (!email.user) await email.remove()
 		else if (
 			!(
 				(await email.user.verifyPassword(this.req.body.password)) ||
@@ -96,20 +95,20 @@ async function activateUserAccount() {
 	return { accessToken: JWTAuth.createToken(email.user), user: email.user }
 }
 
-async function updateUser() {
+async function updateUser(user) {
 	let passwordChanged = false
 
 	// Update user data
-	if (this.req.body.email) await this.user.addPendingEmail(this.req.body.email)
+	if (this.req.body.email) await user.addPendingEmail(this.req.body.email)
 
 	if (this.req.body.phoneNumber)
-		await this.user.setMobilePhone(this.req.body.phoneNumber, false)
+		await user.setMobilePhone(this.req.body.phoneNumber, false)
 
 	if (this.req.body.password)
-		passwordChanged = await this.user.setPassword(this.req.body.password)
+		passwordChanged = await user.setPassword(this.req.body.password)
 
 	if (this.req.body.avatar)
-		this.user.setAvatar(Buffer.from(this.req.body.avatar, "base64"))
+		user.setAvatar(Buffer.from(this.req.body.avatar, "base64"))
 
 	for (let field of [
 		"firstName",
@@ -118,9 +117,9 @@ async function updateUser() {
 		"locale",
 		"notifications",
 	])
-		if (this.req.body[field]) this.user[field] = this.req.body[field]
+		if (this.req.body[field]) user[field] = this.req.body[field]
 
-	await this.user.save()
+	await user.save()
 
 	// Send notification if password changed and saved successfully
 	if (passwordChanged)
@@ -128,7 +127,28 @@ async function updateUser() {
 			console.error("Error sending 'password changed' email:", e)
 		})
 
-	return this.user
+	return user
+}
+
+async function requestPasswordReset() {
+	let user = await User.findOne().byEmail(this.req.body.email)
+
+	if(!user) {
+		const email = await EmailVerification.findOne()
+			.byEmail(this.req.body.email)
+			.populate("user")
+
+		if(!email)
+			throw new UserSchema.UserNotFoundError({email: this.req.body.email})
+
+		user = email.user
+	}
+
+	await user.emailPasswordReset(this.req.body.email).catch((e) => {
+		console.error("Error sending 'password reset' email:", e)
+	})
+
+	this.res.status(204).end()
 }
 
 async function changeUserPassword() {
@@ -151,12 +171,16 @@ async function changeUserPassword() {
 
 	await user.setPassword(this.req.body.password, true)
 
-	if (user.accountStatus === "email-verification-pending")
+	if (user.accountStatus === "email-verification-pending"){
 		user.accountStatus = "active"
+		const data = JWT.decode(JWT_RESET_TYPE, this.req.body.token)
+		if(await user.removePendingEmail(data.user_email))
+			user.emails.push(data.user_email)
+	}
 
 	await user.save()
 
-	user.emailPasswordChanged().catch((e) => {
+	await user.emailPasswordChanged().catch((e) => {
 		console.error("Error sending 'password changed' email:", e)
 	})
 
@@ -176,10 +200,10 @@ async function verifyUserMobilePhone() {
 	this.res.status(204).end()
 }
 
-async function deleteUserAccount() {
-	if (this.user.isDeleted) throw new UserSchema.AccountAlreadyDeletedError()
+async function deleteUserAccount(user) {
+	if (user.isDeleted) throw new UserSchema.AccountAlreadyDeletedError()
 
-	await this.user.deleteAccount()
+	await user.deleteAccount()
 
 	this.res.status(204).end()
 }
@@ -191,6 +215,7 @@ module.exports = {
 	createUser,
 	activateUserAccount,
 	updateUser,
+	requestPasswordReset,
 	changeUserPassword,
 	verifyUserMobilePhone,
 	deleteUserAccount,

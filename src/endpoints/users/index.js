@@ -103,7 +103,7 @@ api.post(
 			404: UserSchema.UserNotFoundError,
 		},
 	},
-	UserController.resetUserPassword
+	UserController.requestPasswordReset
 )
 
 api.post(
