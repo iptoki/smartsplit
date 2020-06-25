@@ -96,6 +96,7 @@ api.put(
 	},
 	JWTAuth.loadAuthUser,
 	loadWorkpieceAsOwner,
+	ensureRightSplitExist,
 	updateRightSplit,
 )
 
@@ -112,6 +113,7 @@ api.delete(
 	},
 	JWTAuth.loadAuthUser,
 	loadWorkpieceAsOwner,
+	ensureRightSplitExist,
 	deleteRightSplit,
 )
 
@@ -128,6 +130,7 @@ api.post(
 	},
 	JWTAuth.loadAuthUser,
 	loadWorkpieceAsOwner,
+	ensureRightSplitExist,
 	submitRightSplit,
 )
 
@@ -144,7 +147,8 @@ api.post(
 	},
 	JWTAuth.loadAuthUser,
 	loadWorkpieceAsRightHolder,
-	voteRightSplit
+	ensureRightSplitExist,
+	voteRightSplit,
 )
 
 api.post(
@@ -160,7 +164,8 @@ api.post(
 	},
 	JWTAuth.loadAuthUser,
 	loadWorkpiece,
-	swapRightSplitUser
+	ensureRightSplitExist,
+	swapRightSplitUser,
 )
 
 /*********************** Handlers ***********************/
@@ -202,7 +207,7 @@ async function createWorkpiece() {
 }
 
 async function updateWorkpiece(workpiece) {
-	for(field of ["title", "entityTags"])
+	for(let field of ["title", "entityTags"])
 		if(this.req.body[field])
 			workpiece[field] = this.req.body[field]
 	await workpiece.save()
@@ -210,21 +215,28 @@ async function updateWorkpiece(workpiece) {
 	return workpiece
 }
 
+function ensureRightSplitExist(workpiece) {
+	if(!workpiece.rightSplit)
+		throw new WorkpieceSchema.RightSplitNotFoundError({
+			workpiece_id: workpiece._id,
+		})
+	return workpiece
+}
+
 async function deleteWorkpiece(workpiece) {
-	// Refuse operation if an accepted rightSplit exist?
+	if(!workpiece.isRemovable())
+		throwConflictingRightSplitStateError(workpiece)
+
 	await workpiece.remove()
 	this.res.status(204).end()
 }
 
 async function createRightSplit(workpiece) {
-	if(workpiece.rightSplit) {
-		if(["voting", "accepted"].includes(workpiece.rightSplit._state))
-			throw new WorkpieceSchema.ConflictingRightSplitStateError({
-				workpiece_id: workpiece._id,
-				right_split_state: workpiece.rightSplit._state
-			})
+	if(!workpiece.canAcceptNewSplit())
+		throwConflictingRightSplitStateError(workpiece)
+	
+	if(workpiece.rightSplit)
 		workpiece.archivedSplits.push(workpiece.rightSplit)
-	}
 	
 	await workpiece.setRightSplit(this.req.body)
 	await workpiece.save()
@@ -232,13 +244,11 @@ async function createRightSplit(workpiece) {
 	return workpiece.rightSplit
 }
 
+
 async function updateRightSplit(workpiece) {
-	if(workpiece.rightSplit._state !== "draft")
-		throw new WorkpieceSchema.ConflictingRightSplitStateError({
-			workpiece_id: workpiece._id,
-			right_split_state: workpiece.rightSplit._state
-		})
-	
+	if(!workpiece.canUpdateRightSplit())
+		throwConflictingRightSplitStateError(workpiece)
+
 	await workpiece.setRightSplit(this.req.body)
 	await workpiece.save()
 
@@ -246,86 +256,61 @@ async function updateRightSplit(workpiece) {
 }
 
 async function deleteRightSplit(workpiece) {
-	if(workpiece.rightSplit._state !== "draft")
-		throw new WorkpieceSchema.ConflictingRightSplitStateError({
-			workpiece_id: workpiece._id,
-			right_split_state: workpiece.rightSplit._state
-		})
+	if(!workpiece.canUpdateRightSplit())
+		throwConflictingRightSplitStateError(workpiece)
 
 	workpiece.archivedSplits.push(workpiece.rightSplit)
-	delete workpiece.rightSplit
+	workpiece.rightSplit = undefined
 	await workpiece.save()
 
 	this.res.status(204).end()
 }
 
 async function submitRightSplit(workpiece) {
-	if(workpiece.rightSplit._state !== "draft")
-		throw new WorkpieceSchema.ConflictingRightSplitStateError({
-			workpiece_id: workpiece._id,
-			right_split_state: workpiece.rightSplit._state
-		})
+	if(!workpiece.canUpdateRightSplit())
+		throwConflictingRightSplitStateError(workpiece)
 
-	workpiece.rightSplit._state = "voting"
-
-	await workpiece.populate("rightHolders").execPopulate()
-	for(user of workpiece.rightHolders)
-		await user.emailRightSplitVoting()
+	await workpiece.submitRightSplit()
 	await workpiece.save()
 	
 	this.res.status(204).end()
 }
 
 async function voteRightSplit(workpiece) {
-	if(workpiece.rightSplit._state !== "voting")
-		throw new WorkpieceSchema.ConflictingRightSplitStateError({
-			workpiece_id: workpiece._id,
-			right_split_state: workpiece.rightSplit._state
-		})
+	if(!workpiece.canVoteRightSplit())
+		throwConflictingRightSplitStateError(workpiece)
 
-	let accepted = true
-	for(type of ["copyright", "interpretation", "recording"]) {
-		for(entry of workpiece.rightSplit[type]) {
-			if(entry.rightHolder === this.authUser._id && this.req.body[type]) {
-				if(entry.vote !== "undecided")
-					throw new WorkpieceSchema.VoteAlreadySubmitedError()
-				entry.vote = this.req.body[type]
-				if(this.req.body[type] === "rejected")
-					workpiece.rightSplit._state = "rejected"
-			}
-			if(entry.vote !== "accepted")
-				accepted = false
-		}
-	}
-	if(accepted) {
-		workpiece.rightSplit._state = "accepted"
-		await workpiece.populate("rightHolders").execPopulate()
-		for(user of workpiece.rightHolders)
-			await user.emailRightSplitAccepted()
-	}
-
+	workpiece.setVote(this.authUser._id, this.req.body)
+	await workpiece.updateRightSplitState()
 	await workpiece.save()
+
 	this.res.status(204).end()
 }
 
 async function swapRightSplitUser(workpiece) {
-	const user = User.findOne().byRightSplitToken(this.req.body.token)
-	const index = workpiece.rightHolders.indexOf(user._id)
+	if(!workpiece.canVoteRightSplit())
+		throwConflictingRightSplitStateError(workpiece)
 
-	if(index === -1)
-		throw new UserSchema.UserForbiddenError()
+	const data = workpiece.decodeToken(this.req.body.token)
 
-	workpiece.rightHolders[index] = this.authUser._id
+	if(data){
+		const tokenUser = await User.findById(data.rightHolder_id)
+		if(tokenUser && workpiece.rightHolders.includes(tokenUser._id)){
+			workpiece.swapRightHolder(tokenUser._id, this.authUser._id)
+			await workpiece.save()
 
-	for(type of ["copyright", "interpretation", "recording"]) {
-		for(entry of workpiece.rightSplit[type]) {
-			if(entry.rightHolder === user._id){
-				entry.rightHolder = this.authUser._id 
-				break
-			}
+			this.res.status(204).end()
 		}
-	}
+	} 
 
-	await workpiece.save()
-	this.res.status(204).end()
+	throw new WorkpieceSchema.InvalidSplitTokenError({
+		token: this.req.body.token
+	})
+}
+
+function throwConflictingRightSplitStateError(workpiece) {
+	throw new WorkpieceSchema.ConflictingRightSplitStateError({
+		workpiece_id: workpiece._id,
+		right_split_state: workpiece.rightSplit._state,
+	})
 }
