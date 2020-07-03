@@ -142,6 +142,17 @@ api.post(
 	UserController.verifyUserMobilePhone
 )
 
+api.post(
+	"/users/invite-new-user",
+	{
+		tags: ["Users"],
+		summary: "Create a new user and send him an email to activate the created account",
+		responses: {
+		},
+	},
+	UserController.inviteNewUser
+)
+
 api.delete(
 	"/users/{user_id}",
 	{

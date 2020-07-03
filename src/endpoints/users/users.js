@@ -208,6 +208,38 @@ async function deleteUserAccount(user) {
 	this.res.status(204).end()
 }
 
+async function inviteNewUser() {
+	if (await User.findOne().byEmail(this.req.body.email))
+		throw new UserSchema.ConflictingUserError({ email: this.req.body.email })
+
+	let user
+	let email = await EmailVerification.findOne()
+		.byEmail(this.req.body.email)
+		.populate("user")
+
+	if (email) {
+		if (!email.user) await email.remove()
+		else user = email.user
+	}
+
+	if (!user) {
+		user = new User({
+			this.req.body.firstName,
+			this.req.body.lastName,
+			accountStatus: "split-invited"
+		})
+
+		await user.addPendingEmail(this.req.body.email, false)
+		await user.save()
+	}
+
+	await user
+		.emailSplitInvitation(this.req.body.email)
+		.catch((e) => console.error(e, "Error sending split invitation email"))
+
+	return user
+}
+
 module.exports = {
 	loadUser,
 	loadUserWithPendingEmails,

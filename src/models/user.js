@@ -654,6 +654,25 @@ UserSchema.methods.emailWelcome = async function (email, expires = "2 weeks") {
 }
 
 /**
+ * Sends a split invitation email to the user
+ */
+UserSchema.methods.emailSplitInvitation = async function (
+	email,
+	expires = "2 weeks"
+) {
+	const token = this.createPasswordResetToken(email, expires)
+
+	console.log(token) // Temporary helper
+
+	return await sendTemplateTo(
+		"user:split-invited",
+		this,
+		{ to: { name: this.fullName, email: email } },
+		{ /* TODO */ }
+	)
+}
+
+/**
  * Sends an activation email to link a new email to the user account
  */
 UserSchema.methods.emailLinkEmailAccount = async function (
@@ -661,8 +680,6 @@ UserSchema.methods.emailLinkEmailAccount = async function (
 	expires = "2 weeks"
 ) {
 	const token = this.createActivationToken(email, expires)
-
-	console.log(token) // Temporary helper
 
 	return await sendTemplateTo(
 		"user:activate-email",
@@ -680,8 +697,6 @@ UserSchema.methods.emailPasswordReset = async function (
 	expires = "2 hours"
 ) {
 	const token = this.createPasswordResetToken(email, expires)
-
-	console.log(token) // Temporary helper
 
 	return await sendTemplateTo(
 		"user:password-reset",
