@@ -173,7 +173,7 @@ async function changeUserPassword() {
 
 	if (user.accountStatus === "email-verification-pending"){
 		user.accountStatus = "active"
-		const data = JWT.decode(JWT_RESET_TYPE, this.req.body.token)
+		const data = user.decodePasswordResetToken(this.req.body.token)
 		if(await user.removePendingEmail(data.user_email))
 			user.emails.push(data.user_email)
 	}

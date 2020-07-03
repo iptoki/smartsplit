@@ -8,6 +8,8 @@ const { sendTemplateTo, normalizeEmailAddress } = require("../utils/email")
 const { generateRandomCode } = require("../utils/random")
 const { sendSMSTo } = require("../service/twilio")
 
+const JWT_RESET_TYPE = "user:password-reset"
+const JWT_ACTIVATE_TYPE = "user:activate"
 
 /**
  * Represents a user's notification preferences in the system
@@ -385,7 +387,7 @@ UserSchema.query.byMobilePhone = function (number) {
  * Looks up a user by a password reset token.
  */
 UserSchema.query.byPasswordResetToken = function (token) {
-	const data = JWT.decode(JWT.RESET_TYPE, token)
+	const data = JWT.decode(JWT_RESET_TYPE, token)
 
 	if (!data)
 		// no way to easily make it just return `null`
@@ -401,7 +403,7 @@ UserSchema.query.byPasswordResetToken = function (token) {
  * Looks up a user by an account activation token.
  */
 UserSchema.query.byActivationToken = function (token) {
-	const data = JWT.decode(JWT.ACTIVATE_TYPE, token)
+	const data = JWT.decode(JWT_ACTIVATE_TYPE, token)
 
 	if (!data) return this.where({ _id: false }).skip(1).limit(0)
 	else
@@ -599,7 +601,7 @@ UserSchema.methods.verifyMobilePhone = async function (code) {
  */
 UserSchema.methods.createPasswordResetToken = function (email, expires) {
 	return JWT.create(
-		JWT.RESET_TYPE,
+		JWT_RESET_TYPE,
 		{
 			user_id: this._id,
 			user_password: this.password,
@@ -610,10 +612,20 @@ UserSchema.methods.createPasswordResetToken = function (email, expires) {
 }
 
 /**
+ * Decode a password reset token for the user
+ */
+UserSchema.methods.decodePasswordResetToken = function (token) {
+	const data = JWT.decode(JWT_RESET_TYPE, token)
+	if(!data || data.user_id !== this._id) 
+		return null
+	return data
+}
+
+/**
  * Verifies a password reset token for the user
  */
 UserSchema.methods.verifyPasswordResetToken = function (token) {
-	const data = JWT.decode(JWT.RESET_TYPE, token)
+	const data = JWT.decode(JWT_RESET_TYPE, token)
 	return data && data.user_id == this._id
 }
 
@@ -625,7 +637,7 @@ UserSchema.methods.createActivationToken = function (
 	expires = "2 weeks"
 ) {
 	const token = JWT.create(
-		JWT.ACTIVATE_TYPE,
+		JWT_ACTIVATE_TYPE,
 		{
 			user_id: this.user_id,
 			user_password: this.password,
