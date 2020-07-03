@@ -251,4 +251,5 @@ module.exports = {
 	changeUserPassword,
 	verifyUserMobilePhone,
 	deleteUserAccount,
+	inviteNewUser,
 }
