@@ -1,6 +1,9 @@
 const Config = require("../config")
 const JWT = require("jsonwebtoken")
 
+module.exports.RESET_TYPE = "user:password-reset"
+module.exports.ACTIVATE_TYPE = "user:activate"
+
 /**
  * Creates a new JWT token using a secret derived from the type and
  * the system JWT secret.
