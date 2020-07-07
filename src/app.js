@@ -95,6 +95,7 @@ module.exports = {
 require("./endpoints/auth")
 require("./endpoints/lists")
 require("./endpoints/users/index")
+require("./endpoints/rightHolders")
 
 // Generic error handler
 api.router.use(function (err, req, res, next) {
