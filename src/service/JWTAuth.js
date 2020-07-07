@@ -22,6 +22,7 @@ const createToken = function (user, expires = "3 hours") {
 			user_id: user.user_id,
 			user_password: user.password,
 			//rightHolders: user.rightHolders,
+			duration: expires,
 		},
 		expires
 	)
