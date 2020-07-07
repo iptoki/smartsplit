@@ -69,9 +69,12 @@ api.get(
 		},
 	},
 	JWTAuth.requireUser,
-	async function (req, res) {
+	async function () {
 		return {
-			accessToken: JWTAuth.createToken(this.authUser, req.auth.data.duration),
+			accessToken: JWTAuth.createToken(
+				this.authUser,
+				this.req.auth.data.duration
+			),
 			user: this.authUser,
 		}
 	}
