@@ -10,6 +10,7 @@ const { sendSMSTo } = require("../service/twilio")
 
 const JWT_RESET_TYPE = "user:password-reset"
 const JWT_ACTIVATE_TYPE = "user:activate"
+const JWT_SPLIT_TYPE = "right-split"
 
 /**
  * Represents a user's notification preferences in the system
@@ -710,6 +711,37 @@ UserSchema.methods.emailPasswordChanged = async function () {
 }
 
 /**
+ * Sends the right split created notification to the user
+ */
+UserSchema.methods.emailRightSplitVoting = async function (
+	expires = "2 weeks"
+) {
+	return await sendTemplateTo("right-split:created", this, {}, {})
+}
+
+/**
+ * Sends the right split completed and accepted notification to the user
+ */
+UserSchema.methods.emailRightSplitAccepted = async function (
+	expires = "2 weeks"
+) {
+	return await sendTemplateTo("right-split:accepted", this, {}, {})
+}
+
+/*
+ * Sends a notification to the user through the medium set in the user's preferences
+ */
+UserSchema.methods.sendNotification = async function (
+	notificationType,
+	data,
+	options
+) {
+	await this.sendSMS(notificationType, data)
+	await this.sendEmail(notificationType, data, options)
+	await this.sendPush(notificationType, data)
+}
+
+/**
  * Sends an SMS to the user
  */
 UserSchema.methods.sendSMS = async function (notificationType, message) {
@@ -717,14 +749,22 @@ UserSchema.methods.sendSMS = async function (notificationType, message) {
 	else throw new Error("notificationType not implemented yet")
 }
 
-/*
- * Sends a notification to the user through the medium set in the user's preferences
+/**
+ * Sends an Email to the user
  */
-UserSchema.methods.sendNotification = async function (notificationType, data) {
-	// Validation is already done in send{Medium}() functions
-	// await this.sendSMS(notificationType, data)    /* NOT IMPLEMENTED */
-	// await this.sendEmail(notificationType, data)  /* NOT IMPLEMENTED */
-	// await this.sendPush(notificationType, data)   /* NOT IMPLEMENTED */
+UserSchema.methods.sendEmail = async function (
+	notificationType,
+	data,
+	options
+) {
+	throw new Error("not implemented yet")
+}
+
+/**
+ * Sends a Push notification to the user
+ */
+UserSchema.methods.sendPush = async function (notificationType, data, options) {
+	throw new Error("not implemented yet")
 }
 
 module.exports = mongoose.model("User", UserSchema)
