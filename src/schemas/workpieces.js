@@ -10,10 +10,18 @@ module.exports = {
 	}),
 
 	workpiece: api.schemaFromModel("workpiece", Workpiece),
-	
-	WorkpieceNotFoundError: error("workpiece_not_found", 404, "Workpiece not found"),
 
-	RightSplitNotFoundError: error("right_split_not_found", 404, "RightSplit not found"),
+	WorkpieceNotFoundError: error(
+		"workpiece_not_found",
+		404,
+		"Workpiece not found"
+	),
+
+	RightSplitNotFoundError: error(
+		"right_split_not_found",
+		404,
+		"RightSplit not found"
+	),
 
 	InvalidSplitTokenError: error(
 		"right_holder_invalid_token",

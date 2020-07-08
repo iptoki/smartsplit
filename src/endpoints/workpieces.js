@@ -19,7 +19,7 @@ api.get(
 		},
 	},
 	JWTAuth.requireUser,
-	loadWorkpiece,
+	loadWorkpiece
 )
 
 api.post(
@@ -33,7 +33,7 @@ api.post(
 		},
 	},
 	JWTAuth.requireUser,
-	createWorkpiece,
+	createWorkpiece
 )
 
 api.patch(
@@ -49,7 +49,7 @@ api.patch(
 	},
 	JWTAuth.requireUser,
 	loadWorkpieceAsOwner,
-	updateWorkpiece,
+	updateWorkpiece
 )
 
 api.delete(
@@ -64,14 +64,15 @@ api.delete(
 	},
 	JWTAuth.requireUser,
 	loadWorkpieceAsOwner,
-	deleteWorkpiece,
+	deleteWorkpiece
 )
 
 api.post(
 	"/workpieces/{workpiece_id}/rightSplit",
 	{
 		tags: ["Workpieces"],
-		summary: "Create a new split in a workpiece and archivate the old one if applicable",
+		summary:
+			"Create a new split in a workpiece and archivate the old one if applicable",
 		parameters: [WorkpieceSchema.workpiece_id],
 		responses: {
 			404: WorkpieceSchema.WorkpieceNotFoundError,
@@ -80,7 +81,7 @@ api.post(
 	},
 	JWTAuth.requireUser,
 	loadWorkpieceAsOwner,
-	createRightSplit,
+	createRightSplit
 )
 
 api.put(
@@ -97,7 +98,7 @@ api.put(
 	JWTAuth.requireUser,
 	loadWorkpieceAsOwner,
 	ensureRightSplitExist,
-	updateRightSplit,
+	updateRightSplit
 )
 
 api.delete(
@@ -114,14 +115,15 @@ api.delete(
 	JWTAuth.requireUser,
 	loadWorkpieceAsOwner,
 	ensureRightSplitExist,
-	deleteRightSplit,
+	deleteRightSplit
 )
 
 api.post(
 	"/workpieces/{workpiece_id}/rightSplit/submit",
 	{
 		tags: ["Workpieces"],
-		summary: "Submit an email to all members of the split and put it in voting mode",
+		summary:
+			"Submit an email to all members of the split and put it in voting mode",
 		parameters: [WorkpieceSchema.workpiece_id],
 		responses: {
 			404: WorkpieceSchema.WorkpieceNotFoundError,
@@ -131,7 +133,7 @@ api.post(
 	JWTAuth.requireUser,
 	loadWorkpieceAsOwner,
 	ensureRightSplitExist,
-	submitRightSplit,
+	submitRightSplit
 )
 
 api.post(
@@ -148,14 +150,15 @@ api.post(
 	JWTAuth.requireUser,
 	loadWorkpieceAsRightHolder,
 	ensureRightSplitExist,
-	voteRightSplit,
+	voteRightSplit
 )
 
 api.post(
 	"/workpieces/{workpiece_id}/rightSplit/swap-user",
 	{
 		tags: ["Workpieces"],
-		summary: "Swap user in a split if this user decide to vote with an other account",
+		summary:
+			"Swap user in a split if this user decide to vote with an other account",
 		parameters: [WorkpieceSchema.workpiece_id],
 		responses: {
 			404: WorkpieceSchema.WorkpieceNotFoundError,
@@ -165,7 +168,7 @@ api.post(
 	JWTAuth.requireUser,
 	loadWorkpiece,
 	ensureRightSplitExist,
-	swapRightSplitUser,
+	swapRightSplitUser
 )
 
 /*********************** Handlers ***********************/
@@ -173,20 +176,23 @@ api.post(
 async function loadWorkpiece() {
 	const workpiece = await Workpiece.findById(this.req.params.workpiece_id)
 
-	if(!workpiece)
+	if (!workpiece)
 		throw new WorkpieceSchema.WorkpieceNotFoundError({
-			workpiece_id: this.req.params.workpiece_id
+			workpiece_id: this.req.params.workpiece_id,
 		})
-	if(workpiece.owner !== this.authUser._id && !workpiece.rightHolders.includes(this.authUser._id))
-		throw new UserSchema.UserForbiddenError({user_id: this.authUser._id})
+	if (
+		workpiece.owner !== this.authUser._id &&
+		!workpiece.rightHolders.includes(this.authUser._id)
+	)
+		throw new UserSchema.UserForbiddenError({ user_id: this.authUser._id })
 
 	return workpiece
 }
 
 async function loadWorkpieceAsOwner() {
 	const workpiece = await loadWorkpiece.call(this)
-	if(workpiece.owner !== this.authUser._id)
-		throw new UserSchema.UserForbiddenError({user_id: this.authUser._id})
+	if (workpiece.owner !== this.authUser._id)
+		throw new UserSchema.UserForbiddenError({ user_id: this.authUser._id })
 
 	return workpiece
 }
@@ -194,9 +200,9 @@ async function loadWorkpieceAsOwner() {
 async function loadWorkpieceAsRightHolder() {
 	const workpiece = await loadWorkpiece.call(this)
 
-	if(!workpiece.rightHolders.includes(this.authUser._id))
-		throw new UserSchema.UserForbiddenError({user_id: this.authUser._id})
-	
+	if (!workpiece.rightHolders.includes(this.authUser._id))
+		throw new UserSchema.UserForbiddenError({ user_id: this.authUser._id })
+
 	return workpiece
 }
 
@@ -209,16 +215,15 @@ async function createWorkpiece() {
 }
 
 async function updateWorkpiece(workpiece) {
-	for(let field of ["title", "entityTags"])
-		if(this.req.body[field])
-			workpiece[field] = this.req.body[field]
+	for (let field of ["title", "entityTags"])
+		if (this.req.body[field]) workpiece[field] = this.req.body[field]
 	await workpiece.save()
 
 	return workpiece
 }
 
 function ensureRightSplitExist(workpiece) {
-	if(!workpiece.rightSplit)
+	if (!workpiece.rightSplit)
 		throw new WorkpieceSchema.RightSplitNotFoundError({
 			workpiece_id: workpiece._id,
 		})
@@ -226,29 +231,26 @@ function ensureRightSplitExist(workpiece) {
 }
 
 async function deleteWorkpiece(workpiece) {
-	if(!workpiece.isRemovable())
-		throwConflictingRightSplitStateError(workpiece)
+	if (!workpiece.isRemovable()) throwConflictingRightSplitStateError(workpiece)
 
 	await workpiece.remove()
 	this.res.status(204).end()
 }
 
 async function createRightSplit(workpiece) {
-	if(!workpiece.canAcceptNewSplit())
+	if (!workpiece.canAcceptNewSplit())
 		throwConflictingRightSplitStateError(workpiece)
-	
-	if(workpiece.rightSplit)
-		workpiece.archivedSplits.push(workpiece.rightSplit)
-	
+
+	if (workpiece.rightSplit) workpiece.archivedSplits.push(workpiece.rightSplit)
+
 	await workpiece.setRightSplit(this.req.body)
 	await workpiece.save()
 
 	return workpiece.rightSplit
 }
 
-
 async function updateRightSplit(workpiece) {
-	if(!workpiece.canUpdateRightSplit())
+	if (!workpiece.canUpdateRightSplit())
 		throwConflictingRightSplitStateError(workpiece)
 
 	await workpiece.setRightSplit(this.req.body)
@@ -258,7 +260,7 @@ async function updateRightSplit(workpiece) {
 }
 
 async function deleteRightSplit(workpiece) {
-	if(!workpiece.canUpdateRightSplit())
+	if (!workpiece.canUpdateRightSplit())
 		throwConflictingRightSplitStateError(workpiece)
 
 	workpiece.archivedSplits.push(workpiece.rightSplit)
@@ -269,17 +271,17 @@ async function deleteRightSplit(workpiece) {
 }
 
 async function submitRightSplit(workpiece) {
-	if(!workpiece.canUpdateRightSplit())
+	if (!workpiece.canUpdateRightSplit())
 		throwConflictingRightSplitStateError(workpiece)
 
 	await workpiece.submitRightSplit()
 	await workpiece.save()
-	
+
 	this.res.status(204).end()
 }
 
 async function voteRightSplit(workpiece) {
-	if(!workpiece.canVoteRightSplit())
+	if (!workpiece.canVoteRightSplit())
 		throwConflictingRightSplitStateError(workpiece)
 
 	workpiece.setVote(this.authUser._id, this.req.body)
@@ -290,23 +292,24 @@ async function voteRightSplit(workpiece) {
 }
 
 async function swapRightSplitUser(workpiece) {
-	if(!workpiece.canVoteRightSplit())
+	if (!workpiece.canVoteRightSplit())
 		throwConflictingRightSplitStateError(workpiece)
 
 	const data = workpiece.decodeToken(this.req.body.token)
 
-	if(data){
+	if (data) {
 		const tokenUser = await User.findById(data.rightHolder_id)
-		if(tokenUser && workpiece.rightHolders.includes(tokenUser._id)){
+		if (tokenUser && workpiece.rightHolders.includes(tokenUser._id)) {
 			workpiece.swapRightHolder(tokenUser._id, this.authUser._id)
 			await workpiece.save()
 
 			this.res.status(204).end()
+			return
 		}
-	} 
+	}
 
 	throw new WorkpieceSchema.InvalidSplitTokenError({
-		token: this.req.body.token
+		token: this.req.body.token,
 	})
 }
 

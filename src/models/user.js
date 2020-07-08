@@ -713,21 +713,29 @@ UserSchema.methods.emailPasswordChanged = async function () {
 /**
  * Sends the right split created notification to the user
  */
-UserSchema.methods.emailRightSplitVoting = async function (expires = "2 weeks") {
+UserSchema.methods.emailRightSplitVoting = async function (
+	expires = "2 weeks"
+) {
 	return await sendTemplateTo("right-split:created", this, {}, {})
 }
 
 /**
  * Sends the right split completed and accepted notification to the user
  */
-UserSchema.methods.emailRightSplitAccepted = async function (expires = "2 weeks") {
+UserSchema.methods.emailRightSplitAccepted = async function (
+	expires = "2 weeks"
+) {
 	return await sendTemplateTo("right-split:accepted", this, {}, {})
 }
 
 /*
  * Sends a notification to the user through the medium set in the user's preferences
  */
-UserSchema.methods.sendNotification = async function (notificationType, data, options) {
+UserSchema.methods.sendNotification = async function (
+	notificationType,
+	data,
+	options
+) {
 	await this.sendSMS(notificationType, data)
 	await this.sendEmail(notificationType, data, options)
 	await this.sendPush(notificationType, data)
@@ -744,7 +752,11 @@ UserSchema.methods.sendSMS = async function (notificationType, message) {
 /**
  * Sends an Email to the user
  */
-UserSchema.methods.sendEmail = async function (notificationType, data, options) {
+UserSchema.methods.sendEmail = async function (
+	notificationType,
+	data,
+	options
+) {
 	throw new Error("not implemented yet")
 }
 
