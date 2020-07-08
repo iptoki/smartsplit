@@ -18,7 +18,7 @@ api.get(
 			404: WorkpieceSchema.WorkpieceNotFoundError,
 		},
 	},
-	JWTAuth.loadAuthUser,
+	JWTAuth.requireUser,
 	loadWorkpiece,
 )
 
@@ -32,7 +32,7 @@ api.post(
 			200: WorkpieceSchema.workpiece,
 		},
 	},
-	JWTAuth.loadAuthUser,
+	JWTAuth.requireUser,
 	createWorkpiece,
 )
 
@@ -47,7 +47,7 @@ api.patch(
 			404: WorkpieceSchema.WorkpieceNotFoundError,
 		},
 	},
-	JWTAuth.loadAuthUser,
+	JWTAuth.requireUser,
 	loadWorkpieceAsOwner,
 	updateWorkpiece,
 )
@@ -62,7 +62,7 @@ api.delete(
 			404: WorkpieceSchema.WorkpieceNotFoundError,
 		},
 	},
-	JWTAuth.loadAuthUser,
+	JWTAuth.requireUser,
 	loadWorkpieceAsOwner,
 	deleteWorkpiece,
 )
@@ -78,7 +78,7 @@ api.post(
 			409: WorkpieceSchema.ConflictingRightSplitStateError,
 		},
 	},
-	JWTAuth.loadAuthUser,
+	JWTAuth.requireUser,
 	loadWorkpieceAsOwner,
 	createRightSplit,
 )
@@ -94,7 +94,7 @@ api.put(
 			409: WorkpieceSchema.ConflictingRightSplitStateError,
 		},
 	},
-	JWTAuth.loadAuthUser,
+	JWTAuth.requireUser,
 	loadWorkpieceAsOwner,
 	ensureRightSplitExist,
 	updateRightSplit,
@@ -111,7 +111,7 @@ api.delete(
 			409: WorkpieceSchema.ConflictingRightSplitStateError,
 		},
 	},
-	JWTAuth.loadAuthUser,
+	JWTAuth.requireUser,
 	loadWorkpieceAsOwner,
 	ensureRightSplitExist,
 	deleteRightSplit,
@@ -128,7 +128,7 @@ api.post(
 			409: WorkpieceSchema.ConflictingRightSplitStateError,
 		},
 	},
-	JWTAuth.loadAuthUser,
+	JWTAuth.requireUser,
 	loadWorkpieceAsOwner,
 	ensureRightSplitExist,
 	submitRightSplit,
@@ -145,7 +145,7 @@ api.post(
 			409: WorkpieceSchema.ConflictingRightSplitStateError,
 		},
 	},
-	JWTAuth.loadAuthUser,
+	JWTAuth.requireUser,
 	loadWorkpieceAsRightHolder,
 	ensureRightSplitExist,
 	voteRightSplit,
@@ -162,7 +162,7 @@ api.post(
 			409: WorkpieceSchema.ConflictingRightSplitStateError,
 		},
 	},
-	JWTAuth.loadAuthUser,
+	JWTAuth.requireUser,
 	loadWorkpiece,
 	ensureRightSplitExist,
 	swapRightSplitUser,
@@ -177,7 +177,9 @@ async function loadWorkpiece() {
 		throw new WorkpieceSchema.WorkpieceNotFoundError({
 			workpiece_id: this.req.params.workpiece_id
 		})
-	
+	if(workpiece.owner !== this.authUser._id && !workpiece.rightHolders.includes(this.authUser._id))
+		throw new UserSchema.UserForbiddenError({user_id: this.authUser._id})
+
 	return workpiece
 }
 

@@ -215,8 +215,10 @@ WorkpieceSchema.methods.setVote = function(rightHolderId, rightsVote) {
 	for(let type of RightTypes) {
 		for(let entry of this.rightSplit[type]) {
 			if(entry.rightHolder === rightHolderId && rightsVote[type]) {
-				if(entry.vote === "undecided")
-					entry.vote = rightsVote[type]
+				if(entry.vote === "undecided") {
+					entry.vote = rightsVote[type].vote
+					entry.comment = rightsVote[type].comment
+				}
 				break
 			}
 		}
