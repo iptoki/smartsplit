@@ -46,6 +46,24 @@ const NotificationsSchema = new mongoose.Schema(
 )
 
 /**
+ * Represents a user's mobile phone in the system
+ */
+const MobilePhoneSchema = new mongoose.Schema(
+	{
+		number: String,
+		status: {
+			type: String,
+			enum: ["verified", "unverified"],
+		},
+		verificationCode: {
+			code: Number,
+			createdAt: Date,
+		},
+	},
+	{ _id: false }
+)
+
+/**
  * Represents a user's permission set in the system
  */
 const PermissionSchema = new mongoose.Schema(
@@ -152,15 +170,7 @@ const UserSchema = new mongoose.Schema({
 	},
 
 	mobilePhone: {
-		number: String,
-		status: {
-			type: String,
-			enum: ["verified", "unverified"],
-		},
-		verificationCode: {
-			code: Number,
-			createdAt: Date,
-		},
+		type: MobilePhoneSchema,
 		api: {
 			type: "object",
 			properties: {
@@ -590,15 +600,25 @@ UserSchema.methods.verifyMobilePhone = async function (code) {
 /**
  * Creates a password reset token for the user
  */
-UserSchema.methods.createPasswordResetToken = function (expires) {
+UserSchema.methods.createPasswordResetToken = function (email, expires) {
 	return JWT.create(
 		JWT_RESET_TYPE,
 		{
 			user_id: this._id,
 			user_password: this.password,
+			user_email: email,
 		},
 		expires
 	)
+}
+
+/**
+ * Decode a password reset token for the user
+ */
+UserSchema.methods.decodePasswordResetToken = function (token) {
+	const data = JWT.decode(JWT_RESET_TYPE, token)
+	if (!data || data.user_id !== this._id) return null
+	return data
 }
 
 /**
@@ -671,7 +691,9 @@ UserSchema.methods.emailPasswordReset = async function (
 	email,
 	expires = "2 hours"
 ) {
-	const token = this.createPasswordResetToken(expires)
+	const token = this.createPasswordResetToken(email, expires)
+
+	console.log(token) // Temporary helper
 
 	return await sendTemplateTo(
 		"user:password-reset",

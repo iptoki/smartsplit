@@ -30,7 +30,7 @@ api.post(
 			})
 
 		return {
-			accessToken: JWTAuth.createToken(user),
+			accessToken: JWTAuth.createToken(user, req.body.expires),
 			user: user,
 		}
 	}
@@ -71,7 +71,10 @@ api.get(
 	JWTAuth.requireUser,
 	async function () {
 		return {
-			accessToken: JWTAuth.createToken(this.authUser),
+			accessToken: JWTAuth.createToken(
+				this.authUser,
+				this.req.auth.data.duration
+			),
 			user: this.authUser,
 		}
 	}
