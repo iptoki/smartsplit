@@ -203,7 +203,7 @@ const WorkpieceSchema = new mongoose.Schema(
 						},
 						mimeType: {
 							type: "string",
-							example: "png",
+							example: "image/png",
 						},
 						visibility: {
 							type: "string",
