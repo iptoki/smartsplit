@@ -365,19 +365,25 @@ async function swapRightSplitUser(workpiece) {
 	})
 }
 
-async function getWorkpieceFile() {
-	const workpiece = await Workpiece.findOne({"files._id": this.req.params.file_id})
+async function loadWorkpieceFile(file_id, workpiece=null) {
+	if(!workpiece)
+		workpiece = await Workpiece.findOne({"files._id": file_id})
 	for(file of workpiece.files) {
-		if(file._id === this.req.params.file_id){
-			this.res.contentType(file.mimeType)
-			this.res.send(file.data)
-			return
+		if(file._id === file_id){
+			return file
 		}
 	}
 	throw new WorkpieceSchema.FileNotFoundError({
 		workpiece_id: workpiece._id,
 		file_id: this.req.params.file_id
 	})
+}
+
+async function getWorkpieceFile() {
+	const file = await loadWorkpieceFile(this.req.params.file_id)
+	this.res.contentType(file.mimeType)
+	this.res.send(file.data)
+	return
 }
 
 async function addWorkpieceFile(workpiece) {
@@ -394,7 +400,18 @@ async function addWorkpieceFile(workpiece) {
 }
 
 async function updateWorkpieceFile(workpiece) {
-
+	const file = await loadWorkpieceFile(this.req.params.file_id, workpiece)
+	for(field of ["name", "mimeType", "visibility"]) {
+		if(this.req.body[field])
+			file[field] = this.req.body[field]
+	}
+	if(this.req.body.data) {
+		const data = Buffer.from(this.req.body.data, "base64")
+		file.data = data
+		file.size = data.length
+	}
+	await workpiece.save()
+	return workpiece
 }
 
 function throwConflictingRightSplitStateError(workpiece) {
