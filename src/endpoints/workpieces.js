@@ -171,6 +171,58 @@ api.post(
 	swapRightSplitUser
 )
 
+api.get(
+	"/workpieces/{workpiece_id}/files/{file_id}",
+	{
+		tags: ["Workpieces"],
+		summary:
+			"Get a workpiece's file by ID",
+		parameters: [
+			WorkpieceSchema.workpiece_id,
+			WorkpieceSchema.file_id,
+		],
+		responses: {
+			404: WorkpieceSchema.WorkpieceNotFoundError,
+		},
+	},
+	getWorkpieceFile
+)
+
+api.post(
+	"/workpieces/{workpiece_id}/files/",
+	{
+		tags: ["Workpieces"],
+		summary:
+			"Add a new file to the workpiece",
+		parameters: [WorkpieceSchema.workpiece_id],
+		responses: {
+			404: WorkpieceSchema.WorkpieceNotFoundError,
+		},
+	},
+	JWTAuth.requireUser,
+	loadWorkpiece,
+	addWorkpieceFile
+)
+
+api.patch(
+	"/workpieces/{workpiece_id}/files/{file_id}",
+	{
+		tags: ["Workpieces"],
+		summary:
+			"Update a workpiece's file by ID",
+		parameters: [
+			WorkpieceSchema.workpiece_id,
+			WorkpieceSchema.file_id,
+		],
+		responses: {
+			404: WorkpieceSchema.WorkpieceNotFoundError,
+		},
+	},
+	JWTAuth.requireUser,
+	loadWorkpiece,
+	updateWorkpieceFile
+)
+
 /*********************** Handlers ***********************/
 
 async function loadWorkpiece() {
@@ -311,6 +363,38 @@ async function swapRightSplitUser(workpiece) {
 	throw new WorkpieceSchema.InvalidSplitTokenError({
 		token: this.req.body.token,
 	})
+}
+
+async function getWorkpieceFile() {
+	const workpiece = await Workpiece.findOne({"files._id": this.req.params.file_id})
+	for(file of workpiece.files) {
+		if(file._id === this.req.params.file_id){
+			this.res.contentType(file.mimeType)
+			this.res.send(file.data)
+			return
+		}
+	}
+	throw new WorkpieceSchema.FileNotFoundError({
+		workpiece_id: workpiece._id,
+		file_id: this.req.params.file_id
+	})
+}
+
+async function addWorkpieceFile(workpiece) {
+	const data = Buffer.from(this.req.body.data, "base64")
+	workpiece.files.push({
+		name: this.req.body.name,
+		size: data.length,
+		mimeType: this.req.body.mimeType,
+		visibility: this.req.body.visibility,
+		data: data,
+	})
+	await workpiece.save()
+	return workpiece
+}
+
+async function updateWorkpieceFile(workpiece) {
+
 }
 
 function throwConflictingRightSplitStateError(workpiece) {

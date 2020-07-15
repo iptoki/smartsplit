@@ -1,5 +1,6 @@
 const mongoose = require("mongoose")
 const uuid = require("uuid").v4
+const Config = require("../config")
 const User = require("./user")
 const UserSchema = require("../schemas/users")
 const JWT = require("../utils/jwt")
@@ -93,6 +94,24 @@ const RightSplitSchema = new mongoose.Schema(
 	{ _id: false }
 )
 
+const WorkpieceFileSchema = new mongoose.Schema(
+	{
+		_id: {
+			type: String,
+			alias: "file_id",
+			default: uuid,
+		},
+		name: String,
+		mimeType: String,
+		size: Number,
+		visibility: {
+			type: String,
+			enum: [ "public", "hidden", "private" ],
+		},
+		data: Buffer
+	}
+)
+
 const WorkpieceSchema = new mongoose.Schema(
 	{
 		_id: {
@@ -165,9 +184,48 @@ const WorkpieceSchema = new mongoose.Schema(
 				items: rightSplitAPISpec,
 			},
 		},
+
+		files: {
+			type: [WorkpieceFileSchema],
+			api: {
+				type: "array",
+				items: {
+					type: "object",
+					properties: {
+						_id: {
+							type: "string",
+							format: "uuid",
+							example: "e87b56fe-1ce0-4ec7-8393-e18dc7415041",
+						},
+						name: {
+							type: "string",
+							example: "myFileName",
+						},
+						mimeType: {
+							type: "string",
+							example: "png",
+						},
+						visibility: {
+							type: "string",
+							enum: [ "public", "hidden", "private" ],
+							example: "public",
+						},
+						fileUrl: {
+							type: "string",
+							example: "https://api.smartsplit.org/workipeces/0d0cb6f9-c1e6-49e0-acbf-1ca4ace07d1c/files/e87b56fe-1ce0-4ec7-8393-e18dc7415041",
+							readOnly: true,
+						}
+					}
+				}
+			}
+		}
 	},
 	{ timestamps: true }
 )
+
+WorkpieceFileSchema.virtual("fileUrl").get(function () {
+	return Config.apiUrl + "/workipeces/" + this.parent().id + "/files/" + this._id
+})
 
 WorkpieceSchema.methods.createToken = async function (
 	rightHolderId,

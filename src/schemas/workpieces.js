@@ -9,6 +9,13 @@ module.exports = {
 		example: "e87b56ee-1ca0-4ec7-8393-e18dc7415041",
 	}),
 
+	file_id: api.param("file_id", {
+		in: "path",
+		name: "file_id",
+		description: "The ID of a workpiece's file",
+		example: "c27956ee-1bb0-4fc7-8373-a18dc8425041",
+	}),
+
 	workpiece: api.schemaFromModel("workpiece", Workpiece),
 
 	WorkpieceNotFoundError: error(
@@ -21,6 +28,11 @@ module.exports = {
 		"right_split_not_found",
 		404,
 		"RightSplit not found"
+	),
+	FileNotFoundError: error(
+		"file_not_found",
+		404,
+		"File not found"
 	),
 
 	InvalidSplitTokenError: error(
