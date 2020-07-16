@@ -196,6 +196,7 @@ api.post(
 			"Add a new file to the workpiece",
 		parameters: [WorkpieceSchema.workpiece_id],
 		responses: {
+			200: WorkpieceSchema.workpiece,
 			404: WorkpieceSchema.WorkpieceNotFoundError,
 		},
 	},
@@ -215,6 +216,7 @@ api.patch(
 			WorkpieceSchema.file_id,
 		],
 		responses: {
+			200: WorkpieceSchema.workpiece,
 			404: WorkpieceSchema.WorkpieceNotFoundError,
 		},
 	},
