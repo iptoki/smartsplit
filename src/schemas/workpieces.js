@@ -29,11 +29,7 @@ module.exports = {
 		404,
 		"RightSplit not found"
 	),
-	FileNotFoundError: error(
-		"file_not_found",
-		404,
-		"File not found"
-	),
+	FileNotFoundError: error("file_not_found", 404, "File not found"),
 
 	InvalidSplitTokenError: error(
 		"right_holder_invalid_token",

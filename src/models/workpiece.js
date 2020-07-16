@@ -94,23 +94,21 @@ const RightSplitSchema = new mongoose.Schema(
 	{ _id: false }
 )
 
-const WorkpieceFileSchema = new mongoose.Schema(
-	{
-		_id: {
-			type: String,
-			alias: "file_id",
-			default: uuid,
-		},
-		name: String,
-		mimeType: String,
-		size: Number,
-		visibility: {
-			type: String,
-			enum: [ "public", "hidden", "private" ],
-		},
-		data: Buffer
-	}
-)
+const WorkpieceFileSchema = new mongoose.Schema({
+	_id: {
+		type: String,
+		alias: "file_id",
+		default: uuid,
+	},
+	name: String,
+	mimeType: String,
+	size: Number,
+	visibility: {
+		type: String,
+		enum: ["public", "hidden", "private"],
+	},
+	data: Buffer,
+})
 
 const WorkpieceSchema = new mongoose.Schema(
 	{
@@ -205,26 +203,33 @@ const WorkpieceSchema = new mongoose.Schema(
 							type: "string",
 							example: "image/png",
 						},
+						size: {
+							type: "number",
+							example: "512",
+						},
 						visibility: {
 							type: "string",
-							enum: [ "public", "hidden", "private" ],
+							enum: ["public", "hidden", "private"],
 							example: "public",
 						},
 						fileUrl: {
 							type: "string",
-							example: "https://api.smartsplit.org/workipeces/0d0cb6f9-c1e6-49e0-acbf-1ca4ace07d1c/files/e87b56fe-1ce0-4ec7-8393-e18dc7415041",
+							example:
+								"https://api.smartsplit.org/workipeces/0d0cb6f9-c1e6-49e0-acbf-1ca4ace07d1c/files/e87b56fe-1ce0-4ec7-8393-e18dc7415041",
 							readOnly: true,
-						}
-					}
-				}
-			}
-		}
+						},
+					},
+				},
+			},
+		},
 	},
 	{ timestamps: true }
 )
 
 WorkpieceFileSchema.virtual("fileUrl").get(function () {
-	return Config.apiUrl + "/workipeces/" + this.parent().id + "/files/" + this._id
+	return (
+		Config.apiUrl + "/workipeces/" + this.parent().id + "/files/" + this._id
+	)
 })
 
 WorkpieceSchema.methods.createToken = async function (
