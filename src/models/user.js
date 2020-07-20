@@ -292,7 +292,7 @@ UserSchema.virtual("fullName").get(function () {
 /**
  * Returns the primary email of this user
  */
-UserSchema.virtual("primaryEmail").get(function () {
+UserSchema.virtual("email").get(function () {
 	if (this.emails.length) return this.emails[0]
 	return null
 })
@@ -302,8 +302,8 @@ UserSchema.virtual("primaryEmail").get(function () {
  */
 UserSchema.virtual("$email").get(function () {
 	return {
-		name: this.fullName || this.primaryEmail,
-		email: this.primaryEmail,
+		name: this.fullName || this.email,
+		email: this.email,
 	}
 })
 

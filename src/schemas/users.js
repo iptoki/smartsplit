@@ -34,6 +34,37 @@ module.exports = {
 		},
 	}),
 
+	userSearchResult: api.schema("user_search_result", {
+		type: "array",
+		items: {
+			type: "object",
+			properties: {
+				user_id: {
+					type: "string",
+					format: "uuid",
+					example: "e87b56fe-1ce0-4ec7-8393-e18dc7415041",
+				},
+				firstName: {
+					type: "string",
+					example: "John",
+				},
+				lastName: {
+					type: "string",
+					example: "Doe",
+				},
+				artistName: {
+					type: "string",
+					example: "JohnDoReMi",
+				},
+				email: {
+					type: "string",
+					format: "email",
+					example: "qa@smartsplit.org",
+				},
+			},
+		},
+	}),
+
 	activateAccountSchema: api.schema("user_activate_account", {
 		type: "object",
 		required: ["token"],
