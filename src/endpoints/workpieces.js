@@ -171,6 +171,51 @@ api.post(
 	swapRightSplitUser
 )
 
+api.get(
+	"/workpieces/{workpiece_id}/files/{file_id}",
+	{
+		tags: ["Workpieces"],
+		summary: "Get a workpiece's file by ID",
+		parameters: [WorkpieceSchema.workpiece_id, WorkpieceSchema.file_id],
+		responses: {
+			404: WorkpieceSchema.WorkpieceNotFoundError,
+		},
+	},
+	getWorkpieceFile
+)
+
+api.post(
+	"/workpieces/{workpiece_id}/files/",
+	{
+		tags: ["Workpieces"],
+		summary: "Add a new file to the workpiece",
+		parameters: [WorkpieceSchema.workpiece_id],
+		responses: {
+			200: WorkpieceSchema.workpieceFile,
+			404: WorkpieceSchema.WorkpieceNotFoundError,
+		},
+	},
+	JWTAuth.requireUser,
+	loadWorkpiece,
+	addWorkpieceFile
+)
+
+api.patch(
+	"/workpieces/{workpiece_id}/files/{file_id}",
+	{
+		tags: ["Workpieces"],
+		summary: "Update a workpiece's file by ID",
+		parameters: [WorkpieceSchema.workpiece_id, WorkpieceSchema.file_id],
+		responses: {
+			200: WorkpieceSchema.workpieceFile,
+			404: WorkpieceSchema.WorkpieceNotFoundError,
+		},
+	},
+	JWTAuth.requireUser,
+	loadWorkpiece,
+	updateWorkpieceFile
+)
+
 /*********************** Handlers ***********************/
 
 async function loadWorkpiece() {
@@ -311,6 +356,51 @@ async function swapRightSplitUser(workpiece) {
 	throw new WorkpieceSchema.InvalidSplitTokenError({
 		token: this.req.body.token,
 	})
+}
+
+async function loadWorkpieceFile(file_id, workpiece = null) {
+	if (!workpiece) workpiece = await Workpiece.findOne({ "files._id": file_id })
+	for (file of workpiece.files) {
+		if (file._id === file_id) {
+			return file
+		}
+	}
+	throw new WorkpieceSchema.FileNotFoundError({
+		workpiece_id: workpiece._id,
+		file_id: this.req.params.file_id,
+	})
+}
+
+async function getWorkpieceFile() {
+	const file = await loadWorkpieceFile(this.req.params.file_id)
+	this.res.contentType(file.mimeType)
+	this.res.send(file.data)
+	return
+}
+
+async function addWorkpieceFile(workpiece) {
+	const file = workpiece.addFile(
+		this.req.body.name,
+		this.req.body.mimeType,
+		this.req.body.visibility,
+		Buffer.from(this.req.body.data, "base64")
+	)
+	await workpiece.save()
+	return file
+}
+
+async function updateWorkpieceFile(workpiece) {
+	const file = await loadWorkpieceFile(this.req.params.file_id, workpiece)
+	for (field of ["name", "mimeType", "visibility"]) {
+		if (this.req.body[field]) file[field] = this.req.body[field]
+	}
+	if (this.req.body.data) {
+		const data = Buffer.from(this.req.body.data, "base64")
+		file.data = data
+		file.size = data.length
+	}
+	await workpiece.save()
+	return file
 }
 
 function throwConflictingRightSplitStateError(workpiece) {

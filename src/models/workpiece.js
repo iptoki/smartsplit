@@ -1,5 +1,6 @@
 const mongoose = require("mongoose")
 const uuid = require("uuid").v4
+const Config = require("../config")
 const User = require("./user")
 const UserSchema = require("../schemas/users")
 const JWT = require("../utils/jwt")
@@ -93,6 +94,51 @@ const RightSplitSchema = new mongoose.Schema(
 	{ _id: false }
 )
 
+const WorkpieceFileSchema = new mongoose.Schema({
+	_id: {
+		type: String,
+		alias: "file_id",
+		default: uuid,
+		api: {
+			type: "string",
+			format: "uuid",
+			example: "e87b56fe-1ce0-4ec7-8393-e18dc7415041",
+			readOnly: true,
+		},
+	},
+	name: {
+		type: String,
+		api: {
+			type: "string",
+			example: "aFileName",
+		},
+	},
+	mimeType: {
+		type: String,
+		api: {
+			type: "string",
+			example: "image/jpeg",
+		},
+	},
+	size: {
+		type: Number,
+		api: {
+			type: "number",
+			example: 512,
+		},
+	},
+	visibility: {
+		type: String,
+		enum: ["public", "hidden", "private"],
+		api: {
+			type: "string",
+			enum: ["public", "hidden", "private"],
+			example: "public",
+		},
+	},
+	data: Buffer,
+})
+
 const WorkpieceSchema = new mongoose.Schema(
 	{
 		_id: {
@@ -165,9 +211,56 @@ const WorkpieceSchema = new mongoose.Schema(
 				items: rightSplitAPISpec,
 			},
 		},
+
+		files: {
+			type: [WorkpieceFileSchema],
+			api: {
+				type: "array",
+				items: {
+					type: "object",
+					properties: {
+						file_id: {
+							type: "string",
+							format: "uuid",
+							example: "e87b56fe-1ce0-4ec7-8393-e18dc7415041",
+							readOnly: true,
+						},
+						name: {
+							type: "string",
+							example: "myFileName",
+						},
+						mimeType: {
+							type: "string",
+							example: "image/png",
+						},
+						size: {
+							type: "number",
+							example: "512",
+						},
+						visibility: {
+							type: "string",
+							enum: ["public", "hidden", "private"],
+							example: "public",
+						},
+						fileUrl: {
+							type: "string",
+							example:
+								"https://api.smartsplit.org/workipeces/0d0cb6f9-c1e6-49e0-acbf-1ca4ace07d1c/files/e87b56fe-1ce0-4ec7-8393-e18dc7415041",
+							readOnly: true,
+						},
+					},
+				},
+			},
+		},
 	},
 	{ timestamps: true }
 )
+
+WorkpieceFileSchema.virtual("fileUrl").get(function () {
+	return (
+		Config.apiUrl + "/workpieces/" + this.parent().id + "/files/" + this._id
+	)
+})
 
 WorkpieceSchema.methods.createToken = async function (
 	rightHolderId,
@@ -226,6 +319,17 @@ WorkpieceSchema.methods.setVote = function (rightHolderId, rightsVote) {
 			}
 		}
 	}
+}
+
+WorkpieceSchema.methods.addFile = function (name, mimeType, visibility, data) {
+	const l = this.files.push({
+		name: name,
+		size: data.length,
+		mimeType: mimeType,
+		visibility: visibility,
+		data: data,
+	})
+	return this.files[l - 1]
 }
 
 WorkpieceSchema.methods.isRemovable = function () {
@@ -298,3 +402,5 @@ WorkpieceSchema.methods.updateRightSplitState = async function () {
 module.exports = mongoose.model("Workpiece", WorkpieceSchema)
 
 module.exports.RightTypes = RightTypes
+
+module.exports.File = mongoose.model("WorkpieceFile", WorkpieceFileSchema)
