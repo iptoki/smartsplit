@@ -39,10 +39,11 @@ module.exports = {
 		items: {
 			type: "object",
 			properties: {
-				user_id: {
+				rightHolder_id: {
 					type: "string",
 					format: "uuid",
 					example: "e87b56fe-1ce0-4ec7-8393-e18dc7415041",
+					aliasFrom: "user_id",
 				},
 				firstName: {
 					type: "string",
