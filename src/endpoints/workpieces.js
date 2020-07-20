@@ -191,7 +191,7 @@ api.post(
 		summary: "Add a new file to the workpiece",
 		parameters: [WorkpieceSchema.workpiece_id],
 		responses: {
-			200: WorkpieceSchema.workpiece,
+			200: WorkpieceSchema.workpieceFile,
 			404: WorkpieceSchema.WorkpieceNotFoundError,
 		},
 	},
@@ -207,7 +207,7 @@ api.patch(
 		summary: "Update a workpiece's file by ID",
 		parameters: [WorkpieceSchema.workpiece_id, WorkpieceSchema.file_id],
 		responses: {
-			200: WorkpieceSchema.workpiece,
+			200: WorkpieceSchema.workpieceFile,
 			404: WorkpieceSchema.WorkpieceNotFoundError,
 		},
 	},
@@ -379,16 +379,14 @@ async function getWorkpieceFile() {
 }
 
 async function addWorkpieceFile(workpiece) {
-	const data = Buffer.from(this.req.body.data, "base64")
-	workpiece.files.push({
-		name: this.req.body.name,
-		size: data.length,
-		mimeType: this.req.body.mimeType,
-		visibility: this.req.body.visibility,
-		data: data,
-	})
+	const file = workpiece.addFile(
+		this.req.body.name,
+		this.req.body.mimeType,
+		this.req.body.visibility,
+		Buffer.from(this.req.body.data, "base64")
+	)
 	await workpiece.save()
-	return workpiece
+	return file
 }
 
 async function updateWorkpieceFile(workpiece) {
@@ -402,7 +400,7 @@ async function updateWorkpieceFile(workpiece) {
 		file.size = data.length
 	}
 	await workpiece.save()
-	return workpiece
+	return file
 }
 
 function throwConflictingRightSplitStateError(workpiece) {

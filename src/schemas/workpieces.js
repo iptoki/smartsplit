@@ -18,6 +18,17 @@ module.exports = {
 
 	workpiece: api.schemaFromModel("workpiece", Workpiece),
 
+	workpieceFile: api.schemaFromModel("workpieceFile", Workpiece.File, {
+		properties: {
+			fileUrl: {
+				type: "string",
+				example:
+					"https://api.smartsplit.org/workipeces/0d0cb6f9-c1e6-49e0-acbf-1ca4ace07d1c/files/e87b56fe-1ce0-4ec7-8393-e18dc7415041",
+				readOnly: true,
+			},
+		},
+	}),
+
 	WorkpieceNotFoundError: error(
 		"workpiece_not_found",
 		404,
