@@ -59,4 +59,15 @@ module.exports = {
 		412,
 		"This right holder's vote has already been submited and cannot be submited again"
 	),
+
+	CanOnlyQueryByOwnOwnerError: error(
+		"can_only_query_by_self_owner",
+		403,
+		"This endpoint only allows querying workpieces owned by the current API user"
+	),
 }
+
+module.exports.workpieceList = api.schema("workpieceList", {
+	type: "array",
+	items: module.exports.workpiece,
+})

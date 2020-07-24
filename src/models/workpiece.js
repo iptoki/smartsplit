@@ -262,6 +262,10 @@ WorkpieceFileSchema.virtual("fileUrl").get(function () {
 	)
 })
 
+WorkpieceSchema.query.byOwner = function (user_id) {
+	return this.where({ owner: user_id })
+}
+
 WorkpieceSchema.methods.createToken = async function (
 	rightHolderId,
 	expires = "7 days"

@@ -8,6 +8,21 @@ const UserSchema = require("../schemas/users")
 /************************ Routes ************************/
 
 api.get(
+	"/workpieces/by-owner/{user_id}/",
+	{
+		tags: ["Workpieces"],
+		summary: "Get all workpieces by a given owner",
+		parameters: [UserSchema.id],
+		responses: {
+			200: WorkpieceSchema.workpieceList,
+			403: WorkpieceSchema.CanOnlyQueryByOwnOwnerError,
+		},
+	},
+	JWTAuth.requireUser,
+	loadWorkpiecesByOwner
+)
+
+api.get(
 	"/workpieces/{workpiece_id}",
 	{
 		tags: ["Workpieces"],
@@ -408,4 +423,8 @@ function throwConflictingRightSplitStateError(workpiece) {
 		workpiece_id: workpiece._id,
 		right_split_state: workpiece.rightSplit._state,
 	})
+}
+
+async function loadWorkpiecesByOwner(owner) {
+	return await Workpiece.find().byOwner(owner._id)
 }
