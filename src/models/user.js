@@ -548,13 +548,16 @@ UserSchema.methods.setMobilePhone = async function (number, verified = false) {
  * Delete the user's account
  */
 UserSchema.methods.deleteAccount = async function () {
+	await EmailVerification.deleteMany({user: this._id})
 	this.accountStatus = "deleted"
 	this.password = undefined
-	this.email = undefined
+	this.emails = undefined
 	this.firstName = undefined
 	this.lastName = undefined
 	this.artistName = undefined
 	this.avatar = undefined
+	this.mobilePhone = undefined
+	this.permissions = undefined
 	this.locale = "en"
 	await this.save()
 }
