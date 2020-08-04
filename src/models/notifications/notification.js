@@ -1,6 +1,5 @@
 const mongoose = require("mongoose")
 const Config = require("../../config")
-const { TemplateMap } = require("./templates")
 
 module.exports.GENERAL_INTERATIONS = "general_interations"
 module.exports.ADMINISTRATIVE_MESSAGES = "administrative_messages"
@@ -94,20 +93,4 @@ module.exports.APISchema = {
 			default: [],
 		},
 	},
-}
-
-module.exports.generateTemplate = function (
-	templateName,
-	medium,
-	user,
-	options = {}
-) {
-	if (!TemplateMap[templateName] || !TemplateMap[templateName][medium])
-		return null
-
-	const template = TemplateMap[templateName]
-	return {
-		notificationType: template.notificationType,
-		...template[medium].generate(user, options),
-	}
 }

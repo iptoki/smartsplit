@@ -5,7 +5,10 @@ const PasswordUtil = require("../utils/password")
 const JWT = require("../utils/jwt")
 const EmailVerification = require("../models/emailVerification")
 const Notification = require("../models/notifications/notification")
-const { UserTemplates } = require("../models/notifications/templates")
+const {
+	UserTemplates,
+	generateTemplate,
+} = require("../models/notifications/templates")
 const { sendTemplateTo, normalizeEmailAddress } = require("../utils/email")
 const { generateRandomCode } = require("../utils/random")
 const { sendSMSTo } = require("../service/twilio")
@@ -159,6 +162,7 @@ const UserSchema = new mongoose.Schema({
 
 	notifications: {
 		type: Notification.Schema,
+		default: {},
 		api: Notification.APISchema,
 	},
 
@@ -573,12 +577,7 @@ UserSchema.methods.sendSMS = async function (
 	templateName,
 	verifiedOnly = true
 ) {
-	const template = Notification.generateTemplate(
-		templateName,
-		"sms",
-		this,
-		options
-	)
+	const template = generateTemplate(templateName, "sms", this)
 
 	if (
 		!template ||
@@ -593,13 +592,8 @@ UserSchema.methods.sendSMS = async function (
  * Sends an Email to the user
  */
 UserSchema.methods.sendEmail = async function (templateName, options = {}) {
-	const template = Notification.generateTemplate(
-		templateName,
-		"email",
-		this,
-		options
-	)
-
+	const template = generateTemplate(templateName, "email", this, options)
+	
 	if (
 		!template ||
 		!this.notifications[template.notificationType].includes("email")
@@ -613,12 +607,7 @@ UserSchema.methods.sendEmail = async function (templateName, options = {}) {
  * Sends a Push notification to the user
  */
 UserSchema.methods.sendPush = async function (templateName) {
-	const template = Notification.generateTemplate(
-		templateName,
-		"push",
-		this,
-		options
-	)
+	const template = generateTemplate(templateName, "push", this)
 
 	if (
 		!template ||

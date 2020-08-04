@@ -175,8 +175,21 @@ const TemplateMap = {
 	},
 }
 
+const generateTemplate = function (templateName, medium, user, options = {}) {
+	if (!TemplateMap[templateName] || !TemplateMap[templateName][medium])
+		return null
+
+	const template = TemplateMap[templateName]
+
+	return {
+		notificationType: template.notificationType,
+		...template[medium].generate(user, options),
+	}
+}
+
 module.exports = {
 	SplitTemplates,
 	UserTemplates,
 	TemplateMap,
+	generateTemplate,
 }
