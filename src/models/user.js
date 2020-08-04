@@ -593,7 +593,7 @@ UserSchema.methods.sendSMS = async function (
  */
 UserSchema.methods.sendEmail = async function (templateName, options = {}) {
 	const template = generateTemplate(templateName, "email", this, options)
-	
+
 	if (
 		!template ||
 		!this.notifications[template.notificationType].includes("email")
