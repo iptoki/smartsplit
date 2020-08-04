@@ -1,4 +1,6 @@
 const User = require("../../models/user")
+const { UserTemplates } = require("../../models/notification/templates")
+const Config = require("../../config")
 const EmailVerification = require("../../models/emailVerification")
 const JWTAuth = require("../../service/JWTAuth")
 const UserSchema = require("../../schemas/users")
@@ -63,14 +65,14 @@ async function createUser() {
 			user.setAvatar(Buffer.from(this.req.body.avatar, "base64"))
 
 		if (this.req.body.phoneNumber)
-			await user.setMobilePhone(this.req.body.phoneNumber, false)
+			await user.setMobilePhone(this.req.body.phoneNumber)
 
 		await user.save()
 	}
 
-	await user
-		.emailWelcome(this.req.body.email)
-		.catch((e) => console.error(e, "Error sending welcome email"))
+	await user.sendNotification(UserTemplates.ACTIVATE_ACCOUNT, {
+		to: { name: user.fullName, email: this.req.body.email },
+	})
 
 	return user
 }
@@ -102,7 +104,7 @@ async function updateUser(user) {
 	if (this.req.body.email) await user.addPendingEmail(this.req.body.email)
 
 	if (this.req.body.phoneNumber)
-		await user.setMobilePhone(this.req.body.phoneNumber, false)
+		await user.setMobilePhone(this.req.body.phoneNumber)
 
 	if (this.req.body.password)
 		passwordChanged = await user.setPassword(this.req.body.password)
@@ -122,10 +124,7 @@ async function updateUser(user) {
 	await user.save()
 
 	// Send notification if password changed and saved successfully
-	if (passwordChanged)
-		user.emailPasswordChanged().catch((e) => {
-			console.error("Error sending 'password changed' email:", e)
-		})
+	if (passwordChanged) user.sendNotification(UserTemplates.PASSWORD_CHANGED)
 
 	return user
 }
@@ -144,8 +143,8 @@ async function requestPasswordReset() {
 		user = email.user
 	}
 
-	await user.emailPasswordReset(this.req.body.email).catch((e) => {
-		console.error("Error sending 'password reset' email:", e)
+	await user.sendNotification(UserTemplates.PASSWORD_RESET, {
+		to: { name: user.fullName, email: this.req.body.email },
 	})
 
 	this.res.status(204).end()
@@ -180,9 +179,7 @@ async function changeUserPassword() {
 
 	await user.save()
 
-	await user.emailPasswordChanged().catch((e) => {
-		console.error("Error sending 'password changed' email:", e)
-	})
+	await user.sendNotification(UserTemplates.PASSWORD_CHANGED)
 
 	return { accessToken: JWTAuth.createToken(user), user }
 }
