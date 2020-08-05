@@ -357,18 +357,21 @@ UserSchema.methods.addPendingEmail = async function (
 ) {
 	email = normalizeEmailAddress(email)
 
-	if (await this.model("User").findOne().byEmail(email))
-		return null
+	if (await this.model("User").findOne().byEmail(email)) return null
 
 	let date = new Date(Date.now() - 60 * 60 * 1000)
 
-	// Throw if an entry already exists and was created less than an hour ago
+	// Seach for an entry created less than an hour ago with the specified email address
 	let emailVerif = await EmailVerification.findOne({
 		_id: email,
 		createdAt: { $gte: date },
-	})
-	if (emailVerif && emailVerif.user !== this._id)
-		return null
+	}).populate("user")
+
+	// An entry exist
+	if (emailVerif) {
+		if (!emailVerif.user) await emailVerif.remove()
+		if (emailVerif.user !== this._id) return null
+	}
 	// Delete it otherwise
 	else await EmailVerification.deleteOne({ _id: email })
 
@@ -376,6 +379,7 @@ UserSchema.methods.addPendingEmail = async function (
 		_id: email,
 		user: this._id,
 	})
+
 	await emailVerif.save()
 
 	if (sendVerifEmail)
@@ -458,7 +462,7 @@ UserSchema.methods.setMobilePhone = async function (number, verified = false) {
  * Delete the user's account
  */
 UserSchema.methods.deleteAccount = async function () {
-	await EmailVerification.deleteMany({user: this._id})
+	await EmailVerification.deleteMany({ user: this._id })
 	this.accountStatus = "deleted"
 	this.password = undefined
 	this.emails = undefined

@@ -41,8 +41,8 @@ async function createUser() {
 
 	if (email) {
 		if (!email.user) await email.remove()
-		if(await email.user.verifyPassword(this.req.body.password))
-			user = email.user		
+		if (await email.user.verifyPassword(this.req.body.password))
+			user = email.user
 	}
 
 	if (!user) {
@@ -52,7 +52,7 @@ async function createUser() {
 			accountStatus: undefined,
 		})
 
-		if(!await user.addPendingEmail(this.req.body.email, false))
+		if (!(await user.addPendingEmail(this.req.body.email, false)))
 			throw new UserSchema.ConflictingUserError({ email: this.req.body.email })
 
 		await user.setPassword(this.req.body.password)
@@ -98,8 +98,10 @@ async function updateUser(user) {
 
 	// Update user data
 	if (this.req.body.email) {
-		if(!await user.addPendingEmail(this.req.body.email))
-			throw new EmailSchema.ConflictingEmailError({email: this.req.body.email})
+		if (!(await user.addPendingEmail(this.req.body.email)))
+			throw new EmailSchema.ConflictingEmailError({
+				email: this.req.body.email,
+			})
 	}
 
 	if (this.req.body.phoneNumber)
@@ -208,32 +210,20 @@ async function inviteNewUser() {
 	if (await User.findOne().byEmail(this.req.body.email))
 		throw new UserSchema.ConflictingUserError({ email: this.req.body.email })
 
-	let user
-	let email = await EmailVerification.findOne()
-		.byEmail(this.req.body.email)
-		.populate("user")
+	const user = new User({
+		firstName: this.req.body.firstName,
+		lastName: this.req.body.lastName,
+		accountStatus: "split-invited",
+	})
 
-	if (email) {
-		if (!email.user) await email.remove()
-		else user = email.user
-	}
+	if (!(await user.addPendingEmail(this.req.body.email, false)))
+		throw new UserSchema.ConflictingUserError({ email: this.req.body.email })
 
-	if (!user) {
-		user = new User({
-			this.req.body.firstName,
-			this.req.body.lastName,
-			accountStatus: "split-invited"
-		})
+	await user.save()
 
-		if(!await user.addPendingEmail(this.req.body.email, false))
-			throw new UserSchema.ConflictingUserError({ email: this.req.body.email })
-		
-		await user.save()
-	}
-
-	await user
-		.emailSplitInvitation(this.req.body.email)
-		.catch((e) => console.error(e, "Error sending split invitation email"))
+	await user.sendNotification(UserTemplate.SPLIT_INVITED, {
+		to: { name: this.fullName, email: this.req.body.email },
+	})
 
 	return user
 }
