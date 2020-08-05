@@ -39,14 +39,8 @@ async function createUser() {
 
 	if (email) {
 		if (!email.user) await email.remove()
-		else if (
-			!(
-				(await email.user.verifyPassword(this.req.body.password)) ||
-				email.user.isActive
-			)
-		)
-			throw new UserSchema.ConflictingUserError({ email: this.req.body.email })
-		else user = email.user
+		if(await email.user.verifyPassword(this.req.body.password))
+			user = email.user		
 	}
 
 	if (!user) {
@@ -56,7 +50,9 @@ async function createUser() {
 			accountStatus: undefined,
 		})
 
-		await user.addPendingEmail(this.req.body.email, false)
+		if(!await user.addPendingEmail(this.req.body.email, false))
+			throw new UserSchema.ConflictingUserError({ email: this.req.body.email })
+
 		await user.setPassword(this.req.body.password)
 
 		if (this.req.body.avatar)
@@ -99,7 +95,10 @@ async function updateUser(user) {
 	let passwordChanged = false
 
 	// Update user data
-	if (this.req.body.email) await user.addPendingEmail(this.req.body.email)
+	if (this.req.body.email) {
+		if(!await user.addPendingEmail(this.req.body.email))
+			throw new EmailSchema.ConflictingEmailError({email: this.req.body.email})
+	}
 
 	if (this.req.body.phoneNumber)
 		await user.setMobilePhone(this.req.body.phoneNumber, false)
@@ -133,13 +132,13 @@ async function updateUser(user) {
 async function requestPasswordReset() {
 	let user = await User.findOne().byEmail(this.req.body.email)
 
-	if(!user) {
+	if (!user) {
 		const email = await EmailVerification.findOne()
 			.byEmail(this.req.body.email)
 			.populate("user")
 
-		if(!email)
-			throw new UserSchema.UserNotFoundError({email: this.req.body.email})
+		if (!email)
+			throw new UserSchema.UserNotFoundError({ email: this.req.body.email })
 
 		user = email.user
 	}
@@ -171,10 +170,10 @@ async function changeUserPassword() {
 
 	await user.setPassword(this.req.body.password, true)
 
-	if (user.accountStatus === "email-verification-pending"){
+	if (user.accountStatus === "email-verification-pending") {
 		user.accountStatus = "active"
-		const data = JWT.decode(JWT_RESET_TYPE, this.req.body.token)
-		if(await user.removePendingEmail(data.user_email))
+		const data = user.decodePasswordResetToken(this.req.body.token)
+		if (await user.removePendingEmail(data.user_email))
 			user.emails.push(data.user_email)
 	}
 
@@ -229,7 +228,9 @@ async function inviteNewUser() {
 			accountStatus: "split-invited"
 		})
 
-		await user.addPendingEmail(this.req.body.email, false)
+		if(!await user.addPendingEmail(this.req.body.email, false))
+			throw new UserSchema.ConflictingUserError({ email: this.req.body.email })
+		
 		await user.save()
 	}
 

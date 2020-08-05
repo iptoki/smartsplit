@@ -134,7 +134,7 @@ async function updateListEntity(entity) {
 
 	entity.setFields(this.req.body)
 	await entity.save()
-	
+
 	return entity
 }
 

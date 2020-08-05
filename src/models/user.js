@@ -10,6 +10,7 @@ const { sendSMSTo } = require("../service/twilio")
 
 const JWT_RESET_TYPE = "user:password-reset"
 const JWT_ACTIVATE_TYPE = "user:activate"
+const JWT_SPLIT_TYPE = "right-split"
 
 /**
  * Represents a user's notification preferences in the system
@@ -292,7 +293,7 @@ UserSchema.virtual("fullName").get(function () {
 /**
  * Returns the primary email of this user
  */
-UserSchema.virtual("primaryEmail").get(function () {
+UserSchema.virtual("email").get(function () {
 	if (this.emails.length) return this.emails[0]
 	return null
 })
@@ -302,8 +303,8 @@ UserSchema.virtual("primaryEmail").get(function () {
  */
 UserSchema.virtual("$email").get(function () {
 	return {
-		name: this.fullName || this.primaryEmail,
-		email: this.primaryEmail,
+		name: this.fullName || this.email,
+		email: this.email,
 	}
 })
 
@@ -427,7 +428,7 @@ UserSchema.methods.hasAccessToUser = function (user_id) {
 }
 
 /**
- * Adds an email address of a user as pending
+ * Adds an email address of the user as pending and returns the email object if successfully created, null otherwise
  */
 UserSchema.methods.addPendingEmail = async function (
 	email,
@@ -436,7 +437,7 @@ UserSchema.methods.addPendingEmail = async function (
 	email = normalizeEmailAddress(email)
 
 	if (await this.model("User").findOne().byEmail(email))
-		throw new Error("Email already used")
+		return null
 
 	let date = new Date(Date.now() - 60 * 60 * 1000)
 
@@ -446,7 +447,7 @@ UserSchema.methods.addPendingEmail = async function (
 		createdAt: { $gte: date },
 	})
 	if (emailVerif && emailVerif.user !== this._id)
-		throw new Error("Email already used")
+		return null
 	// Delete it otherwise
 	else await EmailVerification.deleteOne({ _id: email })
 
@@ -547,13 +548,16 @@ UserSchema.methods.setMobilePhone = async function (number, verified = false) {
  * Delete the user's account
  */
 UserSchema.methods.deleteAccount = async function () {
+	await EmailVerification.deleteMany({user: this._id})
 	this.accountStatus = "deleted"
 	this.password = undefined
-	this.email = undefined
+	this.emails = undefined
 	this.firstName = undefined
 	this.lastName = undefined
 	this.artistName = undefined
 	this.avatar = undefined
+	this.mobilePhone = undefined
+	this.permissions = undefined
 	this.locale = "en"
 	await this.save()
 }
@@ -605,10 +609,19 @@ UserSchema.methods.createPasswordResetToken = function (email, expires) {
 		{
 			user_id: this._id,
 			user_password: this.password,
-			user_email: email
+			user_email: email,
 		},
 		expires
 	)
+}
+
+/**
+ * Decode a password reset token for the user
+ */
+UserSchema.methods.decodePasswordResetToken = function (token) {
+	const data = JWT.decode(JWT_RESET_TYPE, token)
+	if (!data || data.user_id !== this._id) return null
+	return data
 }
 
 /**
@@ -716,6 +729,37 @@ UserSchema.methods.emailPasswordChanged = async function () {
 }
 
 /**
+ * Sends the right split created notification to the user
+ */
+UserSchema.methods.emailRightSplitVoting = async function (
+	expires = "2 weeks"
+) {
+	return await sendTemplateTo("right-split:created", this, {}, {})
+}
+
+/**
+ * Sends the right split completed and accepted notification to the user
+ */
+UserSchema.methods.emailRightSplitAccepted = async function (
+	expires = "2 weeks"
+) {
+	return await sendTemplateTo("right-split:accepted", this, {}, {})
+}
+
+/*
+ * Sends a notification to the user through the medium set in the user's preferences
+ */
+UserSchema.methods.sendNotification = async function (
+	notificationType,
+	data,
+	options
+) {
+	await this.sendSMS(notificationType, data)
+	await this.sendEmail(notificationType, data, options)
+	await this.sendPush(notificationType, data)
+}
+
+/**
  * Sends an SMS to the user
  */
 UserSchema.methods.sendSMS = async function (notificationType, message) {
@@ -723,14 +767,22 @@ UserSchema.methods.sendSMS = async function (notificationType, message) {
 	else throw new Error("notificationType not implemented yet")
 }
 
-/*
- * Sends a notification to the user through the medium set in the user's preferences
+/**
+ * Sends an Email to the user
  */
-UserSchema.methods.sendNotification = async function (notificationType, data) {
-	// Validation is already done in send{Medium}() functions
-	// await this.sendSMS(notificationType, data)    /* NOT IMPLEMENTED */
-	// await this.sendEmail(notificationType, data)  /* NOT IMPLEMENTED */
-	// await this.sendPush(notificationType, data)   /* NOT IMPLEMENTED */
+UserSchema.methods.sendEmail = async function (
+	notificationType,
+	data,
+	options
+) {
+	throw new Error("not implemented yet")
+}
+
+/**
+ * Sends a Push notification to the user
+ */
+UserSchema.methods.sendPush = async function (notificationType, data, options) {
+	throw new Error("not implemented yet")
 }
 
 module.exports = mongoose.model("User", UserSchema)

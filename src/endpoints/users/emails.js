@@ -15,7 +15,9 @@ async function getUserEmails(user) {
 
 async function createUserEmail(user) {
 	const email = await user.addPendingEmail(this.req.body.email)
-
+	if(!email)
+		throw new EmailSchema.ConflictingEmailError({ email: this.req.body.email })
+	
 	return user.emails
 		.map((e) => ({ email: e, status: "active" }))
 		.concat(

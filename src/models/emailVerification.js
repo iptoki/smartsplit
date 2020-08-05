@@ -2,7 +2,6 @@ const mongoose = require("mongoose")
 const JWT = require("../utils/jwt")
 const { normalizeEmailAddress } = require("../utils/email")
 
-
 /**
  * Represents an email with pending verification in the system
  */
