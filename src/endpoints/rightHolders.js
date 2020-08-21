@@ -11,10 +11,23 @@ api.get(
 		summary: "Get the list of rightHolders",
 		parameters: [],
 		responses: {
-			200: UserSchema.userSearchResult,
+			200: UserSchema.rightHolderList,
 		},
 	},
 	getRightHolders
+)
+
+api.get(
+	"/rightHolders/{user_id}",
+	{
+		tags: ["RightHolders"],
+		summary: "Get the a rightHolder by ID",
+		parameters: [UserSchema.id],
+		responses: {
+			200: UserSchema.rightHolder,
+		},
+	},
+	getRightHolderById
 )
 
 /************************ Handlers ************************/
@@ -40,4 +53,15 @@ async function getRightHolders() {
 	})
 		.skip(parseInt(this.req.query.skip))
 		.limit(parseInt(this.req.query.limit))
+}
+
+async function getRightHolderById() {
+	const rightHolder = await User.findById(this.req.params.user_id)
+
+	if (!rightHolder)
+		throw new UserSchema.UserNotFoundError({
+			user_id: this.req.params.user_id,
+		})
+
+	return rightHolder
 }
