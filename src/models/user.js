@@ -4,6 +4,11 @@ const Config = require("../config")
 const PasswordUtil = require("../utils/password")
 const JWT = require("../utils/jwt")
 const EmailVerification = require("../models/emailVerification")
+const Notification = require("../models/notifications/notification")
+const {
+	UserTemplates,
+	generateTemplate,
+} = require("../models/notifications/templates")
 const { sendTemplateTo, normalizeEmailAddress } = require("../utils/email")
 const { generateRandomCode } = require("../utils/random")
 const { sendSMSTo } = require("../service/twilio")
@@ -11,39 +16,6 @@ const { sendSMSTo } = require("../service/twilio")
 const JWT_RESET_TYPE = "user:password-reset"
 const JWT_ACTIVATE_TYPE = "user:activate"
 const JWT_SPLIT_TYPE = "right-split"
-
-/**
- * Represents a user's notification preferences in the system
- */
-const NotificationsSchema = new mongoose.Schema(
-	{
-		general_interations: {
-			type: Array,
-			default: ["email", "push"],
-		},
-		administrative_messages: {
-			type: Array,
-			default: ["email", "push"],
-		},
-		account_login: {
-			type: Array,
-			default: [],
-		},
-		smartsplit_blog: {
-			type: Array,
-			default: [],
-		},
-		smartsplit_promotions: {
-			type: Array,
-			default: [],
-		},
-		partner_promotions: {
-			type: Array,
-			default: [],
-		},
-	},
-	{ _id: false }
-)
 
 /**
  * Represents a user's mobile phone in the system
@@ -189,60 +161,9 @@ const UserSchema = new mongoose.Schema({
 	},
 
 	notifications: {
-		type: NotificationsSchema,
-		api: {
-			type: "object",
-			properties: {
-				general_interations: {
-					type: "array",
-					items: {
-						type: "string",
-						enum: ["email", "push", "sms"],
-					},
-					default: ["email", "push"],
-				},
-				administrative_messages: {
-					type: "array",
-					items: {
-						type: "string",
-						enum: ["email", "push", "sms"],
-					},
-					default: ["email", "push"],
-				},
-				account_login: {
-					type: "array",
-					items: {
-						type: "string",
-						enum: ["email", "push", "sms"],
-					},
-					default: [],
-				},
-				smartsplit_blog: {
-					type: "array",
-					items: {
-						type: "string",
-						enum: ["email", "push", "sms"],
-					},
-					default: [],
-				},
-				smartsplit_promotions: {
-					type: "array",
-					items: {
-						type: "string",
-						enum: ["email", "push", "sms"],
-					},
-					default: [],
-				},
-				partner_promotions: {
-					type: "array",
-					items: {
-						type: "string",
-						enum: ["email", "push", "sms"],
-					},
-					default: [],
-				},
-			},
-		},
+		type: Notification.Schema,
+		default: {},
+		api: Notification.APISchema,
 	},
 
 	permissions: {
@@ -458,9 +379,9 @@ UserSchema.methods.addPendingEmail = async function (
 	await emailVerif.save()
 
 	if (sendVerifEmail)
-		await this.emailLinkEmailAccount(email).catch((e) =>
-			console.error(e, "Error sending email verification")
-		)
+		await this.sendNotification(UserTemplates.ACTIVATE_EMAIL, {
+			to: { name: this.fullName, email: email },
+		})
 
 	if (
 		Array.isArray(this.pendingEmails) &&
@@ -522,26 +443,15 @@ UserSchema.methods.setMobilePhone = async function (number, verified = false) {
 	if (user && (user._id !== this._id || this.mobilePhone.status === "verified"))
 		throw new Error("This phone number is already used")
 
-	const verificationCode = !verified
-		? { code: generateRandomCode(), createdAt: new Date() }
-		: null
+	const verificationCode = { code: generateRandomCode(), createdAt: new Date() }
 
 	this.mobilePhone = {
 		number: number,
-		status: verified ? "verified" : "unverified",
-		verificationCode: verificationCode,
+		status: "unverified",
+		verificationCode: { code: generateRandomCode(), createdAt: new Date() },
 	}
 
-	const text =
-		this.locale === "en" // TODO: i18n
-			? "Your Smartsplit activation code is "
-			: "Votre code d'activation Smartsplit est "
-
-	if (!verified)
-		await this.sendSMS(
-			true,
-			text + this.mobilePhone.verificationCode.code
-		).catch((e) => console.error(e, "Error sending verification code SMS"))
+	await this.sendSMS(UserTemplates.VERIFY_MOBILE_PHONE, false)
 }
 
 /**
@@ -603,13 +513,12 @@ UserSchema.methods.verifyMobilePhone = async function (code) {
 /**
  * Creates a password reset token for the user
  */
-UserSchema.methods.createPasswordResetToken = function (email, expires) {
+UserSchema.methods.createPasswordResetToken = function (expires = "2 hours") {
 	return JWT.create(
 		JWT_RESET_TYPE,
 		{
 			user_id: this._id,
 			user_password: this.password,
-			user_email: email,
 		},
 		expires
 	)
@@ -652,122 +561,64 @@ UserSchema.methods.createActivationToken = function (
 	return token
 }
 
-/**
- * Sends the welcome email to the user
- */
-UserSchema.methods.emailWelcome = async function (email, expires = "2 weeks") {
-	const token = this.createActivationToken(email, expires)
-
-	// console.log(token) // Temporary helper
-
-	return await sendTemplateTo(
-		"user:activate-account",
-		this,
-		{ to: { name: email, email: email } },
-		{ activateAccountUrl: Config.clientUrl + "/user/activate/" + token }
-	)
-}
-
-/**
- * Sends an activation email to link a new email to the user account
- */
-UserSchema.methods.emailLinkEmailAccount = async function (
-	email,
-	expires = "2 weeks"
-) {
-	const token = this.createActivationToken(email, expires)
-
-	console.log(token) // Temporary helper
-
-	return await sendTemplateTo(
-		"user:activate-email",
-		this,
-		{ to: { name: this.fullName, email: email } },
-		{ linkEmailAccountUrl: Config.clientUrl /* TODO see with frontend */ }
-	)
-}
-
-/**
- * Sends the password reset email to the user
- */
-UserSchema.methods.emailPasswordReset = async function (
-	email,
-	expires = "2 hours"
-) {
-	const token = this.createPasswordResetToken(email, expires)
-
-	console.log(token) // Temporary helper
-
-	return await sendTemplateTo(
-		"user:password-reset",
-		this,
-		{ to: { name: this.fullName, email: email } },
-		{ resetPasswordUrl: Config.clientUrl + "/user/change-password/" + token }
-	)
-}
-
-/**
- * Sends the password changed notification to the user
- */
-UserSchema.methods.emailPasswordChanged = async function () {
-	return await sendTemplateTo("user:password-changed", this, {}, {})
-}
-
-/**
- * Sends the right split created notification to the user
- */
-UserSchema.methods.emailRightSplitVoting = async function (
-	expires = "2 weeks"
-) {
-	return await sendTemplateTo("right-split:created", this, {}, {})
-}
-
-/**
- * Sends the right split completed and accepted notification to the user
- */
-UserSchema.methods.emailRightSplitAccepted = async function (
-	expires = "2 weeks"
-) {
-	return await sendTemplateTo("right-split:accepted", this, {}, {})
-}
-
 /*
  * Sends a notification to the user through the medium set in the user's preferences
  */
 UserSchema.methods.sendNotification = async function (
-	notificationType,
-	data,
-	options
+	templateName,
+	options = {}
 ) {
-	await this.sendSMS(notificationType, data)
-	await this.sendEmail(notificationType, data, options)
-	await this.sendPush(notificationType, data)
+	await this.sendSMS(templateName)
+	await this.sendEmail(templateName, options)
+	await this.sendPush(templateName)
 }
 
 /**
  * Sends an SMS to the user
  */
-UserSchema.methods.sendSMS = async function (notificationType, message) {
-	if (notificationType === true) return await sendSMSTo(this, message, false)
-	else throw new Error("notificationType not implemented yet")
+UserSchema.methods.sendSMS = async function (
+	templateName,
+	verifiedOnly = true
+) {
+	const template = generateTemplate(templateName, "sms", this)
+
+	if (
+		!template ||
+		!this.notifications[template.notificationType].includes("sms")
+	)
+		return null
+
+	return await sendSMSTo(this, template.message, verifiedOnly)
 }
 
 /**
  * Sends an Email to the user
  */
-UserSchema.methods.sendEmail = async function (
-	notificationType,
-	data,
-	options
-) {
-	throw new Error("not implemented yet")
+UserSchema.methods.sendEmail = async function (templateName, options = {}) {
+	const template = generateTemplate(templateName, "email", this, options)
+
+	if (
+		!template ||
+		!this.notifications[template.notificationType].includes("email")
+	)
+		return null
+
+	return await sendTemplateTo(template.id, this, options, template.data)
 }
 
 /**
  * Sends a Push notification to the user
  */
-UserSchema.methods.sendPush = async function (notificationType, data, options) {
-	throw new Error("not implemented yet")
+UserSchema.methods.sendPush = async function (templateName) {
+	const template = generateTemplate(templateName, "push", this)
+
+	if (
+		!template ||
+		!this.notifications[template.notificationType].includes("push")
+	)
+		return null
+
+	return "push not implemented"
 }
 
 module.exports = mongoose.model("User", UserSchema)

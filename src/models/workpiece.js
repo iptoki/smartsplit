@@ -2,6 +2,7 @@ const mongoose = require("mongoose")
 const uuid = require("uuid").v4
 const Config = require("../config")
 const User = require("./user")
+const SplitTemplates = require("./notifications/templates")
 const UserSchema = require("../schemas/users")
 const JWT = require("../utils/jwt")
 
@@ -266,6 +267,13 @@ WorkpieceSchema.query.byOwner = function (user_id) {
 	return this.where({ owner: user_id })
 }
 
+WorkpieceSchema.methods.isOwnerPartOfRightHolders = function () {
+	for (rh of this.rightHolders) {
+		if (rh._id === this.owner._id) return true
+	}
+	return false
+}
+
 WorkpieceSchema.methods.createToken = async function (
 	rightHolderId,
 	expires = "7 days"
@@ -357,12 +365,21 @@ WorkpieceSchema.methods.canVoteRightSplit = function () {
 WorkpieceSchema.methods.emailRightHolders = async function (notificationType) {
 	if (!this.populated("rightHolders"))
 		await this.populate("rightHolders").execPopulate()
-	for (rh of this.rightHolders) await rh.sendNotification(notificationType)
+	for (rh of this.rightHolders)
+		await rh.sendNotification(notificationType, {
+			workpiece: this,
+		})
+}
+
+WorkpieceSchema.methods.emailOwner = async function (notificationType) {
+	await this.owner.sendNotification(notificationType, {
+		workpiece: this,
+	})
 }
 
 WorkpieceSchema.methods.submitRightSplit = async function () {
 	this.rightSplit._state = "voting"
-	await this.emailRightHolders("split-created")
+	await this.emailRightHolders(SplitTemplates.CREATED)
 }
 
 WorkpieceSchema.methods.swapRightHolder = async function (originalId, swapId) {
@@ -395,11 +412,13 @@ WorkpieceSchema.methods.updateRightSplitState = async function () {
 	if (accepted) this.rightSplit._state = "accepted"
 
 	if (this.rightSplit._state !== initialState) {
-		if (this.rightSplit._state === "accepted")
-			await this.emailRightHolders("split-accepted")
+		const template =
+			this.rightSplit._state === "accepted"
+				? SplitTemplates.ACCEPTED
+				: SplitTemplates.REJECTED
 
-		if (this.rightSplit._state === "rejected")
-			await this.emailRightHolders("split-rejected")
+		await this.emailRightHolders(template)
+		if (!this.isOwnerPartOfRightHolders()) await this.emailOwner(template)
 	}
 }
 
