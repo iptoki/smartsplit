@@ -5,13 +5,13 @@ const PasswordUtil = require("../utils/password")
 const JWT = require("../utils/jwt")
 const EmailVerification = require("../models/emailVerification")
 const Notification = require("../models/notifications/notification")
+const { sendTemplateTo, normalizeEmailAddress } = require("../utils/email")
+const { generateRandomCode } = require("../utils/random")
+const { sendSMSTo } = require("../service/twilio")
 const {
 	UserTemplates,
 	generateTemplate,
 } = require("../models/notifications/templates")
-const { sendTemplateTo, normalizeEmailAddress } = require("../utils/email")
-const { generateRandomCode } = require("../utils/random")
-const { sendSMSTo } = require("../service/twilio")
 
 const JWT_RESET_TYPE = "user:password-reset"
 const JWT_ACTIVATE_TYPE = "user:activate"
@@ -349,7 +349,7 @@ UserSchema.methods.hasAccessToUser = function (user_id) {
 }
 
 /**
- * Adds an email address of a user as pending
+ * Adds an email address of the user as pending and returns the email object if successfully created, null otherwise
  */
 UserSchema.methods.addPendingEmail = async function (
 	email,
@@ -357,18 +357,21 @@ UserSchema.methods.addPendingEmail = async function (
 ) {
 	email = normalizeEmailAddress(email)
 
-	if (await this.model("User").findOne().byEmail(email))
-		throw new Error("Email already used")
+	if (await this.model("User").findOne().byEmail(email)) return null
 
 	let date = new Date(Date.now() - 60 * 60 * 1000)
 
-	// Throw if an entry already exists and was created less than an hour ago
+	// Seach for an entry created less than an hour ago with the specified email address
 	let emailVerif = await EmailVerification.findOne({
 		_id: email,
 		createdAt: { $gte: date },
-	})
-	if (emailVerif && emailVerif.user !== this._id)
-		throw new Error("Email already used")
+	}).populate("user")
+
+	// An entry exist
+	if (emailVerif) {
+		if (!emailVerif.user) await emailVerif.remove()
+		if (emailVerif.user !== this._id) return null
+	}
 	// Delete it otherwise
 	else await EmailVerification.deleteOne({ _id: email })
 
@@ -376,6 +379,7 @@ UserSchema.methods.addPendingEmail = async function (
 		_id: email,
 		user: this._id,
 	})
+
 	await emailVerif.save()
 
 	if (sendVerifEmail)

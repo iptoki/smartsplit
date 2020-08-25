@@ -41,14 +41,8 @@ async function createUser() {
 
 	if (email) {
 		if (!email.user) await email.remove()
-		else if (
-			!(
-				(await email.user.verifyPassword(this.req.body.password)) ||
-				email.user.isActive
-			)
-		)
-			throw new UserSchema.ConflictingUserError({ email: this.req.body.email })
-		else user = email.user
+		if (await email.user.verifyPassword(this.req.body.password))
+			user = email.user
 	}
 
 	if (!user) {
@@ -58,7 +52,9 @@ async function createUser() {
 			accountStatus: undefined,
 		})
 
-		await user.addPendingEmail(this.req.body.email, false)
+		if (!(await user.addPendingEmail(this.req.body.email, false)))
+			throw new UserSchema.ConflictingUserError({ email: this.req.body.email })
+
 		await user.setPassword(this.req.body.password)
 
 		if (this.req.body.avatar)
@@ -101,7 +97,12 @@ async function updateUser(user) {
 	let passwordChanged = false
 
 	// Update user data
-	if (this.req.body.email) await user.addPendingEmail(this.req.body.email)
+	if (this.req.body.email) {
+		if (!(await user.addPendingEmail(this.req.body.email)))
+			throw new EmailSchema.ConflictingEmailError({
+				email: this.req.body.email,
+			})
+	}
 
 	if (this.req.body.phoneNumber)
 		await user.setMobilePhone(this.req.body.phoneNumber)
@@ -205,6 +206,28 @@ async function deleteUserAccount(user) {
 	this.res.status(204).end()
 }
 
+async function inviteNewUser() {
+	if (await User.findOne().byEmail(this.req.body.email))
+		throw new UserSchema.ConflictingUserError({ email: this.req.body.email })
+
+	const user = new User({
+		firstName: this.req.body.firstName,
+		lastName: this.req.body.lastName,
+		accountStatus: "split-invited",
+	})
+
+	if (!(await user.addPendingEmail(this.req.body.email, false)))
+		throw new UserSchema.ConflictingUserError({ email: this.req.body.email })
+
+	await user.save()
+
+	await user.sendNotification(UserTemplate.SPLIT_INVITED, {
+		to: { name: this.fullName, email: this.req.body.email },
+	})
+
+	return user
+}
+
 module.exports = {
 	loadUser,
 	loadUserWithPendingEmails,
@@ -216,4 +239,5 @@ module.exports = {
 	changeUserPassword,
 	verifyUserMobilePhone,
 	deleteUserAccount,
+	inviteNewUser,
 }

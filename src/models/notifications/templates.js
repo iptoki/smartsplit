@@ -13,6 +13,7 @@ const UserTemplates = {
 	PASSWORD_CHANGED: "user:password-changed",
 	ACTIVATE_EMAIL: "user:activate-email",
 	VERIFY_MOBILE_PHONE: "user:verify-mobile-phone",
+	SPLIT_INVITED: "user:split-invited"
 }
 
 const TemplateMap = {
@@ -114,6 +115,27 @@ const TemplateMap = {
 					data: {
 						resetPasswordUrl:
 							Config.clientUrl + "/user/change-password/" + token,
+					},
+				}
+			},
+		},
+	},
+
+	[UserTemplates.SPLIT_INVITED]: {
+		notificationType: Notification.ADMINISTRATIVE_MESSAGES,
+		email: {
+			template_id: {
+				en: "" /* TODO */,
+				fr: "" /* TODO */,
+			},
+			generate: function (user, options) {
+				const token = user.createPasswordResetToken(
+					options.expires || "2 hours"
+				)
+				return {
+					id: this.template_id[user.locale],
+					data: {
+						url: "" /* TODO */,
 					},
 				}
 			},
