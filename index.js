@@ -1,4 +1,4 @@
-const fastify = require('fastify')({ logger: true })
+const fastify = require('fastify')({ logger: false })
 
 // Load configuration
 const Config = require("./src/config")
@@ -40,11 +40,15 @@ fastify.register(require('fastify-swagger'), {
 
 // Register spec endpoint
 fastify.get("/spec", function (req, res) {
-	return fastify.swagger()
+	res.send(fastify.swagger())
 })
 
 // Register routes
-fastify.register(require())
+//fastify.register(require("./src/endpoints/users/index"))
+//fastify.register(require("./src/endpoints/auth"))
+//fastify.register(require("./src/endpoints/lists"))
+//fastify.register(require("./src/endpoints/rightHolders"))
+//fastify.register(require("./src/endpoints/workpieces"))
 
 // Start up server
 fastify.listen(Config.listen.port, Config.listen.host, function (err, address) {
@@ -52,7 +56,6 @@ fastify.listen(Config.listen.port, Config.listen.host, function (err, address) {
     fastify.log.error(err)
     process.exit(1)
   }
-  fastify.log.info(`Server ready and listening on ${address}`)
 })
 
 console.log("Server ready and listening")
