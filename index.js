@@ -1,6 +1,4 @@
-const express = require("express")
-require("express-async-errors")
-const Swagger = require("swagger-ui-express")
+const fastify = require('fastify')({ logger: true })
 
 // Load configuration
 const Config = require("./src/config")
@@ -11,33 +9,51 @@ require("mongoose").connect(process.env["MONGODB_PATH"] || Config.mongodb.uri, {
 	useUnifiedTopology: true,
 })
 
-// Load up API
-const api = require("./src/app").api
+// Register plugins
+fastify.register(require('fastify-formbody'), {
+	bodyLimit: Config.http.entityMaxSize,
+})
+
+fastify.register(require('fastify-cors'), { 
+	maxAge: 30 * 60
+})
+
+fastify.register(require('fastify-swagger'), {
+  routePrefix: '/docs',
+  swagger: {
+    info: {
+      title: 'Smartsplit API',
+      description: 'Swagger API for smartsplit project',
+      version: '0.1.0'
+    },
+    externalDocs: {
+      url: 'https://swagger.io',
+      description: 'Find more info here'
+    },
+    host: 'localhost',
+    schemes: ['http'],
+    consumes: ['application/json'],
+    produces: ['application/json'],
+  },
+  exposeRoute: true
+})
+
+// Register spec endpoint
+fastify.get("/spec", function (req, res) {
+	return fastify.swagger()
+})
+
+// Register routes
+fastify.register(require())
 
 // Start up server
-const app = express()
-app.use(require("cors")({ maxAge: 30 * 60 }))
-app.use(require("morgan")("short"))
-app.use(express.json({ strict: false, limit: Config.http.entityMaxSize }))
-app.use(
-	express.urlencoded({ extended: false, limit: Config.http.entityMaxSize })
-)
-
-app.use("/docs", Swagger.serve, Swagger.setup(api.oapi))
-app.get("/spec", function (req, res) {
-	res.type("text/plain").send(JSON.stringify(api.oapi, null, 4))
+fastify.listen(Config.listen.port, Config.listen.host, function (err, address) {
+  if (err) {
+    fastify.log.error(err)
+    process.exit(1)
+  }
+  fastify.log.info(`Server ready and listening on ${address}`)
 })
-
-app.use("/v1", api.router)
-app.use("/v1", function (req, res) {
-	res.status(404).json({
-		code: "INVALID_ENDPOINT",
-		message: "Invalid Request: no handler at this path",
-		path: req.baseUrl + req.path,
-	})
-})
-
-app.listen(Config.listen.port, Config.listen.host)
 
 console.log("Server ready and listening")
 console.log(
