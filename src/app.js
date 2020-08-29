@@ -92,11 +92,11 @@ module.exports = {
 }
 
 // Load up the endpoints
-require("./endpoints/auth")
-require("./endpoints/lists")
-require("./endpoints/workpieces")
-require("./endpoints/users/index")
-require("./endpoints/rightHolders")
+// require("./endpoints/auth")
+// require("./endpoints/lists")
+// require("./endpoints/workpieces")
+// require("./endpoints/users/index")
+// require("./endpoints/rightHolders")
 
 // Generic error handler
 api.router.use(function (err, req, res, next) {

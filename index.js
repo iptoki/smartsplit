@@ -1,7 +1,7 @@
-const fastify = require('fastify')({ logger: false })
-
 // Load configuration
 const Config = require("./src/config")
+
+const fastify = require('fastify')({ logger: Config.logger })
 
 // Connect database
 require("mongoose").connect(process.env["MONGODB_PATH"] || Config.mongodb.uri, {
@@ -18,6 +18,9 @@ fastify.register(require('fastify-cors'), {
 	maxAge: 30 * 60
 })
 
+fastify.register(require('fastify-sensible'))
+
+/* TODO: move swagger config */
 fastify.register(require('fastify-swagger'), {
   routePrefix: '/docs',
   swagger: {
@@ -38,17 +41,17 @@ fastify.register(require('fastify-swagger'), {
   exposeRoute: true
 })
 
-// Register spec endpoint
+// Register OAPI specification endpoint
 fastify.get("/spec", function (req, res) {
 	res.send(fastify.swagger())
 })
 
+// Register global schemas
+require("./src/schemas/users")(fastify) // sketchy, looking for better solutions
+
 // Register routes
-//fastify.register(require("./src/endpoints/users/index"))
-//fastify.register(require("./src/endpoints/auth"))
-//fastify.register(require("./src/endpoints/lists"))
-//fastify.register(require("./src/endpoints/rightHolders"))
-//fastify.register(require("./src/endpoints/workpieces"))
+fastify.register(require("./src/routes/index"))
+
 
 // Start up server
 fastify.listen(Config.listen.port, Config.listen.host, function (err, address) {
