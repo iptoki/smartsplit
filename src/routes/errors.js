@@ -67,7 +67,7 @@ module.exports.WorkpieceNotFound = new HTTPErrors.NotFound(
 module.exports.RightSplitNotFound = new HTTPErrors.NotFound(
 	"Right split not found"
 )
-module.exports.FileNotFound = new HTTPErrors.NotFound("File not found")
+module.exports.WorkpieceFileNotFound = new HTTPErrors.NotFound("File not found")
 module.exports.InvalidSplitToken = new HTTPErrors.Forbidden(
 	"The supplied split token is not valid or has expired"
 )

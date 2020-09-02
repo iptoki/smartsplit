@@ -139,7 +139,7 @@ const authorizeUserAccess = async function () {
 	}
 }
 
-const loadAuthUser = async function () {
+const getAuthUser = async function () {
 	try {
 		return await requireUser.call(this)
 	} catch (e) {

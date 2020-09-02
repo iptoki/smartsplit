@@ -127,7 +127,7 @@ async function updateListEntity(req, res) {
 	if (!req.authUser.isAdmin && req.params.list_type === "digital-distributors")
 		throw Errors.UserForbidden
 
-	const entity = getListEntity(req, res)
+	const entity = await getListEntity(req, res)
 
 	if (!req.authUser.isAdmin) {
 		delete req.body.adminReview
@@ -144,7 +144,7 @@ async function deleteListEntity(req, res) {
 	if (!req.authUser.isAdmin && req.params.list_type === "digital-distributors")
 		throw Errors.UserForbidden
 
-	const entity = getListEntity(req, res)
+	const entity = await getListEntity(req, res)
 
 	await entity.remove()
 	res.code(204).send()
