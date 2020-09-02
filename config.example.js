@@ -10,14 +10,14 @@ module.exports = {
 	},
 
 	sendgrid: {
-		apikey: null
+		apikey: null,
 	},
 
 	jwt_secret: "set this to something random",
 
 	listen: {
 		port: 3001,
-		host: "::1"
+		host: "::1",
 	},
 
 	logger: true,

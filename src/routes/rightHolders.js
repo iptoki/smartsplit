@@ -9,7 +9,7 @@ async function routes(fastify, options) {
 		url: "/rightHolders",
 		schema: {
 			querystring: {
-				search_terms: {type: "string"},
+				search_terms: { type: "string" },
 				limit: {
 					type: "integer",
 					default: 50,
@@ -18,15 +18,18 @@ async function routes(fastify, options) {
 				},
 				skip: {
 					type: "integer",
-					default: 0, 
+					default: 0,
 					minimum: 0,
-				}
+				},
 			},
 			response: {
-				200: { type: "array", items: {$ref: "UserSchema#/definitions/rightHolder" } }
-			}
+				200: {
+					type: "array",
+					items: { $ref: "UserSchema#/definitions/rightHolder" },
+				},
+			},
 		},
-		handler: getRightHolders
+		handler: getRightHolders,
 	})
 
 	fastify.route({
@@ -36,13 +39,13 @@ async function routes(fastify, options) {
 			params: {
 				user_id: {
 					type: "string",
-				}
+				},
 			},
 			response: {
 				200: { $ref: "UserSchema#/definitions/rightHolder" },
-			}
+			},
 		},
-		handler: getRightHolderById
+		handler: getRightHolderById,
 	})
 }
 
@@ -71,8 +74,7 @@ async function getRightHolders(req, res) {
 async function getRightHolderById(req, res) {
 	const rightHolder = await User.findById(req.params.user_id)
 
-	if (!rightHolder)
-		throw UserNotFound
+	if (!rightHolder) throw UserNotFound
 
 	return rightHolder
 }

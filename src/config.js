@@ -38,7 +38,7 @@ const DefaultConfig = {
 		entityMaxSize: 16 * 1024 * 1024, // 16MB
 	},
 
-	logger: true
+	logger: true,
 }
 
 try {

@@ -58,7 +58,7 @@ async function schemas(fastify) {
 				format: "email",
 				example: "qa@smartsplit.org",
 			},
-		}
+		},
 	})
 }
 
