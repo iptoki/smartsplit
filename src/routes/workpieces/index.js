@@ -12,7 +12,7 @@ async function routes(fastify, options) {
 				200: { type: "array", items: { $ref: "WorkpieceSchema" } },
 			},
 		},
-		preValidation: JWTAuth.getAuthUser,
+		preValidation: JWTAuth.requireAuthUser,
 		handler: Controller.getWorkpiecesByOwner,
 	})
 
@@ -24,7 +24,7 @@ async function routes(fastify, options) {
 				200: { $ref: "WorkpieceSchema" },
 			},
 		},
-		preValidation: JWTAuth.getAuthUser,
+		preValidation: JWTAuth.requireAuthUser,
 		handler: Controller.getWorkpiece,
 	})
 
@@ -36,7 +36,7 @@ async function routes(fastify, options) {
 				200: { $ref: "WorkpieceSchema" },
 			},
 		},
-		preValidation: JWTAuth.getAuthUser,
+		preValidation: JWTAuth.requireAuthUser,
 		handler: Controller.createWorkpiece,
 	})
 
@@ -48,7 +48,7 @@ async function routes(fastify, options) {
 				200: { $ref: "WorkpieceSchema" },
 			},
 		},
-		preValidation: JWTAuth.getAuthUser,
+		preValidation: JWTAuth.requireAuthUser,
 		handler: Controller.updateWorkpiece,
 	})
 
@@ -60,7 +60,7 @@ async function routes(fastify, options) {
 				204: {},
 			},
 		},
-		preValidation: JWTAuth.getAuthUser,
+		preValidation: JWTAuth.requireAuthUser,
 		handler: Controller.deleteWorkpiece,
 	})
 
@@ -72,7 +72,7 @@ async function routes(fastify, options) {
 				200: { /* TODO */ },
 			},
 		},
-		preValidation: JWTAuth.getAuthUser,
+		preValidation: JWTAuth.requireAuthUser,
 		handler: Controller.getWorkpieceFile,
 	})
 
@@ -84,7 +84,7 @@ async function routes(fastify, options) {
 				200: { $ref: "WorkpieceFileSchema" },
 			},
 		},
-		preValidation: JWTAuth.getAuthUser,
+		preValidation: JWTAuth.requireAuthUser,
 		handler: Controller.addWorkpieceFile,
 	})
 
@@ -96,7 +96,7 @@ async function routes(fastify, options) {
 				200: { $ref: "WorkpieceFileSchema" },
 			},
 		},
-		preValidation: JWTAuth.getAuthUser,
+		preValidation: JWTAuth.requireAuthUser,
 		handler: Controller.updateWorkpieceFile,
 	})
 
@@ -108,7 +108,7 @@ async function routes(fastify, options) {
 				200: { $ref: "RightSplitSchema" },
 			},
 		},
-		preValidation: JWTAuth.getAuthUser,
+		preValidation: JWTAuth.requireAuthUser,
 		handler: Controller.createRightSplit,
 	})
 
@@ -120,7 +120,7 @@ async function routes(fastify, options) {
 				200: { $ref: "RightSplitSchema" },
 			},
 		},
-		preValidation: JWTAuth.getAuthUser,
+		preValidation: JWTAuth.requireAuthUser,
 		handler: Controller.updateRightSplit,
 	})
 
@@ -132,7 +132,7 @@ async function routes(fastify, options) {
 				204: {},
 			},
 		},
-		preValidation: JWTAuth.getAuthUser,
+		preValidation: JWTAuth.requireAuthUser,
 		handler: Controller.deleteRightSplit,
 	})
 
@@ -144,7 +144,7 @@ async function routes(fastify, options) {
 				204: {},
 			},
 		},
-		preValidation: JWTAuth.getAuthUser,
+		preValidation: JWTAuth.requireAuthUser,
 		handler: Controller.submitRightSplit,
 	})
 
@@ -156,7 +156,7 @@ async function routes(fastify, options) {
 				204: {},
 			},
 		},
-		preValidation: JWTAuth.getAuthUser,
+		preValidation: JWTAuth.requireAuthUser,
 		handler: Controller.voteRightSplit,
 	})
 
@@ -168,7 +168,7 @@ async function routes(fastify, options) {
 				204: {},
 			},
 		},
-		preValidation: JWTAuth.getAuthUser,
+		preValidation: JWTAuth.requireAuthUser,
 		handler: Controller.swapRightSplitUser,
 	})
 }

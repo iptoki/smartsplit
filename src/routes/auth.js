@@ -54,8 +54,7 @@ async function login(req, res) {
 }
 
 async function checkToken(req, res) {
-	if(JWTAuth.getAuthUser(req, res)) return true
-	return false
+	return req.authUser ? true : false
 }
 
 async function refreshToken(req, res) {

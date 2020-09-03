@@ -14,7 +14,6 @@ async function routes(fastify, options) {
 				200: { type: "array", items: { $ref: "ListEntitySchema" } },
 			},
 		},
-		preValidation: JWTAuth.getAuthUser,
 		handler: getList,
 	})
 
@@ -26,7 +25,6 @@ async function routes(fastify, options) {
 				200: { $ref: "ListEntitySchema" },
 			},
 		},
-		preValidation: JWTAuth.getAuthUser,
 		handler: getListEntity,
 	})
 
