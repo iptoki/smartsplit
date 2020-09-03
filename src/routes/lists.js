@@ -149,3 +149,5 @@ async function deleteListEntity(req, res) {
 	await entity.remove()
 	res.code(204).send()
 }
+
+module.exports = routes

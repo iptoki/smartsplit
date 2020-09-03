@@ -172,3 +172,5 @@ async function routes(fastify, options) {
 		handler: Controller.swapRightSplitUser,
 	})
 }
+
+module.exports = routes
