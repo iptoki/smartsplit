@@ -13,7 +13,7 @@ const UserTemplates = {
 	PASSWORD_CHANGED: "user:password-changed",
 	ACTIVATE_EMAIL: "user:activate-email",
 	VERIFY_MOBILE_PHONE: "user:verify-mobile-phone",
-	SPLIT_INVITED: "user:split-invited"
+	SPLIT_INVITED: "user:split-invited",
 }
 
 const TemplateMap = {

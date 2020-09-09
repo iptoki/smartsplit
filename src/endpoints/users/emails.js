@@ -5,8 +5,11 @@ const { normalizeEmailAddress } = require("../../utils/email")
 
 async function getEmail() {
 	const email = normalizeEmailAddress(this.req.params.email)
-	console.log(email)
-	if (await User.findOne().byEmail(email) || await EmailVerification.findById(email)) 
+
+	if (
+		(await User.findOne().byEmail(email)) ||
+		(await EmailVerification.findById(email))
+	)
 		this.res.status(204).send()
 
 	this.res.status(404).send()
