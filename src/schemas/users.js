@@ -1,4 +1,4 @@
-//const User = require("../models/user")
+const Notifications = require("../models/notifications/notification")
 
 async function schemas(fastify) {
 	fastify.addSchema({
@@ -39,7 +39,7 @@ async function schemas(fastify) {
 				type: "string",
 				format: "uuid",
 				example: "e87b56fe-1ce0-4ec7-8393-e18dc7415041",
-				aliasFrom: "user_id",
+				aliasFrom: "_id",
 			},
 			firstName: {
 				type: "string",
@@ -57,6 +57,110 @@ async function schemas(fastify) {
 				type: "string",
 				format: "email",
 				example: "qa@smartsplit.org",
+			},
+			accountStatus: {
+				type: "string",
+				enum: [
+					"invalid",
+					"email-verification-pending",
+					"split-invited",
+					"active",
+					"deleted",
+				],
+				example: "active",
+			},
+			mobilePhone: {
+				type: "object",
+				properties: {
+					number: {
+						type: "string",
+						example: "+15555555555",
+					},
+					status: {
+						type: "string",
+						enum: ["verified", "unverified"],
+						example: "verified",
+					},
+				},
+			},
+			permissions: {
+				type: "object",
+				properties: {
+					admin: {
+						type: "boolean",
+					},
+					users: {
+						type: "array",
+						items: {
+							type: "string",
+							format: "uuid",
+						},
+					},
+				},
+			},
+			locale: {
+				type: "string",
+				enum: ["en", "fr"],
+				example: "fr",
+				default: "en",
+			},
+			avatarUrl: {
+				type: "string",
+				example:
+					"https://api.smartsplit.org/users/0d0cb6f9-c1e6-49e0-acbf-1ca4ace07d1c/avatar",
+			},
+			notifications: {
+				type: "object",
+				properties: {
+					[Notifications.GENERAL_INTERATIONS]: {
+						type: "array",
+						items: {
+							type: "string",
+							enum: ["email", "push", "sms"],
+						},
+						default: ["email", "push"],
+					},
+					[Notifications.ADMINISTRATIVE_MESSAGES]: {
+						type: "array",
+						items: {
+							type: "string",
+							enum: ["email", "push", "sms"],
+						},
+						default: ["email", "push"],
+					},
+					[Notifications.ACCOUNT_LOGIN]: {
+						type: "array",
+						items: {
+							type: "string",
+							enum: ["email", "push", "sms"],
+						},
+						default: [],
+					},
+					[Notifications.SMARTSPLIT_BLOG]: {
+						type: "array",
+						items: {
+							type: "string",
+							enum: ["email", "push", "sms"],
+						},
+						default: [],
+					},
+					[Notifications.SMARTSPLIT_PROMOTIONS]: {
+						type: "array",
+						items: {
+							type: "string",
+							enum: ["email", "push", "sms"],
+						},
+						default: [],
+					},
+					[Notifications.PARTNER_PROMOTIONS]: {
+						type: "array",
+						items: {
+							type: "string",
+							enum: ["email", "push", "sms"],
+						},
+						default: [],
+					},
+				},
 			},
 		},
 	})

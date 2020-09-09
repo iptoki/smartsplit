@@ -143,27 +143,11 @@ const UserSchema = new mongoose.Schema({
 
 	mobilePhone: {
 		type: MobilePhoneSchema,
-		api: {
-			type: "object",
-			properties: {
-				number: {
-					type: "string",
-					example: "+15555555555",
-				},
-				status: {
-					type: "string",
-					enum: ["verified", "unverified"],
-					example: "verified",
-				},
-			},
-			readOnly: true,
-		},
 	},
 
 	notifications: {
 		type: Notification.Schema,
 		default: {},
-		api: Notification.APISchema,
 	},
 
 	permissions: {
@@ -186,8 +170,6 @@ const UserSchema = new mongoose.Schema({
 			readOnly: true,
 		},
 	},
-
-	//rightHolders: [{type: String, ref: "RightHolder", default: []}],
 })
 
 /**
