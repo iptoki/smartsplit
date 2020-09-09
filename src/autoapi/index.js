@@ -83,6 +83,11 @@ class AutoAPI {
 		this.route("delete", ...args)
 	}
 
+	/** Declares a DELETE endpoint */
+	head(...args) {
+		this.route("head", ...args)
+	}
+
 	/**
 	 * Adds a new component definition, returning a reference object.
 	 *

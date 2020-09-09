@@ -248,3 +248,17 @@ api.delete(
 	UserController.loadUserWithPendingEmails,
 	EmailController.deleteUserEmail
 )
+
+api.head(
+	"/users/email/{email}",
+	{
+		tags: ["Emails"],
+		parameters: [EmailSchema.email],
+		summary: "Search if a user with the given email exist",
+		responses: {
+			204: {},
+			404: EmailSchema.EmailNotFoundError,
+		},
+	},
+	EmailController.getEmail
+)
