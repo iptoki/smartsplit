@@ -9,7 +9,7 @@ sendgrid.setApiKey(Config.sendgrid.apikey)
  * and the data argument is used as the text to send to the user.
  */
 function sendEmail(options, data) {
-	return sendgrid.send({
+	const sg = {
 		template_id: options.template_id || Config.sendgrid.defaultTemplate,
 		from: options.from || {
 			name: options.from_name || Config.email.from_name,
@@ -25,7 +25,9 @@ function sendEmail(options, data) {
 				dynamic_template_data: options.template_id ? data : { text: data },
 			},
 		],
-	})
+	}
+	console.log(sg.personalizations)
+	return sendgrid.send(sg)
 }
 
 /**

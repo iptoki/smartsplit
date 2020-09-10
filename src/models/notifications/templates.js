@@ -108,6 +108,7 @@ const TemplateMap = {
 			},
 			generate: function (user, options) {
 				const token = user.createPasswordResetToken(
+					options.to.email,
 					options.expires || "2 hours"
 				)
 				return {
@@ -130,6 +131,7 @@ const TemplateMap = {
 			},
 			generate: function (user, options) {
 				const token = user.createPasswordResetToken(
+					options.to.email,
 					options.expires || "2 hours"
 				)
 				return {

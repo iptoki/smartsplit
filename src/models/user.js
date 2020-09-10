@@ -517,7 +517,10 @@ UserSchema.methods.verifyMobilePhone = async function (code) {
 /**
  * Creates a password reset token for the user
  */
-UserSchema.methods.createPasswordResetToken = function (email, expires = "2 hours") {
+UserSchema.methods.createPasswordResetToken = function (
+	email,
+	expires = "2 hours"
+) {
 	return JWT.create(
 		JWT_RESET_TYPE,
 		{
