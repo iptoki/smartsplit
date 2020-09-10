@@ -1,5 +1,6 @@
 const JWTAuth = require("../service/JWTAuth")
 const Controller = require("./handlers")
+const WorkpieceSchema = require("../../schemas/workpieces")
 
 /************************ Routes ************************/
 
@@ -9,7 +10,7 @@ async function routes(fastify, options) {
 		url: "/workpieces/by-owner/:user_id/",
 		schema: {
 			response: {
-				200: { type: "array", items: { $ref: "WorkpieceSchema" } },
+				200: { type: "array", items: WorkpieceSchema.workpiece },
 			},
 		},
 		preValidation: JWTAuth.requireAuthUser,
@@ -21,7 +22,7 @@ async function routes(fastify, options) {
 		url: "/workpieces/:workpiece_id",
 		schema: {
 			response: {
-				200: { $ref: "WorkpieceSchema" },
+				200: WorkpieceSchema.workpiece,
 			},
 		},
 		preValidation: JWTAuth.requireAuthUser,
@@ -33,7 +34,7 @@ async function routes(fastify, options) {
 		url: "/workpieces/",
 		schema: {
 			response: {
-				200: { $ref: "WorkpieceSchema" },
+				201: WorkpieceSchema.workpiece,
 			},
 		},
 		preValidation: JWTAuth.requireAuthUser,
@@ -45,7 +46,7 @@ async function routes(fastify, options) {
 		url: "/workpieces/:workpiece_id",
 		schema: {
 			response: {
-				200: { $ref: "WorkpieceSchema" },
+				200: WorkpieceSchema.workpiece,
 			},
 		},
 		preValidation: JWTAuth.requireAuthUser,
@@ -81,7 +82,7 @@ async function routes(fastify, options) {
 		url: "/workpieces/:workpiece_id/files/",
 		schema: {
 			response: {
-				200: { $ref: "WorkpieceFileSchema" },
+				201: WorkpieceSchema.file,
 			},
 		},
 		preValidation: JWTAuth.requireAuthUser,
@@ -93,7 +94,7 @@ async function routes(fastify, options) {
 		url: "/workpieces/:workpiece_id/files/:file_id",
 		schema: {
 			response: {
-				200: { $ref: "WorkpieceFileSchema" },
+				200: WorkpieceSchema.file,
 			},
 		},
 		preValidation: JWTAuth.requireAuthUser,
@@ -105,7 +106,7 @@ async function routes(fastify, options) {
 		url: "/workpieces/:workpiece_id/rightSplit",
 		schema: {
 			response: {
-				200: { $ref: "RightSplitSchema" },
+				201: WorkpieceSchema.rightSplit,
 			},
 		},
 		preValidation: JWTAuth.requireAuthUser,
@@ -117,7 +118,7 @@ async function routes(fastify, options) {
 		url: "/workpieces/:workpiece_id/rightSplit",
 		schema: {
 			response: {
-				200: { $ref: "RightSplitSchema" },
+				200: WorkpieceSchema.rightSplit,
 			},
 		},
 		preValidation: JWTAuth.requireAuthUser,

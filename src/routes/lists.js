@@ -11,7 +11,7 @@ async function routes(fastify, options) {
 		url: "/entities/:list_type/",
 		schema: {
 			response: {
-				200: { type: "array", items: { $ref: "ListEntitySchema" } },
+				200: ListSchema.list,
 			},
 		},
 		handler: getList,
@@ -22,7 +22,7 @@ async function routes(fastify, options) {
 		url: "/entities/:entity_id",
 		schema: {
 			response: {
-				200: { $ref: "ListEntitySchema" },
+				200: ListSchema.entity,
 			},
 		},
 		handler: getListEntity,
@@ -33,7 +33,7 @@ async function routes(fastify, options) {
 		url: "/entities/:list_type/",
 		schema: {
 			response: {
-				200: { $ref: "ListEntitySchema" },
+				201: ListSchema.entity,
 			},
 		},
 		preValidation: JWTAuth.requireAuthUser,
@@ -45,7 +45,7 @@ async function routes(fastify, options) {
 		url: "/entities/:entity_id",
 		schema: {
 			response: {
-				200: { $ref: "ListEntitySchema" },
+				200: ListSchema.entity,
 			},
 		},
 		preValidation: JWTAuth.requireAuthUser,

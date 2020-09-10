@@ -1,4 +1,5 @@
 const User = require("../models/user")
+const UserSchema = require("../schemas/users")
 const { UserNotFound } = require("./errors")
 
 /************************ Routes ************************/
@@ -25,7 +26,7 @@ async function routes(fastify, options) {
 			response: {
 				200: {
 					type: "array",
-					items: { $ref: "UserSchema#/definitions/rightHolder" },
+					items: UserSchema.rightHolder,
 				},
 			},
 		},
@@ -42,7 +43,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: { $ref: "UserSchema#/definitions/rightHolder" },
+				200: UserSchema.rightHolder,
 			},
 		},
 		handler: getRightHolderById,

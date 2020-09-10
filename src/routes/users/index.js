@@ -7,7 +7,7 @@ async function routes(fastify, options) {
 		url: "/users/:user_id",
 		schema: {
 			response: {
-				200: { $ref: "UserSchema" },
+				200: UserSchema.user,
 			},
 		},
 		handler: Controller.getUserWithPendingEmails,
@@ -29,7 +29,7 @@ async function routes(fastify, options) {
 		url: "/users/",
 		schema: {
 			response: {
-				201: { $ref: "UserSchema" },
+				201: UserSchema.user,
 			},
 		},
 		handler: Controller.createUser,
@@ -40,7 +40,7 @@ async function routes(fastify, options) {
 		url: "/users/activate",
 		schema: {
 			response: {
-				200: { $ref: "AuthSchema#/definitions/sessionInfo" },
+				200: AuthSchema.sessionInfo,
 			},
 		},
 		handler: Controller.activateUserAccount,
@@ -51,7 +51,7 @@ async function routes(fastify, options) {
 		url: "/users/:user_id",
 		schema: {
 			response: {
-				200: { $ref: "UserSchema" },
+				200: UserSchema.user,
 			},
 		},
 		preValidation: JWTAuth.authorizeUserAccess,
@@ -69,7 +69,7 @@ async function routes(fastify, options) {
 		url: "/users/change-password",
 		schema: {
 			response: {
-				200: { $ref: "AuthSchema#/definitions/sessionInfo" },
+				200: AuthSchema.sessionInfo,
 			},
 		},
 		preValidation: JWTAuth.authorizeUserAccess,
@@ -88,7 +88,7 @@ async function routes(fastify, options) {
 		url: "/users/invite-new-user",
 		schema: {
 			response: {
-				200: { $ref: "UserSchema" },
+				201: UserSchema.user,
 			},
 		},
 		handler: Controller.inviteNewUser,
@@ -106,7 +106,7 @@ async function routes(fastify, options) {
 		url: "/users/:user_id/emails/",
 		schema: {
 			response: {
-				200: { type: "array", items: { $ref: "UserSchema#/definitions/email" } },
+				200: UserSchema.emailStatusList,
 			},
 		},
 		preValidation: JWTAuth.authorizeUserAccess,
@@ -118,7 +118,7 @@ async function routes(fastify, options) {
 		url: "/users/:user_id/emails/",
 		schema: {
 			response: {
-				200: { type: "array", items: { $ref: "UserSchema#/definitions/email" } },
+				201: UserSchema.emailStatusList,
 			},
 		},
 		preValidation: JWTAuth.authorizeUserAccess,

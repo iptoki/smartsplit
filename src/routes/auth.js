@@ -19,7 +19,7 @@ async function routes(fastify, options) {
 		url: "/auth/refresh",
 		schema: {
 			response: {
-				200: { $ref: "AuthSchema#/definitions/sessionInfo" },
+				200: AuthSchema.sessionInfo,
 			},
 		},
 		preValidation: JWTAuth.requireUser,
@@ -30,9 +30,9 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/auth/login",
 		schema: {
-			body: { $ref: "AuthSchema#/definitions/login" },
+			body: AuthSchema.login,
 			response: {
-				200: { $ref: "AuthSchema#/definitions/sessionInfo" },
+				200: AuthSchema.sessionInfo,
 			},
 		},
 		handler: login,
