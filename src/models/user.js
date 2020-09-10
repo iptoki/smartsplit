@@ -208,7 +208,7 @@ UserSchema.virtual("fullName").get(function () {
 
 	if (this.firstName) return this.firstName
 
-	return null
+	return "Guest"
 })
 
 /**
