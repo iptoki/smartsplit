@@ -565,7 +565,6 @@ UserSchema.methods.createActivationToken = function (
 		},
 		expires
 	)
-	console.log("token", token)
 	return token
 }
 
