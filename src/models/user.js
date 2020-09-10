@@ -208,7 +208,7 @@ UserSchema.virtual("fullName").get(function () {
 
 	if (this.firstName) return this.firstName
 
-	return "Client"
+	return "Guest"
 })
 
 /**
@@ -517,12 +517,16 @@ UserSchema.methods.verifyMobilePhone = async function (code) {
 /**
  * Creates a password reset token for the user
  */
-UserSchema.methods.createPasswordResetToken = function (expires = "2 hours") {
+UserSchema.methods.createPasswordResetToken = function (
+	email,
+	expires = "2 hours"
+) {
 	return JWT.create(
 		JWT_RESET_TYPE,
 		{
 			user_id: this._id,
 			user_password: this.password,
+			user_email: normalizeEmailAddress(email),
 		},
 		expires
 	)
@@ -561,7 +565,6 @@ UserSchema.methods.createActivationToken = function (
 		},
 		expires
 	)
-	console.log("token", token)
 	return token
 }
 

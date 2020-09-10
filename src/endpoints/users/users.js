@@ -47,6 +47,7 @@ async function createUser() {
 
 	if (!user) {
 		user = new User({
+			firstName: this.req.body.email.split("@")[0],
 			...this.req.body,
 			user_id: undefined,
 			accountStatus: undefined,
@@ -211,7 +212,7 @@ async function inviteNewUser() {
 		throw new UserSchema.ConflictingUserError({ email: this.req.body.email })
 
 	const user = new User({
-		firstName: this.req.body.firstName,
+		firstName: this.req.body.firstName || this.req.body.email.split("@")[0],
 		lastName: this.req.body.lastName,
 		accountStatus: "split-invited",
 	})
