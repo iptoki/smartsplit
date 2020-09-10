@@ -1,62 +1,23 @@
 const Notifications = require("../models/notifications/notification")
 
-async function schemas(fastify) {
-	fastify.addSchema({
-		$id: "UserSchema",
+module.exports = {
+	user: {
 		type: "object",
-		definitions: {
-			rightHolder: {
-				type: "object",
-				properties: {
-					rightHolder_id: {
-						type: "string",
-						format: "uuid",
-						example: "e87b56fe-1ce0-4ec7-8393-e18dc7415041",
-						aliasFrom: "user_id",
-					},
-					firstName: {
-						type: "string",
-						example: "John",
-					},
-					lastName: {
-						type: "string",
-						example: "Doe",
-					},
-					artistName: {
-						type: "string",
-						example: "JohnDoReMi",
-					},
-					email: {
-						type: "string",
-						format: "email",
-						example: "qa@smartsplit.org",
-					},
-				},
-			},
-		},
 		properties: {
 			user_id: {
 				type: "string",
-				format: "uuid",
-				example: "e87b56fe-1ce0-4ec7-8393-e18dc7415041",
-				aliasFrom: "_id",
 			},
 			firstName: {
 				type: "string",
-				example: "John",
 			},
 			lastName: {
 				type: "string",
-				example: "Doe",
 			},
 			artistName: {
 				type: "string",
-				example: "JohnDoReMi",
 			},
 			email: {
 				type: "string",
-				format: "email",
-				example: "qa@smartsplit.org",
 			},
 			accountStatus: {
 				type: "string",
@@ -67,106 +28,102 @@ async function schemas(fastify) {
 					"active",
 					"deleted",
 				],
-				example: "active",
 			},
-			mobilePhone: {
-				type: "object",
-				properties: {
-					number: {
-						type: "string",
-						example: "+15555555555",
-					},
-					status: {
-						type: "string",
-						enum: ["verified", "unverified"],
-						example: "verified",
-					},
-				},
-			},
-			permissions: {
-				type: "object",
-				properties: {
-					admin: {
-						type: "boolean",
-					},
-					users: {
-						type: "array",
-						items: {
-							type: "string",
-							format: "uuid",
-						},
-					},
-				},
-			},
+			mobilePhone: this.mobilePhone,
+			permissions: this.permissions,
 			locale: {
 				type: "string",
 				enum: ["en", "fr"],
-				example: "fr",
-				default: "en",
 			},
 			avatarUrl: {
 				type: "string",
-				example:
-					"https://api.smartsplit.org/users/0d0cb6f9-c1e6-49e0-acbf-1ca4ace07d1c/avatar",
 			},
-			notifications: {
-				type: "object",
-				properties: {
-					[Notifications.GENERAL_INTERATIONS]: {
-						type: "array",
-						items: {
-							type: "string",
-							enum: ["email", "push", "sms"],
-						},
-						default: ["email", "push"],
-					},
-					[Notifications.ADMINISTRATIVE_MESSAGES]: {
-						type: "array",
-						items: {
-							type: "string",
-							enum: ["email", "push", "sms"],
-						},
-						default: ["email", "push"],
-					},
-					[Notifications.ACCOUNT_LOGIN]: {
-						type: "array",
-						items: {
-							type: "string",
-							enum: ["email", "push", "sms"],
-						},
-						default: [],
-					},
-					[Notifications.SMARTSPLIT_BLOG]: {
-						type: "array",
-						items: {
-							type: "string",
-							enum: ["email", "push", "sms"],
-						},
-						default: [],
-					},
-					[Notifications.SMARTSPLIT_PROMOTIONS]: {
-						type: "array",
-						items: {
-							type: "string",
-							enum: ["email", "push", "sms"],
-						},
-						default: [],
-					},
-					[Notifications.PARTNER_PROMOTIONS]: {
-						type: "array",
-						items: {
-							type: "string",
-							enum: ["email", "push", "sms"],
-						},
-						default: [],
-					},
-				},
+			notifications: this.notifications
+		},
+	},
+
+	mobilePhone: {
+		type: "object",
+		properties: {
+			number: {
+				type: "string",
+			},
+			status: {
+				type: "string",
+				enum: ["verified", "unverified"],
 			},
 		},
-	})
-}
+	},
 
-module.exports = schemas
+	permissions: {
+		type: "object",
+		properties: {
+			admin: {
+				type: "boolean",
+			},
+			users: {
+				type: "array",
+				items: {
+					type: "string",
+				},
+			},
+		},		
+	},
+
+	notifications: {
+		type: "object",
+		properties: {
+			[Notifications.GENERAL_INTERATIONS]: {
+				type: "array",
+				items: {
+					type: "string",
+					enum: ["email", "push", "sms"],
+				},
+				default: ["email", "push"],
+			},
+			[Notifications.ADMINISTRATIVE_MESSAGES]: {
+				type: "array",
+				items: {
+					type: "string",
+					enum: ["email", "push", "sms"],
+				},
+				default: ["email", "push"],
+			},
+			[Notifications.ACCOUNT_LOGIN]: {
+				type: "array",
+				items: {
+					type: "string",
+					enum: ["email", "push", "sms"],
+				},
+				default: [],
+			},
+			[Notifications.SMARTSPLIT_BLOG]: {
+				type: "array",
+				items: {
+					type: "string",
+					enum: ["email", "push", "sms"],
+				},
+				default: [],
+			},
+			[Notifications.SMARTSPLIT_PROMOTIONS]: {
+				type: "array",
+				items: {
+					type: "string",
+					enum: ["email", "push", "sms"],
+				},
+				default: [],
+			},
+			[Notifications.PARTNER_PROMOTIONS]: {
+				type: "array",
+				items: {
+					type: "string",
+					enum: ["email", "push", "sms"],
+				},
+				default: [],
+			},
+		},
+	},
+}
 
 // module.exports = {
 // 	id: api.param("user_id", {

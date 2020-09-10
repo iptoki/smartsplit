@@ -1,8 +1,7 @@
-const { api, error } = require("../app")
 const UserSchema = require("./users")
 
 module.exports = {
-	login: api.schema("user_login", {
+	login: {
 		type: "object",
 		required: ["email", "password"],
 		properties: {
@@ -11,44 +10,25 @@ module.exports = {
 				format: "email",
 				example: "qa@smartsplit.org",
 			},
-
 			password: {
 				type: "string",
 				format: "password",
 				example: "Biquette#1!",
 			},
-
 			expires: {
 				type: "string",
 				exemple: "5 days",
 			},
 		},
-	}),
+	},
 
-	sessionInfo: api.schema("session_info", {
+	sessionInfo: {
 		type: "object",
 		properties: {
 			accessToken: {
 				type: "string",
 			},
-
 			user: UserSchema.user,
 		},
-	}),
-
-	check: api.schema("auth_status", {
-		type: "boolean",
-	}),
-
-	InvalidCredentialsError: error(
-		"auth_invalid_credentials",
-		401,
-		"Invalid credentials provided: incorrect email or password"
-	),
-
-	AccountNotActiveError: error(
-		"auth_account_inactive",
-		412,
-		"This account is not active. This user most likely needs to activate their account via email, or may have been banned by an administrator."
-	),
+	}
 }
