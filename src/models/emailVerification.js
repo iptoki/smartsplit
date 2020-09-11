@@ -78,7 +78,6 @@ EmailVerificationSchema.query.byActivationToken = async function (token) {
 		user: data.user_id,
 	}).populate("user")
 
-	
 	if (!email || email.user.password !== data.user_password)
 		return this.where({ _id: false }).skip(1).limit(0)
 
