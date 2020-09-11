@@ -69,7 +69,7 @@ EmailVerificationSchema.query.byEmailUserId = function (email, user_id) {
  * Looks up an email by activation token.
  */
 EmailVerificationSchema.query.byActivationToken = async function (token) {
-	const data = JWT.decode(JWT.ACTIVATE_TYPE, token)
+	const data = JWT.decode("user:activate", token)
 
 	if (!data) return this.where({ _id: false }).skip(1).limit(0)
 
@@ -78,6 +78,7 @@ EmailVerificationSchema.query.byActivationToken = async function (token) {
 		user: data.user_id,
 	}).populate("user")
 
+	
 	if (!email || email.user.password !== data.user_password)
 		return this.where({ _id: false }).skip(1).limit(0)
 
@@ -88,7 +89,7 @@ EmailVerificationSchema.query.byActivationToken = async function (token) {
  * Verify that an activation token is valid against the current instance of EmailVerification
  */
 EmailVerificationSchema.methods.verifyActivationToken = async function (token) {
-	const data = JWT.decode(JWT.ACTIVATE_TYPE, token)
+	const data = JWT.decode("user:activate", token)
 
 	if (!data) return false
 
