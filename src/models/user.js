@@ -561,7 +561,7 @@ UserSchema.methods.createActivationToken = function (
 		{
 			user_id: this.user_id,
 			user_password: this.password,
-			activate_email: normalizeEmailAddress(email),
+			user_email: normalizeEmailAddress(email),
 		},
 		expires
 	)
