@@ -402,7 +402,8 @@ UserSchema.methods.addPendingEmail = async function (
 UserSchema.methods.removePendingEmail = async function (email) {
 	email = normalizeEmailAddress(email)
 
-	if (!this.populated("pendingEmails")) await this.populate("pendingEmails")
+	if (!this.populated("pendingEmails"))
+		await this.populate("pendingEmails").execPopulate()
 
 	if (!this.pendingEmails.find((e) => e.email === email)) return false
 
