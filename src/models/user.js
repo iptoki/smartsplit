@@ -402,12 +402,13 @@ UserSchema.methods.addPendingEmail = async function (
 UserSchema.methods.removePendingEmail = async function (email) {
 	email = normalizeEmailAddress(email)
 
+	if (!this.populated("pendingEmails")) await this.populate("pendingEmails")
+
 	if (!this.pendingEmails.find((e) => e.email === email)) return false
 
 	await EmailVerification.deleteOne().byEmailUserId(email, this._id)
 
-	if (Array.isArray(this.pendingEmails))
-		this.pendingEmails.filter((e) => e.email === email)
+	this.pendingEmails.filter((e) => e.email === email)
 
 	return true
 }
