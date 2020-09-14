@@ -28,6 +28,10 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/users/",
 		schema: {
+			body: {
+				allOf: UserSchema.userRequestBody
+				required: ["email", "password", "locale"],
+			}
 			response: {
 				201: UserSchema.user,
 			},
@@ -39,6 +43,15 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/users/activate",
 		schema: {
+			body: {
+				type: "object",
+				required: ["token"],
+				properties: {
+					token: {
+						type: "string",
+					},
+				},
+			},
 			response: {
 				200: AuthSchema.sessionInfo,
 			},
@@ -50,6 +63,7 @@ async function routes(fastify, options) {
 		method: "PATCH",
 		url: "/users/:user_id",
 		schema: {
+			body: UserSchema.userRequestBody
 			response: {
 				200: UserSchema.user,
 			},
@@ -61,6 +75,20 @@ async function routes(fastify, options) {
 	fastify.route({
 		method: "POST",
 		url: "/users/request-password-reset",
+		schema: {
+			body: {
+				type: "object",
+				required: ["email"],
+				properties: {
+					email: {
+						type: "string",
+					},
+				},
+			},
+			response: {
+				204: {},
+			}
+		},
 		handler: Controller.requestPasswordReset,
 	})
 
@@ -68,6 +96,21 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/users/change-password",
 		schema: {
+			body: {
+				type: "object",
+				required: ["password"],
+				properties: {
+					token: {
+						type: "string",
+					},
+					currentPassword: {
+						type: "string",
+					},
+					password: {
+						type: "string",
+					},
+				},
+			},
 			response: {
 				200: AuthSchema.sessionInfo,
 			},
@@ -79,6 +122,20 @@ async function routes(fastify, options) {
 	fastify.route({
 		method: "POST",
 		url: "/users/verify-mobile-phone",
+		schema: {
+			body: {
+				type: "object",
+				required: ["verificationCode"],
+				properties: {
+					verificationCode: {
+						type: "number",
+					},
+				},
+			},
+			response: {
+				204: {}
+			}
+		},
 		preValidation: JWTAuth.authorizeUserAccess,
 		handler: Controller.verifyUserMobilePhone,
 	})
@@ -87,6 +144,24 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/users/invite-new-user",
 		schema: {
+			body: {
+				type: "object",
+				required: ["email"],
+				properties: {
+					firstName: {
+						type: "string",
+					},
+					lastName: {
+						type: "string",
+					},
+					artistName: {
+						type: "string",
+					},
+					email: {
+						type: "string",
+					}
+				}
+			}
 			response: {
 				201: UserSchema.user,
 			},
@@ -117,6 +192,15 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/users/:user_id/emails/",
 		schema: {
+			body: {
+				type: "object",
+				required: ["email"],
+				properties: {
+					email: {
+						type: "string",
+					},
+				},
+			},
 			response: {
 				201: UserSchema.emailStatusList,
 			},
@@ -128,6 +212,17 @@ async function routes(fastify, options) {
 	fastify.route({
 		method: "POST",
 		url: "/users/:user_id/emails/:email",
+		schemas: {
+			body: {
+				type: "object",
+				required: ["token"],
+				properties: {
+					token: {
+						type: "string",
+					},
+				},
+			},
+		},
 		handler: Controller.activateUserEmail,
 	})
 

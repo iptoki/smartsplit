@@ -46,9 +46,6 @@ fastify.get("/spec", function (req, res) {
 	res.send(fastify.swagger())
 })
 
-// Register global schemas
-require("./src/schemas/users")(fastify) // sketchy, looking for better solutions
-
 // Register routes
 fastify.register(require("./src/routes/index"))
 
