@@ -1,5 +1,6 @@
 const JWTAuth = require("../service/JWTAuth")
 const User = require("../models/user")
+const AuthSchema = require("../schemas/auth")
 const Errors = require("./errors")
 
 async function routes(fastify, options) {
@@ -22,7 +23,7 @@ async function routes(fastify, options) {
 				200: AuthSchema.sessionInfo,
 			},
 		},
-		preValidation: JWTAuth.requireUser,
+		preValidation: JWTAuth.requireAuthUser,
 		handler: refreshToken,
 	})
 

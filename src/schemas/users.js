@@ -94,6 +94,24 @@ module.exports = {
 		},
 	},
 
+	emailStatusList: {
+		type: "array",
+		items: {
+			type: "object",
+			properties: {
+				email: {
+					type: "string",
+					format: "email",
+					example: "qa@smartsplit.org",
+				},
+				status: {
+					type: "string",
+					enum: ["active", "pending"],
+				},
+			},
+		},
+	},
+	
 	mobilePhone: {
 		type: "object",
 		properties: {

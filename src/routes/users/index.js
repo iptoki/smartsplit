@@ -1,4 +1,5 @@
 const JWTAuth = require("../../service/JWTAuth")
+const UserSchema = require("../../schemas/users")
 const Controller = require("./handlers")
 
 async function routes(fastify, options) {

@@ -6,7 +6,7 @@ const JWTAuth = require("../../service/JWTAuth")
 module.exports.getUser = async function (req, res) {
 	const user =
 		req.params.user_id === "session"
-			? await JWTAuth.requireUser(req, res)
+			? await JWTAuth.requireAuthUser(req, res)
 			: await User.findById(req.params.user_id)
 
 	if (!user)
@@ -157,7 +157,7 @@ module.exports.changeUserPassword = async function (req, res) {
 		if (!user)
 			throw Errors.InvalidReset
 	} else {
-		user = await JWTAuth.requireUser(req, res)
+		user = await JWTAuth.requireAuthUser(req, res)
 
 		if (
 			!req.body.currentPassword ||

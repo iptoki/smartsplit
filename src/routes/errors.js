@@ -1,6 +1,13 @@
 const HTTPErrors = require("http-errors")
 
+
 /* Auth related errors */
+module.exports.InvalidAuthToken = new HTTPErrors.Unauthorized(
+	"This request requires an authenticated user"
+)
+module.exports.UnauthorizedUserAccess = new HTTPErrors.Unauthorized(
+	"The authorized user is not allowed to access this user"
+)
 module.exports.InvalidCredentials = new HTTPErrors.Unauthorized(
 	"Invalid credentials provided: incorrect email or password"
 )
