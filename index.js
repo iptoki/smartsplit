@@ -1,5 +1,6 @@
 // Load configuration
 const Config = require("./src/config")
+const JWTAuth = require("./src/service/JWTAuth")
 
 const fastify = require("fastify")({ logger: Config.logger })
 
@@ -39,6 +40,12 @@ fastify.register(require("fastify-swagger"), {
 		produces: ["application/json"],
 	},
 	exposeRoute: true,
+})
+
+// Add Auth hook
+fastify.addHook("preValidation", function(req, res, next) {
+	JWTAuth.expressMiddleware(req, res)
+	next()
 })
 
 // Register OAPI specification endpoint

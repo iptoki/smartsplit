@@ -220,7 +220,7 @@ module.exports.inviteNewUser = async function (req, res) {
 
 	await user.save()
 
-	await user.sendNotification(UserTemplate.SPLIT_INVITED, {
+	await user.sendNotification(UserTemplates.SPLIT_INVITED, {
 		to: { name: user.fullName, email: req.body.email },
 	})
 
