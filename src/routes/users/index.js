@@ -19,7 +19,9 @@ async function routes(fastify, options) {
 		url: "/users/:user_id/avatar",
 		schema: {
 			response: {
-				200: { /* TODO */ },
+				200: {
+					/* TODO */
+				},
 			},
 		},
 		handler: Controller.getUserAvatar,
@@ -30,9 +32,9 @@ async function routes(fastify, options) {
 		url: "/users/",
 		schema: {
 			body: {
-				allOf: UserSchema.userRequestBody
+				allOf: UserSchema.userRequestBody,
 				required: ["email", "password", "locale"],
-			}
+			},
 			response: {
 				201: UserSchema.user,
 			},
@@ -64,7 +66,7 @@ async function routes(fastify, options) {
 		method: "PATCH",
 		url: "/users/:user_id",
 		schema: {
-			body: UserSchema.userRequestBody
+			body: UserSchema.userRequestBody,
 			response: {
 				200: UserSchema.user,
 			},
@@ -88,7 +90,7 @@ async function routes(fastify, options) {
 			},
 			response: {
 				204: {},
-			}
+			},
 		},
 		handler: Controller.requestPasswordReset,
 	})
@@ -134,8 +136,8 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				204: {}
-			}
+				204: {},
+			},
 		},
 		preValidation: JWTAuth.authorizeUserAccess,
 		handler: Controller.verifyUserMobilePhone,
@@ -160,9 +162,9 @@ async function routes(fastify, options) {
 					},
 					email: {
 						type: "string",
-					}
-				}
-			}
+					},
+				},
+			},
 			response: {
 				201: UserSchema.user,
 			},

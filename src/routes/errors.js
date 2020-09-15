@@ -1,6 +1,5 @@
 const HTTPErrors = require("http-errors")
 
-
 /* Auth related errors */
 module.exports.InvalidAuthToken = new HTTPErrors.Unauthorized(
 	"This request requires an authenticated user"
@@ -39,7 +38,9 @@ module.exports.ConflictingListEntity = new HTTPErrors.Conflict(
 
 /* User related errors */
 module.exports.UserNotFound = new HTTPErrors.NotFound("User not found")
-module.exports.UserMobilePhoneNotFound = new HTTPErrors.NotFound("User mobile phone not found")
+module.exports.UserMobilePhoneNotFound = new HTTPErrors.NotFound(
+	"User mobile phone not found"
+)
 module.exports.UserForbidden = new HTTPErrors.Forbidden(
 	"The currently authorized user is not allowed to perform this operation"
 )

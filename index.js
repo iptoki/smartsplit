@@ -43,7 +43,7 @@ fastify.register(require("fastify-swagger"), {
 })
 
 // Add Auth hook
-fastify.addHook("preValidation", function(req, res, next) {
+fastify.addHook("preValidation", function (req, res, next) {
 	JWTAuth.expressMiddleware(req, res)
 	next()
 })

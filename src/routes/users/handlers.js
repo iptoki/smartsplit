@@ -9,8 +9,7 @@ module.exports.getUser = async function (req, res) {
 			? await JWTAuth.requireAuthUser(req, res)
 			: await User.findById(req.params.user_id)
 
-	if (!user)
-		throw Errors.UserNotFound
+	if (!user) throw Errors.UserNotFound
 
 	return user
 }
@@ -28,8 +27,7 @@ module.exports.getUserAvatar = async function (req, res) {
 }
 
 module.exports.createUser = async function (req, res) {
-	if (await User.findOne().byEmail(req.body.email))
-		throw Errors.ConflictingUser
+	if (await User.findOne().byEmail(req.body.email)) throw Errors.ConflictingUser
 
 	let user
 	let email = await EmailVerification.findOne()
@@ -38,8 +36,7 @@ module.exports.createUser = async function (req, res) {
 
 	if (email) {
 		if (!email.user) await email.remove()
-		if (await email.user.verifyPassword(req.body.password))
-			user = email.user
+		if (await email.user.verifyPassword(req.body.password)) user = email.user
 	}
 
 	if (!user) {
@@ -54,11 +51,9 @@ module.exports.createUser = async function (req, res) {
 
 		await user.setPassword(req.body.password)
 
-		if (req.body.avatar)
-			user.setAvatar(Buffer.from(req.body.avatar, "base64"))
+		if (req.body.avatar) user.setAvatar(Buffer.from(req.body.avatar, "base64"))
 
-		if (req.body.phoneNumber)
-			await user.setMobilePhone(req.body.phoneNumber)
+		if (req.body.phoneNumber) await user.setMobilePhone(req.body.phoneNumber)
 
 		await user.save()
 	}
@@ -75,11 +70,9 @@ module.exports.activateUserAccount = async function (req, res) {
 		req.body.token
 	)
 
-	if (email && email.user.isActive)
-		throw Errors.AccountAlreadyActivated
+	if (email && email.user.isActive) throw Errors.AccountAlreadyActivated
 
-	if (!email || !email.user.canActivate)
-		throw Errors.InvalidActivationToken
+	if (!email || !email.user.canActivate) throw Errors.InvalidActivationToken
 
 	email.user.accountStatus = "active"
 	email.user.emails.push(email._id)
@@ -101,14 +94,12 @@ module.exports.updateUser = async function (req, res) {
 			throw Errors.ConflictingEmail
 	}
 
-	if (req.body.phoneNumber)
-		await user.setMobilePhone(req.body.phoneNumber)
+	if (req.body.phoneNumber) await user.setMobilePhone(req.body.phoneNumber)
 
 	if (req.body.password)
 		passwordChanged = await user.setPassword(req.body.password)
 
-	if (req.body.avatar)
-		user.setAvatar(Buffer.from(req.body.avatar, "base64"))
+	if (req.body.avatar) user.setAvatar(Buffer.from(req.body.avatar, "base64"))
 
 	for (let field of [
 		"firstName",
@@ -135,8 +126,7 @@ module.exports.requestPasswordReset = async function (req, res) {
 			.byEmail(req.body.email)
 			.populate("user")
 
-		if (!email)
-			throw Errors.UserNotFound
+		if (!email) throw Errors.UserNotFound
 
 		user = email.user
 	}
@@ -154,8 +144,7 @@ module.exports.changeUserPassword = async function (req, res) {
 	if (req.body.token) {
 		user = await User.findOne().byPasswordResetToken(req.body.token)
 
-		if (!user)
-			throw Errors.InvalidReset
+		if (!user) throw Errors.InvalidReset
 	} else {
 		user = await JWTAuth.requireAuthUser(req, res)
 
@@ -183,8 +172,7 @@ module.exports.changeUserPassword = async function (req, res) {
 }
 
 module.exports.verifyUserMobilePhone = async function (req, res) {
-	if (!req.authUser.mobilePhone)
-		throw Errors.UserMobilePhoneNotFound
+	if (!req.authUser.mobilePhone) throw Errors.UserMobilePhoneNotFound
 
 	if (req.authUser.mobilePhone.code === "verified")
 		throw Errors.MobilePhoneAlreadyActivated
@@ -206,8 +194,7 @@ module.exports.deleteUserAccount = async function (req, res) {
 }
 
 module.exports.inviteNewUser = async function (req, res) {
-	if (await User.findOne().byEmail(req.body.email))
-		throw Errors.ConflictingUser
+	if (await User.findOne().byEmail(req.body.email)) throw Errors.ConflictingUser
 
 	const user = new User({
 		firstName: req.body.firstName,
@@ -244,8 +231,7 @@ module.exports.createUserEmail = async function (req, res) {
 	const user = await this.getUserWithPendingEmails(req, res)
 	const email = await user.addPendingEmail(req.body.email)
 
-	if (!email)
-		throw Errors.ConflictingEmail
+	if (!email) throw Errors.ConflictingEmail
 
 	return user.emails
 		.map((e) => ({ email: e, status: "active" }))
@@ -267,8 +253,7 @@ module.exports.activateUserEmail = async function (req, res) {
 		(item) => item.email === normalizeEmailAddress(req.params.email)
 	)
 
-	if (!email)
-		throw Errors.EmailNotFound
+	if (!email) throw Errors.EmailNotFound
 
 	if (!(await email.verifyActivationToken(req.body.token)))
 		throw Errors.InvalidActivationToken
@@ -283,7 +268,7 @@ module.exports.activateUserEmail = async function (req, res) {
 
 module.exports.deleteUserEmail = async function (req, res) {
 	const user = await this.getUserWithPendingEmails(req, res)
-	
+
 	if (!(await user.removeEmail(req.params.email))) {
 		if (!(await user.removePendingEmail(req.params.email))) {
 			throw Errors.EmailNotFound

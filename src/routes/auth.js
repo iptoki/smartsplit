@@ -12,6 +12,7 @@ async function routes(fastify, options) {
 				200: { type: "boolean" },
 			},
 		},
+		preValidation: JWTAuth.requireAuthUser,
 		handler: checkToken,
 	})
 
@@ -60,10 +61,7 @@ async function checkToken(req, res) {
 
 async function refreshToken(req, res) {
 	return {
-		accessToken: JWTAuth.createToken(
-			req.authUser,
-			req.auth.data.duration
-		),
+		accessToken: JWTAuth.createToken(req.authUser, req.auth.data.duration),
 		user: req.authUser,
 	}
 }

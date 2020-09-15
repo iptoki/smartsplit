@@ -52,7 +52,7 @@
 
 // *
 //  * Builds a generic error response with the description string
- 
+
 // function errorResponse(description) {
 // 	const schema = Object.create(errorSchema)
 // 	schema.description = description

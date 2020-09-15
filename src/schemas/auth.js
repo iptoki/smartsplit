@@ -7,12 +7,10 @@ module.exports = {
 		properties: {
 			email: {
 				type: "string",
-				format: "email",
 				example: "qa@smartsplit.org",
 			},
 			password: {
 				type: "string",
-				format: "password",
 				example: "Biquette#1!",
 			},
 			expires: {
@@ -30,5 +28,5 @@ module.exports = {
 			},
 			user: UserSchema.user,
 		},
-	}
+	},
 }

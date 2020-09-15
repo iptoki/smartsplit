@@ -70,7 +70,9 @@ async function routes(fastify, options) {
 		url: "/workpieces/:workpiece_id/files/:file_id",
 		schema: {
 			response: {
-				200: { /* TODO */ },
+				200: {
+					/* TODO */
+				},
 			},
 		},
 		preValidation: JWTAuth.requireAuthUser,

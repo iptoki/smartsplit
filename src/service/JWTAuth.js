@@ -6,7 +6,7 @@ const Errors = require("../routes/errors")
 /**
  * Creates an access token for a user
  */
-module.exports.createToken = function (user, expires = "3 hours") {
+const createToken = function (user, expires = "3 hours") {
 	return JWT.create(
 		"session",
 		{
@@ -21,7 +21,7 @@ module.exports.createToken = function (user, expires = "3 hours") {
 /**
  * Decodes an access token and returns its contents
  */
-module.exports.decodeToken = function (token) {
+const decodeToken = function (token) {
 	return JWT.decode("session", token)
 }
 
@@ -31,7 +31,7 @@ module.exports.decodeToken = function (token) {
  *
  * TODO: Maybe the OpenAPI integration can handle this for most cases?
  */
-module.exports.expressMiddleware = function (req, res) {
+const expressMiddleware = function (req, res) {
 	let tokenData = undefined
 	req.auth = {}
 
@@ -74,14 +74,13 @@ module.exports.expressMiddleware = function (req, res) {
 				})
 		},
 	})
-
 }
 
 /**
  * Requires the request to contain an authenticated user, and returns the User model
  * @throws AuthError if there is no authenticated user
  */
-module.exports.requireAuthUser = async function (req, res) {
+const requireAuthUser = async function (req, res) {
 	const user = await req.auth.user
 
 	if (!user || user.password !== req.auth.data.user_password)
@@ -97,7 +96,7 @@ module.exports.requireAuthUser = async function (req, res) {
  * Requires the request to contain a user with administrator priviledges, and returns the User model
  * @throws AuthError if there is no authenticated admin
  */
-module.exports.requireAuthAdmin = async function (req, res) {
+const requireAuthAdmin = async function (req, res) {
 	const admin = await req.auth.admin
 
 	if (!admin || admin.password !== req.auth.data.user_password)
@@ -109,7 +108,7 @@ module.exports.requireAuthAdmin = async function (req, res) {
 	return admin
 }
 
-module.exports.authorizeUserAccess = async function (req, res) {
+const authorizeUserAccess = async function (req, res) {
 	await this.requireAuthUser(req, res)
 	if (
 		!(
@@ -117,5 +116,15 @@ module.exports.authorizeUserAccess = async function (req, res) {
 			req.authUser.isAdmin ||
 			req.authUser.hasAccessToUser(req.params.user_id)
 		)
-	) throw Errors.UnauthorizedUserAccess
+	)
+		throw Errors.UnauthorizedUserAccess
+}
+
+module.exports = {
+	createToken,
+	decodeToken,
+	expressMiddleware,
+	requireAuthUser,
+	requireAuthAdmin,
+	authorizeUserAccess,
 }
