@@ -222,7 +222,7 @@ async function inviteNewUser() {
 
 	await user.save()
 
-	await user.sendNotification(UserTemplate.SPLIT_INVITED, {
+	await user.sendNotification(UserTemplates.SPLIT_INVITED, {
 		to: { name: this.fullName, email: this.req.body.email },
 	})
 
