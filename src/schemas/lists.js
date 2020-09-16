@@ -7,45 +7,46 @@ module.exports.locale = {
 }
 
 module.exports.genericEntity = {
+	entity_id: {
+		type: "string",
+	},
+	users: {
+		oneOf: [
+			{
+				type: "string",
+				enum: [false],
+			},
+			{
+				type: "array",
+				items: {
+					type: "string",
+				},
+			},
+		],
+	},
+	adminReview: {
+		type: "string",
+	},
+}
+
+module.exports["content-languages"] = {
 	type: "object",
 	properties: {
-		entity_id: {
-			type: "string",
-		},
-		users: {
-			oneOf: [
-				{ const: false },
-				{
-					type: "array",
-					items: {
-						type: "string",
-					},
-				},
-			],
-		},
-		adminReview: {
-			type: "string",
-		},
-	},
-}
-
-module.exports.content_languages = {
-	allOf: this.genericEntity,
-	properties: {
+		...this.genericEntity,
 		name: this.locale,
-	},
-
-	altNames: {
-		type: "array",
-		items: {
-			type: "string",
+		altNames: {
+			type: "array",
+			items: {
+				type: "string",
+			},
 		},
 	},
 }
 
-module.exports.digital_distributors = {
-	allOf: this.genericEntity,
+module.exports["digital-distributors"] = {
+	type: "object",
 	properties: {
+		...this.genericEntity,
 		name: {
 			type: "string",
 		},
@@ -82,8 +83,9 @@ module.exports.digital_distributors = {
 }
 
 module.exports.instruments = {
-	allOf: this.genericEntity,
+	type: "object",
 	properties: {
+		...this.genericEntity,
 		name: this.locale,
 		uris: {
 			type: "array",
@@ -100,9 +102,10 @@ module.exports.instruments = {
 	},
 }
 
-module.exports.musical_genres = {
-	allOf: this.genericEntity,
+module.exports["musical-genres"] = {
+	type: "object",
 	properties: {
+		...this.genericEntity,
 		name: this.locale,
 		uris: {
 			type: "array",
@@ -126,9 +129,9 @@ module.exports.list = {
 
 module.exports.entity = {
 	oneOf: [
-		this.content_languages,
-		this.digital_distributors,
+		this["content-languages"],
+		this["digital-distributors"],
 		this.instruments,
-		this.musical_genres,
+		this["musical-genres"],
 	],
 }

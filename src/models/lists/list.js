@@ -54,6 +54,7 @@ ListSchema.query.publicOnly = function () {
 }
 
 ListSchema.query.byUserId = function (user_id) {
+	console.log(user_id)
 	return this.where({
 		users: {
 			$in: [false, user_id],

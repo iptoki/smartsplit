@@ -9,6 +9,11 @@ async function routes(fastify, options) {
 		method: "GET",
 		url: "/workpieces/by-owner/:user_id/",
 		schema: {
+			params: {
+				user_id: {
+					type: "string",
+				},
+			},
 			response: {
 				200: { type: "array", items: WorkpieceSchema.workpiece },
 			},
@@ -21,6 +26,11 @@ async function routes(fastify, options) {
 		method: "GET",
 		url: "/workpieces/:workpiece_id",
 		schema: {
+			params: {
+				workpiece_id: {
+					type: "string",
+				},
+			},
 			response: {
 				200: WorkpieceSchema.workpiece,
 			},
@@ -45,6 +55,11 @@ async function routes(fastify, options) {
 		method: "PATCH",
 		url: "/workpieces/:workpiece_id",
 		schema: {
+			params: {
+				workpiece_id: {
+					type: "string",
+				},
+			},
 			response: {
 				200: WorkpieceSchema.workpiece,
 			},
@@ -57,6 +72,11 @@ async function routes(fastify, options) {
 		method: "DELETE",
 		url: "/workpieces/:workpiece_id",
 		schema: {
+			params: {
+				workpiece_id: {
+					type: "string",
+				},
+			},
 			response: {
 				204: {},
 			},
@@ -69,6 +89,14 @@ async function routes(fastify, options) {
 		method: "GET",
 		url: "/workpieces/:workpiece_id/files/:file_id",
 		schema: {
+			params: {
+				workpiece_id: {
+					type: "string",
+				},
+				file_id: {
+					type: "string",
+				},
+			},
 			response: {
 				200: {
 					/* TODO */
@@ -83,6 +111,11 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/workpieces/:workpiece_id/files/",
 		schema: {
+			params: {
+				workpiece_id: {
+					type: "string",
+				},
+			},
 			response: {
 				201: WorkpieceSchema.file,
 			},
@@ -95,6 +128,14 @@ async function routes(fastify, options) {
 		method: "PATCH",
 		url: "/workpieces/:workpiece_id/files/:file_id",
 		schema: {
+			params: {
+				workpiece_id: {
+					type: "string",
+				},
+				file_id: {
+					type: "string",
+				},
+			},
 			response: {
 				200: WorkpieceSchema.file,
 			},
@@ -107,6 +148,11 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/workpieces/:workpiece_id/rightSplit",
 		schema: {
+			params: {
+				workpiece_id: {
+					type: "string",
+				},
+			},
 			response: {
 				201: WorkpieceSchema.rightSplit,
 			},
@@ -119,6 +165,11 @@ async function routes(fastify, options) {
 		method: "PUT",
 		url: "/workpieces/:workpiece_id/rightSplit",
 		schema: {
+			params: {
+				workpiece_id: {
+					type: "string",
+				},
+			},
 			response: {
 				200: WorkpieceSchema.rightSplit,
 			},
@@ -131,6 +182,11 @@ async function routes(fastify, options) {
 		method: "DELETE",
 		url: "/workpieces/:workpiece_id/rightSplit",
 		schema: {
+			params: {
+				workpiece_id: {
+					type: "string",
+				},
+			},
 			response: {
 				204: {},
 			},
@@ -143,6 +199,11 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/workpieces/:workpiece_id/rightSplit/submit",
 		schema: {
+			params: {
+				workpiece_id: {
+					type: "string",
+				},
+			},
 			response: {
 				204: {},
 			},
@@ -155,6 +216,11 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/workpieces/:workpiece_id/rightSplit/vote",
 		schema: {
+			params: {
+				workpiece_id: {
+					type: "string",
+				},
+			},
 			response: {
 				204: {},
 			},
@@ -167,6 +233,11 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/workpieces/:workpiece_id/rightSplit/swap-user",
 		schema: {
+			params: {
+				workpiece_id: {
+					type: "string",
+				},
+			},
 			response: {
 				204: {},
 			},

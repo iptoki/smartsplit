@@ -9,29 +9,49 @@ async function routes(fastify, options) {
 	fastify.route({
 		method: "GET",
 		url: "/entities/:list_type/",
+		serializerCompiler: listSerializer,
 		schema: {
+			params: {
+				list_type: {
+					type: "string",
+				},
+			},
 			response: {
 				200: ListSchema.list,
 			},
 		},
+		preValidation: JWTAuth.getAuthUser,
 		handler: getList,
 	})
 
 	fastify.route({
 		method: "GET",
 		url: "/entities/:entity_id",
+		serializerCompiler: entitySerializer,
 		schema: {
+			params: {
+				entity_id: {
+					type: "string",
+				},
+			},
 			response: {
 				200: ListSchema.entity,
 			},
 		},
+		preValidation: JWTAuth.getAuthUser,
 		handler: getListEntity,
 	})
 
 	fastify.route({
 		method: "POST",
 		url: "/entities/:list_type/",
+		serializerCompiler: entitySerializer,
 		schema: {
+			params: {
+				list_type: {
+					type: "string",
+				},
+			},
 			response: {
 				201: ListSchema.entity,
 			},
@@ -43,7 +63,13 @@ async function routes(fastify, options) {
 	fastify.route({
 		method: "PATCH",
 		url: "/entities/:entity_id",
+		serializerCompiler: entitySerializer,
 		schema: {
+			params: {
+				entity_id: {
+					type: "string",
+				},
+			},
 			response: {
 				200: ListSchema.entity,
 			},
@@ -56,6 +82,11 @@ async function routes(fastify, options) {
 		method: "DELETE",
 		url: "/entities/:entity_id",
 		schema: {
+			params: {
+				entity_id: {
+					type: "string",
+				},
+			},
 			response: {
 				204: {},
 			},
@@ -146,6 +177,35 @@ async function deleteListEntity(req, res) {
 
 	await entity.remove()
 	res.code(204).send()
+}
+
+/************************ Custom serializer ************************/
+
+/*
+	fast-json-stringify does not support schema with `oneOf` being at the root.
+	As a workaround, we mimic the `oneOf` mechanism  by defining a custom serializer 
+	where we dinamicaly determine which schema should be serialized.
+	See /src/schemas/lists.js for more information
+*/
+
+function entitySerializer({ schema, method, url, httpStatus }) {
+	const fastJson = require("fast-json-stringify")
+	return (response) => {
+		const serializer = fastJson(ListSchema[response.type])
+		return serializer(response)
+	}
+}
+
+function listSerializer({ schema, method, url, httpStatus }) {
+	const fastJson = require("fast-json-stringify")
+	return (response) => {
+		if (response.length === 0) return JSON.stringify(response)
+		const serializer = fastJson({
+			type: "array",
+			items: ListSchema[response[0].type],
+		})
+		return serializer(response)
+	}
 }
 
 module.exports = routes

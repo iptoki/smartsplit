@@ -31,6 +31,7 @@ module.exports.createWorkpiece = async function (req, res) {
 	req.body.owner = req.authUser._id
 	const workpiece = new Workpiece(req.body)
 	await workpiece.save()
+	res.code(201)
 	return workpiece
 }
 
@@ -79,6 +80,7 @@ module.exports.addWorkpieceFile = async function (req, res) {
 		Buffer.from(req.body.data, "base64")
 	)
 	await workpiece.save()
+	res.code(201)
 	return file
 }
 
@@ -111,6 +113,7 @@ module.exports.createRightSplit = async function (req, res) {
 	await workpiece.setRightSplit(req.body)
 	await workpiece.save()
 
+	res.code(201)
 	return workpiece.rightSplit
 }
 

@@ -62,6 +62,7 @@ module.exports.createUser = async function (req, res) {
 		to: { name: user.fullName, email: req.body.email },
 	})
 
+	res.code(201)
 	return user
 }
 
@@ -211,6 +212,7 @@ module.exports.inviteNewUser = async function (req, res) {
 		to: { name: user.fullName, email: req.body.email },
 	})
 
+	res.code(201)
 	return user
 }
 

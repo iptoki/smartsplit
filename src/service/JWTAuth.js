@@ -109,7 +109,7 @@ const requireAuthAdmin = async function (req, res) {
 }
 
 const authorizeUserAccess = async function (req, res) {
-	await this.requireAuthUser(req, res)
+	await requireAuthUser(req, res)
 	if (
 		!(
 			req.params.user_id === req.authUser._id ||
@@ -120,6 +120,14 @@ const authorizeUserAccess = async function (req, res) {
 		throw Errors.UnauthorizedUserAccess
 }
 
+const getAuthUser = async function (req, res) {
+	try {
+		return await requireAuthUser(req, res)
+	} catch (err) {
+		if (err.statusCode !== 401) throw err
+		return
+	}
+}
 module.exports = {
 	createToken,
 	decodeToken,
@@ -127,4 +135,5 @@ module.exports = {
 	requireAuthUser,
 	requireAuthAdmin,
 	authorizeUserAccess,
+	getAuthUser,
 }
