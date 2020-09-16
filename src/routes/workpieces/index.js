@@ -1,4 +1,4 @@
-const JWTAuth = require("../service/JWTAuth")
+const JWTAuth = require("../../service/JWTAuth")
 const Controller = require("./handlers")
 const WorkpieceSchema = require("../../schemas/workpieces")
 

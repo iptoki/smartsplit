@@ -1,5 +1,6 @@
 const JWTAuth = require("../../service/JWTAuth")
 const UserSchema = require("../../schemas/users")
+const AuthSchema = require("../../schemas/auth")
 const Controller = require("./handlers")
 
 async function routes(fastify, options) {
@@ -31,10 +32,7 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/users/",
 		schema: {
-			body: {
-				allOf: UserSchema.userRequestBody,
-				required: ["email", "password", "locale"],
-			},
+			body: UserSchema.userRequestBody,
 			response: {
 				201: UserSchema.user,
 			},

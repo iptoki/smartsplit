@@ -1,5 +1,5 @@
-const User = require("../models/user")
-const Workpiece = require("../models/workpiece")
+const User = require("../../models/user")
+const Workpiece = require("../../models/workpiece")
 const Errors = require("../errors")
 
 module.exports.getWorkpiece = async function (req, res) {
