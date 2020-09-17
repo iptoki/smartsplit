@@ -40,9 +40,9 @@ fastify.register(require("fastify-swagger"), {
 	exposeRoute: true,
 })
 
-// Add Auth hook
+// Add Global Auth hook
 fastify.addHook("preValidation", function (req, res, next) {
-	JWTAuth.expressMiddleware(req, res)
+	JWTAuth.bearerTokenMiddleware(req, res)
 	next()
 })
 
