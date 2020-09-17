@@ -11,23 +11,11 @@ const EmailVerificationSchema = new mongoose.Schema({
 		alias: "email",
 		lowercase: true,
 		trim: true,
-		api: {
-			type: "string",
-			format: "email",
-			example: "example@smartsplit.org",
-			readOnly: true,
-		},
 	},
 
 	user: {
 		type: String,
 		ref: "User",
-		api: {
-			type: "string",
-			format: "uuid",
-			example: "e87b56fe-1ce0-4ec7-8393-e18dc7415041",
-			readOnly: true,
-		},
 	},
 
 	createdAt: {

@@ -9,23 +9,10 @@ const MusicalGenresList = new mongoose.Schema(
 	{
 		name: {
 			type: LocaleSchema,
-			api: {
-				type: "object",
-				properties: {
-					fr: { type: "string" },
-					en: { type: "string" },
-				},
-			},
 		},
 
 		uris: {
 			type: [String],
-			api: {
-				type: "array",
-				items: {
-					type: "string",
-				},
-			},
 		},
 
 		parents: {
@@ -35,12 +22,6 @@ const MusicalGenresList = new mongoose.Schema(
 					ref: "musical-genres",
 				},
 			],
-			api: {
-				type: "array",
-				items: {
-					type: "string",
-				},
-			},
 		},
 	},
 	{ discriminatorKey: "type" }

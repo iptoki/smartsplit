@@ -9,75 +9,38 @@ const DigitalDistributorsList = new mongoose.Schema(
 	{
 		name: {
 			type: String,
-			api: {
-				type: "string",
-			},
 		},
 
 		icon: {
 			type: String,
-			api: {
-				type: "string",
-			},
 		},
 
 		localizedName: {
 			type: LocaleSchema,
-			api: {
-				type: "object",
-				properties: {
-					fr: { type: "string" },
-					en: { type: "string" },
-				},
-			},
 		},
 
 		domains: {
 			type: [String],
-			api: {
-				type: "array",
-				items: {
-					type: "string",
-				},
-			},
 		},
 
 		markets: {
 			type: [String],
-			api: {
-				type: "array",
-				items: {
-					type: "string",
-				},
-			},
 		},
 
 		streaming: {
 			type: Boolean,
-			api: {
-				type: "boolean",
-			},
 		},
 
 		download: {
 			type: Boolean,
-			api: {
-				type: "boolean",
-			},
 		},
 
 		other: {
 			type: Boolean,
-			api: {
-				type: "boolean",
-			},
 		},
 
 		blockchain: {
 			type: Boolean,
-			api: {
-				type: "boolean",
-			},
 		},
 	},
 	{ discriminatorKey: "type" }

@@ -55,36 +55,16 @@ const UserSchema = new mongoose.Schema(
 			type: String,
 			alias: "user_id",
 			default: uuid,
-			api: {
-				type: "string",
-				format: "uuid",
-				example: "e87b56fe-1ce0-4ec7-8393-e18dc7415041",
-				readOnly: true,
-			},
 		},
 
 		emails: {
 			type: [String],
 			lowercase: true,
 			trim: true,
-			api: {
-				type: "array",
-				items: {
-					type: "string",
-					format: "email",
-				},
-				readOnly: true,
-			},
 		},
 
 		password: {
 			type: String, // bcrypt
-			api: {
-				type: "string",
-				writeOnly: true,
-				format: "password",
-				example: "Biquette#1!",
-			},
 		},
 
 		accountStatus: {
@@ -97,35 +77,18 @@ const UserSchema = new mongoose.Schema(
 				"active",
 				"deleted",
 			],
-			api: {
-				type: "string",
-				readOnly: true,
-				example: "active",
-			},
 		},
 
 		firstName: {
 			type: String,
-			api: {
-				type: "string",
-				example: "John",
-			},
 		},
 
 		lastName: {
 			type: String,
-			api: {
-				type: "string",
-				example: "Doe",
-			},
 		},
 
 		artistName: {
 			type: String,
-			api: {
-				type: "string",
-				example: "Johnny",
-			},
 		},
 
 		avatar: Buffer,
@@ -134,12 +97,6 @@ const UserSchema = new mongoose.Schema(
 			type: String,
 			default: "en",
 			enum: ["fr", "en"],
-			api: {
-				type: "string",
-				enum: ["en", "fr"],
-				example: "fr",
-				default: "en",
-			},
 		},
 
 		mobilePhone: {
@@ -154,22 +111,6 @@ const UserSchema = new mongoose.Schema(
 		permissions: {
 			type: PermissionSchema,
 			default: {},
-			api: {
-				type: "object",
-				properties: {
-					admin: {
-						type: "boolean",
-					},
-					users: {
-						type: "array",
-						items: {
-							type: "string",
-							format: "uuid",
-						},
-					},
-				},
-				readOnly: true,
-			},
 		},
 	},
 	{ toJSON: { virtuals: true } }

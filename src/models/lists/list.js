@@ -10,40 +10,15 @@ const ListSchema = new mongoose.Schema(
 			type: String,
 			alias: "entity_id",
 			default: uuid,
-			api: {
-				type: "string",
-				example: "e87b56fe-1ce0-4ec7-8393-e18dc7415041",
-			},
 		},
 
 		users: {
 			type: mongoose.Mixed,
-			api: {
-				oneOf: [
-					{ const: false },
-					{
-						type: "array",
-						items: {
-							type: "string",
-							format: "uuid",
-							example: [
-								"e87b56fe-1ce0-4ec7-8393-e18dc7415041",
-								"e90b56dc-1fe0-4ef7-2354-f18dc7415948",
-							],
-						},
-					},
-				],
-			},
 		},
 
 		adminReview: {
 			type: String,
 			default: null,
-			api: {
-				type: "string",
-				default: null,
-				example: "this is an admin review",
-			},
 		},
 	},
 	{ discriminatorKey: "type", toJSON: { virtuals: true } }
