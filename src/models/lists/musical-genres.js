@@ -1,11 +1,11 @@
 const mongoose = require("mongoose")
-const List = require("./list")
+const Entity = require("./entity")
 const LocaleSchema = require("./locale")
 
 /**
  * Represents an entity of musical genres list in the system
  */
-const MusicalGenresList = new mongoose.Schema(
+const MusicalGenresEntity = new mongoose.Schema(
 	{
 		name: {
 			type: LocaleSchema,
@@ -27,10 +27,10 @@ const MusicalGenresList = new mongoose.Schema(
 	{ discriminatorKey: "type" }
 )
 
-MusicalGenresList.methods.setFields = function (body) {
-	for (let field in ["name", "uris", "parents", ...List.getFields()]) {
+MusicalGenresEntity.methods.setFields = function (body) {
+	for (let field in ["name", "uris", "parents", ...Entity.getFields()]) {
 		if (body[field]) this[field] = body[field]
 	}
 }
 
-module.exports = List.discriminator("musical-genres", MusicalGenresList)
+module.exports = Entity.discriminator("musical-genres", MusicalGenresEntity)

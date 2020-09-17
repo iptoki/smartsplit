@@ -13,7 +13,7 @@ module.exports.genericEntity = {
 	users: {
 		oneOf: [
 			{
-				type: "string",
+				type: "boolean",
 				enum: [false],
 			},
 			{

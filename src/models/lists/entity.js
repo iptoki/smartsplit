@@ -2,7 +2,7 @@ const mongoose = require("mongoose")
 const uuid = require("uuid").v4
 
 /**
- * Represents a generic modifiable list in the system
+ * Represents a generic modifiable entity in the system
  */
 const EntitySchema = new mongoose.Schema(
 	{
