@@ -134,7 +134,7 @@ UserSchema.virtual("fullName").get(function () {
 
 	if (this.firstName) return this.firstName
 
-	return null
+	return "Guest"
 })
 
 UserSchema.virtual("user_id").get(function () {
@@ -336,12 +336,14 @@ UserSchema.methods.addPendingEmail = async function (
 UserSchema.methods.removePendingEmail = async function (email) {
 	email = normalizeEmailAddress(email)
 
+	if (!this.populated("pendingEmails"))
+		await this.populate("pendingEmails").execPopulate()
+
 	if (!this.pendingEmails.find((e) => e.email === email)) return false
 
 	await EmailVerification.deleteOne().byEmailUserId(email, this._id)
 
-	if (Array.isArray(this.pendingEmails))
-		this.pendingEmails.filter((e) => e.email === email)
+	this.pendingEmails.filter((e) => e.email === email)
 
 	return true
 }
@@ -451,12 +453,16 @@ UserSchema.methods.verifyMobilePhone = async function (code) {
 /**
  * Creates a password reset token for the user
  */
-UserSchema.methods.createPasswordResetToken = function (expires = "2 hours") {
+UserSchema.methods.createPasswordResetToken = function (
+	email,
+	expires = "2 hours"
+) {
 	return JWT.create(
 		JWT_RESET_TYPE,
 		{
 			user_id: this._id,
 			user_password: this.password,
+			user_email: normalizeEmailAddress(email),
 		},
 		expires
 	)
@@ -491,11 +497,10 @@ UserSchema.methods.createActivationToken = function (
 		{
 			user_id: this.user_id,
 			user_password: this.password,
-			activate_email: normalizeEmailAddress(email),
+			user_email: normalizeEmailAddress(email),
 		},
 		expires
 	)
-	console.log("token", token)
 	return token
 }
 

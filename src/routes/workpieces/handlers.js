@@ -2,7 +2,7 @@ const User = require("../../models/user")
 const Workpiece = require("../../models/workpiece")
 const Errors = require("../errors")
 
-module.exports.getWorkpiece = async function (req, res) {
+const getWorkpiece = async function (req, res) {
 	const workpiece = await Workpiece.findById(req.params.workpiece_id)
 
 	if (!workpiece) throw Errors.WorkpieceNotFound
@@ -10,16 +10,18 @@ module.exports.getWorkpiece = async function (req, res) {
 	return workpiece
 }
 
-module.exports.getWorkpieceAsOwner = async function (req, res) {
-	const workpiece = await this.getWorkpiece(req, res)
+const getWorkpieceAsOwner = async function (req, res) {
+	const workpiece = await getWorkpiece(req, res)
 
 	if (workpiece.owner !== req.authUser._id) throw Errors.UserForbidden
 
 	return workpiece
 }
 
+module.exports.getWorkpiece = getWorkpiece
+
 module.exports.getWorkpieceAsRightHolder = async function (req, res) {
-	const workpiece = await this.getWorkpiece(req, res)
+	const workpiece = await getWorkpiece(req, res)
 
 	if (!workpiece.rightHolders.includes(req.authUser._id))
 		throw Errors.UserForbidden
@@ -36,7 +38,7 @@ module.exports.createWorkpiece = async function (req, res) {
 }
 
 module.exports.updateWorkpiece = async function (req, res) {
-	const workpiece = await this.getWorkpieceAsOwner(req, res)
+	const workpiece = await getWorkpieceAsOwner(req, res)
 
 	for (let field of ["title", "entityTags"])
 		if (req.body[field]) workpiece[field] = req.body[field]
@@ -46,7 +48,7 @@ module.exports.updateWorkpiece = async function (req, res) {
 }
 
 module.exports.deleteWorkpiece = async function (req, res) {
-	const workpiece = await this.getWorkpieceAsOwner(req, res)
+	const workpiece = await getWorkpieceAsOwner(req, res)
 
 	if (!workpiece.isRemovable()) throw ConflictingRightSplitState
 
@@ -65,14 +67,14 @@ module.exports.getWorkpieceFile = async function (file_id, workpiece = null) {
 }
 
 module.exports.getWorkpieceFile = async function (req, res) {
-	const file = await this.getWorkpieceFile(req.params.file_id)
+	const file = await getWorkpieceFile(req.params.file_id)
 	res.contentType(file.mimeType)
 	res.send(file.data)
 	return
 }
 
 module.exports.addWorkpieceFile = async function (req, res) {
-	const workpiece = await this.getWorkpieceAsOwner(req, res)
+	const workpiece = await getWorkpieceAsOwner(req, res)
 	const file = workpiece.addFile(
 		req.body.name,
 		req.body.mimeType,
@@ -85,8 +87,8 @@ module.exports.addWorkpieceFile = async function (req, res) {
 }
 
 module.exports.updateWorkpieceFile = async function (req, res) {
-	const workpiece = await this.getWorkpieceAsOwner(req, res)
-	const file = await this.getWorkpieceFile(req.params.file_id, workpiece)
+	const workpiece = await getWorkpieceAsOwner(req, res)
+	const file = await getWorkpieceFile(req.params.file_id, workpiece)
 	for (field of ["name", "mimeType", "visibility"]) {
 		if (req.body[field]) file[field] = req.body[field]
 	}
@@ -104,7 +106,7 @@ module.exports.getWorkpiecesByOwner = async function (req, res) {
 }
 
 module.exports.createRightSplit = async function (req, res) {
-	const workpiece = await this.getWorkpieceAsOwner(req, res)
+	const workpiece = await getWorkpieceAsOwner(req, res)
 
 	if (!workpiece.canAcceptNewSplit()) throw Errors.ConflictingRightSplitState
 
@@ -118,7 +120,7 @@ module.exports.createRightSplit = async function (req, res) {
 }
 
 module.exports.updateRightSplit = async function (req, res) {
-	const workpiece = await this.getWorkpieceAsOwner(req, res)
+	const workpiece = await getWorkpieceAsOwner(req, res)
 
 	if (!workpiece.canUpdateRightSplit()) throw Errors.ConflictingRightSplitState
 
@@ -129,7 +131,7 @@ module.exports.updateRightSplit = async function (req, res) {
 }
 
 module.exports.deleteRightSplit = async function (req, res) {
-	const workpiece = await this.getWorkpieceAsOwner(req, res)
+	const workpiece = await getWorkpieceAsOwner(req, res)
 
 	if (!workpiece.canUpdateRightSplit()) throw Errors.ConflictingRightSplitState
 
@@ -141,7 +143,7 @@ module.exports.deleteRightSplit = async function (req, res) {
 }
 
 module.exports.submitRightSplit = async function (req, res) {
-	const workpiece = await this.getWorkpieceAsOwner(req, res)
+	const workpiece = await getWorkpieceAsOwner(req, res)
 
 	if (!workpiece.canUpdateRightSplit()) throw Errors.ConflictingRightSplitState
 
@@ -152,7 +154,7 @@ module.exports.submitRightSplit = async function (req, res) {
 }
 
 module.exports.voteRightSplit = async function (req, res) {
-	const workpiece = await this.getWorkpieceAsRightHolder(req, res)
+	const workpiece = await getWorkpieceAsRightHolder(req, res)
 
 	if (!workpiece.canVoteRightSplit()) throw Errors.ConflictingRightSplitState
 
@@ -164,7 +166,7 @@ module.exports.voteRightSplit = async function (req, res) {
 }
 
 module.exports.swapRightSplitUser = async function (req, res) {
-	const workpiece = await this.getWorkpiece(req, res)
+	const workpiece = await getWorkpiece(req, res)
 
 	if (!workpiece.canVoteRightSplit()) throw Errors.ConflictingRightSplitState
 

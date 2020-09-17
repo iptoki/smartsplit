@@ -116,7 +116,6 @@ async function routes(fastify, options) {
 				200: AuthSchema.sessionInfo,
 			},
 		},
-		preValidation: JWTAuth.authorizeUserAccess,
 		handler: Controller.changeUserPassword,
 	})
 

@@ -62,7 +62,7 @@ EmailVerificationSchema.query.byActivationToken = async function (token) {
 	if (!data) return this.where({ _id: false }).skip(1).limit(0)
 
 	const email = await this.where({
-		_id: data.activate_email,
+		_id: data.user_email,
 		user: data.user_id,
 	}).populate("user")
 
@@ -76,14 +76,14 @@ EmailVerificationSchema.query.byActivationToken = async function (token) {
  * Verify that an activation token is valid against the current instance of EmailVerification
  */
 EmailVerificationSchema.methods.verifyActivationToken = async function (token) {
-	const data = JWT.decode(JWT.ACTIVATE_TYPE, token)
+	const data = JWT.decode("user:activate", token)
 
 	if (!data) return false
 
 	if (!this.populated("user")) await this.populate("user").execPopulate()
 
 	return (
-		data.activate_email === this.email &&
+		data.user_email === this.email &&
 		data.user_id === this.user._id &&
 		data.user_password === this.user.password
 	)

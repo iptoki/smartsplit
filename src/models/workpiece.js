@@ -3,7 +3,7 @@ const uuid = require("uuid").v4
 const Config = require("../config")
 const User = require("./user")
 const SplitTemplates = require("./notifications/templates")
-const UserSchema = require("../schemas/users")
+const { UserNotFound } = require("../routes/errors")
 const JWT = require("../utils/jwt")
 
 const JWT_SPLIT_TYPE = "workpiece:split-invite"
@@ -211,7 +211,7 @@ WorkpieceSchema.methods.setRightSplit = async function (body) {
 	for (let rightType of RightTypes) {
 		for (let entry of body[rightType]) {
 			if (!(await User.exists({ _id: entry.rightHolder })))
-				throw new UserSchema.UserNotFoundError({ user_id: entry.rightHolder })
+				throw UserNotFound
 
 			if (!this.rightHolders.includes(entry.rightHolder))
 				this.rightHolders.push(entry.rightHolder)

@@ -108,6 +108,7 @@ const TemplateMap = {
 			},
 			generate: function (user, options) {
 				const token = user.createPasswordResetToken(
+					options.to.email,
 					options.expires || "2 hours"
 				)
 				return {
@@ -125,11 +126,12 @@ const TemplateMap = {
 		notificationType: Notification.ADMINISTRATIVE_MESSAGES,
 		email: {
 			template_id: {
-				en: "" /* TODO */,
-				fr: "" /* TODO */,
+				en: "d-97a4ef0dcaf94b41a10346d937d04312" /* TODO */,
+				fr: "d-4b743067d5a542e4b0ef3032fdc48164" /* TODO */,
 			},
 			generate: function (user, options) {
 				const token = user.createPasswordResetToken(
+					options.to.email,
 					options.expires || "2 hours"
 				)
 				return {
