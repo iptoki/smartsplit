@@ -1,5 +1,5 @@
 const JWTAuth = require("../service/JWTAuth")
-const List = require("../models/lists/list")
+const Entity = require("../models/lists/entity")
 const ListSchema = require("../schemas/lists")
 const Errors = require("./errors")
 
@@ -110,7 +110,7 @@ async function createListEntity(req, res) {
 			? { users: false }
 			: { users: [req.authUser._id] }
 
-	const listModel = List.getListModel(req.params.list_type)
+	const listModel = Entity.getEntityModel(req.params.list_type)
 	if (!listModel) throw Errors.ListNotFound
 
 	const entity = new listModel({ ...base, ...req.body })
@@ -127,7 +127,7 @@ async function createListEntity(req, res) {
 }
 
 async function getListEntity(req, res) {
-	const entity = await List.findById(req.params.entity_id)
+	const entity = await Entity.findById(req.params.entity_id)
 
 	if (!entity) throw Errors.ListEntityNotFound
 
@@ -144,7 +144,7 @@ async function getListEntity(req, res) {
 }
 
 async function getList(req, res) {
-	let query = List.find({ type: req.params.list_type })
+	let query = Entity.find({ type: req.params.list_type })
 
 	if (!req.authUser) query = query.publicOnly()
 	else if (!req.authUser.isAdmin) query = query.byUserId(req.authUser._id)
@@ -191,8 +191,8 @@ async function deleteListEntity(req, res) {
 function entitySerializer({ schema, method, url, httpStatus }) {
 	const fastJson = require("fast-json-stringify")
 	return (response) => {
-		const serializer = fastJson(ListSchema[response.type])
-		return serializer(response)
+		const stringify = fastJson(ListSchema[response.type])
+		return stringify(response)
 	}
 }
 
@@ -200,11 +200,11 @@ function listSerializer({ schema, method, url, httpStatus }) {
 	const fastJson = require("fast-json-stringify")
 	return (response) => {
 		if (response.length === 0) return JSON.stringify(response)
-		const serializer = fastJson({
+		const stringify = fastJson({
 			type: "array",
 			items: ListSchema[response[0].type],
 		})
-		return serializer(response)
+		return stringify(response)
 	}
 }
 
