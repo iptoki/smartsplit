@@ -19,8 +19,6 @@ fastify.register(require("fastify-cors"), {
 	maxAge: 30 * 60,
 })
 
-fastify.register(require("fastify-sensible"))
-
 /* TODO: move swagger config */
 fastify.register(require("fastify-swagger"), {
 	routePrefix: "/docs",

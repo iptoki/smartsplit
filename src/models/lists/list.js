@@ -46,8 +46,12 @@ const ListSchema = new mongoose.Schema(
 			},
 		},
 	},
-	{ discriminatorKey: "type" }
+	{ discriminatorKey: "type", toJSON: { virtuals: true } }
 )
+
+ListSchema.virtual("entity_id").get(function () {
+	return this._id
+})
 
 ListSchema.query.publicOnly = function () {
 	return this.where({ users: false })

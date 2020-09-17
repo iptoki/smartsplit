@@ -254,8 +254,12 @@ const WorkpieceSchema = new mongoose.Schema(
 			},
 		},
 	},
-	{ timestamps: true }
+	{ timestamps: true, toJSON: { virtuals: true } }
 )
+
+WorkpieceSchema.virtual("workpiece_id").get(function () {
+	return this._id
+})
 
 WorkpieceFileSchema.virtual("fileUrl").get(function () {
 	return (

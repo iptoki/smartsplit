@@ -49,128 +49,131 @@ const PermissionSchema = new mongoose.Schema(
 /**
  * Represents a user / login in the system
  */
-const UserSchema = new mongoose.Schema({
-	_id: {
-		type: String,
-		alias: "user_id",
-		default: uuid,
-		api: {
-			type: "string",
-			format: "uuid",
-			example: "e87b56fe-1ce0-4ec7-8393-e18dc7415041",
-			readOnly: true,
-		},
-	},
-
-	emails: {
-		type: [String],
-		lowercase: true,
-		trim: true,
-		api: {
-			type: "array",
-			items: {
+const UserSchema = new mongoose.Schema(
+	{
+		_id: {
+			type: String,
+			alias: "user_id",
+			default: uuid,
+			api: {
 				type: "string",
-				format: "email",
+				format: "uuid",
+				example: "e87b56fe-1ce0-4ec7-8393-e18dc7415041",
+				readOnly: true,
 			},
-			readOnly: true,
 		},
-	},
 
-	password: {
-		type: String, // bcrypt
-		api: {
-			type: "string",
-			writeOnly: true,
-			format: "password",
-			example: "Biquette#1!",
-		},
-	},
-
-	accountStatus: {
-		type: String,
-		default: "email-verification-pending",
-		enum: [
-			"invalid",
-			"email-verification-pending",
-			"split-invited",
-			"active",
-			"deleted",
-		],
-		api: {
-			type: "string",
-			readOnly: true,
-			example: "active",
-		},
-	},
-
-	firstName: {
-		type: String,
-		api: {
-			type: "string",
-			example: "John",
-		},
-	},
-
-	lastName: {
-		type: String,
-		api: {
-			type: "string",
-			example: "Doe",
-		},
-	},
-
-	artistName: {
-		type: String,
-		api: {
-			type: "string",
-			example: "Johnny",
-		},
-	},
-
-	avatar: Buffer,
-
-	locale: {
-		type: String,
-		default: "en",
-		enum: ["fr", "en"],
-		api: {
-			type: "string",
-			enum: ["en", "fr"],
-			example: "fr",
-			default: "en",
-		},
-	},
-
-	mobilePhone: {
-		type: MobilePhoneSchema,
-	},
-
-	notifications: {
-		type: Notification.Schema,
-		default: {},
-	},
-
-	permissions: {
-		type: PermissionSchema,
-		default: {},
-		api: {
-			type: "object",
-			properties: {
-				admin: {
-					type: "boolean",
+		emails: {
+			type: [String],
+			lowercase: true,
+			trim: true,
+			api: {
+				type: "array",
+				items: {
+					type: "string",
+					format: "email",
 				},
-				users: {
-					type: "array",
-					items: {
-						type: "string",
-						format: "uuid",
+				readOnly: true,
+			},
+		},
+
+		password: {
+			type: String, // bcrypt
+			api: {
+				type: "string",
+				writeOnly: true,
+				format: "password",
+				example: "Biquette#1!",
+			},
+		},
+
+		accountStatus: {
+			type: String,
+			default: "email-verification-pending",
+			enum: [
+				"invalid",
+				"email-verification-pending",
+				"split-invited",
+				"active",
+				"deleted",
+			],
+			api: {
+				type: "string",
+				readOnly: true,
+				example: "active",
+			},
+		},
+
+		firstName: {
+			type: String,
+			api: {
+				type: "string",
+				example: "John",
+			},
+		},
+
+		lastName: {
+			type: String,
+			api: {
+				type: "string",
+				example: "Doe",
+			},
+		},
+
+		artistName: {
+			type: String,
+			api: {
+				type: "string",
+				example: "Johnny",
+			},
+		},
+
+		avatar: Buffer,
+
+		locale: {
+			type: String,
+			default: "en",
+			enum: ["fr", "en"],
+			api: {
+				type: "string",
+				enum: ["en", "fr"],
+				example: "fr",
+				default: "en",
+			},
+		},
+
+		mobilePhone: {
+			type: MobilePhoneSchema,
+		},
+
+		notifications: {
+			type: Notification.Schema,
+			default: {},
+		},
+
+		permissions: {
+			type: PermissionSchema,
+			default: {},
+			api: {
+				type: "object",
+				properties: {
+					admin: {
+						type: "boolean",
+					},
+					users: {
+						type: "array",
+						items: {
+							type: "string",
+							format: "uuid",
+						},
 					},
 				},
+				readOnly: true,
 			},
-			readOnly: true,
 		},
 	},
-})
+	{ toJSON: { virtuals: true } }
+)
 
 /**
  * Define a virtual property that makes a reference to EmailVerification documents
@@ -191,6 +194,14 @@ UserSchema.virtual("fullName").get(function () {
 	if (this.firstName) return this.firstName
 
 	return null
+})
+
+UserSchema.virtual("user_id").get(function () {
+	return this._id
+})
+
+UserSchema.virtual("rightHolder_id").get(function () {
+	return this._id
 })
 
 /**
