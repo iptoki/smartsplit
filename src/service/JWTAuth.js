@@ -31,7 +31,7 @@ const decodeToken = function (token) {
  *
  * TODO: Maybe the OpenAPI integration can handle this for most cases?
  */
-const expressMiddleware = function (req, res) {
+const bearerTokenMiddleware = function (req, res) {
 	let tokenData = undefined
 	req.auth = {}
 
@@ -109,12 +109,12 @@ const requireAuthAdmin = async function (req, res) {
 }
 
 const authorizeUserAccess = async function (req, res) {
-	await requireAuthUser(req, res)
+	const authUser = await requireAuthUser(req, res)
 	if (
 		!(
-			req.params.user_id === req.authUser._id ||
-			req.authUser.isAdmin ||
-			req.authUser.hasAccessToUser(req.params.user_id)
+			req.params.user_id === authUser._id ||
+			authUser.isAdmin ||
+			authUser.hasAccessToUser(req.params.user_id)
 		)
 	)
 		throw Errors.UnauthorizedUserAccess
@@ -131,7 +131,7 @@ const getAuthUser = async function (req, res) {
 module.exports = {
 	createToken,
 	decodeToken,
-	expressMiddleware,
+	bearerTokenMiddleware,
 	requireAuthUser,
 	requireAuthAdmin,
 	authorizeUserAccess,
