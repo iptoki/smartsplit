@@ -25,6 +25,7 @@ module.exports.sendSMSTo = async function (user, message, verifiedOnly = true) {
 	if (verifiedOnly && user.mobilePhone.status !== "verified")
 		throw new Error("User's mobile phone must be verified")
 
+	console.log("twilio/sendSMSTo")
 	return await client.messages.create({
 		body: message,
 		from: Config.twilio.phoneNumber,

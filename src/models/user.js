@@ -391,7 +391,7 @@ UserSchema.methods.setMobilePhone = async function (number, verified = false) {
 		verificationCode: { code: generateRandomCode(), createdAt: new Date() },
 	}
 
-	await this.sendSMS(UserTemplates.VERIFY_MOBILE_PHONE, false)
+	await this.sendSMS(UserTemplates.VERIFY_MOBILE_PHONE, false, false)
 }
 
 /**
@@ -521,13 +521,15 @@ UserSchema.methods.sendNotification = async function (
  */
 UserSchema.methods.sendSMS = async function (
 	templateName,
-	verifiedOnly = true
+	verifiedOnly = true,
+	checkNotif = true
 ) {
 	const template = generateTemplate(templateName, "sms", this)
 
 	if (
 		!template ||
-		!this.notifications[template.notificationType].includes("sms")
+		(checkNotif &&
+			!this.notifications[template.notificationType].includes("sms"))
 	)
 		return null
 

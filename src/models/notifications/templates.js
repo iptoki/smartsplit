@@ -191,9 +191,10 @@ const TemplateMap = {
 				fr: "Votre code d'activation Smartsplit est ",
 			},
 			generate: function (user) {
-				return (
-					this.message[user.locale] + user.mobilePhone.verificationCode.code
-				)
+				return {
+					message:
+						this.message[user.locale] + user.mobilePhone.verificationCode.code,
+				}
 			},
 		},
 	},

@@ -136,7 +136,7 @@ async function routes(fastify, options) {
 				204: {},
 			},
 		},
-		preValidation: JWTAuth.authorizeUserAccess,
+		preValidation: JWTAuth.requireAuthUser,
 		handler: Controller.verifyUserMobilePhone,
 	})
 
