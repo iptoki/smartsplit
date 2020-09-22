@@ -1,6 +1,7 @@
 const User = require("../../models/user")
 const Workpiece = require("../../models/workpiece")
 const Errors = require("../errors")
+const JWTAuth = require("../../service/JWTAuth")
 
 const getWorkpiece = async function (req, res) {
 	const workpiece = await Workpiece.findById(req.params.workpiece_id)
@@ -16,6 +17,15 @@ const getWorkpieceAsOwner = async function (req, res) {
 	if (workpiece.owner !== req.authUser._id) throw Errors.UserForbidden
 
 	return workpiece
+}
+
+const _getWorkpieceFile = async function (workpiece, file_id) {
+	for (file of workpiece.files) {
+		if (file._id === file_id) {
+			return file
+		}
+	}
+	throw Errors.WorkpieceFileNotFound
 }
 
 module.exports.getWorkpiece = getWorkpiece
@@ -50,27 +60,26 @@ module.exports.updateWorkpiece = async function (req, res) {
 module.exports.deleteWorkpiece = async function (req, res) {
 	const workpiece = await getWorkpieceAsOwner(req, res)
 
-	if (!workpiece.isRemovable()) throw ConflictingRightSplitState
+	if (!workpiece.isRemovable()) throw Errors.ConflictingRightSplitState
 
 	await workpiece.remove()
 	res.code(204).send()
 }
 
-module.exports.getWorkpieceFile = async function (file_id, workpiece = null) {
-	if (!workpiece) workpiece = await Workpiece.findOne({ "files._id": file_id })
-	for (file of workpiece.files) {
-		if (file._id === file_id) {
-			return file
-		}
-	}
-	throw Errors.WorkpieceFileNotFound
-}
-
 module.exports.getWorkpieceFile = async function (req, res) {
-	const file = await getWorkpieceFile(req.params.file_id)
-	res.contentType(file.mimeType)
-	res.send(file.data)
-	return
+	const workpiece = await Workpiece.findById(req.params.workpiece_id)
+	if(!workpiece) throw Errors.WorkpieceNotFound
+	
+	const file = await _getWorkpieceFile(workpiece, req.params.file_id)
+	
+	if(file.visibility !== "public") {
+		await JWTAuth.requireAuthUser(req, res)
+		if(workpiece.owner !== req.authUser._id)
+			throw Errors.UserForbidden
+	}
+
+	res.header("Content-Type", file.mimeType)
+	return file.data
 }
 
 module.exports.addWorkpieceFile = async function (req, res) {
@@ -88,7 +97,7 @@ module.exports.addWorkpieceFile = async function (req, res) {
 
 module.exports.updateWorkpieceFile = async function (req, res) {
 	const workpiece = await getWorkpieceAsOwner(req, res)
-	const file = await getWorkpieceFile(req.params.file_id, workpiece)
+	const file = await _getWorkpieceFile(workpiece, req.params.file_id)
 	for (field of ["name", "mimeType", "visibility"]) {
 		if (req.body[field]) file[field] = req.body[field]
 	}

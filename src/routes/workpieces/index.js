@@ -97,13 +97,7 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			response: {
-				200: {
-					/* TODO */
-				},
-			},
 		},
-		preValidation: JWTAuth.requireAuthUser,
 		handler: Controller.getWorkpieceFile,
 	})
 
@@ -115,6 +109,10 @@ async function routes(fastify, options) {
 				workpiece_id: {
 					type: "string",
 				},
+			},
+			body: { 
+				allOf: [WorkpieceSchema.fileRequestBody],
+				required: ["name", "mimeType", "data"],
 			},
 			response: {
 				201: WorkpieceSchema.file,
@@ -136,6 +134,7 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
+			body: WorkpieceSchema.fileRequestBody,
 			response: {
 				200: WorkpieceSchema.file,
 			},

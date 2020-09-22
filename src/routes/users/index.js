@@ -8,6 +8,11 @@ async function routes(fastify, options) {
 		method: "GET",
 		url: "/users/:user_id",
 		schema: {
+			params: {
+				user_id: {
+					type: "string",
+				},
+			},
 			response: {
 				200: UserSchema.user,
 			},
@@ -19,6 +24,11 @@ async function routes(fastify, options) {
 		method: "GET",
 		url: "/users/:user_id/avatar",
 		schema: {
+			params: {
+				user_id: {
+					type: "string",
+				},
+			},
 			response: {
 				200: {
 					/* TODO */
@@ -64,6 +74,11 @@ async function routes(fastify, options) {
 		method: "PATCH",
 		url: "/users/:user_id",
 		schema: {
+			params: {
+				user_id: {
+					type: "string",
+				},
+			},
 			body: UserSchema.userRequestBody,
 			response: {
 				200: UserSchema.user,
@@ -172,6 +187,13 @@ async function routes(fastify, options) {
 	fastify.route({
 		method: "DELETE",
 		url: "/users/:user_id",
+		schema: {
+			params: {
+				user_id: {
+					type: "string",
+				},
+			},
+		},
 		preValidation: JWTAuth.authorizeUserAccess,
 		handler: Controller.deleteUserAccount,
 	})
@@ -180,6 +202,11 @@ async function routes(fastify, options) {
 		method: "GET",
 		url: "/users/:user_id/emails/",
 		schema: {
+			params: {
+				user_id: {
+					type: "string",
+				},
+			},
 			response: {
 				200: UserSchema.emailStatusList,
 			},
@@ -192,6 +219,11 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/users/:user_id/emails/",
 		schema: {
+			params: {
+				user_id: {
+					type: "string",
+				},
+			},
 			body: {
 				type: "object",
 				required: ["email"],
@@ -213,6 +245,14 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/users/:user_id/emails/:email",
 		schemas: {
+			params: {
+				user_id: {
+					type: "string",
+				},
+				email: {
+					type: "string",
+				},
+			},
 			body: {
 				type: "object",
 				required: ["token"],
@@ -229,6 +269,16 @@ async function routes(fastify, options) {
 	fastify.route({
 		method: "DELETE",
 		url: "/users/:user_id/emails/:email",
+		schema: {
+			params: {
+				user_id: {
+					type: "string",
+				},
+				email: {
+					type: "string",
+				},
+			},
+		},
 		preValidation: JWTAuth.authorizeUserAccess,
 		handler: Controller.deleteUserEmail,
 	})

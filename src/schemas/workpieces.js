@@ -72,6 +72,27 @@ module.exports.file = {
 	},
 }
 
+module.exports.fileRequestBody = {
+	type: "object",
+	properties: {
+		name: { 
+			type: "string",
+		},
+		visibility: {
+			type: "string",
+			enum: ["public", "hidden", "private"],
+			default: "private",
+		},
+		mimeType: { 
+			type: "string",
+		},
+		data: { 
+			type: "string",
+		},
+	},
+	additionalProperties: false,
+}
+
 module.exports.workpiece = {
 	type: "object",
 	properties: {

@@ -28,8 +28,8 @@ module.exports = {
 
 	getUserAvatar: async function (req, res) {
 		const user = await getUser(req, res)
-		res.contentType("image/jpeg") // hardcoded for the moment
-		res.send(user.avatar)
+		res.header("Content-Type", "image/jpeg") // hardcoded for the moment
+		return user.avatar
 	},
 
 	createUser: async function (req, res) {
@@ -78,17 +78,19 @@ module.exports = {
 			req.body.token
 		)
 
-		if (email && email.user.isActive) throw Errors.AccountAlreadyActivated
+		const user = email.user
 
-		if (!email || !email.user.canActivate) throw Errors.InvalidActivationToken
+		if (email && user.isActive) throw Errors.AccountAlreadyActivated
 
-		email.user.accountStatus = "active"
-		email.user.emails.push(email._id)
+		if (!email || !user.canActivate) throw Errors.InvalidActivationToken
 
-		await email.user.save()
+		user.accountStatus = "active"
+		user.emails.push(email._id)
+
+		await user.save()
 		await EmailVerification.deleteOne({ _id: email._id })
 
-		return { accessToken: JWTAuth.createToken(email.user), user: email.user }
+		return { accessToken: JWTAuth.createToken(user), user: user }
 	},
 
 	updateUser: async function (req, res) {

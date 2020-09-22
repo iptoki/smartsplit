@@ -10,61 +10,6 @@ const JWT_SPLIT_TYPE = "workpiece:split-invite"
 
 const RightTypes = ["copyright", "interpretation", "recording"]
 
-const splitAPISpec = {
-	type: "object",
-	properties: {
-		rightHolder: {
-			type: "string",
-			format: "uuid",
-			example: "e87b56fe-1ce0-4ec7-8393-e18dc7415041",
-		},
-		roles: {
-			type: "array",
-			items: {
-				type: "string",
-				example: "guitarist",
-			},
-		},
-		vote: {
-			type: "string",
-			enum: ["undecided", "accepted", "rejected"],
-			example: "accepted",
-		},
-		comment: {
-			type: "string",
-			example: "this is a comment",
-		},
-		shares: {
-			type: "number",
-			example: 2,
-		},
-	},
-}
-
-const rightSplitAPISpec = {
-	type: "object",
-	properties: {
-		_state: {
-			type: "string",
-			enum: ["draft", "voting", "accepted", "rejected"],
-			example: "accepted",
-			readOnly: true,
-		},
-		copyright: {
-			type: "array",
-			items: splitAPISpec,
-		},
-		interpretation: {
-			type: "array",
-			items: splitAPISpec,
-		},
-		recording: {
-			type: "array",
-			items: splitAPISpec,
-		},
-	},
-}
-
 const SplitSchema = new mongoose.Schema(
 	{
 		rightHolder: {
@@ -115,7 +60,7 @@ const WorkpieceFileSchema = new mongoose.Schema({
 		enum: ["public", "hidden", "private"],
 	},
 	data: Buffer,
-})
+}, { toJSON: { virtuals: true } })
 
 const WorkpieceSchema = new mongoose.Schema(
 	{
@@ -146,7 +91,6 @@ const WorkpieceSchema = new mongoose.Schema(
 
 		rightSplit: {
 			type: RightSplitSchema,
-			api: rightSplitAPISpec,
 		},
 
 		archivedSplits: {
@@ -161,6 +105,10 @@ const WorkpieceSchema = new mongoose.Schema(
 )
 
 WorkpieceSchema.virtual("workpiece_id").get(function () {
+	return this._id
+})
+
+WorkpieceFileSchema.virtual("file_id").get(function () {
 	return this._id
 })
 
