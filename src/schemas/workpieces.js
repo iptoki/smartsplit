@@ -90,7 +90,6 @@ module.exports.fileRequestBody = {
 			type: "string",
 		},
 	},
-	additionalProperties: false,
 }
 
 module.exports.workpiece = {

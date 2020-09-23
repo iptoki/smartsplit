@@ -19,7 +19,7 @@ const getWorkpieceAsOwner = async function (req, res) {
 	return workpiece
 }
 
-const _getWorkpieceFile = async function (workpiece, file_id) {
+const _getWorkpieceFile = function (workpiece, file_id) {
 	for (file of workpiece.files) {
 		if (file._id === file_id) {
 			return file
@@ -70,7 +70,7 @@ module.exports.getWorkpieceFile = async function (req, res) {
 	const workpiece = await Workpiece.findById(req.params.workpiece_id)
 	if(!workpiece) throw Errors.WorkpieceNotFound
 	
-	const file = await _getWorkpieceFile(workpiece, req.params.file_id)
+	const file = _getWorkpieceFile(workpiece, req.params.file_id)
 	
 	if(file.visibility !== "public") {
 		await JWTAuth.requireAuthUser(req, res)
@@ -97,7 +97,7 @@ module.exports.addWorkpieceFile = async function (req, res) {
 
 module.exports.updateWorkpieceFile = async function (req, res) {
 	const workpiece = await getWorkpieceAsOwner(req, res)
-	const file = await _getWorkpieceFile(workpiece, req.params.file_id)
+	const file = _getWorkpieceFile(workpiece, req.params.file_id)
 	for (field of ["name", "mimeType", "visibility"]) {
 		if (req.body[field]) file[field] = req.body[field]
 	}

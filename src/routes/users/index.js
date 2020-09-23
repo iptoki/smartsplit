@@ -29,11 +29,6 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			response: {
-				200: {
-					/* TODO */
-				},
-			},
 		},
 		handler: Controller.getUserAvatar,
 	})
@@ -42,7 +37,10 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/users/",
 		schema: {
-			body: UserSchema.userRequestBody,
+			body: {
+				allOf: [UserSchema.userRequestBody],
+				required: ["email", "password"],
+			},
 			response: {
 				201: UserSchema.user,
 			},
