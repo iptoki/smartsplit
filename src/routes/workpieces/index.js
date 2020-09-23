@@ -115,7 +115,7 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: { 
+			body: {
 				allOf: [WorkpieceSchema.fileRequestBody],
 				required: ["name", "mimeType", "data"],
 			},

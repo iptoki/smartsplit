@@ -40,27 +40,30 @@ const RightSplitSchema = new mongoose.Schema(
 	{ _id: false }
 )
 
-const WorkpieceFileSchema = new mongoose.Schema({
-	_id: {
-		type: String,
-		alias: "file_id",
-		default: uuid,
+const WorkpieceFileSchema = new mongoose.Schema(
+	{
+		_id: {
+			type: String,
+			alias: "file_id",
+			default: uuid,
+		},
+		name: {
+			type: String,
+		},
+		mimeType: {
+			type: String,
+		},
+		size: {
+			type: Number,
+		},
+		visibility: {
+			type: String,
+			enum: ["public", "hidden", "private"],
+		},
+		data: Buffer,
 	},
-	name: {
-		type: String,
-	},
-	mimeType: {
-		type: String,
-	},
-	size: {
-		type: Number,
-	},
-	visibility: {
-		type: String,
-		enum: ["public", "hidden", "private"],
-	},
-	data: Buffer,
-}, { toJSON: { virtuals: true } })
+	{ toJSON: { virtuals: true } }
+)
 
 const WorkpieceSchema = new mongoose.Schema(
 	{

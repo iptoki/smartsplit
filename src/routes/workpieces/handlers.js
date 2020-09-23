@@ -68,14 +68,13 @@ module.exports.deleteWorkpiece = async function (req, res) {
 
 module.exports.getWorkpieceFile = async function (req, res) {
 	const workpiece = await Workpiece.findById(req.params.workpiece_id)
-	if(!workpiece) throw Errors.WorkpieceNotFound
-	
+	if (!workpiece) throw Errors.WorkpieceNotFound
+
 	const file = _getWorkpieceFile(workpiece, req.params.file_id)
-	
-	if(file.visibility !== "public") {
+
+	if (file.visibility !== "public") {
 		await JWTAuth.requireAuthUser(req, res)
-		if(workpiece.owner !== req.authUser._id)
-			throw Errors.UserForbidden
+		if (workpiece.owner !== req.authUser._id) throw Errors.UserForbidden
 	}
 
 	res.header("Content-Type", file.mimeType)

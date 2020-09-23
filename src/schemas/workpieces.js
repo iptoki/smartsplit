@@ -130,7 +130,7 @@ module.exports.file = {
 module.exports.fileRequestBody = {
 	type: "object",
 	properties: {
-		name: { 
+		name: {
 			type: "string",
 		},
 		visibility: {
@@ -138,10 +138,10 @@ module.exports.fileRequestBody = {
 			enum: ["public", "hidden", "private"],
 			default: "private",
 		},
-		mimeType: { 
+		mimeType: {
 			type: "string",
 		},
-		data: { 
+		data: {
 			type: "string",
 		},
 	},
