@@ -37,13 +37,14 @@ module.exports = {
 			throw Errors.ConflictingUser
 
 		let user
-		let email = await EmailVerification.findOne()
+		let emailVerif = await EmailVerification.findOne()
 			.byEmail(req.body.email)
 			.populate("user")
 
-		if (email) {
-			if (!email.user) await email.remove()
-			if (await email.user.verifyPassword(req.body.password)) user = email.user
+		if (emailVerif) {
+			if (!emailVerif.user) await emailVerif.remove()
+			else if (await emailVerif.user.verifyPassword(req.body.password))
+				user = emailVerif.user
 		}
 
 		if (!user) {
@@ -52,8 +53,7 @@ module.exports = {
 				...req.body,
 			})
 
-			if (!(await user.addPendingEmail(req.body.email, false)))
-				throw Errors.ConflictingUser
+			emailVerif = await user.addPendingEmail(req.body.email)
 
 			await user.setPassword(req.body.password)
 
@@ -63,10 +63,11 @@ module.exports = {
 			if (req.body.phoneNumber) await user.setMobilePhone(req.body.phoneNumber)
 
 			await user.save()
+			await emailVerif.save()
 		}
 
 		await user.sendNotification(UserTemplates.ACTIVATE_ACCOUNT, {
-			to: { name: user.fullName, email: req.body.email },
+			to: { name: user.fullName, email: emailVerif._id },
 		})
 
 		res.code(201)
@@ -100,8 +101,11 @@ module.exports = {
 
 		// Update user data
 		if (req.body.email) {
-			if (!(await user.addPendingEmail(req.body.email)))
-				throw Errors.ConflictingEmail
+			const emailVerif = await user.addPendingEmail(req.body.email)
+			await emailVerif.save()
+			await user.sendNotification(UserTemplates.ACTIVATE_EMAIL, {
+				to: { name: user.fullName, email: emailVerif._id },
+			})
 		}
 
 		if (req.body.phoneNumber) await user.setMobilePhone(req.body.phoneNumber)
@@ -213,13 +217,13 @@ module.exports = {
 			accountStatus: "split-invited",
 		})
 
-		if (!(await user.addPendingEmail(req.body.email, false)))
-			throw Errors.ConflictingUser
+		const emailVerif = await user.addPendingEmail(req.body.email)
 
 		await user.save()
+		await emailVerif.save()
 
 		await user.sendNotification(UserTemplates.SPLIT_INVITED, {
-			to: { name: user.fullName, email: req.body.email },
+			to: { name: user.fullName, email: emailVerif._id },
 		})
 
 		res.code(201)
@@ -241,9 +245,12 @@ module.exports = {
 
 	createUserEmail: async function (req, res) {
 		const user = await getUserWithPendingEmails(req, res)
-		const email = await user.addPendingEmail(req.body.email)
+		const emailVerif = await user.addPendingEmail(req.body.email)
 
-		if (!email) throw Errors.ConflictingEmail
+		await email.save()
+		await user.sendNotification(UserTemplates.ACTIVATE_EMAIL, {
+			to: { name: user.fullName, email: emailVerif._id },
+		})
 
 		return user.emails
 			.map((e) => ({ email: e, status: "active" }))

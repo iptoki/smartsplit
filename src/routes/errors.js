@@ -59,6 +59,9 @@ module.exports.InvalidVerificationCode = new HTTPErrors.Forbidden(
 module.exports.ConflictingUser = new HTTPErrors.Conflict(
 	"A user already exists with this ID or email address"
 )
+module.exports.ConflictingUserPhoneNumber = new HTTPErrors.Conflict(
+	"A user already exists with this phone number"
+)
 module.exports.AccountAlreadyActivated = new HTTPErrors.PreconditionFailed(
 	"This account is already active and cannot be activated again"
 )
