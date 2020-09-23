@@ -7,7 +7,7 @@ const WorkpieceSchema = require("../../schemas/workpieces")
 async function routes(fastify, options) {
 	fastify.route({
 		method: "GET",
-		url: "/workpieces/by-owner/:user_id/",
+		url: "/workpieces/by-owner/:user_id",
 		schema: {
 			params: {
 				user_id: {

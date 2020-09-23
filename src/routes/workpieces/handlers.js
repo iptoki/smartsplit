@@ -19,6 +19,15 @@ const getWorkpieceAsOwner = async function (req, res) {
 	return workpiece
 }
 
+const getWorkpieceAsRightHolder = async function (req, res) {
+	const workpiece = await getWorkpiece(req, res)
+
+	if (!workpiece.rightHolders.includes(req.authUser._id))
+		throw Errors.UserForbidden
+
+	return workpiece
+}
+
 const _getWorkpieceFile = function (workpiece, file_id) {
 	for (file of workpiece.files) {
 		if (file._id === file_id) {
@@ -29,15 +38,6 @@ const _getWorkpieceFile = function (workpiece, file_id) {
 }
 
 module.exports.getWorkpiece = getWorkpiece
-
-module.exports.getWorkpieceAsRightHolder = async function (req, res) {
-	const workpiece = await getWorkpiece(req, res)
-
-	if (!workpiece.rightHolders.includes(req.authUser._id))
-		throw Errors.UserForbidden
-
-	return workpiece
-}
 
 module.exports.createWorkpiece = async function (req, res) {
 	req.body.owner = req.authUser._id
@@ -110,7 +110,7 @@ module.exports.updateWorkpieceFile = async function (req, res) {
 }
 
 module.exports.getWorkpiecesByOwner = async function (req, res) {
-	return await Workpiece.find().byOwner(req.user_id)
+	return await Workpiece.find().byOwner(req.params.user_id)
 }
 
 module.exports.createRightSplit = async function (req, res) {
