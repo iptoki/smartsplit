@@ -286,10 +286,7 @@ UserSchema.methods.hasAccessToUser = function (user_id) {
 /**
  * Adds an email address of the user as pending and returns the email object if successfully created, null otherwise
  */
-UserSchema.methods.addPendingEmail = async function (
-	email,
-	sendVerifEmail = true
-) {
+UserSchema.methods.addPendingEmail = async function (email) {
 	email = normalizeEmailAddress(email)
 
 	if (await this.model("User").findOne().byEmail(email))
@@ -313,13 +310,6 @@ UserSchema.methods.addPendingEmail = async function (
 		_id: email,
 		user: this._id,
 	})
-
-	//await emailVerif.save()
-
-	if (sendVerifEmail)
-		await this.sendNotification(UserTemplates.ACTIVATE_EMAIL, {
-			to: { name: this.fullName, email: email },
-		})
 
 	if (
 		Array.isArray(this.pendingEmails) &&
@@ -400,7 +390,7 @@ UserSchema.methods.setMobilePhone = async function (number, verified = false) {
 		verificationCode: { code: generateRandomCode(), createdAt: new Date() },
 	}
 
-	//await this.sendSMS(UserTemplates.VERIFY_MOBILE_PHONE, false, false)
+	await this.sendSMS(UserTemplates.VERIFY_MOBILE_PHONE, false, false)
 }
 
 /**
