@@ -31,7 +31,7 @@ const DefaultConfig = {
 
 	listen: {
 		port: process.env.API_PORT || 3001,
-		host: undefined,
+		host: "0.0.0.0",
 	},
 
 	http: {
