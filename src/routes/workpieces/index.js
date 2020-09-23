@@ -43,6 +43,7 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/workpieces/",
 		schema: {
+			body: WorkpieceSchema.workpieceRequestBody,
 			response: {
 				201: WorkpieceSchema.workpiece,
 			},
@@ -60,6 +61,7 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
+			body: WorkpieceSchema.workpieceRequestBody,
 			response: {
 				200: WorkpieceSchema.workpiece,
 			},
@@ -96,6 +98,9 @@ async function routes(fastify, options) {
 				file_id: {
 					type: "string",
 				},
+			},
+			response: {
+				200: {},
 			},
 		},
 		handler: Controller.getWorkpieceFile,
@@ -152,6 +157,7 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
+			body: WorkpieceSchema.rightSplitRequestBody,
 			response: {
 				201: WorkpieceSchema.rightSplit,
 			},
@@ -169,6 +175,7 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
+			body: WorkpieceSchema.rightSplitRequestBody,
 			response: {
 				200: WorkpieceSchema.rightSplit,
 			},
@@ -220,6 +227,7 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
+			body: WorkpieceSchema.rightSplitVoteBody,
 			response: {
 				204: {},
 			},
@@ -235,6 +243,15 @@ async function routes(fastify, options) {
 			params: {
 				workpiece_id: {
 					type: "string",
+				},
+			},
+			body: {
+				type: "object",
+				required: ["token"],
+				properties: {
+					token: {
+						type: "string",
+					},
 				},
 			},
 			response: {

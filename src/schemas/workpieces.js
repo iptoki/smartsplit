@@ -25,6 +25,27 @@ module.exports.split = {
 	},
 }
 
+const splitRequestBody = {
+	type: "object",
+	properties: {
+		rightHolder: {
+			type: "string",
+		},
+		roles: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
+		comment: {
+			type: "string",
+		},
+		shares: {
+			type: "number",
+		},
+	},
+}
+
 module.exports.rightSplit = {
 	type: "object",
 	properties: {
@@ -44,6 +65,40 @@ module.exports.rightSplit = {
 			type: "array",
 			items: this.split,
 		},
+	},
+}
+
+module.exports.rightSplitRequestBody = {
+	type: "object",
+	required: ["copyright", "interpretation", "recording"],
+	properties: {
+		copyright: {
+			type: "array",
+			items: this.splitRequestBody,
+		},
+		interpretation: {
+			type: "array",
+			items: this.splitRequestBody,
+		},
+		recording: {
+			type: "array",
+			items: this.splitRequestBody,
+		},
+	},
+}
+
+module.exports.rightSplitVoteBody = {
+	copyright: {
+		type: "string",
+		enum: ["accepted", "rejected"],
+	},
+	interpretation: {
+		type: "string",
+		enum: ["accepted", "rejected"],
+	},
+	recording: {
+		type: "string",
+		enum: ["accepted", "rejected"],
 	},
 }
 
@@ -128,6 +183,16 @@ module.exports.workpiece = {
 		files: {
 			type: "array",
 			items: this.file,
+		},
+	},
+}
+
+module.exports.workpieceRequestBody = {
+	type: "object",
+	properties: {
+		title: {
+			type: "string",
+			default: "ExampleTitle",
 		},
 	},
 }

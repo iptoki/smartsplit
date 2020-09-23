@@ -279,5 +279,3 @@ WorkpieceSchema.methods.updateRightSplitState = async function () {
 module.exports = mongoose.model("Workpiece", WorkpieceSchema)
 
 module.exports.RightTypes = RightTypes
-
-module.exports.File = mongoose.model("WorkpieceFile", WorkpieceFileSchema)
