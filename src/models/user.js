@@ -511,9 +511,14 @@ UserSchema.methods.sendNotification = async function (
 	templateName,
 	options = {}
 ) {
-	await this.sendSMS(templateName)
-	await this.sendEmail(templateName, options)
-	await this.sendPush(templateName)
+	try {
+		await this.sendSMS(templateName)
+		await this.sendEmail(templateName, options)
+		await this.sendPush(templateName)
+	} catch (err) {
+		console.error("Failed to send notification")
+		console.error(err)
+	}
 }
 
 /**
