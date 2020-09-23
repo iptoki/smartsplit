@@ -52,7 +52,7 @@ fastify.get("/spec", function (req, res) {
 })
 
 // Register routes
-fastify.register(require("./src/routes/index"))
+fastify.register(require("./src/routes/index"), { prefix: "/v1" })
 
 // Start up server
 fastify.listen(Config.listen.port, Config.listen.host, function (err, address) {
