@@ -18,6 +18,7 @@ module.exports = {
 				exemple: "5 days",
 			},
 		},
+		additionalProperties: false,
 	},
 
 	sessionInfo: {

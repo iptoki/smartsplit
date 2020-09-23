@@ -173,6 +173,7 @@ module.exports.userRequestBody = {
 			enum: ["en", "fr"],
 		},
 	},
+	additionalProperties: false,
 }
 
 module.exports.emailStatusList = {

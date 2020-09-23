@@ -30,6 +30,9 @@ async function routes(fastify, options) {
 				},
 			},
 		},
+		reponse: {
+			200: {},
+		},
 		handler: Controller.getUserAvatar,
 	})
 
@@ -60,6 +63,7 @@ async function routes(fastify, options) {
 						type: "string",
 					},
 				},
+				additionalProperties: false,
 			},
 			response: {
 				200: AuthSchema.sessionInfo,
@@ -98,6 +102,7 @@ async function routes(fastify, options) {
 						type: "string",
 					},
 				},
+				additionalProperties: false,
 			},
 			response: {
 				204: {},
@@ -124,6 +129,7 @@ async function routes(fastify, options) {
 						type: "string",
 					},
 				},
+				additionalProperties: false,
 			},
 			response: {
 				200: AuthSchema.sessionInfo,
@@ -144,6 +150,7 @@ async function routes(fastify, options) {
 						type: "number",
 					},
 				},
+				additionalProperties: false,
 			},
 			response: {
 				204: {},
@@ -174,6 +181,7 @@ async function routes(fastify, options) {
 						type: "string",
 					},
 				},
+				additionalProperties: false,
 			},
 			response: {
 				201: UserSchema.user,
@@ -190,6 +198,9 @@ async function routes(fastify, options) {
 				user_id: {
 					type: "string",
 				},
+			},
+			response: {
+				204: {},
 			},
 		},
 		preValidation: JWTAuth.authorizeUserAccess,
@@ -230,6 +241,7 @@ async function routes(fastify, options) {
 						type: "string",
 					},
 				},
+				additionalProperties: false,
 			},
 			response: {
 				201: UserSchema.emailStatusList,
@@ -259,6 +271,10 @@ async function routes(fastify, options) {
 						type: "string",
 					},
 				},
+				additionalProperties: false,
+			},
+			response: {
+				204: {},
 			},
 		},
 		handler: Controller.activateUserEmail,
@@ -275,6 +291,9 @@ async function routes(fastify, options) {
 				email: {
 					type: "string",
 				},
+			},
+			response: {
+				204: {},
 			},
 		},
 		preValidation: JWTAuth.authorizeUserAccess,

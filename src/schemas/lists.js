@@ -6,7 +6,7 @@ module.exports.locale = {
 	},
 }
 
-module.exports.genericEntity = {
+module.exports.genericEntityFields = {
 	entity_id: {
 		type: "string",
 	},
@@ -32,7 +32,7 @@ module.exports.genericEntity = {
 module.exports["content-languages"] = {
 	type: "object",
 	properties: {
-		...this.genericEntity,
+		...this.genericEntityFields,
 		name: this.locale,
 		altNames: {
 			type: "array",
@@ -46,7 +46,7 @@ module.exports["content-languages"] = {
 module.exports["digital-distributors"] = {
 	type: "object",
 	properties: {
-		...this.genericEntity,
+		...this.genericEntityFields,
 		name: {
 			type: "string",
 		},
@@ -85,7 +85,7 @@ module.exports["digital-distributors"] = {
 module.exports.instruments = {
 	type: "object",
 	properties: {
-		...this.genericEntity,
+		...this.genericEntityFields,
 		name: this.locale,
 		uris: {
 			type: "array",
@@ -105,7 +105,7 @@ module.exports.instruments = {
 module.exports["musical-genres"] = {
 	type: "object",
 	properties: {
-		...this.genericEntity,
+		...this.genericEntityFields,
 		name: this.locale,
 		uris: {
 			type: "array",
@@ -128,10 +128,19 @@ module.exports.list = {
 }
 
 module.exports.entity = {
-	oneOf: [
+	anyOf: [
 		this["content-languages"],
 		this["digital-distributors"],
 		this.instruments,
 		this["musical-genres"],
 	],
 }
+
+const entityRequestBody = JSON.parse(JSON.stringify(this.entity))
+
+for (schema of entityRequestBody.anyOf) {
+	delete schema.properties.entity_id
+	schema.additionalProperties = false
+}
+
+module.exports.entityRequestBody = entityRequestBody

@@ -52,6 +52,7 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
+			body: ListSchema.entityRequestBody,
 			response: {
 				201: ListSchema.entity,
 			},
@@ -70,6 +71,7 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
+			body: ListSchema.entityRequestBody,
 			response: {
 				200: ListSchema.entity,
 			},
@@ -123,7 +125,7 @@ async function createListEntity(req, res) {
 	}
 
 	res.code(201)
-	return entity
+	return filterAdminFields(entity, req.authUser)
 }
 
 async function getListEntity(req, res) {
@@ -140,7 +142,7 @@ async function getListEntity(req, res) {
 	)
 		throw Errors.UserForbidden
 
-	return entity
+	return filterAdminFields(entity, req.authUser)
 }
 
 async function getList(req, res) {
@@ -149,7 +151,8 @@ async function getList(req, res) {
 	if (!req.authUser) query = query.publicOnly()
 	else if (!req.authUser.isAdmin) query = query.byUserId(req.authUser._id)
 
-	return await query.exec()
+	const list = await query.exec()
+	return list.map((entity) => filterAdminFields(entity, req.authUser))
 }
 
 async function updateListEntity(req, res) {
@@ -166,7 +169,7 @@ async function updateListEntity(req, res) {
 	entity.setFields(req.body)
 	await entity.save()
 
-	return entity
+	return filterAdminFields(entity, req.authUser)
 }
 
 async function deleteListEntity(req, res) {
@@ -190,22 +193,33 @@ async function deleteListEntity(req, res) {
 
 function entitySerializer({ schema, method, url, httpStatus }) {
 	const fastJson = require("fast-json-stringify")
-	return (response) => {
-		const stringify = fastJson(ListSchema[response.type])
-		return stringify(response)
+	return (entity) => {
+		const stringify = fastJson(ListSchema[entity.type])
+		return stringify(entity)
 	}
 }
 
 function listSerializer({ schema, method, url, httpStatus }) {
 	const fastJson = require("fast-json-stringify")
-	return (response) => {
-		if (response.length === 0) return JSON.stringify(response)
+	return (list) => {
+		if (list.length === 0) return JSON.stringify(list)
 		const stringify = fastJson({
 			type: "array",
-			items: ListSchema[response[0].type],
+			items: ListSchema[list[0].type],
 		})
-		return stringify(response)
+		return stringify(list)
 	}
+}
+
+/************************ Helpers ************************/
+
+function filterAdminFields(entity, authUser) {
+	if (!authUser || !authUser.isAdmin) {
+		entity.users = undefined
+		entity.adminReview = undefined
+	}
+
+	return entity
 }
 
 module.exports = routes

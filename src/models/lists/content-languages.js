@@ -5,7 +5,7 @@ const LocaleSchema = require("./locale")
 /**
  * Represents a generic modifiable list in the system
  */
-const contentLanguagesEntity = new mongoose.Schema(
+const ContentLanguageSchema = new mongoose.Schema(
 	{
 		name: {
 			type: LocaleSchema,
@@ -18,7 +18,11 @@ const contentLanguagesEntity = new mongoose.Schema(
 	{ discriminatorKey: "type" }
 )
 
-contentLanguagesEntity.methods.setFields = function (body) {
+// ContentLanguageSchema.virtual("entity_id").get(function () {
+// 	return this._id
+// })
+
+ContentLanguageSchema.methods.setFields = function (body) {
 	for (let field of ["name", "altNames", ...Entity.getFields()]) {
 		if (body[field]) this[field] = body[field]
 	}
@@ -26,5 +30,5 @@ contentLanguagesEntity.methods.setFields = function (body) {
 
 module.exports = Entity.discriminator(
 	"content-languages",
-	contentLanguagesEntity
+	ContentLanguageSchema
 )

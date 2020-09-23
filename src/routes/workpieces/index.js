@@ -253,6 +253,7 @@ async function routes(fastify, options) {
 						type: "string",
 					},
 				},
+				additionalProperties: false,
 			},
 			response: {
 				204: {},

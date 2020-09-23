@@ -44,6 +44,7 @@ const splitRequestBody = {
 			type: "number",
 		},
 	},
+	additionalProperties: false,
 }
 
 module.exports.rightSplit = {
@@ -85,6 +86,7 @@ module.exports.rightSplitRequestBody = {
 			items: this.splitRequestBody,
 		},
 	},
+	additionalProperties: false,
 }
 
 module.exports.rightSplitVoteBody = {
@@ -145,6 +147,7 @@ module.exports.fileRequestBody = {
 			type: "string",
 		},
 	},
+	additionalProperties: false,
 }
 
 module.exports.workpiece = {
@@ -195,4 +198,5 @@ module.exports.workpieceRequestBody = {
 			default: "ExampleTitle",
 		},
 	},
+	additionalProperties: false,
 }
