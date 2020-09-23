@@ -2,6 +2,7 @@ const mongoose = require("mongoose")
 const JWT = require("../utils/jwt")
 const { normalizeEmailAddress } = require("../utils/email")
 
+const JWT_ACTIVATE_TYPE = "user:activate"
 /**
  * Represents an email with pending verification in the system
  */
@@ -11,23 +12,11 @@ const EmailVerificationSchema = new mongoose.Schema({
 		alias: "email",
 		lowercase: true,
 		trim: true,
-		api: {
-			type: "string",
-			format: "email",
-			example: "example@smartsplit.org",
-			readOnly: true,
-		},
 	},
 
 	user: {
 		type: String,
 		ref: "User",
-		api: {
-			type: "string",
-			format: "uuid",
-			example: "e87b56fe-1ce0-4ec7-8393-e18dc7415041",
-			readOnly: true,
-		},
 	},
 
 	createdAt: {
@@ -69,7 +58,7 @@ EmailVerificationSchema.query.byEmailUserId = function (email, user_id) {
  * Looks up an email by activation token.
  */
 EmailVerificationSchema.query.byActivationToken = async function (token) {
-	const data = JWT.decode("user:activate", token)
+	const data = JWT.decode(JWT_ACTIVATE_TYPE, token)
 
 	if (!data) return this.where({ _id: false }).skip(1).limit(0)
 

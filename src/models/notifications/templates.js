@@ -126,8 +126,8 @@ const TemplateMap = {
 		notificationType: Notification.ADMINISTRATIVE_MESSAGES,
 		email: {
 			template_id: {
-				en: "" /* TODO */,
-				fr: "" /* TODO */,
+				en: "d-97a4ef0dcaf94b41a10346d937d04312" /* TODO */,
+				fr: "d-4b743067d5a542e4b0ef3032fdc48164" /* TODO */,
 			},
 			generate: function (user, options) {
 				const token = user.createPasswordResetToken(
@@ -191,9 +191,10 @@ const TemplateMap = {
 				fr: "Votre code d'activation Smartsplit est ",
 			},
 			generate: function (user) {
-				return (
-					this.message[user.locale] + user.mobilePhone.verificationCode.code
-				)
+				return {
+					message:
+						this.message[user.locale] + user.mobilePhone.verificationCode.code,
+				}
 			},
 		},
 	},

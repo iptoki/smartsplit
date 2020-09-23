@@ -1,16 +1,7 @@
 const JWT = require("../utils/jwt")
 const Config = require("../config")
 const User = require("../models/user")
-const AutoAPI = require("../autoapi")
-
-/**
- * Exception type that will be thrown in case of authentication errors
- */
-class AuthError extends AutoAPI.Error {
-	constructor(status, data, ...args) {
-		super(status, data, ...args)
-	}
-}
+const Errors = require("../routes/errors")
 
 /**
  * Creates an access token for a user
@@ -21,7 +12,6 @@ const createToken = function (user, expires = "3 hours") {
 		{
 			user_id: user.user_id,
 			user_password: user.password,
-			//rightHolders: user.rightHolders,
 			duration: expires,
 		},
 		expires
@@ -41,7 +31,7 @@ const decodeToken = function (token) {
  *
  * TODO: Maybe the OpenAPI integration can handle this for most cases?
  */
-const expressMiddleware = function (req, res, next) {
+const bearerTokenMiddleware = function (req, res) {
 	let tokenData = undefined
 	req.auth = {}
 
@@ -84,25 +74,20 @@ const expressMiddleware = function (req, res, next) {
 				})
 		},
 	})
-
-	next("route")
 }
 
 /**
  * Requires the request to contain an authenticated user, and returns the User model
  * @throws AuthError if there is no authenticated user
  */
-const requireUser = async function () {
-	const user = await this.req.auth.user
+const requireAuthUser = async function (req, res) {
+	const user = await req.auth.user
 
-	if (!user || user.password !== this.req.auth.data.user_password)
-		throw new AuthError(401, {
-			code: "AUTH:INVALID_AUTH_TOKEN",
-			message: "This request requires an authenticated user",
-		})
+	if (!user || user.password !== req.auth.data.user_password)
+		throw Errors.InvalidAuthToken
 
-	this.authUser = user
-	if (this.req.params.user_id === "session") this.req.params.user_id = user._id
+	req.authUser = user
+	if (req.params.user_id === "session") req.params.user_id = user._id
 
 	return user
 }
@@ -111,49 +96,44 @@ const requireUser = async function () {
  * Requires the request to contain a user with administrator priviledges, and returns the User model
  * @throws AuthError if there is no authenticated admin
  */
-const requireAdmin = async function () {
-	const admin = await this.req.auth.admin
+const requireAuthAdmin = async function (req, res) {
+	const admin = await req.auth.admin
 
-	if (!admin || admin.password !== this.req.auth.data.user_password)
-		throw new AuthError(401, {
-			code: "AUTH:INVALID_AUTH_TOKEN",
-			message: "This request requires an authenticated admin",
-		})
+	if (!admin || admin.password !== req.auth.data.user_password)
+		throw Errors.InvalidAuthToken
 
-	this.authUser = admin
+	req.authUser = admin
+	if (req.params.user_id === "session") req.params.user_id = user._id
+
 	return admin
 }
 
-const authorizeUserAccess = async function () {
+const authorizeUserAccess = async function (req, res) {
+	const authUser = await requireAuthUser(req, res)
 	if (
 		!(
-			this.req.params.user_id === this.authUser._id ||
-			this.authUser.isAdmin ||
-			this.authUser.hasAccessToUser(this.req.params.user_id)
+			req.params.user_id === authUser._id ||
+			authUser.isAdmin ||
+			authUser.hasAccessToUser(req.params.user_id)
 		)
-	) {
-		throw new AuthError(401, {
-			code: "AUTH: PERMISSION_DENIED",
-			message: "The authorized user is not allowed to access this user",
-		})
-	}
+	)
+		throw Errors.UnauthorizedUserAccess
 }
 
-const loadAuthUser = async function () {
+const getAuthUser = async function (req, res) {
 	try {
-		return await requireUser.call(this)
-	} catch (e) {
-		if (!(e instanceof AuthError)) throw e
+		return await requireAuthUser(req, res)
+	} catch (err) {
+		if (err.statusCode !== 401) throw err
+		return
 	}
 }
-
 module.exports = {
 	createToken,
 	decodeToken,
-	expressMiddleware,
-	requireUser,
-	requireAdmin,
+	bearerTokenMiddleware,
+	requireAuthUser,
+	requireAuthAdmin,
 	authorizeUserAccess,
-	loadAuthUser,
-	Error: AuthError,
+	getAuthUser,
 }

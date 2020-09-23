@@ -1,40 +1,34 @@
 const mongoose = require("mongoose")
-const List = require("./list")
+const Entity = require("./entity")
 const LocaleSchema = require("./locale")
 
 /**
  * Represents a generic modifiable list in the system
  */
-const contentLanguagesList = new mongoose.Schema(
+const ContentLanguageSchema = new mongoose.Schema(
 	{
 		name: {
 			type: LocaleSchema,
-			api: {
-				type: "object",
-				properties: {
-					fr: { type: "string" },
-					en: { type: "string" },
-				},
-			},
 		},
 
 		altNames: {
 			type: [String],
-			api: {
-				type: "array",
-				items: {
-					type: "string",
-				},
-			},
 		},
 	},
 	{ discriminatorKey: "type" }
 )
 
-contentLanguagesList.methods.setFields = function (body) {
-	for (let field of ["name", "altNames", ...List.getFields()]) {
+// ContentLanguageSchema.virtual("entity_id").get(function () {
+// 	return this._id
+// })
+
+ContentLanguageSchema.methods.setFields = function (body) {
+	for (let field of ["name", "altNames", ...Entity.getFields()]) {
 		if (body[field]) this[field] = body[field]
 	}
 }
 
-module.exports = List.discriminator("content-languages", contentLanguagesList)
+module.exports = Entity.discriminator(
+	"content-languages",
+	ContentLanguageSchema
+)

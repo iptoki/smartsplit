@@ -3,67 +3,12 @@ const uuid = require("uuid").v4
 const Config = require("../config")
 const User = require("./user")
 const SplitTemplates = require("./notifications/templates")
-const UserSchema = require("../schemas/users")
+const { UserNotFound } = require("../routes/errors")
 const JWT = require("../utils/jwt")
 
 const JWT_SPLIT_TYPE = "workpiece:split-invite"
 
 const RightTypes = ["copyright", "interpretation", "recording"]
-
-const splitAPISpec = {
-	type: "object",
-	properties: {
-		rightHolder: {
-			type: "string",
-			format: "uuid",
-			example: "e87b56fe-1ce0-4ec7-8393-e18dc7415041",
-		},
-		roles: {
-			type: "array",
-			items: {
-				type: "string",
-				example: "guitarist",
-			},
-		},
-		vote: {
-			type: "string",
-			enum: ["undecided", "accepted", "rejected"],
-			example: "accepted",
-		},
-		comment: {
-			type: "string",
-			example: "this is a comment",
-		},
-		shares: {
-			type: "number",
-			example: 2,
-		},
-	},
-}
-
-const rightSplitAPISpec = {
-	type: "object",
-	properties: {
-		_state: {
-			type: "string",
-			enum: ["draft", "voting", "accepted", "rejected"],
-			example: "accepted",
-			readOnly: true,
-		},
-		copyright: {
-			type: "array",
-			items: splitAPISpec,
-		},
-		interpretation: {
-			type: "array",
-			items: splitAPISpec,
-		},
-		recording: {
-			type: "array",
-			items: splitAPISpec,
-		},
-	},
-}
 
 const SplitSchema = new mongoose.Schema(
 	{
@@ -95,50 +40,30 @@ const RightSplitSchema = new mongoose.Schema(
 	{ _id: false }
 )
 
-const WorkpieceFileSchema = new mongoose.Schema({
-	_id: {
-		type: String,
-		alias: "file_id",
-		default: uuid,
-		api: {
-			type: "string",
-			format: "uuid",
-			example: "e87b56fe-1ce0-4ec7-8393-e18dc7415041",
-			readOnly: true,
+const WorkpieceFileSchema = new mongoose.Schema(
+	{
+		_id: {
+			type: String,
+			alias: "file_id",
+			default: uuid,
 		},
-	},
-	name: {
-		type: String,
-		api: {
-			type: "string",
-			example: "aFileName",
+		name: {
+			type: String,
 		},
-	},
-	mimeType: {
-		type: String,
-		api: {
-			type: "string",
-			example: "image/jpeg",
+		mimeType: {
+			type: String,
 		},
-	},
-	size: {
-		type: Number,
-		api: {
-			type: "number",
-			example: 512,
+		size: {
+			type: Number,
 		},
-	},
-	visibility: {
-		type: String,
-		enum: ["public", "hidden", "private"],
-		api: {
-			type: "string",
+		visibility: {
+			type: String,
 			enum: ["public", "hidden", "private"],
-			example: "public",
 		},
+		data: Buffer,
 	},
-	data: Buffer,
-})
+	{ toJSON: { virtuals: true } }
+)
 
 const WorkpieceSchema = new mongoose.Schema(
 	{
@@ -146,116 +71,49 @@ const WorkpieceSchema = new mongoose.Schema(
 			type: String,
 			alias: "workpiece_id",
 			default: uuid,
-			api: {
-				type: "string",
-				format: "uuid",
-				example: "e87b56fe-1ce0-4ec7-8393-e18dc7415041",
-				readOnly: true,
-			},
 		},
 
 		title: {
 			type: String,
-			api: {
-				type: "string",
-				example: "MyWorkpieceTitle",
-			},
 		},
 
 		owner: {
 			type: String,
 			ref: "User",
-			api: {
-				type: "string",
-				format: "uuid",
-				example: "e87b56fe-1ce0-4ec7-8393-e18dc7415041",
-				readOnly: true,
-			},
 		},
 
 		rightHolders: {
 			type: [String],
 			ref: "User",
-			api: {
-				type: "array",
-				items: {
-					type: "string",
-					format: "uuid",
-					example: "e87b56fe-1ce0-4ec7-8393-e18dc7415041",
-				},
-				readOnly: true,
-			},
 		},
 
 		entityTags: {
 			type: [String],
 			ref: "ListEntity",
-			api: {
-				type: "array",
-				items: {
-					type: "string",
-					format: "uuid",
-					example: "e87b56fe-1ce0-4ec7-8393-e18dc7415041",
-				},
-			},
 		},
 
 		rightSplit: {
 			type: RightSplitSchema,
-			api: rightSplitAPISpec,
 		},
 
 		archivedSplits: {
 			type: [RightSplitSchema],
-			api: {
-				type: "array",
-				items: rightSplitAPISpec,
-			},
 		},
 
 		files: {
 			type: [WorkpieceFileSchema],
-			api: {
-				type: "array",
-				items: {
-					type: "object",
-					properties: {
-						file_id: {
-							type: "string",
-							format: "uuid",
-							example: "e87b56fe-1ce0-4ec7-8393-e18dc7415041",
-							readOnly: true,
-						},
-						name: {
-							type: "string",
-							example: "myFileName",
-						},
-						mimeType: {
-							type: "string",
-							example: "image/png",
-						},
-						size: {
-							type: "number",
-							example: "512",
-						},
-						visibility: {
-							type: "string",
-							enum: ["public", "hidden", "private"],
-							example: "public",
-						},
-						fileUrl: {
-							type: "string",
-							example:
-								"https://api.smartsplit.org/workipeces/0d0cb6f9-c1e6-49e0-acbf-1ca4ace07d1c/files/e87b56fe-1ce0-4ec7-8393-e18dc7415041",
-							readOnly: true,
-						},
-					},
-				},
-			},
 		},
 	},
-	{ timestamps: true }
+	{ timestamps: true, toJSON: { virtuals: true } }
 )
+
+WorkpieceSchema.virtual("workpiece_id").get(function () {
+	return this._id
+})
+
+WorkpieceFileSchema.virtual("file_id").get(function () {
+	return this._id
+})
 
 WorkpieceFileSchema.virtual("fileUrl").get(function () {
 	return (
@@ -303,8 +161,7 @@ WorkpieceSchema.methods.setRightSplit = async function (body) {
 
 	for (let rightType of RightTypes) {
 		for (let entry of body[rightType]) {
-			if (!(await User.exists({ _id: entry.rightHolder })))
-				throw new UserSchema.UserNotFoundError({ user_id: entry.rightHolder })
+			if (!(await User.exists({ _id: entry.rightHolder }))) throw UserNotFound
 
 			if (!this.rightHolders.includes(entry.rightHolder))
 				this.rightHolders.push(entry.rightHolder)
@@ -425,5 +282,3 @@ WorkpieceSchema.methods.updateRightSplitState = async function () {
 module.exports = mongoose.model("Workpiece", WorkpieceSchema)
 
 module.exports.RightTypes = RightTypes
-
-module.exports.File = mongoose.model("WorkpieceFile", WorkpieceFileSchema)

@@ -49,146 +49,72 @@ const PermissionSchema = new mongoose.Schema(
 /**
  * Represents a user / login in the system
  */
-const UserSchema = new mongoose.Schema({
-	_id: {
-		type: String,
-		alias: "user_id",
-		default: uuid,
-		api: {
-			type: "string",
-			format: "uuid",
-			example: "e87b56fe-1ce0-4ec7-8393-e18dc7415041",
-			readOnly: true,
+const UserSchema = new mongoose.Schema(
+	{
+		_id: {
+			type: String,
+			alias: "user_id",
+			default: uuid,
 		},
-	},
 
-	emails: {
-		type: [String],
-		lowercase: true,
-		trim: true,
-		api: {
-			type: "array",
-			items: {
-				type: "string",
-				format: "email",
-			},
-			readOnly: true,
+		emails: {
+			type: [String],
+			lowercase: true,
+			trim: true,
 		},
-	},
 
-	password: {
-		type: String, // bcrypt
-		api: {
-			type: "string",
-			writeOnly: true,
-			format: "password",
-			example: "Biquette#1!",
+		password: {
+			type: String, // bcrypt
 		},
-	},
 
-	accountStatus: {
-		type: String,
-		default: "email-verification-pending",
-		enum: [
-			"invalid",
-			"email-verification-pending",
-			"split-invited",
-			"active",
-			"deleted",
-		],
-		api: {
-			type: "string",
-			readOnly: true,
-			example: "active",
+		accountStatus: {
+			type: String,
+			default: "email-verification-pending",
+			enum: [
+				"invalid",
+				"email-verification-pending",
+				"split-invited",
+				"active",
+				"deleted",
+			],
 		},
-	},
 
-	firstName: {
-		type: String,
-		api: {
-			type: "string",
-			example: "John",
+		firstName: {
+			type: String,
 		},
-	},
 
-	lastName: {
-		type: String,
-		api: {
-			type: "string",
-			example: "Doe",
+		lastName: {
+			type: String,
 		},
-	},
 
-	artistName: {
-		type: String,
-		api: {
-			type: "string",
-			example: "Johnny",
+		artistName: {
+			type: String,
 		},
-	},
 
-	avatar: Buffer,
+		avatar: Buffer,
 
-	locale: {
-		type: String,
-		default: "en",
-		enum: ["fr", "en"],
-		api: {
-			type: "string",
-			enum: ["en", "fr"],
-			example: "fr",
+		locale: {
+			type: String,
 			default: "en",
+			enum: ["fr", "en"],
+		},
+
+		mobilePhone: {
+			type: MobilePhoneSchema,
+		},
+
+		notifications: {
+			type: Notification.Schema,
+			default: {},
+		},
+
+		permissions: {
+			type: PermissionSchema,
+			default: {},
 		},
 	},
-
-	mobilePhone: {
-		type: MobilePhoneSchema,
-		api: {
-			type: "object",
-			properties: {
-				number: {
-					type: "string",
-					example: "+15555555555",
-				},
-				status: {
-					type: "string",
-					enum: ["verified", "unverified"],
-					example: "verified",
-				},
-			},
-			readOnly: true,
-		},
-	},
-
-	notifications: {
-		type: Notification.Schema,
-		default: {},
-		api: Notification.APISchema,
-	},
-
-	permissions: {
-		type: PermissionSchema,
-		default: {},
-		api: {
-			type: "object",
-			properties: {
-				admin: {
-					type: "boolean",
-				},
-				users: {
-					type: "array",
-					items: {
-						type: "string",
-						format: "uuid",
-					},
-				},
-			},
-			readOnly: true,
-		},
-	},
-
-	//rightHolders: [{type: String, ref: "RightHolder", default: []}],
-})
+	{ toJSON: { virtuals: true } }
+)
 
 /**
  * Define a virtual property that makes a reference to EmailVerification documents
@@ -209,6 +135,14 @@ UserSchema.virtual("fullName").get(function () {
 	if (this.firstName) return this.firstName
 
 	return "Guest"
+})
+
+UserSchema.virtual("user_id").get(function () {
+	return this._id
+})
+
+UserSchema.virtual("rightHolder_id").get(function () {
+	return this._id
 })
 
 /**
@@ -457,7 +391,7 @@ UserSchema.methods.setMobilePhone = async function (number, verified = false) {
 		verificationCode: { code: generateRandomCode(), createdAt: new Date() },
 	}
 
-	await this.sendSMS(UserTemplates.VERIFY_MOBILE_PHONE, false)
+	await this.sendSMS(UserTemplates.VERIFY_MOBILE_PHONE, false, false)
 }
 
 /**
@@ -592,13 +526,15 @@ UserSchema.methods.sendNotification = async function (
  */
 UserSchema.methods.sendSMS = async function (
 	templateName,
-	verifiedOnly = true
+	verifiedOnly = true,
+	checkNotif = true
 ) {
 	const template = generateTemplate(templateName, "sms", this)
 
 	if (
 		!template ||
-		!this.notifications[template.notificationType].includes("sms")
+		(checkNotif &&
+			!this.notifications[template.notificationType].includes("sms"))
 	)
 		return null
 

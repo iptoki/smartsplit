@@ -1,31 +1,146 @@
-const { api, error } = require("../app")
-
-module.exports = {
-	list_type: api.param("list_type", {
-		in: "path",
-		name: "list_type",
-		description: "The type of the list",
-		example: "digital-distributors",
-	}),
-
-	entity_id: api.param("entity_id", {
-		in: "path",
-		name: "entity_id",
-		description: "The ID of a list entity",
-		example: "123",
-	}),
-
-	ListNotFoundError: error("list_not_found", 404, "List not found"),
-
-	ListEntityNotFoundError: error(
-		"list_entity_not_found",
-		404,
-		"List Entity not found"
-	),
-
-	ConflictingListEntityError: error(
-		"conflicting_list_entity",
-		409,
-		"A list entity with this ID already exists"
-	),
+module.exports.locale = {
+	type: "object",
+	properties: {
+		fr: { type: "string" },
+		en: { type: "string" },
+	},
 }
+
+module.exports.genericEntityFields = {
+	entity_id: {
+		type: "string",
+	},
+	users: {
+		oneOf: [
+			{
+				type: "boolean",
+				enum: [false],
+			},
+			{
+				type: "array",
+				items: {
+					type: "string",
+				},
+			},
+		],
+	},
+	adminReview: {
+		type: "string",
+	},
+}
+
+module.exports["content-languages"] = {
+	type: "object",
+	properties: {
+		...this.genericEntityFields,
+		name: this.locale,
+		altNames: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
+	},
+}
+
+module.exports["digital-distributors"] = {
+	type: "object",
+	properties: {
+		...this.genericEntityFields,
+		name: {
+			type: "string",
+		},
+		icon: {
+			type: "string",
+		},
+		localizedName: this.locale,
+		domains: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
+		markets: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
+		streaming: {
+			type: "boolean",
+		},
+
+		download: {
+			type: "boolean",
+		},
+		other: {
+			type: "boolean",
+		},
+		blockchain: {
+			type: "boolean",
+		},
+	},
+}
+
+module.exports.instruments = {
+	type: "object",
+	properties: {
+		...this.genericEntityFields,
+		name: this.locale,
+		uris: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
+		parents: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
+	},
+}
+
+module.exports["musical-genres"] = {
+	type: "object",
+	properties: {
+		...this.genericEntityFields,
+		name: this.locale,
+		uris: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
+		parents: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
+	},
+}
+
+module.exports.list = {
+	type: "array",
+	items: this.entity,
+}
+
+module.exports.entity = {
+	anyOf: [
+		this["content-languages"],
+		this["digital-distributors"],
+		this.instruments,
+		this["musical-genres"],
+	],
+}
+
+const entityRequestBody = JSON.parse(JSON.stringify(this.entity))
+
+for (schema of entityRequestBody.anyOf) {
+	delete schema.properties.entity_id
+	schema.additionalProperties = false
+}
+
+module.exports.entityRequestBody = entityRequestBody
