@@ -7,6 +7,7 @@ const EmailVerification = require("../models/emailVerification")
 const Notification = require("../models/notifications/notification")
 const { sendTemplateTo, normalizeEmailAddress } = require("../utils/email")
 const { generateRandomCode } = require("../utils/random")
+const Errors = require("../routes/errors")
 const { sendSMSTo } = require("../service/twilio")
 const {
 	UserTemplates,
@@ -291,7 +292,8 @@ UserSchema.methods.addPendingEmail = async function (
 ) {
 	email = normalizeEmailAddress(email)
 
-	if (await this.model("User").findOne().byEmail(email)) return null
+	if (await this.model("User").findOne().byEmail(email))
+		throw Errors.ConflictingEmail
 
 	let date = new Date(Date.now() - 60 * 60 * 1000)
 
@@ -302,10 +304,8 @@ UserSchema.methods.addPendingEmail = async function (
 	}).populate("user")
 
 	// An entry exist
-	if (emailVerif) {
-		if (!emailVerif.user) await emailVerif.remove()
-		if (emailVerif.user !== this._id) return null
-	}
+	if (emailVerif && emailVerif.user && emailVerif.user !== this._id)
+		throw Errors.ConflictingEmail
 	// Delete it otherwise
 	else await EmailVerification.deleteOne({ _id: email })
 
@@ -314,7 +314,7 @@ UserSchema.methods.addPendingEmail = async function (
 		user: this._id,
 	})
 
-	await emailVerif.save()
+	//await emailVerif.save()
 
 	if (sendVerifEmail)
 		await this.sendNotification(UserTemplates.ACTIVATE_EMAIL, {
@@ -356,7 +356,7 @@ UserSchema.methods.removeEmail = async function (email) {
 
 	if (!this.emails.includes(email)) return false
 
-	if (this.emails.length === 1) throw new EmailSchema.DeleteNotAllowedError()
+	if (this.emails.length === 1) throw Errors.DeleteNotAllowed
 
 	this.emails.splice(this.emails.indexOf(email), 1)
 	await this.save()
@@ -380,10 +380,19 @@ UserSchema.methods.setPassword = async function (password, force = false) {
 UserSchema.methods.setMobilePhone = async function (number, verified = false) {
 	const user = await this.model("User").findOne().byMobilePhone(number)
 
-	if (user && (user._id !== this._id || this.mobilePhone.status === "verified"))
-		throw new Error("This phone number is already used")
+	const expireDate = new Date(Date.now() - 24 * 60 * 60 * 1000)
 
-	const verificationCode = { code: generateRandomCode(), createdAt: new Date() }
+	if (
+		user &&
+		user._id !== this._id &&
+		(user.mobilePhone.status === "verified" ||
+			(user.mobilePhone.status === "unverified" &&
+				user.mobilePhone.verificationCode.createdAt > expireDate))
+	)
+		throw Errors.ConflictingUserPhoneNumber
+
+	if (user && user._id === this._id && user.mobilePhone.status === "verified")
+		return
 
 	this.mobilePhone = {
 		number: number,
@@ -391,7 +400,7 @@ UserSchema.methods.setMobilePhone = async function (number, verified = false) {
 		verificationCode: { code: generateRandomCode(), createdAt: new Date() },
 	}
 
-	await this.sendSMS(UserTemplates.VERIFY_MOBILE_PHONE, false, false)
+	//await this.sendSMS(UserTemplates.VERIFY_MOBILE_PHONE, false, false)
 }
 
 /**
@@ -434,6 +443,14 @@ UserSchema.methods.verifyPassword = async function (password) {
  */
 UserSchema.methods.verifyMobilePhone = async function (code) {
 	if (!this.mobilePhone.verificationCode) return false
+
+	if (
+		await this.model("User").findOne({
+			"mobilePhone.number": this.mobilePhone.number,
+			"mobilePhone.status": "verified",
+		})
+	)
+		throw Errors.ConflictingUserPhoneNumber
 
 	const expireDate = new Date(
 		this.mobilePhone.verificationCode.createdAt.getTime() +
