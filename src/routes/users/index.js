@@ -8,6 +8,8 @@ async function routes(fastify, options) {
 		method: "GET",
 		url: "/users/:user_id",
 		schema: {
+			tags: ["users"],
+			description: "Get a user by ID",
 			params: {
 				user_id: {
 					type: "string",
@@ -16,6 +18,7 @@ async function routes(fastify, options) {
 			response: {
 				200: UserSchema.user,
 			},
+			security: [{ bearerAuth: [] }],
 		},
 		handler: Controller.getUserWithPendingEmails,
 	})
@@ -24,6 +27,8 @@ async function routes(fastify, options) {
 		method: "GET",
 		url: "/users/:user_id/avatar",
 		schema: {
+			tags: ["users"],
+			description: "Get a user's avatar by ID",
 			params: {
 				user_id: {
 					type: "string",
@@ -40,6 +45,8 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/users/",
 		schema: {
+			tags: ["users"],
+			description: "Create a new user in the system",
 			body: {
 				allOf: [UserSchema.userRequestBody],
 				required: ["email", "password"],
@@ -55,6 +62,8 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/users/activate",
 		schema: {
+			tags: ["users"],
+			description: "Activate a user's account",
 			body: {
 				type: "object",
 				required: ["token"],
@@ -76,6 +85,8 @@ async function routes(fastify, options) {
 		method: "PATCH",
 		url: "/users/:user_id",
 		schema: {
+			tags: ["users"],
+			description: "Update a user by ID",
 			params: {
 				user_id: {
 					type: "string",
@@ -85,6 +96,7 @@ async function routes(fastify, options) {
 			response: {
 				200: UserSchema.user,
 			},
+			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.authorizeUserAccess,
 		handler: Controller.updateUser,
@@ -94,6 +106,8 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/users/request-password-reset",
 		schema: {
+			tags: ["users"],
+			description: "Send a password reset email",
 			body: {
 				type: "object",
 				required: ["email"],
@@ -115,6 +129,8 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/users/change-password",
 		schema: {
+			tags: ["users"],
+			description: "Update the user password",
 			body: {
 				type: "object",
 				required: ["password"],
@@ -142,6 +158,8 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/users/verify-mobile-phone",
 		schema: {
+			tags: ["users"],
+			description: "Verify the user's phone number",
 			body: {
 				type: "object",
 				required: ["verificationCode"],
@@ -155,6 +173,7 @@ async function routes(fastify, options) {
 			response: {
 				204: {},
 			},
+			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthUser,
 		handler: Controller.verifyUserMobilePhone,
@@ -164,6 +183,8 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/users/invite-new-user",
 		schema: {
+			tags: ["users"],
+			description: "Invite a new user",
 			body: {
 				type: "object",
 				required: ["email"],
@@ -194,6 +215,8 @@ async function routes(fastify, options) {
 		method: "DELETE",
 		url: "/users/:user_id",
 		schema: {
+			tags: ["users"],
+			description: "Delete a user's account by ID",
 			params: {
 				user_id: {
 					type: "string",
@@ -202,6 +225,7 @@ async function routes(fastify, options) {
 			response: {
 				204: {},
 			},
+			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.authorizeUserAccess,
 		handler: Controller.deleteUserAccount,
@@ -211,6 +235,8 @@ async function routes(fastify, options) {
 		method: "GET",
 		url: "/users/:user_id/emails/",
 		schema: {
+			tags: ["users", "users_emails"],
+			description: "Get a user's email list",
 			params: {
 				user_id: {
 					type: "string",
@@ -219,6 +245,7 @@ async function routes(fastify, options) {
 			response: {
 				200: UserSchema.emailStatusList,
 			},
+			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.authorizeUserAccess,
 		handler: Controller.getUserEmails,
@@ -228,6 +255,8 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/users/:user_id/emails/",
 		schema: {
+			tags: ["users", "users_emails"],
+			description: "Create a new email in a user's account",
 			params: {
 				user_id: {
 					type: "string",
@@ -246,6 +275,7 @@ async function routes(fastify, options) {
 			response: {
 				201: UserSchema.emailStatusList,
 			},
+			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.authorizeUserAccess,
 		handler: Controller.createUserEmail,
@@ -254,7 +284,9 @@ async function routes(fastify, options) {
 	fastify.route({
 		method: "POST",
 		url: "/users/:user_id/emails/:email",
-		schemas: {
+		schema: {
+			tags: ["users", "users_emails"],
+			description: "Activate a user's email",
 			params: {
 				user_id: {
 					type: "string",
@@ -284,6 +316,8 @@ async function routes(fastify, options) {
 		method: "DELETE",
 		url: "/users/:user_id/emails/:email",
 		schema: {
+			tags: ["users", "users_emails"],
+			description: "Delete a user's email",
 			params: {
 				user_id: {
 					type: "string",
@@ -295,6 +329,7 @@ async function routes(fastify, options) {
 			response: {
 				204: {},
 			},
+			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.authorizeUserAccess,
 		handler: Controller.deleteUserEmail,

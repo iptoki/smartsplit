@@ -9,8 +9,9 @@ async function routes(fastify, options) {
 	fastify.route({
 		method: "GET",
 		url: "/entities/:list_type/",
-		serializerCompiler: listSerializer,
 		schema: {
+			tags: ["lists"],
+			description: "Get a list by type",
 			params: {
 				list_type: {
 					type: "string",
@@ -19,7 +20,9 @@ async function routes(fastify, options) {
 			response: {
 				200: ListSchema.list,
 			},
+			security: [{ bearerAuth: [] }],
 		},
+		serializerCompiler: listSerializer,
 		preValidation: JWTAuth.getAuthUser,
 		handler: getList,
 	})
@@ -27,8 +30,9 @@ async function routes(fastify, options) {
 	fastify.route({
 		method: "GET",
 		url: "/entities/:entity_id",
-		serializerCompiler: entitySerializer,
 		schema: {
+			tags: ["lists"],
+			description: "Get a list entity by ID",
 			params: {
 				entity_id: {
 					type: "string",
@@ -37,7 +41,9 @@ async function routes(fastify, options) {
 			response: {
 				200: ListSchema.entity,
 			},
+			security: [{ bearerAuth: [] }],
 		},
+		serializerCompiler: entitySerializer,
 		preValidation: JWTAuth.getAuthUser,
 		handler: getListEntity,
 	})
@@ -45,8 +51,9 @@ async function routes(fastify, options) {
 	fastify.route({
 		method: "POST",
 		url: "/entities/:list_type/",
-		serializerCompiler: entitySerializer,
 		schema: {
+			tags: ["lists"],
+			description: "Create a new entity",
 			params: {
 				list_type: {
 					type: "string",
@@ -56,7 +63,9 @@ async function routes(fastify, options) {
 			response: {
 				201: ListSchema.entity,
 			},
+			security: [{ bearerAuth: [] }],
 		},
+		serializerCompiler: entitySerializer,
 		preValidation: JWTAuth.requireAuthUser,
 		handler: createListEntity,
 	})
@@ -64,8 +73,9 @@ async function routes(fastify, options) {
 	fastify.route({
 		method: "PATCH",
 		url: "/entities/:entity_id",
-		serializerCompiler: entitySerializer,
 		schema: {
+			tags: ["lists"],
+			description: "Update a list entity by ID",
 			params: {
 				entity_id: {
 					type: "string",
@@ -75,7 +85,9 @@ async function routes(fastify, options) {
 			response: {
 				200: ListSchema.entity,
 			},
+			security: [{ bearerAuth: [] }],
 		},
+		serializerCompiler: entitySerializer,
 		preValidation: JWTAuth.requireAuthUser,
 		handler: updateListEntity,
 	})
@@ -84,6 +96,8 @@ async function routes(fastify, options) {
 		method: "DELETE",
 		url: "/entities/:entity_id",
 		schema: {
+			tags: ["lists"],
+			description: "Delete a list entity by ID",
 			params: {
 				entity_id: {
 					type: "string",
@@ -92,6 +106,7 @@ async function routes(fastify, options) {
 			response: {
 				204: {},
 			},
+			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthUser,
 		handler: deleteListEntity,

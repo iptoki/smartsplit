@@ -9,6 +9,9 @@ async function routes(fastify, options) {
 		method: "GET",
 		url: "/rightHolders",
 		schema: {
+			tags: ["right_holders"],
+			description:
+				"Search for right holders by first name, last name, artist name",
 			querystring: {
 				search_terms: { type: "string" },
 				limit: {
@@ -37,6 +40,8 @@ async function routes(fastify, options) {
 		method: "GET",
 		url: "/rightHolders/:user_id",
 		schema: {
+			tags: ["right_holders"],
+			description: "Get a right holder by ID",
 			params: {
 				user_id: {
 					type: "string",
