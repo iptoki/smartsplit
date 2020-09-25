@@ -4,8 +4,8 @@ module.exports = {
 	routePrefix: "/docs",
 	swagger: {
 		info: {
-			title: "Smartsplit API",
-			description: "Swagger API for the Smartsplit project",
+			title: "Smartsplit MVP",
+			description: "Smartsplit MVP API documentation",
 			version: "0.1.0",
 		},
 		externalDocs: {
