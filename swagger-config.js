@@ -8,11 +8,11 @@ module.exports = {
 			description: "Smartsplit MVP API documentation",
 			version: "0.1.0",
 		},
+		openapi: "3.0.0",
 		externalDocs: {
 			url: "https://swagger.io",
 			description: "Find more info here",
 		},
-		host: "localhost",
 		schemes: ["http"],
 		consumes: ["application/json"],
 		produces: ["application/json"],
@@ -30,8 +30,12 @@ module.exports = {
 		],
 		servers: [
 			{
-				url: Config.listen.host + ":" + Config.listen.port,
+				url: `http://${Config.listen.host}:${Config.listen.port}`,
 				description: "Local server",
+			},
+			{
+				url: "https://apiv2-dev.smartsplit.org",
+				description: "Development server",
 			},
 		],
 		components: {

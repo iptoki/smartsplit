@@ -25,7 +25,7 @@ module.exports.split = {
 	},
 }
 
-const splitRequestBody = {
+module.exports.splitRequestBody = {
 	type: "object",
 	properties: {
 		rightHolder: {
@@ -71,7 +71,11 @@ module.exports.rightSplit = {
 
 module.exports.rightSplitRequestBody = {
 	type: "object",
-	required: ["copyright", "interpretation", "recording"],
+	anyOf: [
+	  { required: [ "copyright" ] },
+	  { required: [ "interpretation" ] },
+	  { required: [ "recording" ] },
+	],
 	properties: {
 		copyright: {
 			type: "array",
