@@ -19,36 +19,13 @@ fastify.register(require("fastify-cors"), {
 	maxAge: 30 * 60,
 })
 
-/* TODO: move swagger config */
-fastify.register(require("fastify-swagger"), {
-	routePrefix: "/docs",
-	swagger: {
-		info: {
-			title: "Smartsplit API",
-			description: "Swagger API for smartsplit project",
-			version: "0.1.0",
-		},
-		externalDocs: {
-			url: "https://swagger.io",
-			description: "Find more info here",
-		},
-		host: "localhost",
-		schemes: ["http"],
-		consumes: ["application/json"],
-		produces: ["application/json"],
-	},
-	exposeRoute: true,
-})
+// Register swagger for auto documentation with OAS 3.0
+fastify.register(require("fastify-oas"), require("./swagger-config"))
 
 // Add Global Auth hook
 fastify.addHook("preValidation", function (req, res, next) {
 	JWTAuth.bearerTokenMiddleware(req, res)
 	next()
-})
-
-// Register OAPI specification endpoint
-fastify.get("/spec", function (req, res) {
-	res.send(fastify.swagger())
 })
 
 // Register routes

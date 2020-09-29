@@ -8,9 +8,12 @@ async function routes(fastify, options) {
 		method: "GET",
 		url: "/auth/check",
 		schema: {
+			tags: ["auth"],
+			description: "Check if an access token is valid or not",
 			response: {
 				200: { type: "boolean" },
 			},
+			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthUser,
 		handler: checkToken,
@@ -20,9 +23,12 @@ async function routes(fastify, options) {
 		method: "GET",
 		url: "/auth/refresh",
 		schema: {
+			tags: ["auth"],
+			description: "Refresh an access toke",
 			response: {
 				200: AuthSchema.sessionInfo,
 			},
+			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthUser,
 		handler: refreshToken,
@@ -32,6 +38,8 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/auth/login",
 		schema: {
+			tags: ["auth"],
+			description: "Login a user",
 			body: AuthSchema.login,
 			response: {
 				200: AuthSchema.sessionInfo,
