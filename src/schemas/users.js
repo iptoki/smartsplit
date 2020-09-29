@@ -172,6 +172,7 @@ module.exports.userRequestBody = {
 			type: "string",
 			enum: ["en", "fr"],
 		},
+		notifications: this.notifications,
 	},
 	additionalProperties: false,
 }
