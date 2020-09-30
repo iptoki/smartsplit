@@ -5,12 +5,18 @@ const Errors = require("../errors")
 const JWTAuth = require("../../service/JWTAuth")
 
 const getUser = async function (req, res) {
-	const user =
-		req.params.user_id === "session"
-			? await JWTAuth.requireAuthUser(req, res)
-			: await User.findById(req.params.user_id)
+	let user
+	if (req.params.user_id === "session")
+		user = await JWTAuth.requireAuthUser(req, res)
+	else {
+		JWTAuth.getAuthUser(req, res)
+		user = await User.findById(req.params.user_id)
+	}
 
 	if (!user) throw Errors.UserNotFound
+
+	if (req.authUser && req.authUser.hasAccessToUser(user._id)) return user
+	else res.isUserPublic = true
 
 	return user
 }
@@ -62,6 +68,9 @@ module.exports = {
 
 			if (req.body.phoneNumber) await user.setMobilePhone(req.body.phoneNumber)
 
+			if (req.body.professional_identity)
+				user.setProfessionalIdentity(req.body.professional_identity)
+
 			await user.save()
 			await emailVerif.save()
 		}
@@ -112,6 +121,9 @@ module.exports = {
 
 		if (req.body.password)
 			passwordChanged = await user.setPassword(req.body.password)
+
+		if (req.body.professional_identity)
+			user.setProfessionalIdentity(req.body.professional_identity)
 
 		if (req.body.avatar) user.setAvatar(Buffer.from(req.body.avatar, "base64"))
 

@@ -82,6 +82,31 @@ module.exports.notifications = {
 	},
 }
 
+module.exports.professional_identity = {
+	type: "object",
+	properties: {
+		socan: {
+			type: "string",
+		},
+		sodrac: {
+			type: "string",
+		},
+		soproq: {
+			type: "string",
+		},
+		resound: {
+			type: "string",
+		},
+		artisiti: {
+			type: "string",
+		},
+		public: {
+			type: "boolean",
+			default: false,
+		},
+	},
+}
+
 module.exports.user = {
 	type: "object",
 	properties: {
@@ -120,6 +145,7 @@ module.exports.user = {
 			type: "string",
 		},
 		notifications: this.notifications,
+		professional_identity: this.professional_identity,
 	},
 }
 
@@ -141,6 +167,35 @@ module.exports.rightHolder = {
 		email: {
 			type: "string",
 		},
+	},
+}
+
+module.exports.userPublicProfile = {
+	type: "object",
+	properties: {
+		user_id: {
+			type: "string",
+		},
+		email: {
+			type: "string",
+		},
+		artistName: {
+			type: "string",
+		},
+		firstName: {
+			type: "string",
+		},
+		lastName: {
+			type: "string",
+		},
+		avatarUrl: {
+			type: "string",
+		},
+		locale: {
+			type: "string",
+			enum: ["en", "fr"],
+		},
+		professional_identity: this.professional_identity,
 	},
 }
 
@@ -173,6 +228,7 @@ module.exports.userRequestBody = {
 			enum: ["en", "fr"],
 		},
 		notifications: this.notifications,
+		professional_identity: this.professional_identity,
 	},
 	additionalProperties: false,
 }

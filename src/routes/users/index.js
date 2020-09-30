@@ -21,6 +21,7 @@ async function routes(fastify, options) {
 			security: [{ bearerAuth: [] }],
 		},
 		handler: Controller.getUserWithPendingEmails,
+		preSerialization: serializeUser,
 	})
 
 	fastify.route({
@@ -334,6 +335,17 @@ async function routes(fastify, options) {
 		preValidation: JWTAuth.authorizeUserAccess,
 		handler: Controller.deleteUserEmail,
 	})
+}
+
+async function serializeUser(req, res, user) {
+	if (res.isUserPublic) {
+		const fastJson = require("fast-json-stringify")
+		const stringify = fastJson(UserSchema.userPublicProfile)
+		if (user.professional_identity && !user.professional_identity.public)
+			user.professional_identity = undefined
+		return JSON.parse(stringify(user))
+	}
+	return user
 }
 
 module.exports = routes
