@@ -47,6 +47,21 @@ const PermissionSchema = new mongoose.Schema(
 	{ _id: false }
 )
 
+const ProfessionalIdentitySchema = new mongoose.Schema(
+	{
+		socan: String,
+		sodrac: String,
+		soproq: String,
+		resound: String,
+		artisiti: String,
+		public: {
+			type: Boolean,
+			default: false,
+		},
+	},
+	{ _id: false }
+)
+
 /**
  * Represents a user / login in the system
  */
@@ -113,6 +128,11 @@ const UserSchema = new mongoose.Schema(
 			type: PermissionSchema,
 			default: {},
 		},
+
+		professional_identity: {
+			type: ProfessionalIdentitySchema,
+			default: {},
+		},
 	},
 	{ toJSON: { virtuals: true } }
 )
@@ -176,6 +196,7 @@ UserSchema.virtual("avatarUrl").get(function () {
  * Returns whether the current user is an administrator
  */
 UserSchema.virtual("isAdmin").get(function () {
+	if (!this.permissions) return false
 	return this.permissions.admin === true
 })
 
@@ -274,12 +295,12 @@ UserSchema.query.byActivationToken = function (token) {
  * Adds an email address of a user as pending
  */
 UserSchema.methods.hasAccessToUser = function (user_id) {
+	if (this._id === user_id) return true
 	if (
 		Array.isArray(this.permissions.users) &&
 		this.permissions.users.includes(user_id)
 	)
 		return true
-
 	return false
 }
 
@@ -394,6 +415,18 @@ UserSchema.methods.setMobilePhone = async function (number, verified = false) {
 }
 
 /**
+ * Sets the user's profesional identity
+ */
+UserSchema.methods.setProfessionalIdentity = function (professional_id) {
+	for (org of ["socan", "sodrac", "soproq", "resound", "artisiti"]) {
+		if (professional_id[org])
+			this.professional_identity[org] = professional_id[org]
+	}
+	if (typeof professional_id.public === "boolean")
+		this.professional_identity.public = professional_id.public
+}
+
+/**
  * Delete the user's account
  */
 UserSchema.methods.deleteAccount = async function () {
@@ -407,6 +440,7 @@ UserSchema.methods.deleteAccount = async function () {
 	this.avatar = undefined
 	this.mobilePhone = undefined
 	this.permissions = undefined
+	this.professional_identity = undefined
 	this.locale = "en"
 	await this.save()
 }

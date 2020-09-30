@@ -72,9 +72,9 @@ module.exports.rightSplit = {
 module.exports.rightSplitRequestBody = {
 	type: "object",
 	anyOf: [
-	  { required: [ "copyright" ] },
-	  { required: [ "interpretation" ] },
-	  { required: [ "recording" ] },
+		{ required: ["copyright"] },
+		{ required: ["interpretation"] },
+		{ required: ["recording"] },
 	],
 	properties: {
 		copyright: {
