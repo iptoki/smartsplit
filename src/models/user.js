@@ -133,6 +133,11 @@ const UserSchema = new mongoose.Schema(
 			type: ProfessionalIdentitySchema,
 			default: {},
 		},
+
+		collaborators: {
+			type: [String],
+			ref: "User",
+		},
 	},
 	{ toJSON: { virtuals: true } }
 )
@@ -418,7 +423,7 @@ UserSchema.methods.setMobilePhone = async function (number, verified = false) {
  * Sets the user's profesional identity
  */
 UserSchema.methods.setProfessionalIdentity = function (professional_id) {
-	for (org of ["socan", "sodrac", "soproq", "resound", "artisiti"]) {
+	for (const org of ["socan", "sodrac", "soproq", "resound", "artisiti"]) {
 		if (professional_id[org])
 			this.professional_identity[org] = professional_id[org]
 	}
@@ -427,11 +432,35 @@ UserSchema.methods.setProfessionalIdentity = function (professional_id) {
 }
 
 /**
+ * Add collaborators to the user
+ */
+UserSchema.methods.addCollaborators = async function (collaboratorIds) {
+	for (const id of collaboratorIds) {
+		if (!this.collaborators.includes(id)) {
+			if (!(await this.model("User").exists({ _id: id })))
+				throw Errors.UserNotFound
+			this.collaborators.push(id)
+		}
+	}
+}
+
+/**
+ * Delete a collaborator by ID
+ */
+UserSchema.methods.deleteCollaborator = function (id) {
+	this.collaborators = this.collaborators.filter(function (item) {
+		if (typeof item === "string") return item !== id
+		return item._id !== id
+	})
+}
+
+/**
  * Delete the user's account
  */
 UserSchema.methods.deleteAccount = async function () {
 	await EmailVerification.deleteMany({ user: this._id })
 	this.accountStatus = "deleted"
+	this.locale = "en"
 	this.password = undefined
 	this.emails = undefined
 	this.firstName = undefined
@@ -441,7 +470,7 @@ UserSchema.methods.deleteAccount = async function () {
 	this.mobilePhone = undefined
 	this.permissions = undefined
 	this.professional_identity = undefined
-	this.locale = "en"
+	this.collaborators = undefined
 	await this.save()
 }
 

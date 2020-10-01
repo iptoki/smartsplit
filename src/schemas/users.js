@@ -149,6 +149,11 @@ module.exports.user = {
 	},
 }
 
+module.exports.userList = {
+	type: "array",
+	items: this.user,
+}
+
 module.exports.rightHolder = {
 	type: "object",
 	properties: {

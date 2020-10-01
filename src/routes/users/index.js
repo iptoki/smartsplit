@@ -335,6 +335,49 @@ async function routes(fastify, options) {
 		preValidation: JWTAuth.authorizeUserAccess,
 		handler: Controller.deleteUserEmail,
 	})
+
+	fastify.route({
+		method: "GET",
+		url: "/users/:user_id/collaborators/",
+		schema: {
+			tags: ["users", "collaborators"],
+			description: "Get a user collaborators",
+			params: {
+				user_id: {
+					type: "string",
+				},
+			},
+			response: {
+				200: UserSchema.userList,
+			},
+			security: [{ bearerAuth: [] }],
+		},
+		preValidation: JWTAuth.authorizeUserAccess,
+		handler: Controller.getCollaborators,
+	})
+
+	fastify.route({
+		method: "DELETE",
+		url: "/users/:user_id/collaborators/:collaborator_id",
+		schema: {
+			tags: ["users", "collaborators"],
+			description: "Delete a user's collaborator by ID",
+			params: {
+				user_id: {
+					type: "string",
+				},
+				collaborator_id: {
+					type: "string",
+				},
+			},
+			response: {
+				204: {},
+			},
+			security: [{ bearerAuth: [] }],
+		},
+		preValidation: JWTAuth.authorizeUserAccess,
+		handler: Controller.deleteCollaborator,
+	})
 }
 
 async function serializeUser(req, res, user) {

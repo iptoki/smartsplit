@@ -127,6 +127,8 @@ module.exports = {
 
 		if (req.body.avatar) user.setAvatar(Buffer.from(req.body.avatar, "base64"))
 
+		if (req.body.collaborators) user.addCollaborators(req.body.collaborators)
+
 		for (let field of [
 			"firstName",
 			"lastName",
@@ -305,6 +307,20 @@ module.exports = {
 				throw Errors.EmailNotFound
 			}
 		}
+
+		res.code(204).send()
+	},
+
+	getCollaborators: async function (req, res) {
+		const user = await getUser(req, res)
+		await user.populate("collaborators").execPopulate()
+		return user.collaborators
+	},
+
+	deleteCollaborator: async function (req, res) {
+		const user = await getUser(req, res)
+		user.deleteCollaborator(req.params.collaborator_id)
+		await user.save()
 
 		res.code(204).send()
 	},
