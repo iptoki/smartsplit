@@ -20,7 +20,8 @@ async function routes(fastify, options) {
 			},
 			security: [{ bearerAuth: [] }],
 		},
-		handler: Controller.getUserWithPendingEmails,
+		preValidation: JWTAuth.getAuthUser,
+		handler: Controller.getUser,
 		preSerialization: serializeUser,
 	})
 
@@ -151,6 +152,7 @@ async function routes(fastify, options) {
 			response: {
 				200: AuthSchema.sessionInfo,
 			},
+			security: [{ bearerAuth: [] }],
 		},
 		handler: Controller.changeUserPassword,
 	})
@@ -185,7 +187,8 @@ async function routes(fastify, options) {
 		url: "/users/invite-new-user",
 		schema: {
 			tags: ["users"],
-			description: "Invite a new user",
+			description:
+				"Deprecated, you should use POST /users/:user_id/collaborators/. Invite a new user",
 			body: {
 				type: "object",
 				required: ["email"],
@@ -341,19 +344,57 @@ async function routes(fastify, options) {
 		url: "/users/:user_id/collaborators/",
 		schema: {
 			tags: ["users", "collaborators"],
-			description: "Get a user collaborators",
+			description: "Get a user's collaborators",
 			params: {
 				user_id: {
 					type: "string",
 				},
 			},
 			response: {
-				200: UserSchema.userList,
+				200: {
+					type: "array",
+					items: UserSchema.userPublicProfile,
+				},
 			},
 			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.authorizeUserAccess,
 		handler: Controller.getCollaborators,
+	})
+
+	fastify.route({
+		method: "POST",
+		url: "/users/:user_id/collaborators/",
+		schema: {
+			tags: ["users", "collaborators"],
+			description:
+				"Create a new collaborator and add it to the authenticated user's collaborators",
+			body: {
+				type: "object",
+				required: ["email"],
+				properties: {
+					firstName: {
+						type: "string",
+					},
+					lastName: {
+						type: "string",
+					},
+					artistName: {
+						type: "string",
+					},
+					email: {
+						type: "string",
+					},
+				},
+				additionalProperties: false,
+			},
+			response: {
+				201: UserSchema.user,
+			},
+			security: [{ bearerAuth: [] }],
+		},
+		preValidation: JWTAuth.authorizeUserAccess,
+		handler: Controller.createCollaborator,
 	})
 
 	fastify.route({
@@ -381,7 +422,7 @@ async function routes(fastify, options) {
 }
 
 async function serializeUser(req, res, user) {
-	if (res.isUserPublic) {
+	if (res.userPublicSchema) {
 		const fastJson = require("fast-json-stringify")
 		const stringify = fastJson(UserSchema.userPublicProfile)
 		if (user.professional_identity && !user.professional_identity.public)

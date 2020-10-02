@@ -5,18 +5,18 @@ const Errors = require("../errors")
 const JWTAuth = require("../../service/JWTAuth")
 
 const getUser = async function (req, res) {
-	let user
-	if (req.params.user_id === "session")
-		user = await JWTAuth.requireAuthUser(req, res)
-	else {
-		JWTAuth.getAuthUser(req, res)
-		user = await User.findById(req.params.user_id)
-	}
+	if (req.authUser && req.authUser._id === req.params.user_id)
+		return req.authUser
+
+	const user = await User.findById(req.params.user_id)
 
 	if (!user) throw Errors.UserNotFound
 
-	if (req.authUser && req.authUser.hasAccessToUser(user._id)) return user
-	else res.isUserPublic = true
+	if (
+		!req.authUser ||
+		(req.authUser && !req.authUser.hasAccessToUser(user._id))
+	)
+		res.userPublicSchema = true
 
 	return user
 }
@@ -70,6 +70,9 @@ module.exports = {
 
 			if (req.body.professional_identity)
 				user.setProfessionalIdentity(req.body.professional_identity)
+
+			if (req.body.collaborators)
+				await user.addCollaborators(req.body.collaborators)
 
 			await user.save()
 			await emailVerif.save()
@@ -127,7 +130,8 @@ module.exports = {
 
 		if (req.body.avatar) user.setAvatar(Buffer.from(req.body.avatar, "base64"))
 
-		if (req.body.collaborators) user.addCollaborators(req.body.collaborators)
+		if (req.body.collaborators)
+			await user.addCollaborators(req.body.collaborators)
 
 		for (let field of [
 			"firstName",
@@ -314,7 +318,39 @@ module.exports = {
 	getCollaborators: async function (req, res) {
 		const user = await getUser(req, res)
 		await user.populate("collaborators").execPopulate()
+		for (let collab of user.collaborators) {
+			if (!collab.professional_identity.public)
+				collab.professional_identity = undefined
+		}
 		return user.collaborators
+	},
+
+	createCollaborator: async function (req, res) {
+		const user = await getUser(req, res)
+
+		if (await User.findOne().byEmail(req.body.email))
+			throw Errors.ConflictingUser
+
+		const collaborator = new User({
+			firstName: req.body.firstName || req.body.email.split("@")[0],
+			lastName: req.body.lastName,
+			accountStatus: "split-invited",
+		})
+
+		const emailVerif = await collaborator.addPendingEmail(req.body.email)
+
+		await collaborator.save()
+		await emailVerif.save()
+
+		await collaborator.sendNotification(UserTemplates.SPLIT_INVITED, {
+			to: { name: collaborator.fullName, email: emailVerif._id },
+		})
+
+		user.collaborators.push(collaborator._id)
+		await user.save()
+
+		res.code(201)
+		return user
 	},
 
 	deleteCollaborator: async function (req, res) {
