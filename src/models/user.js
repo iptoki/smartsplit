@@ -438,7 +438,7 @@ UserSchema.methods.addCollaborators = async function (collaboratorIds) {
 	for (const id of collaboratorIds) {
 		if (!this.collaborators.includes(id)) {
 			if (!(await this.model("User").exists({ _id: id })))
-				throw Errors.UserNotFound
+				throw Errors.CollaboratorNotFound
 			this.collaborators.push(id)
 		}
 	}

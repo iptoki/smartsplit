@@ -355,6 +355,10 @@ module.exports = {
 
 	deleteCollaborator: async function (req, res) {
 		const user = await getUser(req, res)
+
+		if (!(await User.exists({ _id: req.params.collaborator_id })))
+			throw Errors.CollaboratorNotFound
+
 		user.deleteCollaborator(req.params.collaborator_id)
 		await user.save()
 

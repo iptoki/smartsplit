@@ -38,6 +38,9 @@ module.exports.ConflictingListEntity = new HTTPErrors.Conflict(
 
 /* User related errors */
 module.exports.UserNotFound = new HTTPErrors.NotFound("User not found")
+module.exports.CollaboratorNotFound = new HTTPErrors.NotFound(
+	"Collaborator not found"
+)
 module.exports.UserMobilePhoneNotFound = new HTTPErrors.NotFound(
 	"User mobile phone not found"
 )
