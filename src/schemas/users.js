@@ -97,7 +97,7 @@ module.exports.professional_identity = {
 		resound: {
 			type: "string",
 		},
-		artisiti: {
+		artisti: {
 			type: "string",
 		},
 		public: {
