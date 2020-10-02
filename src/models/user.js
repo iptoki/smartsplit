@@ -53,7 +53,7 @@ const ProfessionalIdentitySchema = new mongoose.Schema(
 		sodrac: String,
 		soproq: String,
 		resound: String,
-		artisiti: String,
+		artisti: String,
 		public: {
 			type: Boolean,
 			default: false,
@@ -423,7 +423,7 @@ UserSchema.methods.setMobilePhone = async function (number, verified = false) {
  * Sets the user's profesional identity
  */
 UserSchema.methods.setProfessionalIdentity = function (professional_id) {
-	for (const org of ["socan", "sodrac", "soproq", "resound", "artisiti"]) {
+	for (org of ["socan", "sodrac", "soproq", "resound", "artisti"]) {
 		if (professional_id[org])
 			this.professional_identity[org] = professional_id[org]
 	}
