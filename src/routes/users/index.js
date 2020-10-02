@@ -22,7 +22,7 @@ async function routes(fastify, options) {
 		},
 		preValidation: JWTAuth.getAuthUser,
 		handler: Controller.getUser,
-		preSerialization: serializeUser,
+		preSerialization: preSerializeUser,
 	})
 
 	fastify.route({
@@ -421,7 +421,7 @@ async function routes(fastify, options) {
 	})
 }
 
-async function serializeUser(req, res, user) {
+async function preSerializeUser(req, res, user) {
 	if (res.userPublicSchema) {
 		const fastJson = require("fast-json-stringify")
 		const stringify = fastJson(UserSchema.userPublicProfile)
