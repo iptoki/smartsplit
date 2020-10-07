@@ -138,6 +138,11 @@ const UserSchema = new mongoose.Schema(
 			type: [String],
 			ref: "User",
 		},
+
+		contributors: {
+			type: [String],
+			ref: "User",
+		},
 	},
 	{ toJSON: { virtuals: true } }
 )
@@ -228,6 +233,7 @@ UserSchema.virtual("canActivate").get(function () {
 		null,
 		"email-verification-pending",
 		"split-invited",
+		"contributor",
 	].includes(this.accountStatus)
 })
 
@@ -240,6 +246,15 @@ UserSchema.query.byBody = function (body) {
 
 	return this.where({
 		$or: [{ _id: body.user_id }, { emails: normalizeEmailAddress(body.email) }],
+	})
+}
+
+/**
+ * Looks up the database for an existing usser by contributorID
+ */
+UserSchema.query.byContributorId = function (contributor_id) {
+	return this.where({
+		contributors: contributor_id,
 	})
 }
 

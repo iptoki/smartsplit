@@ -131,6 +131,7 @@ module.exports.user = {
 				"invalid",
 				"email-verification-pending",
 				"split-invited",
+				"contributor",
 				"active",
 				"deleted",
 			],
@@ -151,6 +152,24 @@ module.exports.user = {
 			items: {
 				type: "string",
 			},
+		},
+	},
+}
+
+module.exports.contributor = {
+	type: "object",
+	properties: {
+		user_id: {
+			type: "string",
+		},
+		firstName: {
+			type: "string",
+		},
+		lastName: {
+			type: "string",
+		},
+		artistName: {
+			type: "string",
 		},
 	},
 }
@@ -236,6 +255,12 @@ module.exports.userRequestBody = {
 		notifications: this.notifications,
 		professional_identity: this.professional_identity,
 		collaborators: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
+		contributors: {
 			type: "array",
 			items: {
 				type: "string",

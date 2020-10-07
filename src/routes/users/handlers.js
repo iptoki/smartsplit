@@ -364,4 +364,22 @@ module.exports = {
 
 		res.code(204).send()
 	},
+
+	getCollaborators: async function (req, res) {
+		const user = await getUser(req, res)
+		await user.populate("contributors").execPopulate()
+		return user.contributors
+	}
+
+	deleteContributor: async function (req, res) {
+		const user = await User.findById(req.params.user_id).byContributor(contributor_id)
+
+		if (!user)
+			throw Errors.ContributorNotFound
+
+		user.deleteContributor(req.params.contributor_id)
+		await user.save()
+
+		res.code(204).send()
+	},
 }

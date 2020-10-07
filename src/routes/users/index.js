@@ -419,6 +419,83 @@ async function routes(fastify, options) {
 		preValidation: JWTAuth.authorizeUserAccess,
 		handler: Controller.deleteCollaborator,
 	})
+
+	fastify.route({
+		method: "GET",
+		url: "/users/:user_id/contributors/",
+		schema: {
+			tags: ["users", "contributors"],
+			description: "Get a user's contributors",
+			params: {
+				user_id: {
+					type: "string",
+				},
+			},
+			response: {
+				200: {
+					type: "array",
+					items: UserSchema.userPublicProfile,
+				},
+			},
+			security: [{ bearerAuth: [] }],
+		},
+		preValidation: JWTAuth.authorizeUserAccess,
+		handler: Controller.getContributors,
+	})
+
+	fastify.route({
+		method: "POST",
+		url: "/users/:user_id/contributors/",
+		schema: {
+			tags: ["users", "contributors"],
+			description:
+				"Create a new contributor and add it to the authenticated user's contributors",
+			body: {
+				type: "object",
+				properties: {
+					firstName: {
+						type: "string",
+					},
+					lastName: {
+						type: "string",
+					},
+					artistName: {
+						type: "string",
+					},
+				},
+				additionalProperties: false,
+			},
+			response: {
+				201: UserSchema.contributor,
+			},
+			security: [{ bearerAuth: [] }],
+		},
+		preValidation: JWTAuth.authorizeUserAccess,
+		handler: Controller.createContributor,
+	})
+
+	fastify.route({
+		method: "DELETE",
+		url: "/users/:user_id/contributor/:contributor_id",
+		schema: {
+			tags: ["users", "contributor"],
+			description: "Delete a user's contributor by ID",
+			params: {
+				user_id: {
+					type: "string",
+				},
+				contributor_id: {
+					type: "string",
+				},
+			},
+			response: {
+				204: {},
+			},
+			security: [{ bearerAuth: [] }],
+		},
+		preValidation: JWTAuth.authorizeUserAccess,
+		handler: Controller.deleteContributor,
+	})
 }
 
 async function preSerializeUser(req, res, user) {
