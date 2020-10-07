@@ -265,7 +265,7 @@ module.exports = {
 		const user = await getUserWithPendingEmails(req, res)
 		const emailVerif = await user.addPendingEmail(req.body.email)
 
-		await email.save()
+		await emailVerif.save()
 		await user.sendNotification(UserTemplates.ACTIVATE_EMAIL, {
 			to: { name: user.fullName, email: emailVerif._id },
 		})
