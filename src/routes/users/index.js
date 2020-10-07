@@ -20,8 +20,9 @@ async function routes(fastify, options) {
 			},
 			security: [{ bearerAuth: [] }],
 		},
-		handler: Controller.getUserWithPendingEmails,
-		preSerialization: serializeUser,
+		preValidation: JWTAuth.getAuthUser,
+		handler: Controller.getUser,
+		preSerialization: preSerializeUser,
 	})
 
 	fastify.route({
@@ -151,6 +152,7 @@ async function routes(fastify, options) {
 			response: {
 				200: AuthSchema.sessionInfo,
 			},
+			security: [{ bearerAuth: [] }],
 		},
 		handler: Controller.changeUserPassword,
 	})
@@ -185,7 +187,8 @@ async function routes(fastify, options) {
 		url: "/users/invite-new-user",
 		schema: {
 			tags: ["users"],
-			description: "Invite a new user",
+			description:
+				"Deprecated, you should use POST /users/:user_id/collaborators/. Invite a new user",
 			body: {
 				type: "object",
 				required: ["email"],
@@ -335,10 +338,91 @@ async function routes(fastify, options) {
 		preValidation: JWTAuth.authorizeUserAccess,
 		handler: Controller.deleteUserEmail,
 	})
+
+	fastify.route({
+		method: "GET",
+		url: "/users/:user_id/collaborators/",
+		schema: {
+			tags: ["users", "collaborators"],
+			description: "Get a user's collaborators",
+			params: {
+				user_id: {
+					type: "string",
+				},
+			},
+			response: {
+				200: {
+					type: "array",
+					items: UserSchema.userPublicProfile,
+				},
+			},
+			security: [{ bearerAuth: [] }],
+		},
+		preValidation: JWTAuth.authorizeUserAccess,
+		handler: Controller.getCollaborators,
+	})
+
+	fastify.route({
+		method: "POST",
+		url: "/users/:user_id/collaborators/",
+		schema: {
+			tags: ["users", "collaborators"],
+			description:
+				"Create a new collaborator and add it to the authenticated user's collaborators",
+			body: {
+				type: "object",
+				required: ["email"],
+				properties: {
+					firstName: {
+						type: "string",
+					},
+					lastName: {
+						type: "string",
+					},
+					artistName: {
+						type: "string",
+					},
+					email: {
+						type: "string",
+					},
+				},
+				additionalProperties: false,
+			},
+			response: {
+				201: UserSchema.user,
+			},
+			security: [{ bearerAuth: [] }],
+		},
+		preValidation: JWTAuth.authorizeUserAccess,
+		handler: Controller.createCollaborator,
+	})
+
+	fastify.route({
+		method: "DELETE",
+		url: "/users/:user_id/collaborators/:collaborator_id",
+		schema: {
+			tags: ["users", "collaborators"],
+			description: "Delete a user's collaborator by ID",
+			params: {
+				user_id: {
+					type: "string",
+				},
+				collaborator_id: {
+					type: "string",
+				},
+			},
+			response: {
+				204: {},
+			},
+			security: [{ bearerAuth: [] }],
+		},
+		preValidation: JWTAuth.authorizeUserAccess,
+		handler: Controller.deleteCollaborator,
+	})
 }
 
-async function serializeUser(req, res, user) {
-	if (res.isUserPublic) {
+async function preSerializeUser(req, res, user) {
+	if (res.userPublicSchema) {
 		const fastJson = require("fast-json-stringify")
 		const stringify = fastJson(UserSchema.userPublicProfile)
 		if (user.professional_identity && !user.professional_identity.public)

@@ -146,6 +146,12 @@ module.exports.user = {
 		},
 		notifications: this.notifications,
 		professional_identity: this.professional_identity,
+		collaborators: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
 	},
 }
 
@@ -229,6 +235,12 @@ module.exports.userRequestBody = {
 		},
 		notifications: this.notifications,
 		professional_identity: this.professional_identity,
+		collaborators: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
 	},
 	additionalProperties: false,
 }
