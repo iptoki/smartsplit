@@ -44,6 +44,11 @@ module.exports.getDocumentation = async function (req, res) {
 	return workpiece.documentation
 }
 
+module.exports.getDocumentationField = async function (req, res) {
+	const workpiece = await getWorkpiece(req, res)
+	return workpiece.documentation[req.params.field]
+}
+
 module.exports.createWorkpiece = async function (req, res) {
 	req.body.owner = req.authUser._id
 	const workpiece = new Workpiece(req.body)

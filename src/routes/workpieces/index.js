@@ -324,6 +324,30 @@ async function routes(fastify, options) {
 		preValidation: JWTAuth.requireAuthUser,
 		handler: Controller.getDocumentation,
 	})
+
+	fastify.route({
+		method: "GET",
+		url: "/workpieces/:workpiece_id/docs/:field",
+		schema: {
+			tags: ["workpieces"],
+			description: "Get a workpiece's documentation",
+			params: {
+				workpiece_id: {
+					type: "string",
+				},
+				field: {
+					type: "string",
+					enum: ["creation", "performance", "recording", "release", "lyrics"],
+				},
+			},
+			response: {
+				200: WorkpieceSchema.documentation,
+			},
+			security: [{ bearerAuth: [] }],
+		},
+		preValidation: JWTAuth.requireAuthUser,
+		handler: Controller.getDocumentationField,
+	})
 }
 
 module.exports = routes
