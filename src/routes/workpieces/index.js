@@ -304,6 +304,26 @@ async function routes(fastify, options) {
 		preValidation: JWTAuth.requireAuthUser,
 		handler: Controller.swapRightSplitUser,
 	})
+
+	fastify.route({
+		method: "GET",
+		url: "/workpieces/:workpiece_id/docs",
+		schema: {
+			tags: ["workpieces"],
+			description: "Get a workpiece's documentation",
+			params: {
+				workpiece_id: {
+					type: "string",
+				},
+			},
+			response: {
+				200: WorkpieceSchema.documentation,
+			},
+			security: [{ bearerAuth: [] }],
+		},
+		preValidation: JWTAuth.requireAuthUser,
+		handler: Controller.getDocumentation,
+	})
 }
 
 module.exports = routes

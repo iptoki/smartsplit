@@ -10,6 +10,17 @@ const JWT_SPLIT_TYPE = "workpiece:split-invite"
 
 const RightTypes = ["copyright", "interpretation", "recording"]
 
+const documentationSchema = new mongoose.Schema(
+	{
+		creation: new mongoose.Schema({}, { _id: false }),
+		performance: new mongoose.Schema({}, { _id: false }),
+		recording: new mongoose.Schema({}, { _id: false }),
+		release: new mongoose.Schema({}, { _id: false }),
+		lyrics: new mongoose.Schema({}, { _id: false }),
+	},
+	{ _id: false }
+)
+
 const SplitSchema = new mongoose.Schema(
 	{
 		rightHolder: {
@@ -102,6 +113,10 @@ const WorkpieceSchema = new mongoose.Schema(
 
 		files: {
 			type: [WorkpieceFileSchema],
+		},
+
+		documentation: {
+			type: documentationSchema,
 		},
 	},
 	{ timestamps: true, toJSON: { virtuals: true } }

@@ -128,6 +128,32 @@ module.exports.file = {
 	},
 }
 
+module.exports.documentation = {
+	type: "object",
+	properties: {
+		creation: {
+			type: "object",
+			properties: {},
+		},
+		performance: {
+			type: "object",
+			properties: {},
+		},
+		recording: {
+			type: "object",
+			properties: {},
+		},
+		release: {
+			type: "object",
+			properties: {},
+		},
+		lyrics: {
+			type: "object",
+			properties: {},
+		},
+	},
+}
+
 module.exports.fileRequestBody = {
 	type: "object",
 	properties: {
@@ -186,6 +212,7 @@ module.exports.workpiece = {
 			type: "array",
 			items: this.file,
 		},
+		documentation: this.documentation,
 	},
 }
 
