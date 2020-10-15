@@ -41,6 +41,9 @@ module.exports.UserNotFound = new HTTPErrors.NotFound("User not found")
 module.exports.CollaboratorNotFound = new HTTPErrors.NotFound(
 	"Collaborator not found"
 )
+module.exports.ContributorNotFound = new HTTPErrors.NotFound(
+	"Contributor not found"
+)
 module.exports.UserMobilePhoneNotFound = new HTTPErrors.NotFound(
 	"User mobile phone not found"
 )
