@@ -484,6 +484,17 @@ UserSchema.methods.setAvatar = async function (avatar) {
 	this.avatar = avatar
 }
 
+/*
+ * Sets the user's primary email
+ */
+UserSchema.methods.setPrimaryEmail = async function (email) {
+	email = normalizeEmailAddress(email)
+	const index = this.emails.indexOf(email)
+	if(index < 0) throw Errors.EmailNotFound
+	this.emails.splice(index, 1)
+	this.emails = [email, ...this.emails]
+}
+
 /**
  * Verifies the password of the current user
  */
