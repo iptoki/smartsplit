@@ -89,6 +89,58 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
+		method: "POST",
+		url: "/users/:user_id/emails/primary",
+		schema: {
+			tags: ["users", "users_emails"],
+			description: "Set a user email to the primary one",
+			params: {
+				user_id: {
+					type: "string",
+				},
+			},
+			body: {
+				type: "object",
+				required: ["email"],
+				properties: {
+					email: {
+						type: "string",
+					},
+				},
+				additionalProperties: false,
+			},
+			response: {
+				204: {},
+			},
+			security: [{ bearerAuth: [] }],
+		},
+		preValidation: JWTAuth.authorizeUserAccess,
+		handler: setUserPrimaryEmail,
+	})
+
+	fastify.route({
+		method: "GET",
+		url: "/users/:user_id/emails/primary",
+		schema: {
+			tags: ["users", "users_emails"],
+			description: "Get the user primary email",
+			params: {
+				user_id: {
+					type: "string",
+				},
+			},
+			response: {
+				200: {
+					type: "string",
+				},
+			},
+			security: [{ bearerAuth: [] }],
+		},
+		preValidation: JWTAuth.authorizeUserAccess,
+		handler: getUserPrimaryEmail,
+	})
+
+	fastify.route({
 		method: "DELETE",
 		url: "/users/:user_id/emails/:email",
 		schema: {
@@ -183,6 +235,21 @@ async function deleteUserEmail(req, res) {
 			throw Errors.EmailNotFound
 		}
 	}
+
+	res.code(204).send()
+}
+
+async function getUserPrimaryEmail(req, res) {
+	const user = await getUser(req, res)
+	if (!user.email) throw Errors.EmailNotFound
+	return user.email
+}
+
+async function setUserPrimaryEmail(req, res) {
+	const user = await getUser(req, res)
+
+	user.setPrimaryEmail(req.body.email)
+	await user.save()
 
 	res.code(204).send()
 }

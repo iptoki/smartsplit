@@ -507,7 +507,7 @@ UserSchema.methods.setAvatar = async function (avatar) {
 UserSchema.methods.setPrimaryEmail = async function (email) {
 	email = normalizeEmailAddress(email)
 	const index = this.emails.indexOf(email)
-	if(index < 0) throw Errors.EmailNotFound
+	if (index < 0) throw Errors.EmailNotFound
 	this.emails.splice(index, 1)
 	this.emails = [email, ...this.emails]
 }
