@@ -181,6 +181,15 @@ async function createCollaborator(req, res) {
 	return collaborator
 }
 
+async function addCollaboratorById(req, res) {
+	const user = await getUser(req, res)
+
+	await user.addCollaborators([req.params.collaborator_id])
+	await user.save()
+
+	return user
+}
+
 async function deleteCollaboratorById(req, res) {
 	const user = await getUser(req, res)
 	const index = user.collaborators.indexOf(req.params.collaborator_id)

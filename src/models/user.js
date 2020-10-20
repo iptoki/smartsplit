@@ -165,6 +165,8 @@ UserSchema.virtual("fullName").get(function () {
 
 	if (this.firstName) return this.firstName
 
+	if (this.lastName) return this.lastName
+
 	return "Guest"
 })
 
@@ -497,6 +499,17 @@ UserSchema.methods.setAvatar = async function (avatar) {
 		throw new Error("Maximum file size is 4 MB")
 
 	this.avatar = avatar
+}
+
+/*
+ * Sets the user's primary email
+ */
+UserSchema.methods.setPrimaryEmail = async function (email) {
+	email = normalizeEmailAddress(email)
+	const index = this.emails.indexOf(email)
+	if (index < 0) throw Errors.EmailNotFound
+	this.emails.splice(index, 1)
+	this.emails = [email, ...this.emails]
 }
 
 /**
