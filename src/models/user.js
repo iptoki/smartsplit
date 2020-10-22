@@ -49,11 +49,15 @@ const PermissionSchema = new mongoose.Schema(
 
 const ProfessionalIdentitySchema = new mongoose.Schema(
 	{
-		socan: String,
-		sodrac: String,
-		soproq: String,
-		resound: String,
-		artisti: String,
+		ids: [
+			new mongoose.Schema(
+				{
+					name: String,
+					value: String,
+				},
+				{ _id: false }
+			),
+		],
 		public: {
 			type: Boolean,
 			default: false,
@@ -439,13 +443,21 @@ UserSchema.methods.setMobilePhone = async function (number, verified = false) {
 /**
  * Sets the user's profesional identity
  */
-UserSchema.methods.setProfessionalIdentity = function (professional_id) {
-	for (org of ["socan", "sodrac", "soproq", "resound", "artisti"]) {
-		if (professional_id[org])
-			this.professional_identity[org] = professional_id[org]
+UserSchema.methods.setProfessionalIdentity = function (professional_identity) {
+	if (Array.isArray(professional_identity.ids)) {
+		let ids
+		if (Array.isArray(this.professional_identity.ids))
+			ids = this.professional_identity.ids.concat(professional_identity.ids)
+		else ids = professional_identity.ids
+		let map = {}
+		ids.forEach((x) => (map[x.name] = x.value))
+		this.professional_identity.ids = []
+		for (const [name, value] of Object.entries(map))
+			this.professional_identity.ids.push({ name, value })
 	}
-	if (typeof professional_id.public === "boolean")
-		this.professional_identity.public = professional_id.public
+
+	if (typeof professional_identity.public === "boolean")
+		this.professional_identity.public = professional_identity.public
 }
 
 /**
