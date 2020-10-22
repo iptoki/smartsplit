@@ -85,20 +85,19 @@ module.exports.notifications = {
 module.exports.professional_identity = {
 	type: "object",
 	properties: {
-		socan: {
-			type: "string",
-		},
-		sodrac: {
-			type: "string",
-		},
-		soproq: {
-			type: "string",
-		},
-		resound: {
-			type: "string",
-		},
-		artisti: {
-			type: "string",
+		ids: {
+			type: "array",
+			items: {
+				type: "object",
+				properties: {
+					name: {
+						type: "string",
+					},
+					value: {
+						type: "string",
+					},
+				},
+			},
 		},
 		public: {
 			type: "boolean",
