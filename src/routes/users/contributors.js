@@ -124,7 +124,7 @@ async function routes(fastify, options) {
 
 	fastify.route({
 		method: "PATCH",
-		url: "/users/:user_id/contributors/",
+		url: "/users/:user_id/contributors/:contributor_id",
 		schema: {
 			tags: ["users", "contributors"],
 			description: "Update a user's contributor by ID",
