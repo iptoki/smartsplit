@@ -445,12 +445,10 @@ UserSchema.methods.setMobilePhone = async function (number, verified = false) {
  */
 UserSchema.methods.setProfessionalIdentity = function (professional_identity) {
 	if (Array.isArray(professional_identity.ids)) {
-		let ids
-		if (Array.isArray(this.professional_identity.ids))
-			ids = this.professional_identity.ids.concat(professional_identity.ids)
-		else ids = professional_identity.ids
 		let map = {}
-		ids.forEach((x) => (map[x.name] = x.value))
+		professional_identity.ids.forEach(function (x) {
+			if (x.name.length && x.value.length) map[x.name] = x.value
+		})
 		this.professional_identity.ids = []
 		for (const [name, value] of Object.entries(map))
 			this.professional_identity.ids.push({ name, value })
