@@ -52,7 +52,11 @@ const ProfessionalIdentitySchema = new mongoose.Schema(
 		ids: [
 			new mongoose.Schema(
 				{
-					name: String,
+					name: {
+						type: String,
+						lowercase: true,
+						trim: true,
+					},
 					value: String,
 				},
 				{ _id: false }
@@ -432,7 +436,7 @@ UserSchema.methods.setProfessionalIdentity = function (professional_identity) {
 		let map = {}
 		professional_identity.ids.forEach(function (id) {
 			if (id.name.length && id.value.length)
-				map[id.name.toLowerCase()] = id.value
+				map[id.name.toLowerCase().trim()] = id.value
 		})
 		this.professional_identity.ids = []
 		for (const [name, value] of Object.entries(map))
