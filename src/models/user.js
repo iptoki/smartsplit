@@ -76,17 +76,22 @@ const UserSchema = new mongoose.Schema(
 			alias: "user_id",
 			default: uuid,
 		},
-
+		password: String, //bcrypt
+		firstName: String,
+		lastName: String,
+		artistName: String,
+		avatar: Buffer,
+		isni: String,
+		birthDate: String,
+		address: String,
+		organisations: [String],
+		projects: [String],
+		uri: String,
 		emails: {
 			type: [String],
 			lowercase: true,
 			trim: true,
 		},
-
-		password: {
-			type: String, // bcrypt
-		},
-
 		accountStatus: {
 			type: String,
 			default: "email-verification-pending",
@@ -98,51 +103,30 @@ const UserSchema = new mongoose.Schema(
 				"deleted",
 			],
 		},
-
-		firstName: {
-			type: String,
-		},
-
-		lastName: {
-			type: String,
-		},
-
-		artistName: {
-			type: String,
-		},
-
-		avatar: Buffer,
-
 		locale: {
 			type: String,
 			default: "en",
 			enum: ["fr", "en"],
 		},
-
 		mobilePhone: {
 			type: MobilePhoneSchema,
 		},
-
 		notifications: {
 			type: Notification.Schema,
 			default: {},
 		},
-
 		permissions: {
 			type: PermissionSchema,
 			default: {},
 		},
-
 		professional_identity: {
 			type: ProfessionalIdentitySchema,
 			default: {},
 		},
-
 		collaborators: {
 			type: [String],
 			ref: "User",
 		},
-
 		contributors: {
 			type: [String],
 			ref: "User",

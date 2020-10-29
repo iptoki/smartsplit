@@ -369,13 +369,19 @@ async function updateUser(req, res) {
 
 	if (req.body.collaborators)
 		await user.addCollaborators(req.body.collaborators)
-
+	
 	for (let field of [
 		"firstName",
 		"lastName",
 		"artistName",
 		"locale",
 		"notifications",
+		"isni",
+		"birthDate",
+		"address",
+		"organisations",
+		"projects",
+		"uri",
 	])
 		if (req.body[field]) user[field] = req.body[field]
 

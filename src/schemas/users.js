@@ -121,8 +121,11 @@ module.exports.user = {
 		artistName: {
 			type: "string",
 		},
-		email: {
-			type: "string",
+		emails: {
+			type: "array",
+			items: {
+				type: "string",
+			},
 		},
 		accountStatus: {
 			type: "string",
@@ -151,6 +154,31 @@ module.exports.user = {
 			items: {
 				type: "string",
 			},
+		},
+		isni: {
+			type: "string",
+		},
+		birthDate: {
+			type: "string",
+			format: "date",
+		},
+		address: {
+			type: "string",
+		},
+		organisations: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
+		projects: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
+		uri: {
+			type: "string",
 		},
 	},
 }
@@ -188,9 +216,6 @@ module.exports.rightHolder = {
 		artistName: {
 			type: "string",
 		},
-		email: {
-			type: "string",
-		},
 	},
 }
 
@@ -198,9 +223,6 @@ module.exports.userPublicProfile = {
 	type: "object",
 	properties: {
 		user_id: {
-			type: "string",
-		},
-		email: {
 			type: "string",
 		},
 		artistName: {
@@ -220,6 +242,24 @@ module.exports.userPublicProfile = {
 			enum: ["en", "fr"],
 		},
 		professional_identity: this.professional_identity,
+		isni: {
+			type: "string",
+		},
+		organisations: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
+		projects: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
+		uri: {
+			type: "string",
+		},
 	},
 }
 
@@ -264,6 +304,31 @@ module.exports.userRequestBody = {
 			items: {
 				type: "string",
 			},
+		},
+		isni: {
+			type: "string",
+		},
+		birthDate: {
+			type: "string",
+			format: "date",
+		},
+		address: {
+			type: "string",
+		},
+		organisations: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
+		projects: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
+		uri: {
+			type: "string",
 		},
 	},
 	additionalProperties: false,
