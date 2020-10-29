@@ -124,7 +124,7 @@ const getAuthUser = async function (req, res) {
 	try {
 		return await requireAuthUser(req, res)
 	} catch (err) {
-		if (err.statusCode !== 401) throw err
+		if (err.statusCode !== 401 || req.params.user_id === "session") throw err
 		return
 	}
 }

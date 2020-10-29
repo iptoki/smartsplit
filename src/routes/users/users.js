@@ -376,6 +376,12 @@ async function updateUser(req, res) {
 		"artistName",
 		"locale",
 		"notifications",
+		"isni",
+		"birthDate",
+		"address",
+		"organisations",
+		"projects",
+		"uri",
 	])
 		if (req.body[field]) user[field] = req.body[field]
 
