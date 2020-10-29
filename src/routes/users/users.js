@@ -369,7 +369,7 @@ async function updateUser(req, res) {
 
 	if (req.body.collaborators)
 		await user.addCollaborators(req.body.collaborators)
-	
+
 	for (let field of [
 		"firstName",
 		"lastName",

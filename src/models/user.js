@@ -431,7 +431,7 @@ UserSchema.methods.setProfessionalIdentity = function (professional_identity) {
 	if (Array.isArray(professional_identity.ids)) {
 		let map = {}
 		professional_identity.ids.forEach(function (id) {
-			if (id.name.length && id.value.length) 
+			if (id.name.length && id.value.length)
 				map[id.name.toLowerCase()] = id.value
 		})
 		this.professional_identity.ids = []
