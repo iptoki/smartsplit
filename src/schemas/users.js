@@ -346,7 +346,7 @@ module.exports.emailStatusList = {
 			},
 			status: {
 				type: "string",
-				enum: ["active", "pending"],
+				enum: ["primary", "active", "pending"],
 			},
 		},
 	},

@@ -1,5 +1,6 @@
 const JWTAuth = require("../../service/JWTAuth")
 const EmailVerification = require("../../models/emailVerification")
+const { UserTemplates } = require("../../models/notifications/templates")
 const UserSchema = require("../../schemas/users")
 const Errors = require("../errors")
 const { getUser } = require("./users")
@@ -82,7 +83,7 @@ async function routes(fastify, options) {
 				additionalProperties: false,
 			},
 			response: {
-				204: {},
+				200: UserSchema.emailStatusList,
 			},
 		},
 		handler: activateUserEmail,
@@ -110,7 +111,7 @@ async function routes(fastify, options) {
 				additionalProperties: false,
 			},
 			response: {
-				204: {},
+				200: UserSchema.emailStatusList,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -173,16 +174,7 @@ async function getUserWithPendingEmails(req, res) {
 }
 
 async function getUserEmails(req, res) {
-	const user = await getUserWithPendingEmails(req, res)
-
-	return user.emails
-		.map((e) => ({ email: e, status: "active" }))
-		.concat(
-			user.pendingEmails.map((e) => ({
-				email: e.email,
-				status: "pending",
-			}))
-		)
+	return formatEmailList(await getUserWithPendingEmails(req, res))
 }
 
 async function createUserEmail(req, res) {
@@ -194,14 +186,7 @@ async function createUserEmail(req, res) {
 		to: { name: user.fullName, email: emailVerif._id },
 	})
 
-	return user.emails
-		.map((e) => ({ email: e, status: "active" }))
-		.concat(
-			user.pendingEmails.map((e) => ({
-				email: e.email,
-				status: "pending",
-			}))
-		)
+	return formatEmailList(user)
 }
 
 async function activateUserEmail(req, res) {
@@ -224,7 +209,7 @@ async function activateUserEmail(req, res) {
 	user.emails.push(email._id)
 	await user.save()
 
-	res.code(204).send()
+	return formatEmailList(user)
 }
 
 async function deleteUserEmail(req, res) {
@@ -251,7 +236,17 @@ async function setUserPrimaryEmail(req, res) {
 	user.setPrimaryEmail(req.body.email)
 	await user.save()
 
-	res.code(204).send()
+	return formatEmailList(user)
+}
+
+function formatEmailList(user) {
+	let list = []
+	if (user.email) list.push({ email: user.emails[0], status: "primary" })
+	list.push(
+		...user.emails.slice(1).map((e) => ({ email: e, status: "active" })),
+		...user.pendingEmails.map((e) => ({ email: e.email, status: "pending" }))
+	)
+	return list
 }
 
 module.exports = routes

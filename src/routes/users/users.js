@@ -383,7 +383,10 @@ async function updateUser(req, res) {
 		"projects",
 		"uri",
 	])
-		if (req.body[field]) user[field] = req.body[field]
+		if (field in req.body) {
+			if (req.body[field]) user[field] = req.body[field]
+			else user[field] = undefined
+		}
 
 	await user.save()
 

@@ -192,7 +192,7 @@ UserSchema.virtual("$email").get(function () {
  * Returns the user's avatarUrl
  */
 UserSchema.virtual("avatarUrl").get(function () {
-	if (!this.avatar) return null
+	if (!this.avatar) return undefined
 	return Config.apiUrl + "/users/" + this._id + "/avatar"
 })
 
@@ -335,8 +335,8 @@ UserSchema.methods.addPendingEmail = async function (email) {
 		createdAt: { $gte: date },
 	}).populate("user")
 
-	// An entry exist
-	if (emailVerif && emailVerif.user && emailVerif.user !== this._id)
+	// An entry exist, check if it belongs to the current user
+	if (emailVerif && emailVerif.user && emailVerif.user._id !== this._id)
 		throw Errors.ConflictingEmail
 	// Delete it otherwise
 	else await EmailVerification.deleteOne({ _id: email })
