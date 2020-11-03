@@ -192,7 +192,7 @@ UserSchema.virtual("$email").get(function () {
  * Returns the user's avatarUrl
  */
 UserSchema.virtual("avatarUrl").get(function () {
-	if (!this.avatar) return null
+	if (!this.avatar) return undefined
 	return Config.apiUrl + "/users/" + this._id + "/avatar"
 })
 
