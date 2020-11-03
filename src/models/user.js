@@ -335,8 +335,8 @@ UserSchema.methods.addPendingEmail = async function (email) {
 		createdAt: { $gte: date },
 	}).populate("user")
 
-	// An entry exist
-	if (emailVerif && emailVerif.user && emailVerif.user !== this._id)
+	// An entry exist, check if it belongs to the current user
+	if (emailVerif && emailVerif.user && emailVerif.user._id !== this._id)
 		throw Errors.ConflictingEmail
 	// Delete it otherwise
 	else await EmailVerification.deleteOne({ _id: email })
