@@ -1,5 +1,6 @@
 const JWTAuth = require("../../service/JWTAuth")
 const User = require("../../models/user")
+const AccountStatus = require("../../constants/accountStatus")
 const UserSchema = require("../../schemas/users")
 const Errors = require("../errors")
 const { getUser } = require("./users")
@@ -60,6 +61,11 @@ async function routes(fastify, options) {
 			tags: ["users", "contributors"],
 			description:
 				"Create a new contributor and add it to the authenticated user's contributors",
+			params: {
+				user_id: {
+					type: "string",
+				},
+			},
 			body: {
 				type: "object",
 				properties: {
@@ -90,6 +96,14 @@ async function routes(fastify, options) {
 		schema: {
 			tags: ["users", "contributors"],
 			description: "Upgrade a contributor's account to a collaborator",
+			params: {
+				user_id: {
+					type: "string",
+				},
+				contributor_id: {
+					type: "string",
+				},
+			},
 			body: {
 				type: "object",
 				required: ["email"],
@@ -128,6 +142,14 @@ async function routes(fastify, options) {
 		schema: {
 			tags: ["users", "contributors"],
 			description: "Update a user's contributor by ID",
+			params: {
+				user_id: {
+					type: "string",
+				},
+				contributor_id: {
+					type: "string",
+				},
+			},
 			body: {
 				type: "object",
 				properties: {
@@ -154,9 +176,9 @@ async function routes(fastify, options) {
 
 	fastify.route({
 		method: "DELETE",
-		url: "/users/:user_id/contributor/:contributor_id",
+		url: "/users/:user_id/contributors/:contributor_id",
 		schema: {
-			tags: ["users", "contributor"],
+			tags: ["users", "contributors"],
 			description: "Delete a user's contributor by ID",
 			params: {
 				user_id: {
@@ -195,7 +217,10 @@ async function getContributors(req, res) {
 
 async function createContributor(req, res) {
 	const user = await getUser(req, res)
-	const contributor = new User({ ...req.body, accountStatus: "contributor" })
+	const contributor = new User({
+		...req.body,
+		accountStatus: AccountStatus.CONTRIBUTOR,
+	})
 	await contributor.save()
 	user.contributors.push(contributor._id)
 	return contributor
@@ -212,7 +237,7 @@ async function upgradeContributorById(req, res) {
 	const contributor = User.findById(req.params.contributor_id)
 
 	const emailVerif = await contributor.addPendingEmail(req.body.email)
-	contributor.accountStatus = "split-invited"
+	contributor.accountStatus = AccountStatus.SPLIT_INVITED
 
 	await contributor.save()
 	await emailVerif.save()

@@ -5,6 +5,7 @@ const PasswordUtil = require("../utils/password")
 const JWT = require("../utils/jwt")
 const EmailVerification = require("../models/emailVerification")
 const Notification = require("../models/notifications/notification")
+const AccountStatus = require("../constants/accountStatus")
 const { sendTemplateTo, normalizeEmailAddress } = require("../utils/email")
 const { generateRandomCode } = require("../utils/random")
 const Errors = require("../routes/errors")
@@ -98,14 +99,8 @@ const UserSchema = new mongoose.Schema(
 		},
 		accountStatus: {
 			type: String,
-			default: "email-verification-pending",
-			enum: [
-				"invalid",
-				"email-verification-pending",
-				"split-invited",
-				"active",
-				"deleted",
-			],
+			default: AccountStatus.EMAIL_VERIFICATION_PENDING,
+			enum: AccountStatus.list,
 		},
 		locale: {
 			type: String,
@@ -208,27 +203,21 @@ UserSchema.virtual("isAdmin").get(function () {
  * Returns whether the current account status is active
  */
 UserSchema.virtual("isActive").get(function () {
-	return this.accountStatus === "active"
+	return this.accountStatus === AccountStatus.ACTIVE
 })
 
 /**
  * Returns whether the current account status is deleted
  */
 UserSchema.virtual("isDeleted").get(function () {
-	return this.accountStatus === "deleted"
+	return this.accountStatus === AccountStatus.DELETED
 })
 
 /**
  * Returns whether this account can be activated with an account activation token
  */
 UserSchema.virtual("canActivate").get(function () {
-	return [
-		undefined,
-		null,
-		"email-verification-pending",
-		"split-invited",
-		"contributor",
-	].includes(this.accountStatus)
+	return AccountStatus.activableStatus.includes(this.accountStatus)
 })
 
 /**
@@ -257,7 +246,7 @@ UserSchema.query.byContributorId = function (contributor_id) {
  */
 UserSchema.query.byActive = function () {
 	this.where({
-		accountStatus: "active",
+		accountStatus: AccountStatus.ACTIVE,
 	})
 }
 
@@ -475,7 +464,7 @@ UserSchema.methods.deleteCollaborator = function (id) {
  */
 UserSchema.methods.deleteAccount = async function () {
 	await EmailVerification.deleteMany({ user: this._id })
-	this.accountStatus = "deleted"
+	this.accountStatus = AccountStatus.DELETED
 	this.locale = "en"
 	this.password = undefined
 	this.emails = undefined

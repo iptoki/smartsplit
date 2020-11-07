@@ -334,7 +334,7 @@ async function activateUserAccount(req, res) {
 
 	if (!email || !user.canActivate) throw Errors.InvalidActivationToken
 
-	user.accountStatus = "active"
+	user.accountStatus = AccountStatus.ACTIVE
 	user.emails.push(email._id)
 
 	await user.save()
@@ -435,8 +435,8 @@ async function changeUserPassword(req, res) {
 
 	await user.setPassword(req.body.password, true)
 
-	if (user.accountStatus === "email-verification-pending") {
-		user.accountStatus = "active"
+	if (user.accountStatus === AccountStatus.EMAIL_VERIFICATION_PENDING) {
+		user.accountStatus = AccountStatus.ACTIVE
 		const data = user.decodePasswordResetToken(req.body.token)
 		if (await user.removePendingEmail(data.user_email))
 			user.emails.push(data.user_email)
@@ -478,7 +478,7 @@ async function inviteNewUser(req, res) {
 	const user = new User({
 		firstName: req.body.firstName || req.body.email.split("@")[0],
 		lastName: req.body.lastName,
-		accountStatus: "split-invited",
+		accountStatus: AccountStatus.SPLIT_INVITED,
 	})
 
 	const emailVerif = await user.addPendingEmail(req.body.email)

@@ -20,6 +20,7 @@ module.exports = {
 			{ name: "auth", description: "Manage authorization" },
 			{ name: "users", description: "Manage users accounts" },
 			{ name: "collaborators", description: "Manage user's collaborators" },
+			{ name: "contributors", description: "Manage user's contributors" },
 			{ name: "users_emails", description: "Manage users emails" },
 			{ name: "right_holders", description: "Manage right holders" },
 			{ name: "workpieces", description: "Manage workpieces" },
