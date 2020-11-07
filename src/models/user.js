@@ -217,13 +217,7 @@ UserSchema.virtual("isDeleted").get(function () {
  * Returns whether this account can be activated with an account activation token
  */
 UserSchema.virtual("canActivate").get(function () {
-	return [
-		undefined,
-		null,
-		AccountStatus.EMAIL_VERIFICATION_PENDING,
-		AccountStatus.SPLIT_INVITED,
-		AccountStatus.CONTRIBUTOR,
-	].includes(this.accountStatus)
+	return AccountStatus.activableStatus.includes(this.accountStatus)
 })
 
 /**

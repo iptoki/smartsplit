@@ -38,6 +38,9 @@ class AccountStatus extends Constant {
 		]
 	}
 
+	static get activableStatus() {
+		return [EMAIL_VERIFICATION_PENDING, SPLIT_INVITED, CONTRIBUTOR]
+	}
 	static get constantName() {
 		return "AccountStatus"
 	}
