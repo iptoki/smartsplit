@@ -1,5 +1,6 @@
 const JWTAuth = require("../../service/JWTAuth")
 const User = require("../../models/user")
+const AccountStatus = require("../../constants/accountStatus")
 const UserSchema = require("../../schemas/users")
 const Errors = require("../errors")
 const { UserTemplates } = require("../../models/notifications/templates")
@@ -61,6 +62,11 @@ async function routes(fastify, options) {
 			tags: ["users", "collaborators"],
 			description:
 				"Create a new collaborator and add it to the authenticated user's collaborators",
+			params: {
+				user_id: {
+					type: "string",
+				},
+			},
 			body: {
 				type: "object",
 				required: ["email"],
@@ -96,6 +102,14 @@ async function routes(fastify, options) {
 			tags: ["users", "collaborators"],
 			description:
 				"Add an existing user to the authenticated user's collaborators",
+			params: {
+				user_id: {
+					type: "string",
+				},
+				collaborator_id: {
+					type: "string",
+				},
+			},
 			response: {
 				200: UserSchema.user,
 			},
@@ -162,7 +176,7 @@ async function createCollaborator(req, res) {
 	const collaborator = new User({
 		firstName: req.body.email.split("@")[0],
 		...req.body,
-		accountStatus: "split-invited",
+		accountStatus: AccountStatus.SPLIT_INVITED,
 	})
 
 	const emailVerif = await collaborator.addPendingEmail(req.body.email)

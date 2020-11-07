@@ -1,4 +1,5 @@
 const Notifications = require("../models/notifications/notification")
+const AccountStatus = require("../constants/accountStatus")
 
 module.exports.mobilePhone = {
 	type: "object",
@@ -129,14 +130,7 @@ module.exports.user = {
 		},
 		accountStatus: {
 			type: "string",
-			enum: [
-				"invalid",
-				"email-verification-pending",
-				"split-invited",
-				"contributor",
-				"active",
-				"deleted",
-			],
+			enum: AccountStatus.list,
 		},
 		mobilePhone: this.mobilePhone,
 		permissions: this.permissions,
