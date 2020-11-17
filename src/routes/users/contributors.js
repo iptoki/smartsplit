@@ -4,6 +4,7 @@ const AccountStatus = require("../../constants/accountStatus")
 const UserSchema = require("../../schemas/users")
 const Errors = require("../errors")
 const { getUser } = require("./users")
+const { UserTemplates } = require("../../models/notifications/templates")
 
 /************************ Routes ************************/
 
@@ -33,7 +34,7 @@ async function routes(fastify, options) {
 
 	fastify.route({
 		method: "GET",
-		url: "/users/:user_id/contributors/contributor_id",
+		url: "/users/:user_id/contributors/:contributor_id",
 		schema: {
 			tags: ["users", "contributors"],
 			description: "Get a user's contributor by ID",
@@ -202,11 +203,10 @@ async function routes(fastify, options) {
 
 async function getContributorById(req, res) {
 	const user = await getUser(req, res)
-
 	if (!user.contributors.includes(req.params.contributor_id))
 		throw Errors.ContributorNotFound
 
-	return await Users.findById(req.params.contributor_id)
+	return await User.findById(req.params.contributor_id)
 }
 
 async function getContributors(req, res) {
@@ -221,8 +221,13 @@ async function createContributor(req, res) {
 		...req.body,
 		accountStatus: AccountStatus.CONTRIBUTOR,
 	})
-	await contributor.save()
+
 	user.contributors.push(contributor._id)
+
+	await contributor.save()
+	await user.save()
+
+	res.code(201)
 	return contributor
 }
 
@@ -234,7 +239,7 @@ async function upgradeContributorById(req, res) {
 
 	if (await User.findOne().byEmail(req.body.email)) throw Errors.ConflictingUser
 
-	const contributor = User.findById(req.params.contributor_id)
+	const contributor = await User.findById(req.params.contributor_id)
 
 	const emailVerif = await contributor.addPendingEmail(req.body.email)
 	contributor.accountStatus = AccountStatus.SPLIT_INVITED
@@ -247,7 +252,7 @@ async function upgradeContributorById(req, res) {
 	})
 
 	user.collaborators.push(contributor._id)
-	user.splice(index, 1)
+	user.contributors.splice(index, 1)
 	await user.save()
 
 	await user.populate("contributors").execPopulate()
@@ -266,15 +271,9 @@ async function upgradeContributorById(req, res) {
 }
 
 async function updateContributorById(req, res) {
-	const user = await getUser(req, res)
-
-	if (!user.contributors.includes(req.params.contributor_id))
-		throw Errors.ContributorNotFound
-
-	const contributor = await User.findById(req.params.contributor_id)
+	const contributor = await getContributorById(req, res)
 	await contributor.update(req.body)
-
-	return contributor
+	return await User.findById(contributor._id)
 }
 
 async function deleteContributorById(req, res) {
@@ -283,7 +282,7 @@ async function deleteContributorById(req, res) {
 
 	if (index < 0) throw Errors.ContributorNotFound
 
-	user.splice(index, 1)
+	user.contributors.splice(index, 1)
 	await User.deleteOne({ _id: req.params.contributor_id })
 	await user.save()
 
