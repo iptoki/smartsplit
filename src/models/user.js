@@ -5,6 +5,7 @@ const PasswordUtil = require("../utils/password")
 const JWT = require("../utils/jwt")
 const EmailVerification = require("../models/emailVerification")
 const Notification = require("../models/notifications/notification")
+const AccountStatus = require("../constants/accountStatus")
 const { sendTemplateTo, normalizeEmailAddress } = require("../utils/email")
 const { generateRandomCode } = require("../utils/random")
 const Errors = require("../routes/errors")
@@ -49,11 +50,19 @@ const PermissionSchema = new mongoose.Schema(
 
 const ProfessionalIdentitySchema = new mongoose.Schema(
 	{
-		socan: String,
-		sodrac: String,
-		soproq: String,
-		resound: String,
-		artisti: String,
+		ids: [
+			new mongoose.Schema(
+				{
+					name: {
+						type: String,
+						lowercase: true,
+						trim: true,
+					},
+					value: String,
+				},
+				{ _id: false }
+			),
+		],
 		public: {
 			type: Boolean,
 			default: false,
@@ -72,69 +81,52 @@ const UserSchema = new mongoose.Schema(
 			alias: "user_id",
 			default: uuid,
 		},
-
+		password: String, //bcrypt
+		firstName: String,
+		lastName: String,
+		artistName: String,
+		avatar: Buffer,
+		isni: String,
+		birthDate: String,
+		address: String,
+		organisations: [String],
+		projects: [String],
+		uri: String,
 		emails: {
 			type: [String],
 			lowercase: true,
 			trim: true,
 		},
-
-		password: {
-			type: String, // bcrypt
-		},
-
 		accountStatus: {
 			type: String,
-			default: "email-verification-pending",
-			enum: [
-				"invalid",
-				"email-verification-pending",
-				"split-invited",
-				"active",
-				"deleted",
-			],
+			default: AccountStatus.EMAIL_VERIFICATION_PENDING,
+			enum: AccountStatus.list,
 		},
-
-		firstName: {
-			type: String,
-		},
-
-		lastName: {
-			type: String,
-		},
-
-		artistName: {
-			type: String,
-		},
-
-		avatar: Buffer,
-
 		locale: {
 			type: String,
 			default: "en",
 			enum: ["fr", "en"],
 		},
-
 		mobilePhone: {
 			type: MobilePhoneSchema,
 		},
-
 		notifications: {
 			type: Notification.Schema,
 			default: {},
 		},
-
 		permissions: {
 			type: PermissionSchema,
 			default: {},
 		},
-
 		professional_identity: {
 			type: ProfessionalIdentitySchema,
 			default: {},
 		},
-
 		collaborators: {
+			type: [String],
+			ref: "User",
+		},
+		contributors: {
 			type: [String],
 			ref: "User",
 		},
@@ -159,6 +151,8 @@ UserSchema.virtual("fullName").get(function () {
 		return this.firstName + " " + this.lastName
 
 	if (this.firstName) return this.firstName
+
+	if (this.lastName) return this.lastName
 
 	return "Guest"
 })
@@ -193,7 +187,7 @@ UserSchema.virtual("$email").get(function () {
  * Returns the user's avatarUrl
  */
 UserSchema.virtual("avatarUrl").get(function () {
-	if (!this.avatar) return null
+	if (!this.avatar) return undefined
 	return Config.apiUrl + "/users/" + this._id + "/avatar"
 })
 
@@ -209,26 +203,21 @@ UserSchema.virtual("isAdmin").get(function () {
  * Returns whether the current account status is active
  */
 UserSchema.virtual("isActive").get(function () {
-	return this.accountStatus === "active"
+	return this.accountStatus === AccountStatus.ACTIVE
 })
 
 /**
  * Returns whether the current account status is deleted
  */
 UserSchema.virtual("isDeleted").get(function () {
-	return this.accountStatus === "deleted"
+	return this.accountStatus === AccountStatus.DELETED
 })
 
 /**
  * Returns whether this account can be activated with an account activation token
  */
 UserSchema.virtual("canActivate").get(function () {
-	return [
-		undefined,
-		null,
-		"email-verification-pending",
-		"split-invited",
-	].includes(this.accountStatus)
+	return AccountStatus.activableStatus.includes(this.accountStatus)
 })
 
 /**
@@ -244,11 +233,20 @@ UserSchema.query.byBody = function (body) {
 }
 
 /**
+ * Looks up the database for an existing usser by contributorID
+ */
+UserSchema.query.byContributorId = function (contributor_id) {
+	return this.where({
+		contributors: contributor_id,
+	})
+}
+
+/**
  * Filters account that are considered active
  */
 UserSchema.query.byActive = function () {
 	this.where({
-		accountStatus: "active",
+		accountStatus: AccountStatus.ACTIVE,
 	})
 }
 
@@ -326,8 +324,8 @@ UserSchema.methods.addPendingEmail = async function (email) {
 		createdAt: { $gte: date },
 	}).populate("user")
 
-	// An entry exist
-	if (emailVerif && emailVerif.user && emailVerif.user !== this._id)
+	// An entry exist, check if it belongs to the current user
+	if (emailVerif && emailVerif.user && emailVerif.user._id !== this._id)
 		throw Errors.ConflictingEmail
 	// Delete it otherwise
 	else await EmailVerification.deleteOne({ _id: email })
@@ -422,13 +420,20 @@ UserSchema.methods.setMobilePhone = async function (number, verified = false) {
 /**
  * Sets the user's profesional identity
  */
-UserSchema.methods.setProfessionalIdentity = function (professional_id) {
-	for (org of ["socan", "sodrac", "soproq", "resound", "artisti"]) {
-		if (professional_id[org])
-			this.professional_identity[org] = professional_id[org]
+UserSchema.methods.setProfessionalIdentity = function (professional_identity) {
+	if (Array.isArray(professional_identity.ids)) {
+		let map = {}
+		professional_identity.ids.forEach(function (id) {
+			if (id.name.length && id.value.length)
+				map[id.name.toLowerCase().trim()] = id.value
+		})
+		this.professional_identity.ids = []
+		for (const [name, value] of Object.entries(map))
+			this.professional_identity.ids.push({ name, value })
 	}
-	if (typeof professional_id.public === "boolean")
-		this.professional_identity.public = professional_id.public
+
+	if (typeof professional_identity.public === "boolean")
+		this.professional_identity.public = professional_identity.public
 }
 
 /**
@@ -459,7 +464,7 @@ UserSchema.methods.deleteCollaborator = function (id) {
  */
 UserSchema.methods.deleteAccount = async function () {
 	await EmailVerification.deleteMany({ user: this._id })
-	this.accountStatus = "deleted"
+	this.accountStatus = AccountStatus.DELETED
 	this.locale = "en"
 	this.password = undefined
 	this.emails = undefined
@@ -482,6 +487,17 @@ UserSchema.methods.setAvatar = async function (avatar) {
 		throw new Error("Maximum file size is 4 MB")
 
 	this.avatar = avatar
+}
+
+/*
+ * Sets the user's primary email
+ */
+UserSchema.methods.setPrimaryEmail = async function (email) {
+	email = normalizeEmailAddress(email)
+	const index = this.emails.indexOf(email)
+	if (index < 0) throw Errors.EmailNotFound
+	this.emails.splice(index, 1)
+	this.emails = [email, ...this.emails]
 }
 
 /**

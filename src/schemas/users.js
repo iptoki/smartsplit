@@ -1,4 +1,5 @@
 const Notifications = require("../models/notifications/notification")
+const AccountStatus = require("../constants/accountStatus")
 
 module.exports.mobilePhone = {
 	type: "object",
@@ -85,20 +86,19 @@ module.exports.notifications = {
 module.exports.professional_identity = {
 	type: "object",
 	properties: {
-		socan: {
-			type: "string",
-		},
-		sodrac: {
-			type: "string",
-		},
-		soproq: {
-			type: "string",
-		},
-		resound: {
-			type: "string",
-		},
-		artisti: {
-			type: "string",
+		ids: {
+			type: "array",
+			items: {
+				type: "object",
+				properties: {
+					name: {
+						type: "string",
+					},
+					value: {
+						type: "string",
+					},
+				},
+			},
 		},
 		public: {
 			type: "boolean",
@@ -122,18 +122,15 @@ module.exports.user = {
 		artistName: {
 			type: "string",
 		},
-		email: {
-			type: "string",
+		emails: {
+			type: "array",
+			items: {
+				type: "string",
+			},
 		},
 		accountStatus: {
 			type: "string",
-			enum: [
-				"invalid",
-				"email-verification-pending",
-				"split-invited",
-				"active",
-				"deleted",
-			],
+			enum: AccountStatus.list,
 		},
 		mobilePhone: this.mobilePhone,
 		permissions: this.permissions,
@@ -151,6 +148,49 @@ module.exports.user = {
 			items: {
 				type: "string",
 			},
+		},
+		isni: {
+			type: "string",
+		},
+		birthDate: {
+			type: "string",
+			format: "date",
+		},
+		address: {
+			type: "string",
+		},
+		organisations: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
+		projects: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
+		uri: {
+			type: "string",
+		},
+	},
+}
+
+module.exports.contributor = {
+	type: "object",
+	properties: {
+		user_id: {
+			type: "string",
+		},
+		firstName: {
+			type: "string",
+		},
+		lastName: {
+			type: "string",
+		},
+		artistName: {
+			type: "string",
 		},
 	},
 }
@@ -170,9 +210,6 @@ module.exports.rightHolder = {
 		artistName: {
 			type: "string",
 		},
-		email: {
-			type: "string",
-		},
 	},
 }
 
@@ -180,9 +217,6 @@ module.exports.userPublicProfile = {
 	type: "object",
 	properties: {
 		user_id: {
-			type: "string",
-		},
-		email: {
 			type: "string",
 		},
 		artistName: {
@@ -202,6 +236,24 @@ module.exports.userPublicProfile = {
 			enum: ["en", "fr"],
 		},
 		professional_identity: this.professional_identity,
+		isni: {
+			type: "string",
+		},
+		organisations: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
+		projects: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
+		uri: {
+			type: "string",
+		},
 	},
 }
 
@@ -241,6 +293,37 @@ module.exports.userRequestBody = {
 				type: "string",
 			},
 		},
+		contributors: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
+		isni: {
+			type: "string",
+		},
+		birthDate: {
+			type: "string",
+			format: "date",
+		},
+		address: {
+			type: "string",
+		},
+		organisations: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
+		projects: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
+		uri: {
+			type: "string",
+		},
 	},
 	additionalProperties: false,
 }
@@ -257,7 +340,7 @@ module.exports.emailStatusList = {
 			},
 			status: {
 				type: "string",
-				enum: ["active", "pending"],
+				enum: ["primary", "active", "pending"],
 			},
 		},
 	},
