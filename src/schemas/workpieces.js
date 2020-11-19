@@ -1,5 +1,3 @@
-const Workpiece = require("../models/workpiece")
-
 module.exports.split = {
 	type: "object",
 	properties: {
@@ -122,8 +120,57 @@ module.exports.file = {
 			type: "string",
 			enum: ["public", "hidden", "private"],
 		},
-		fileUrl: {
+		url: {
 			type: "string",
+		},
+	},
+}
+
+module.exports.externalFile = {
+	type: "object",
+	properties: {
+		url: {
+			type: "string",
+		},
+		public: {
+			type: "boolean",
+		},
+	},
+}
+
+module.exports.musicGenre = {
+	type: "object",
+	properties: {
+		id: {
+			type: "string",
+		},
+		name: {
+			type: "string",
+		},
+	},
+}
+
+module.exports.record = {
+	type: "object",
+	properties: {
+		studio: {
+			type: "string",
+		},
+		engineers: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
+		date: {
+			type: "string",
+			format: "date",
+		},
+		notes: {
+			type: "array",
+			items: {
+				type: "string",
+			},
 		},
 	},
 }
@@ -133,23 +180,176 @@ module.exports.documentation = {
 	properties: {
 		creation: {
 			type: "object",
-			properties: {},
+			properties: {
+				date: {
+					type: "string",
+					format: "date",
+				},
+				authors: {
+					type: "array",
+					items: {
+						type: "string",
+					},
+				},
+				composers: {
+					type: "array",
+					items: {
+						type: "string",
+					},
+				},
+				publishers: {
+					type: "array",
+					items: {
+						type: "string",
+					},
+				},
+				iswc: {
+					type: "string",
+				},
+			},
 		},
 		performance: {
 			type: "object",
-			properties: {},
+			properties: {
+				principle: {
+					type: "array",
+					items: {
+						type: "string",
+					},
+				},
+				accompanying: {
+					type: "array",
+					items: {
+						type: "string",
+					},
+				},
+			},
 		},
 		recording: {
 			type: "object",
-			properties: {},
+			properties: {
+				directors: {
+					type: "array",
+					items: {
+						type: "string",
+					},
+				},
+				recording: {
+					type: "array",
+					items: {
+						type: this.record,
+					},
+				},
+				mixing: {
+					type: "array",
+					items: {
+						type: this.record,
+					},
+				},
+				mastering: {
+					type: "array",
+					items: {
+						type: this.record,
+					},
+				},
+			},
 		},
 		release: {
 			type: "object",
-			properties: {},
+			properties: {
+				date: {
+					type: "string",
+					format: "date",
+				},
+				label: {
+					type: "string",
+				},
+				format: {
+					type: "string",
+				},
+				support: {
+					type: "string",
+				},
+			},
+		},
+		files: {
+			art: {
+				type: "array",
+				items: {
+					type: this.file,
+				},
+			},
+			audio: {
+				type: "array",
+				items: {
+					type: this.externalFile,
+				},
+			},
+			scores: {
+				type: "array",
+				items: {
+					type: this.externalFile,
+				},
+			},
+			midi: {
+				type: "array",
+				items: {
+					type: this.externalFile,
+				},
+			},
+		},
+		info: {
+			length: {
+				type: "string",
+			},
+			BPM: {
+				type: "number",
+			},
+			mainGenre: this.musicGenre,
+			secondaryGenres: {
+				type: "array",
+				items: this.musicGenre,
+			},
+			influences: {
+				type: "array",
+				items: {
+					type: "string",
+				},
+			},
 		},
 		lyrics: {
 			type: "object",
-			properties: {},
+			properties: {
+				texts: {
+					type: "array",
+					items: {
+						type: "string",
+					},
+				},
+				languages: {
+					type: "array",
+					items: {
+						type: "string",
+					},
+				},
+				public: {
+					type: "boolean",
+				},
+			},
+		},
+		streaming: {
+			type: "array",
+			items: {
+				type: "object",
+				properties: {
+					platform: {
+						type: "string",
+					},
+					url: {
+						type: "string",
+					},
+				},
+			},
 		},
 	},
 }
@@ -207,10 +407,6 @@ module.exports.workpiece = {
 		archivedSplits: {
 			type: "array",
 			items: this.rightSplit,
-		},
-		files: {
-			type: "array",
-			items: this.file,
 		},
 		documentation: this.documentation,
 	},
