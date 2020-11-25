@@ -1,6 +1,8 @@
 const JWTAuth = require("../../service/JWTAuth")
 const Controller = require("./handlers")
-const WorkpieceSchema = require("../../schemas/workpieces")
+const WorkpieceSchemas = require("../../schemas/workpieces/workpieces")
+const RightSplitSchemas = require("../../schemas/workpieces/rightSplits")
+const DocumentationSchemas = require("../../schemas/workpieces/documentation")
 
 /************************ Routes ************************/
 
@@ -17,7 +19,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: { type: "array", items: WorkpieceSchema.workpiece },
+				200: { type: "array", items: WorkpieceSchemas.workpiece },
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -37,7 +39,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: WorkpieceSchema.workpiece,
+				200: WorkpieceSchemas.workpiece,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -51,9 +53,9 @@ async function routes(fastify, options) {
 		schema: {
 			tags: ["workpieces"],
 			description: "Create a new workpiece in the system",
-			body: WorkpieceSchema.workpieceRequestBody,
+			body: WorkpieceSchemas.workpieceRequestBody,
 			response: {
-				201: WorkpieceSchema.workpiece,
+				201: WorkpieceSchemas.workpiece,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -72,9 +74,9 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: WorkpieceSchema.workpieceRequestBody,
+			body: WorkpieceSchemas.workpieceRequestBody,
 			response: {
-				200: WorkpieceSchema.workpiece,
+				200: WorkpieceSchemas.workpiece,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -135,11 +137,11 @@ async function routes(fastify, options) {
 				},
 			},
 			body: {
-				allOf: [WorkpieceSchema.fileRequestBody],
+				allOf: [DocumentationSchemas.fileRequestBody],
 				required: ["name", "mimeType", "data"],
 			},
 			response: {
-				201: WorkpieceSchema.file,
+				201: DocumentationSchemas.file,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -161,9 +163,9 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: WorkpieceSchema.fileRequestBody,
+			body: DocumentationSchemas.fileRequestBody,
 			response: {
-				200: WorkpieceSchema.file,
+				200: DocumentationSchemas.file,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -182,9 +184,9 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: WorkpieceSchema.rightSplitRequestBody,
+			body: RightSplitSchemas.rightSplitRequestBody,
 			response: {
-				201: WorkpieceSchema.rightSplit,
+				201: RightSplitSchemas.rightSplit,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -203,9 +205,9 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: WorkpieceSchema.rightSplitRequestBody,
+			body: RightSplitSchemas.rightSplitRequestBody,
 			response: {
-				200: WorkpieceSchema.rightSplit,
+				200: RightSplitSchemas.rightSplit,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -264,7 +266,7 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: WorkpieceSchema.rightSplitVoteBody,
+			body: RightSplitSchemas.rightSplitVoteBody,
 			response: {
 				204: {},
 			},
@@ -317,7 +319,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: WorkpieceSchema.documentation,
+				200: DocumentationSchemas.documentation,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -341,7 +343,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: WorkpieceSchema.documentation,
+				200: DocumentationSchemas.documentation,
 			},
 			security: [{ bearerAuth: [] }],
 		},

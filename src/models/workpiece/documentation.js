@@ -36,14 +36,11 @@ const CreationSchema = new mongoose.Schema(
 
 const PerformanceSchema = new mongoose.Schema(
 	{
-		principale: {
-			type: [String],
+		conductor: {
+			type: String,
 			ref: "User",
 		},
-		accompanying: {
-			type: [String],
-			ref: "User",
-		},
+		performers: [PerformerSchema],
 	},
 	{ _id: false }
 )
@@ -54,9 +51,9 @@ const RecordingSchema = new mongoose.Schema(
 			type: [String],
 			ref: "User",
 		},
-		recording: [RecordSchema] 
-		mixing: [RecordSchema]
-		mastering: [RecordSchema]
+		recording: [RecordSchema],
+		mixing: [RecordSchema],
+		mastering: [RecordSchema],
 	},
 	{ _id: false }
 )
@@ -73,10 +70,10 @@ const ReleaseSchema = new mongoose.Schema(
 
 const FilesSchema = new mongoose.Schema(
 	{
-		art: [FilesSchema]
-		audio: [ExternalFileSchema]
-		scores: [ExternalFileSchema]
-		midi: [ExternalFileSchema]
+		art: [FilesSchema],
+		audio: [ExternalFileSchema],
+		scores: [ExternalFileSchema],
+		midi: [ExternalFileSchema],
 	},
 	{ _id: false }
 )
@@ -119,7 +116,7 @@ const ExternalFileSchema = new mongoose.Schema(
 	{
 		url: String,
 		public: Boolean,
-	}	
+	},
 	{ _id: false }
 )
 
@@ -145,7 +142,7 @@ const FileSchema = new mongoose.Schema(
 		},
 		data: Buffer,
 	},
-	{ toJSON: { virtuals: true } }	
+	{ toJSON: { virtuals: true } }
 )
 
 const RecordSchema = new mongoose.Schema(
@@ -160,6 +157,39 @@ const RecordSchema = new mongoose.Schema(
 		},
 		date: String,
 		notes: [String],
-	}	
+	},
+	{ _id: false }
+)
+
+const PerformerSchema = new mongoose.Schema(
+	{
+		user: {
+			type: String,
+			ref: "User",
+		},
+		type: {
+			type: String,
+			enum: ["principale", "featured", "bandMember"],
+		},
+		isSinger: Boolean,
+		isMusician: Boolean,
+		vocals: [PerformerToolSchema],
+		instruments: [PerformerToolSchema],
+	},
+	{ _id: false }
+)
+
+const PerformerToolSchema = new mongoose.Schema(
+	{
+		instrument: {
+			type: String,
+			ref: "",
+		},
+		role: {
+			type: String,
+			ref: "",
+		},
+		notes: String,
+	},
 	{ _id: false }
 )
