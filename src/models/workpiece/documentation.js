@@ -1,15 +1,84 @@
 const mongoose = require("mongoose")
+const uuid = require("uuid").v4
 
-const DocumentationSchema = new mongoose.Schema(
+const ExternalFileSchema = new mongoose.Schema(
 	{
-		creation: CreationSchema,
-		performance: PerformanceSchema,
-		recording: RecordingSchema,
-		release: ReleaseSchema,
-		files: FilesSchema,
-		info: InfoSchema,
-		lyrics: LyricsSchema,
-		streaming: [StreamingSchema],
+		url: String,
+		public: Boolean,
+	},
+	{ _id: false }
+)
+
+const FileSchema = new mongoose.Schema(
+	{
+		_id: {
+			type: String,
+			alias: "file_id",
+			default: uuid,
+		},
+		name: {
+			type: String,
+		},
+		mimeType: {
+			type: String,
+		},
+		size: {
+			type: Number,
+		},
+		visibility: {
+			type: String,
+			enum: ["public", "hidden", "private"],
+		},
+		data: Buffer,
+	},
+	{ toJSON: { virtuals: true } }
+)
+
+const RecordSchema = new mongoose.Schema(
+	{
+		studio: {
+			type: String,
+			ref: "",
+		},
+		engineers: {
+			type: [String],
+			ref: "User",
+		},
+		date: String,
+		notes: [String],
+	},
+	{ _id: false }
+)
+
+const PerformerToolSchema = new mongoose.Schema(
+	{
+		instrument: {
+			type: String,
+			ref: "",
+		},
+		role: {
+			type: String,
+			ref: "",
+		},
+		notes: String,
+	},
+	{ _id: false }
+)
+
+const PerformerSchema = new mongoose.Schema(
+	{
+		user: {
+			type: String,
+			ref: "User",
+		},
+		type: {
+			type: String,
+			enum: ["principale", "featured", "bandMember"],
+		},
+		isSinger: Boolean,
+		isMusician: Boolean,
+		vocals: [PerformerToolSchema],
+		instruments: [PerformerToolSchema],
 	},
 	{ _id: false }
 )
@@ -70,7 +139,7 @@ const ReleaseSchema = new mongoose.Schema(
 
 const FilesSchema = new mongoose.Schema(
 	{
-		art: [FilesSchema],
+		art: [FileSchema],
 		audio: [ExternalFileSchema],
 		scores: [ExternalFileSchema],
 		midi: [ExternalFileSchema],
@@ -112,84 +181,16 @@ const StreamingSchema = new mongoose.Schema(
 	{ _id: false }
 )
 
-const ExternalFileSchema = new mongoose.Schema(
+const DocumentationSchema = new mongoose.Schema(
 	{
-		url: String,
-		public: Boolean,
-	},
-	{ _id: false }
-)
-
-const FileSchema = new mongoose.Schema(
-	{
-		_id: {
-			type: String,
-			alias: "file_id",
-			default: uuid,
-		},
-		name: {
-			type: String,
-		},
-		mimeType: {
-			type: String,
-		},
-		size: {
-			type: Number,
-		},
-		visibility: {
-			type: String,
-			enum: ["public", "hidden", "private"],
-		},
-		data: Buffer,
-	},
-	{ toJSON: { virtuals: true } }
-)
-
-const RecordSchema = new mongoose.Schema(
-	{
-		studio: {
-			type: String,
-			ref: "",
-		},
-		engineers: {
-			type: [String],
-			ref: "User",
-		},
-		date: String,
-		notes: [String],
-	},
-	{ _id: false }
-)
-
-const PerformerSchema = new mongoose.Schema(
-	{
-		user: {
-			type: String,
-			ref: "User",
-		},
-		type: {
-			type: String,
-			enum: ["principale", "featured", "bandMember"],
-		},
-		isSinger: Boolean,
-		isMusician: Boolean,
-		vocals: [PerformerToolSchema],
-		instruments: [PerformerToolSchema],
-	},
-	{ _id: false }
-)
-
-const PerformerToolSchema = new mongoose.Schema(
-	{
-		instrument: {
-			type: String,
-			ref: "",
-		},
-		role: {
-			type: String,
-			ref: "",
-		},
-		notes: String,
+		creation: CreationSchema,
+		performance: PerformanceSchema,
+		recording: RecordingSchema,
+		release: ReleaseSchema,
+		files: FilesSchema,
+		info: InfoSchema,
+		lyrics: LyricsSchema,
+		streaming: [StreamingSchema],
 	},
 	{ _id: false }
 )

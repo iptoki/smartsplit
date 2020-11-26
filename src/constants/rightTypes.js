@@ -15,11 +15,7 @@ class RightTypes extends Constant {
 		return RECORDING
 	}
 	static get list() {
-		return [
-			COPYRIGHT,
-			INTERPRETATION,
-			RECORDING,
-		]
+		return [COPYRIGHT, INTERPRETATION, RECORDING]
 	}
 	static get constantName() {
 		return "RightType"
