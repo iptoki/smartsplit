@@ -7,9 +7,9 @@ const { UserNotFound } = require("../routes/errors")
 const JWT = require("../utils/jwt")
 const RightSplitSchema = require("./rightSplit")
 const DocumentationSchema = require("./documentation")
-const JWT_SPLIT_TYPE = "workpiece:split-invite"
+const RightTypes = require("../../constants/rightTypes")
 
-const RightTypes = ["copyright", "interpretation", "recording"]
+const JWT_SPLIT_TYPE = "workpiece:split-invite"
 
 const WorkpieceSchema = new mongoose.Schema(
 	{
@@ -88,7 +88,7 @@ WorkpieceSchema.methods.setRightSplit = async function (body) {
 	}
 	this.rightHolders = []
 
-	for (let rightType of RightTypes) {
+	for (let rightType of RightTypes.list) {
 		for (let entry of body[rightType]) {
 			if (!(await User.exists({ _id: entry.rightHolder }))) throw UserNotFound
 
@@ -106,7 +106,7 @@ WorkpieceSchema.methods.setRightSplit = async function (body) {
 }
 
 WorkpieceSchema.methods.setVote = function (rightHolderId, rightsVote) {
-	for (let type of RightTypes) {
+	for (let type of RightTypes.list) {
 		for (let entry of this.rightSplit[type]) {
 			if (entry.rightHolder === rightHolderId && rightsVote[type]) {
 				if (entry.vote === "undecided") {
@@ -172,7 +172,7 @@ WorkpieceSchema.methods.swapRightHolder = async function (originalId, swapId) {
 	const index = this.rightHolders.indexOf(originalId)
 	this.rightHolders[index] = swapId
 
-	for (let type of RightTypes) {
+	for (let type of RightTypes.list) {
 		for (let entry of this.rightSplit[type]) {
 			if (entry.rightHolder === originalId) {
 				entry.rightHolder = swapId
@@ -188,7 +188,7 @@ WorkpieceSchema.methods.updateRightSplitState = async function () {
 	const initialState = this.rightSplit._state
 	let accepted = true
 
-	for (let type of RightTypes) {
+	for (let type of RightTypes.list) {
 		for (let entry of this.rightSplit[type]) {
 			if (entry.vote === "rejected") this.rightSplit._state = "rejected"
 			else if (entry.vote === "undecided") accepted = false
@@ -209,5 +209,3 @@ WorkpieceSchema.methods.updateRightSplitState = async function () {
 }
 
 module.exports = mongoose.model("Workpiece", WorkpieceSchema)
-
-module.exports.RightTypes = RightTypes
