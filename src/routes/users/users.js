@@ -3,6 +3,7 @@ const { UserTemplates } = require("../../models/notifications/templates")
 const EmailVerification = require("../../models/emailVerification")
 const UserSchema = require("../../schemas/users")
 const AuthSchema = require("../../schemas/auth")
+const AccountStatus = require("../../constants/accountStatus")
 const Errors = require("../errors")
 const JWTAuth = require("../../service/JWTAuth")
 

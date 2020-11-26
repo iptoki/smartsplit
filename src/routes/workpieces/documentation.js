@@ -7,7 +7,7 @@ const DocumentationSchemas = require("../../schemas/workpieces/documentation")
 async function routes(fastify, options) {
 	fastify.route({
 		method: "GET",
-		url: "/workpieces/:workpiece_id/docs",
+		url: "/workpieces/:workpiece_id/documentation",
 		schema: {
 			tags: ["workpieces"],
 			description: "Get a workpiece's documentation",
@@ -27,7 +27,7 @@ async function routes(fastify, options) {
 
 	fastify.route({
 		method: "GET",
-		url: "/workpieces/:workpiece_id/docs/:field",
+		url: "/workpieces/:workpiece_id/documentaion/:field",
 		schema: {
 			tags: ["workpieces"],
 			description: "Get a workpiece's documentation",
@@ -49,17 +49,18 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: DocumentationSchemas.documentation,
+				200: DocumentationSchemas.documentationField,
 			},
 			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthUser,
 		handler: getDocumentationField,
+		serializerCompiler: documentationFieldSerializer,
 	})
 
 	fastify.route({
 		method: "GET",
-		url: "/workpieces/:workpiece_id/files/:file_id",
+		url: "/workpieces/:workpiece_id/documentation/files/:file_id",
 		schema: {
 			tags: ["workpieces", "workpieces_files"],
 			description: "Get a workpiece's file by ID",
@@ -75,15 +76,15 @@ async function routes(fastify, options) {
 				200: {},
 			},
 		},
-		handler: getWorkpieceFile,
+		handler: getFile,
 	})
 
 	fastify.route({
 		method: "POST",
-		url: "/workpieces/:workpiece_id/files/",
+		url: "/workpieces/:workpiece_id/documentaion/files/",
 		schema: {
 			tags: ["workpieces", "workpieces_files"],
-			description: "Create a new file in a workpiece",
+			description: "Create and add a new file to a workpiece's documentation",
 			params: {
 				workpiece_id: {
 					type: "string",
@@ -99,12 +100,12 @@ async function routes(fastify, options) {
 			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthUser,
-		handler: addWorkpieceFile,
+		handler: createFile,
 	})
 
 	fastify.route({
 		method: "PATCH",
-		url: "/workpieces/:workpiece_id/files/:file_id",
+		url: "/workpieces/:workpiece_id/documentation/files/:file_id",
 		schema: {
 			tags: ["workpieces", "workpieces_files"],
 			description: "Update a workpiece's file by ID",
@@ -123,7 +124,7 @@ async function routes(fastify, options) {
 			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthUser,
-		handler: updateWorkpieceFile,
+		handler: updateFile,
 	})
 }
 
@@ -132,7 +133,7 @@ async function routes(fastify, options) {
 const { getWorkpiece, getWorkpieceAsOwner } = require("./workpieces")
 
 const _getWorkpieceFile = function (workpiece, file_id) {
-	for (file of workpiece.files) {
+	for (file of workpiece.documentation.files.art) {
 		if (file._id === file_id) {
 			return file
 		}
@@ -147,13 +148,14 @@ const getDocumentation = async function (req, res) {
 
 const getDocumentationField = async function (req, res) {
 	const workpiece = await getWorkpiece(req, res)
-	return workpiece.documentation[req.params.field]
+	return { 
+		field: req.params.field,
+		data: workpiece.documentation[req.params.field],
+	}
 }
 
-const getWorkpieceFile = async function (req, res) {
-	const workpiece = await Workpiece.findById(req.params.workpiece_id)
-	if (!workpiece) throw Errors.WorkpieceNotFound
-
+const getFile = async function (req, res) {
+	const workpiece = await getWorkpiece(req, res)
 	const file = _getWorkpieceFile(workpiece, req.params.file_id)
 
 	if (file.visibility !== "public") {
@@ -165,7 +167,7 @@ const getWorkpieceFile = async function (req, res) {
 	return file.data
 }
 
-const addWorkpieceFile = async function (req, res) {
+const createFile = async function (req, res) {
 	const workpiece = await getWorkpieceAsOwner(req, res)
 	const file = workpiece.addFile(
 		req.body.name,
@@ -178,7 +180,7 @@ const addWorkpieceFile = async function (req, res) {
 	return file
 }
 
-const updateWorkpieceFile = async function (req, res) {
+const updateFile = async function (req, res) {
 	const workpiece = await getWorkpieceAsOwner(req, res)
 	const file = _getWorkpieceFile(workpiece, req.params.file_id)
 	for (field of ["name", "mimeType", "visibility"]) {
@@ -193,8 +195,21 @@ const updateWorkpieceFile = async function (req, res) {
 	return file
 }
 
-const getWorkpiecesByOwner = async function (req, res) {
-	return await Workpiece.find().byOwner(req.params.user_id)
+/************************ Custom serializer ************************/
+
+/*
+	fast-json-stringify does not support schema with `oneOf` being at the root.
+	As a workaround, we mimic the `oneOf` mechanism  by defining a custom serializer 
+	where we dinamicaly determine which schema should be serialized.
+	See /src/schemas/workpieces/documentation.js for more information
+*/
+
+function documentationFieldSerializer(test) {
+	const fastJson = require("fast-json-stringify")
+	return (response) => {
+		const stringify = fastJson(DocumentationSchemas[response.field])
+		return stringify(response.data)
+	}
 }
 
 module.exports = routes

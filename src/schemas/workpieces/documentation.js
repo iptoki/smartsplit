@@ -259,6 +259,19 @@ module.exports.documentation = {
 	},
 }
 
+module.exports.documentationField = {
+	anyOf: [
+		this.creation,
+		this.performance,
+		this.recording,
+		this.release,
+		this.files,
+		this.info,
+		this.lyrics,
+		this.streaming,
+	]
+}
+
 module.exports.fileRequestBody = {
 	type: "object",
 	properties: {

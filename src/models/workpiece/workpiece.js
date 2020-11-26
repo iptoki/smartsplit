@@ -41,6 +41,7 @@ const WorkpieceSchema = new mongoose.Schema(
 		},
 		documentation: {
 			type: DocumentationSchema,
+			default: {},
 		},
 	},
 	{ timestamps: true, toJSON: { virtuals: true } }
@@ -120,14 +121,14 @@ WorkpieceSchema.methods.setVote = function (rightHolderId, rightsVote) {
 }
 
 WorkpieceSchema.methods.addFile = function (name, mimeType, visibility, data) {
-	const l = this.files.push({
+	const l = this.documentation.files.art.push({
 		name: name,
 		size: data.length,
 		mimeType: mimeType,
 		visibility: visibility,
 		data: data,
 	})
-	return this.files[l - 1]
+	return this.documentation.files.art[l - 1]
 }
 
 WorkpieceSchema.methods.isRemovable = function () {

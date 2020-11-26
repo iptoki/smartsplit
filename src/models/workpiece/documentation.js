@@ -183,14 +183,37 @@ const StreamingSchema = new mongoose.Schema(
 
 const DocumentationSchema = new mongoose.Schema(
 	{
-		creation: CreationSchema,
-		performance: PerformanceSchema,
-		recording: RecordingSchema,
-		release: ReleaseSchema,
-		files: FilesSchema,
-		info: InfoSchema,
-		lyrics: LyricsSchema,
+		creation: {
+			type: CreationSchema,
+			default: {},
+		},
+		performance: {
+			type: PerformanceSchema,
+			default: {},
+		},
+		recording: {
+			type: RecordingSchema,
+			default: {},
+		},
+		release: {
+			type: ReleaseSchema,
+			default: {},
+		},
+		files: {
+			type: FilesSchema,
+			default: {},
+		},
+		info: {
+			type: InfoSchema,
+			default: {},
+		},
+		lyrics: {
+			type: LyricsSchema,
+			default: {},
+		},
 		streaming: [StreamingSchema],
 	},
 	{ _id: false }
 )
+
+module.exports = DocumentationSchema

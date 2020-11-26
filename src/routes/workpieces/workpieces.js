@@ -131,19 +131,11 @@ const getWorkpieceAsRightHolder = async function (req, res) {
 	return workpiece
 }
 
-const _getWorkpieceFile = function (workpiece, file_id) {
-	for (file of workpiece.files) {
-		if (file._id === file_id) {
-			return file
-		}
-	}
-	throw Errors.WorkpieceFileNotFound
-}
-
 const createWorkpiece = async function (req, res) {
 	req.body.owner = req.authUser._id
 	const workpiece = new Workpiece(req.body)
 	await workpiece.save()
+	console.log(workpiece)
 	res.code(201)
 	return workpiece
 }
