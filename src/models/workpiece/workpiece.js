@@ -209,4 +209,63 @@ WorkpieceSchema.methods.updateRightSplitState = async function () {
 	}
 }
 
+WorkpieceSchema.methods.updateDocumentation = async function (data) {
+	await this.updateCreation(data.creation)
+	await this.updatePerformance(data.performance)
+	await this.updateRecording(data.recording)
+	await this.updateRelease(data.release)
+	await this.updateInfo(data.info)
+	await this.updateLyrics(data.lyrics)
+	await this.updateStreaming(data.streaming)
+}
+
+WorkpieceSchema.methods.updateCreation = async function (data) {
+	for (let field of ["date", "iswc"])
+		if (field !== undefined) this.documentation.creation[field] = data[field]
+	for (field of ["authors", "composers", "publishers"])
+		if (Array.isArray(data[field])) {
+			for (const uid of data[field])
+				if (!(await User.exists({ _id: uid }))) throw UserNotFound
+			this.documentation.creation[field] = data[field]
+		}
+}
+
+WorkpieceSchema.methods.updatePerformance = async function (data) {
+	if (data.conductor !== undefined)
+		this.documentation.performance.conductor = data.conductor
+	if (Array.isArray(data.performers)) {
+		// TODO
+	}
+}
+
+WorkpieceSchema.methods.updateRecording = async function (data) {
+	if (Array.isArray(data.directors)) {
+		for (const uid of data.directors)
+			if (!(await User.exists({ _id: uid }))) throw UserNotFound
+		this.documentation.recording.directors = data.directors
+	}
+	// TODO `recording` `mixing` `mastering`
+}
+
+WorkpieceSchema.methods.updateRelease = async function (data) {
+	for (let field of ["date", "label", "format", "support"])
+		if (field !== undefined) this.documentation.release[field] = data[field]
+}
+
+WorkpieceSchema.methods.updateInfo = async function (data) {
+	for (let field of ["length", "BPM", "influences"])
+		if (field !== undefined) this.documentation.info[field] = data[field]
+
+	// TODO `mainGenre` `secondaryGenres`
+}
+
+WorkpieceSchema.methods.updateLyrics = async function (data) {
+	for (let field of ["texts", "languages", "public"])
+		if (field !== undefined) this.documentation.lyrics[field] = data[field]
+}
+
+WorkpieceSchema.methods.updateStreaming = async function (data) {
+	if (Array.isArray(data)) this.documentation.streaming = data
+}
+
 module.exports = mongoose.model("Workpiece", WorkpieceSchema)

@@ -59,6 +59,59 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
+		method: "PATCH",
+		url: "/workpieces/:workpiece_id/documentation",
+		schema: {
+			tags: ["workpieces"],
+			description: "Update a workpiece's documentation",
+			params: {
+				workpiece_id: {
+					type: "string",
+				},
+			},
+			response: {
+				200: DocumentationSchemas.documentation,
+			},
+			security: [{ bearerAuth: [] }],
+		},
+		preValidation: JWTAuth.requireAuthUser,
+		handler: updateDocumentation,
+	})
+
+	fastify.route({
+		method: "PATCH",
+		url: "/workpieces/:workpiece_id/documentaion/:field",
+		schema: {
+			tags: ["workpiece_documentation"],
+			description: "Patch a workpiece's documentation field",
+			params: {
+				workpiece_id: {
+					type: "string",
+				},
+				field: {
+					type: "string",
+					enum: [
+						"creation",
+						"performance",
+						"recording",
+						"release",
+						"info",
+						"lyrics",
+						"streaming",
+					],
+				},
+			},
+			response: {
+				200: DocumentationSchemas.documentationField,
+			},
+			security: [{ bearerAuth: [] }],
+		},
+		preValidation: JWTAuth.requireAuthUser,
+		handler: updateDocumentationField,
+		serializerCompiler: documentationFieldSerializer,
+	})
+
+	fastify.route({
 		method: "GET",
 		url: "/workpieces/:workpiece_id/documentation/files/:file_id",
 		schema: {
@@ -148,10 +201,23 @@ const getDocumentation = async function (req, res) {
 
 const getDocumentationField = async function (req, res) {
 	const workpiece = await getWorkpiece(req, res)
-	return { 
+	return {
 		field: req.params.field,
 		data: workpiece.documentation[req.params.field],
 	}
+}
+
+const updateDocumentation = async function (req, res) {
+	const workpiece = await getWorkpieceAsOwner(req, res)
+	await workpiece.updateDocumentation(req.body)
+	await workpiece.save()
+	return workpiece.documentation
+}
+
+const updateDocumentationField = async function (req, res) {
+	req.body = { [req.params.field]: req.body }
+	const doc = await updateDocumentation(req, res)
+	return doc[req.params.field]
 }
 
 const getFile = async function (req, res) {

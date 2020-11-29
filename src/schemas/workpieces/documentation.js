@@ -269,7 +269,7 @@ module.exports.documentationField = {
 		this.info,
 		this.lyrics,
 		this.streaming,
-	]
+	],
 }
 
 module.exports.fileRequestBody = {
