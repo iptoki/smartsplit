@@ -146,7 +146,7 @@ const updateWorkpiece = async function (req, res) {
 	for (let field of ["title", "entityTags"])
 		if (req.body[field]) workpiece[field] = req.body[field]
 
-	if(req.body.documentation !== undefined)
+	if (req.body.documentation !== undefined)
 		await workpiece.updateDocumentation(req.body.documentation)
 
 	await workpiece.save()

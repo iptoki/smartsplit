@@ -9,7 +9,7 @@ async function routes(fastify, options) {
 		method: "GET",
 		url: "/workpieces/:workpiece_id/documentation",
 		schema: {
-			tags: ["workpieces"],
+			tags: ["workpieces", "workpiece_documentation"],
 			description: "Get a workpiece's documentation",
 			params: {
 				workpiece_id: {
@@ -29,7 +29,7 @@ async function routes(fastify, options) {
 		method: "GET",
 		url: "/workpieces/:workpiece_id/documentaion/:field",
 		schema: {
-			tags: ["workpieces"],
+			tags: ["workpieces", "workpiece_documentation"],
 			description: "Get a workpiece's documentation",
 			params: {
 				workpiece_id: {
@@ -62,7 +62,7 @@ async function routes(fastify, options) {
 		method: "PATCH",
 		url: "/workpieces/:workpiece_id/documentation",
 		schema: {
-			tags: ["workpieces"],
+			tags: ["workpieces", "workpiece_documentation"],
 			description: "Update a workpiece's documentation",
 			params: {
 				workpiece_id: {
