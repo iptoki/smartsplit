@@ -214,6 +214,7 @@ WorkpieceSchema.methods.updateDocumentation = async function (data) {
 	await this.updatePerformance(data.performance)
 	await this.updateRecording(data.recording)
 	await this.updateRelease(data.release)
+	await this.updateFiles(data.files)
 	await this.updateInfo(data.info)
 	await this.updateLyrics(data.lyrics)
 	await this.updateStreaming(data.streaming)
@@ -250,6 +251,11 @@ WorkpieceSchema.methods.updateRecording = async function (data) {
 WorkpieceSchema.methods.updateRelease = async function (data) {
 	for (let field of ["date", "label", "format", "support"])
 		if (field !== undefined) this.documentation.release[field] = data[field]
+}
+
+WorkpieceSchema.methods.updateFiles = async function (data) {
+	for (let field of ["audio", "scores", "midi"])
+		if (field !== undefined) this.documentation.info[field] = data[field]
 }
 
 WorkpieceSchema.methods.updateInfo = async function (data) {
