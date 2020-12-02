@@ -210,68 +210,54 @@ WorkpieceSchema.methods.updateRightSplitState = async function () {
 }
 
 WorkpieceSchema.methods.updateDocumentation = async function (data) {
-	await this.updateCreation(data.creation)
-	await this.updatePerformance(data.performance)
-	await this.updateRecording(data.recording)
-	await this.updateRelease(data.release)
-	await this.updateFiles(data.files)
-	await this.updateInfo(data.info)
-	await this.updateLyrics(data.lyrics)
-	await this.updateStreaming(data.streaming)
+	await this.documentation.updateCreation(data.creation || {})
+	await this.documentation.updatePerformance(data.performance || {})
+	await this.documentation.updateRecording(data.recording || {})
+	await this.documentation.updateRelease(data.release || {})
+	await this.documentation.updateFiles(data.files || {})
+	await this.documentation.updateInfo(data.info || {})
+	await this.documentation.updateLyrics(data.lyrics || {})
+	await this.documentation.updateStreaming(data.streaming || {})
 }
 
-WorkpieceSchema.methods.updateCreation = async function (data) {
-	for (let field of ["date", "iswc"])
-		if (field !== undefined) this.documentation.creation[field] = data[field]
-	for (field of ["authors", "composers", "publishers"])
-		if (Array.isArray(data[field])) {
-			for (const uid of data[field])
-				if (!(await User.exists({ _id: uid }))) throw UserNotFound
-			this.documentation.creation[field] = data[field]
+WorkpieceSchema.methods.populateDocumentation = async function () {
+	await this.populateCreation()
+	// await this.populatePerformance()
+	// await this.populateRecording()
+	// await this.populateInfo()
+}
+
+WorkpieceSchema.methods.populateCreation = async function () {
+	await this.populate("documentation.creation.authors").execPopulate()
+	await this.populate("documentation.creation.composers").execPopulate()
+	await this.populate("documentation.creation.publishers").execPopulate()
+}
+
+WorkpieceSchema.methods.populatePerformance = async function () {
+	await this.populate("documentation.performance.conductor").execPopulate()
+	for (let performer of this.documentation.performance.performers) {
+		await performer.populate("user")
+		for (let instrument of this.instruments) {
+			await instrument.populate("instrument").execPopulate()
+			await instrument.populate("role").execPopulate()
 		}
+	}
+	// TODO performer.vocals
 }
 
-WorkpieceSchema.methods.updatePerformance = async function (data) {
-	if (data.conductor !== undefined)
-		this.documentation.performance.conductor = data.conductor
-	if (Array.isArray(data.performers)) {
-		// TODO
+WorkpieceSchema.methods.populateRecording = async function () {
+	await this.populate("documentation.recording.directors").execPopulate()
+	for (let field of ["recording", "mixing", "mastering"]) {
+		for (let record of this.documentation.recording[field]) {
+			await record.populate("studio").execPopulate()
+			await record.populate("engineers").execPopulate()
+		}
 	}
 }
 
-WorkpieceSchema.methods.updateRecording = async function (data) {
-	if (Array.isArray(data.directors)) {
-		for (const uid of data.directors)
-			if (!(await User.exists({ _id: uid }))) throw UserNotFound
-		this.documentation.recording.directors = data.directors
-	}
-	// TODO `recording` `mixing` `mastering`
-}
-
-WorkpieceSchema.methods.updateRelease = async function (data) {
-	for (let field of ["date", "label", "format", "support"])
-		if (field !== undefined) this.documentation.release[field] = data[field]
-}
-
-WorkpieceSchema.methods.updateFiles = async function (data) {
-	for (let field of ["audio", "scores", "midi"])
-		if (field !== undefined) this.documentation.info[field] = data[field]
-}
-
-WorkpieceSchema.methods.updateInfo = async function (data) {
-	for (let field of ["length", "BPM", "influences"])
-		if (field !== undefined) this.documentation.info[field] = data[field]
-
-	// TODO `mainGenre` `secondaryGenres`
-}
-
-WorkpieceSchema.methods.updateLyrics = async function (data) {
-	for (let field of ["texts", "languages", "public"])
-		if (field !== undefined) this.documentation.lyrics[field] = data[field]
-}
-
-WorkpieceSchema.methods.updateStreaming = async function (data) {
-	if (Array.isArray(data)) this.documentation.streaming = data
+WorkpieceSchema.methods.populateInfo = async function () {
+	await this.populate("documentation.info.mainGenre").execPopulate()
+	await this.populate("documentation.info.secondaryGenres").execPopulate()
 }
 
 module.exports = mongoose.model("Workpiece", WorkpieceSchema)
