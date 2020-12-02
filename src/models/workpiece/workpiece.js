@@ -1,69 +1,15 @@
 const mongoose = require("mongoose")
 const uuid = require("uuid").v4
-const Config = require("../config")
-const User = require("./user")
-const SplitTemplates = require("./notifications/templates")
-const { UserNotFound } = require("../routes/errors")
-const JWT = require("../utils/jwt")
+const Config = require("../../config")
+const User = require("../user")
+const SplitTemplates = require("../notifications/templates")
+const { UserNotFound } = require("../../routes/errors")
+const JWT = require("../../utils/jwt")
+const RightSplitSchema = require("./rightSplit")
+const DocumentationSchema = require("./documentation")
+const RightTypes = require("../../constants/rightTypes")
 
 const JWT_SPLIT_TYPE = "workpiece:split-invite"
-
-const RightTypes = ["copyright", "interpretation", "recording"]
-
-const SplitSchema = new mongoose.Schema(
-	{
-		rightHolder: {
-			type: String,
-			ref: "User",
-		},
-		roles: [String],
-		vote: {
-			type: String,
-			enum: ["undecided", "accepted", "rejected"],
-		},
-		comment: String,
-		shares: Number,
-	},
-	{ _id: false }
-)
-
-const RightSplitSchema = new mongoose.Schema(
-	{
-		_state: {
-			type: String,
-			enum: ["draft", "voting", "accepted", "rejected"],
-		},
-		copyright: [SplitSchema],
-		interpretation: [SplitSchema],
-		recording: [SplitSchema],
-	},
-	{ _id: false }
-)
-
-const WorkpieceFileSchema = new mongoose.Schema(
-	{
-		_id: {
-			type: String,
-			alias: "file_id",
-			default: uuid,
-		},
-		name: {
-			type: String,
-		},
-		mimeType: {
-			type: String,
-		},
-		size: {
-			type: Number,
-		},
-		visibility: {
-			type: String,
-			enum: ["public", "hidden", "private"],
-		},
-		data: Buffer,
-	},
-	{ toJSON: { virtuals: true } }
-)
 
 const WorkpieceSchema = new mongoose.Schema(
 	{
@@ -72,36 +18,30 @@ const WorkpieceSchema = new mongoose.Schema(
 			alias: "workpiece_id",
 			default: uuid,
 		},
-
 		title: {
 			type: String,
 		},
-
 		owner: {
 			type: String,
 			ref: "User",
 		},
-
 		rightHolders: {
 			type: [String],
 			ref: "User",
 		},
-
 		entityTags: {
 			type: [String],
 			ref: "ListEntity",
 		},
-
 		rightSplit: {
 			type: RightSplitSchema,
 		},
-
 		archivedSplits: {
 			type: [RightSplitSchema],
 		},
-
-		files: {
-			type: [WorkpieceFileSchema],
+		documentation: {
+			type: DocumentationSchema,
+			default: {},
 		},
 	},
 	{ timestamps: true, toJSON: { virtuals: true } }
@@ -109,16 +49,6 @@ const WorkpieceSchema = new mongoose.Schema(
 
 WorkpieceSchema.virtual("workpiece_id").get(function () {
 	return this._id
-})
-
-WorkpieceFileSchema.virtual("file_id").get(function () {
-	return this._id
-})
-
-WorkpieceFileSchema.virtual("fileUrl").get(function () {
-	return (
-		Config.apiUrl + "/workpieces/" + this.parent().id + "/files/" + this._id
-	)
 })
 
 WorkpieceSchema.query.byOwner = function (user_id) {
@@ -159,7 +89,7 @@ WorkpieceSchema.methods.setRightSplit = async function (body) {
 	}
 	this.rightHolders = []
 
-	for (let rightType of RightTypes) {
+	for (let rightType of RightTypes.list) {
 		for (let entry of body[rightType]) {
 			if (!(await User.exists({ _id: entry.rightHolder }))) throw UserNotFound
 
@@ -177,7 +107,7 @@ WorkpieceSchema.methods.setRightSplit = async function (body) {
 }
 
 WorkpieceSchema.methods.setVote = function (rightHolderId, rightsVote) {
-	for (let type of RightTypes) {
+	for (let type of RightTypes.list) {
 		for (let entry of this.rightSplit[type]) {
 			if (entry.rightHolder === rightHolderId && rightsVote[type]) {
 				if (entry.vote === "undecided") {
@@ -191,14 +121,14 @@ WorkpieceSchema.methods.setVote = function (rightHolderId, rightsVote) {
 }
 
 WorkpieceSchema.methods.addFile = function (name, mimeType, visibility, data) {
-	const l = this.files.push({
+	const l = this.documentation.files.art.push({
 		name: name,
 		size: data.length,
 		mimeType: mimeType,
 		visibility: visibility,
 		data: data,
 	})
-	return this.files[l - 1]
+	return this.documentation.files.art[l - 1]
 }
 
 WorkpieceSchema.methods.isRemovable = function () {
@@ -243,7 +173,7 @@ WorkpieceSchema.methods.swapRightHolder = async function (originalId, swapId) {
 	const index = this.rightHolders.indexOf(originalId)
 	this.rightHolders[index] = swapId
 
-	for (let type of RightTypes) {
+	for (let type of RightTypes.list) {
 		for (let entry of this.rightSplit[type]) {
 			if (entry.rightHolder === originalId) {
 				entry.rightHolder = swapId
@@ -259,7 +189,7 @@ WorkpieceSchema.methods.updateRightSplitState = async function () {
 	const initialState = this.rightSplit._state
 	let accepted = true
 
-	for (let type of RightTypes) {
+	for (let type of RightTypes.list) {
 		for (let entry of this.rightSplit[type]) {
 			if (entry.vote === "rejected") this.rightSplit._state = "rejected"
 			else if (entry.vote === "undecided") accepted = false
@@ -279,6 +209,69 @@ WorkpieceSchema.methods.updateRightSplitState = async function () {
 	}
 }
 
-module.exports = mongoose.model("Workpiece", WorkpieceSchema)
+WorkpieceSchema.methods.updateDocumentation = async function (data) {
+	await this.updateCreation(data.creation)
+	await this.updatePerformance(data.performance)
+	await this.updateRecording(data.recording)
+	await this.updateRelease(data.release)
+	await this.updateFiles(data.files)
+	await this.updateInfo(data.info)
+	await this.updateLyrics(data.lyrics)
+	await this.updateStreaming(data.streaming)
+}
 
-module.exports.RightTypes = RightTypes
+WorkpieceSchema.methods.updateCreation = async function (data) {
+	for (let field of ["date", "iswc"])
+		if (field !== undefined) this.documentation.creation[field] = data[field]
+	for (field of ["authors", "composers", "publishers"])
+		if (Array.isArray(data[field])) {
+			for (const uid of data[field])
+				if (!(await User.exists({ _id: uid }))) throw UserNotFound
+			this.documentation.creation[field] = data[field]
+		}
+}
+
+WorkpieceSchema.methods.updatePerformance = async function (data) {
+	if (data.conductor !== undefined)
+		this.documentation.performance.conductor = data.conductor
+	if (Array.isArray(data.performers)) {
+		// TODO
+	}
+}
+
+WorkpieceSchema.methods.updateRecording = async function (data) {
+	if (Array.isArray(data.directors)) {
+		for (const uid of data.directors)
+			if (!(await User.exists({ _id: uid }))) throw UserNotFound
+		this.documentation.recording.directors = data.directors
+	}
+	// TODO `recording` `mixing` `mastering`
+}
+
+WorkpieceSchema.methods.updateRelease = async function (data) {
+	for (let field of ["date", "label", "format", "support"])
+		if (field !== undefined) this.documentation.release[field] = data[field]
+}
+
+WorkpieceSchema.methods.updateFiles = async function (data) {
+	for (let field of ["audio", "scores", "midi"])
+		if (field !== undefined) this.documentation.info[field] = data[field]
+}
+
+WorkpieceSchema.methods.updateInfo = async function (data) {
+	for (let field of ["length", "BPM", "influences"])
+		if (field !== undefined) this.documentation.info[field] = data[field]
+
+	// TODO `mainGenre` `secondaryGenres`
+}
+
+WorkpieceSchema.methods.updateLyrics = async function (data) {
+	for (let field of ["texts", "languages", "public"])
+		if (field !== undefined) this.documentation.lyrics[field] = data[field]
+}
+
+WorkpieceSchema.methods.updateStreaming = async function (data) {
+	if (Array.isArray(data)) this.documentation.streaming = data
+}
+
+module.exports = mongoose.model("Workpiece", WorkpieceSchema)

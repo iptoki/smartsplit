@@ -25,8 +25,13 @@ module.exports = {
 			{ name: "right_holders", description: "Manage right holders" },
 			{ name: "workpieces", description: "Manage workpieces" },
 			{
+				name: "workpiece_documentation",
+				description: "Manage workpiece's documentation",
+			},
+			{ name: "workpiece_files", description: "Manage workpiece's files" },
+			{
 				name: "right_splits",
-				description: "manage right splits of a workpiece",
+				description: "Manage right splits of a workpiece",
 			},
 			{ name: "lists", description: "Manage lists of the system" },
 		],
