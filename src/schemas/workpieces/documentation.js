@@ -1,3 +1,5 @@
+const UserSchema = require("../users")
+
 module.exports.file = {
 	type: "object",
 	properties: {
@@ -82,19 +84,31 @@ module.exports.creation = {
 		authors: {
 			type: "array",
 			items: {
-				type: "string",
+				anyOf:
+				[
+					{ type: "string" },
+					UserSchema.userPublicProfile
+				],
 			},
 		},
 		composers: {
 			type: "array",
 			items: {
-				type: "string",
+				anyOf:
+				[
+					{ type: "string" },
+					UserSchema.userPublicProfile
+				],
 			},
 		},
 		publishers: {
 			type: "array",
 			items: {
-				type: "string",
+				anyOf:
+				[
+					{ type: "string" },
+					UserSchema.userPublicProfile
+				],
 			},
 		},
 		iswc: {

@@ -70,6 +70,7 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
+			body: DocumentationSchemas.documentation,
 			response: {
 				200: DocumentationSchemas.documentation,
 			},
@@ -103,6 +104,7 @@ async function routes(fastify, options) {
 					],
 				},
 			},
+			body: DocumentationSchemas.documentationField,
 			response: {
 				200: DocumentationSchemas.documentationField,
 			},
@@ -187,7 +189,7 @@ async function routes(fastify, options) {
 
 const { getWorkpiece, getWorkpieceAsOwner } = require("./workpieces")
 
-const _getWorkpieceFile = function (workpiece, file_id) {
+const getWorkpieceFile = function (workpiece, file_id) {
 	for (file of workpiece.documentation.files.art) {
 		if (file._id === file_id) {
 			return file
@@ -198,11 +200,13 @@ const _getWorkpieceFile = function (workpiece, file_id) {
 
 const getDocumentation = async function (req, res) {
 	const workpiece = await getWorkpiece(req, res)
+	await workpiece.populateDocumentation()
 	return workpiece.documentation
 }
 
 const getDocumentationField = async function (req, res) {
 	const workpiece = await getWorkpiece(req, res)
+	await workpiece.populateDocumentation()
 	return {
 		field: req.params.field,
 		data: workpiece.documentation[req.params.field],
@@ -213,18 +217,22 @@ const updateDocumentation = async function (req, res) {
 	const workpiece = await getWorkpieceAsOwner(req, res)
 	await workpiece.updateDocumentation(req.body)
 	await workpiece.save()
+	await workpiece.populateDocumentation()
 	return workpiece.documentation
 }
 
 const updateDocumentationField = async function (req, res) {
 	req.body = { [req.params.field]: req.body }
 	const doc = await updateDocumentation(req, res)
-	return doc[req.params.field]
+	return {
+		field: req.params.field,
+		data: doc[req.params.field],
+	}
 }
 
 const getFile = async function (req, res) {
 	const workpiece = await getWorkpiece(req, res)
-	const file = _getWorkpieceFile(workpiece, req.params.file_id)
+	const file = getWorkpieceFile(workpiece, req.params.file_id)
 
 	if (file.visibility !== "public") {
 		await JWTAuth.requireAuthUser(req, res)
@@ -250,7 +258,7 @@ const createFile = async function (req, res) {
 
 const updateFile = async function (req, res) {
 	const workpiece = await getWorkpieceAsOwner(req, res)
-	const file = _getWorkpieceFile(workpiece, req.params.file_id)
+	const file = getWorkpieceFile(workpiece, req.params.file_id)
 	for (field of ["name", "mimeType", "visibility"]) {
 		if (req.body[field]) file[field] = req.body[field]
 	}
