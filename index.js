@@ -37,11 +37,10 @@ fastify.listen(Config.listen.port, Config.listen.host, function (err, address) {
 		fastify.log.error(err)
 		process.exit(1)
 	}
+	console.log("Server ready and listening")
+	console.log(
+		`Swagger documentation => http://${Config.listen.host || "localhost"}:${
+			Config.listen.port
+		}/docs`
+	)
 })
-
-console.log("Server ready and listening")
-console.log(
-	`Swagger documentation => http://${Config.listen.host || "localhost"}:${
-		Config.listen.port
-	}/docs`
-)

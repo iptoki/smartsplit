@@ -27,7 +27,7 @@ async function routes(fastify, options) {
 
 	fastify.route({
 		method: "GET",
-		url: "/workpieces/:workpiece_id/documentaion/:field",
+		url: "/workpieces/:workpiece_id/documentation/:field",
 		schema: {
 			tags: ["workpieces", "workpiece_documentation"],
 			description: "Get a workpiece's documentation",
@@ -82,7 +82,7 @@ async function routes(fastify, options) {
 
 	fastify.route({
 		method: "PATCH",
-		url: "/workpieces/:workpiece_id/documentaion/:field",
+		url: "/workpieces/:workpiece_id/documentation/:field",
 		schema: {
 			tags: ["workpiece_documentation"],
 			description: "Patch a workpiece's documentation field",
@@ -138,7 +138,7 @@ async function routes(fastify, options) {
 
 	fastify.route({
 		method: "POST",
-		url: "/workpieces/:workpiece_id/documentaion/files/",
+		url: "/workpieces/:workpiece_id/documentation/files/",
 		schema: {
 			tags: ["workpieces", "workpieces_files"],
 			description: "Create and add a new file to a workpiece's documentation",
