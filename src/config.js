@@ -1,9 +1,9 @@
 const DefaultConfig = {
 	defaultLanguage: "fr",
 
-	clientUrl: "https://www.smartsplit.org",
+	clientUrl: process.env.CLIENT_URL || "https://www.smartsplit.org",
 
-	apiUrl: "https://apiv2-dev.smartsplit.org/v1",
+	apiUrl: process.env.API_BASE_URL || "https://apiv2-dev.smartsplit.org/v1",
 
 	mongodb: {
 		uri: process.env.MONGODB_PATH || "mongodb://localhost/smartsplit",
