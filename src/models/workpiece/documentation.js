@@ -1,6 +1,7 @@
 const mongoose = require("mongoose")
 const uuid = require("uuid").v4
 const User = require("../user")
+const Config = require("../../config")
 const { UserNotFound } = require("../../routes/errors")
 
 const ExternalFileSchema = new mongoose.Schema(
@@ -42,10 +43,12 @@ const RecordSchema = new mongoose.Schema(
 			type: String,
 			ref: "",
 		},
-		engineers: [{
-			type: String,
-			ref: "User",
-		}],
+		engineers: [
+			{
+				type: String,
+				ref: "User",
+			},
+		],
 		date: String,
 		notes: [String],
 	},
@@ -88,18 +91,24 @@ const PerformerSchema = new mongoose.Schema(
 const CreationSchema = new mongoose.Schema(
 	{
 		date: String,
-		authors: [{
-			type: String,
-			ref: "User",
-		}],
-		composers: [{
-			type: String,
-			ref: "User",
-		}],
-		publishers: [{
-			type: String,
-			ref: "User",
-		}],
+		authors: [
+			{
+				type: String,
+				ref: "User",
+			},
+		],
+		composers: [
+			{
+				type: String,
+				ref: "User",
+			},
+		],
+		publishers: [
+			{
+				type: String,
+				ref: "User",
+			},
+		],
 		iswc: String,
 	},
 	{ _id: false }
@@ -118,10 +127,12 @@ const PerformanceSchema = new mongoose.Schema(
 
 const RecordingSchema = new mongoose.Schema(
 	{
-		directors: [{
-			type: String,
-			ref: "User",
-		}],
+		directors: [
+			{
+				type: String,
+				ref: "User",
+			},
+		],
 		recording: [RecordSchema],
 		mixing: [RecordSchema],
 		mastering: [RecordSchema],
@@ -157,10 +168,12 @@ const InfoSchema = new mongoose.Schema(
 			type: String,
 			ref: "",
 		},
-		secondaryGenres: [{
-			type: String,
-			ref: "",
-		}],
+		secondaryGenres: [
+			{
+				type: String,
+				ref: "",
+			},
+		],
 		influences: [String],
 	},
 	{ _id: false }
@@ -217,6 +230,20 @@ const DocumentationSchema = new mongoose.Schema(
 	},
 	{ _id: false }
 )
+
+FileSchema.virtual("file_id").get(function () {
+	return this._id
+})
+
+FileSchema.virtual("url").get(function () {
+	return (
+		Config.apiUrl +
+		"/workpieces/" +
+		this.parent().parent().parent().id +
+		"/documentation/files/" +
+		this._id
+	)
+})
 
 DocumentationSchema.methods.updateCreation = async function (data) {
 	for (let field of ["date", "iswc"])

@@ -84,31 +84,19 @@ module.exports.creation = {
 		authors: {
 			type: "array",
 			items: {
-				anyOf:
-				[
-					{ type: "string" },
-					UserSchema.userPublicProfile
-				],
+				anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
 			},
 		},
 		composers: {
 			type: "array",
 			items: {
-				anyOf:
-				[
-					{ type: "string" },
-					UserSchema.userPublicProfile
-				],
+				anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
 			},
 		},
 		publishers: {
 			type: "array",
 			items: {
-				anyOf:
-				[
-					{ type: "string" },
-					UserSchema.userPublicProfile
-				],
+				anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
 			},
 		},
 		iswc: {

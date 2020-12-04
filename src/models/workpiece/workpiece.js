@@ -1,6 +1,5 @@
 const mongoose = require("mongoose")
 const uuid = require("uuid").v4
-const Config = require("../../config")
 const User = require("../user")
 const SplitTemplates = require("../notifications/templates")
 const { UserNotFound } = require("../../routes/errors")
