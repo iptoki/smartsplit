@@ -214,11 +214,8 @@ module.exports.info = {
 module.exports.lyrics = {
 	type: "object",
 	properties: {
-		texts: {
-			type: "array",
-			items: {
-				type: "string",
-			},
+		text: {
+			type: "string",
 		},
 		languages: {
 			type: "array",
@@ -226,22 +223,29 @@ module.exports.lyrics = {
 				type: "string",
 			},
 		},
-		public: {
-			type: "boolean",
+		access: {
+			type: "string",
+			enum: ["public", "private", "limited"],
+			default: "private",
 		},
 	},
 }
 
 module.exports.streaming = {
-	type: "array",
-	items: {
-		type: "object",
-		properties: {
-			platform: {
-				type: "string",
-			},
-			url: {
-				type: "string",
+	type: "object",
+	properties: {
+		links: {
+			type: "array",
+			items: {
+				type: "object",
+				properties: {
+					platform: {
+						type: "string",
+					},
+					url: {
+						type: "string",
+					},
+				},
 			},
 		},
 	},

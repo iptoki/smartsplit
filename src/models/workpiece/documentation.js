@@ -181,17 +181,27 @@ const InfoSchema = new mongoose.Schema(
 
 const LyricsSchema = new mongoose.Schema(
 	{
-		texts: [String],
+		text: String,
 		languages: [String],
-		public: Boolean,
+		access: {
+			type: String,
+			enum: ["public", "private", "limited"],
+		},
 	},
 	{ _id: false }
 )
 
 const StreamingSchema = new mongoose.Schema(
 	{
-		platform: String,
-		url: String,
+		links: [
+			new mongoose.Schema(
+				{
+					platform: String,
+					url: String,
+				},
+				{ _id: false }
+			),
+		],
 	},
 	{ _id: false }
 )
@@ -290,12 +300,12 @@ DocumentationSchema.methods.updateInfo = async function (data) {
 }
 
 DocumentationSchema.methods.updateLyrics = async function (data) {
-	for (let field of ["texts", "languages", "public"])
+	for (let field of ["text", "languages", "access"])
 		if (field !== undefined) this.lyrics[field] = data[field]
 }
 
 DocumentationSchema.methods.updateStreaming = async function (data) {
-	if (Array.isArray(data)) this.streaming = data
+	if (Array.isArray(data.links)) this.streaming = data.links
 }
 
 module.exports = DocumentationSchema
