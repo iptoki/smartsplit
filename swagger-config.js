@@ -32,7 +32,10 @@ module.exports = {
 				name: "workpiece_documentation",
 				description: "Manage workpiece's documentation",
 			},
-			{ name: "workpieces_documentation_files", description: "Manage workpiece's files" },
+			{
+				name: "workpieces_documentation_files",
+				description: "Manage workpiece's files",
+			},
 			{ name: "entities", description: "Manage lists of the system" },
 		],
 		servers: [
