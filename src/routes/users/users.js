@@ -14,7 +14,7 @@ async function routes(fastify, options) {
 		method: "GET",
 		url: "/users/:user_id",
 		schema: {
-			tags: ["users"],
+			tags: ["users_general"],
 			description: "Get a user by ID",
 			params: {
 				user_id: {
@@ -35,7 +35,7 @@ async function routes(fastify, options) {
 		method: "GET",
 		url: "/users/:user_id/avatar",
 		schema: {
-			tags: ["users"],
+			tags: ["users_general"],
 			description: "Get a user's avatar by ID",
 			params: {
 				user_id: {
@@ -53,7 +53,7 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/users/",
 		schema: {
-			tags: ["users"],
+			tags: ["users_general"],
 			description: "Create a new user in the system",
 			body: {
 				allOf: [UserSchema.userRequestBody],
@@ -70,7 +70,7 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/users/activate",
 		schema: {
-			tags: ["users"],
+			tags: ["users_general"],
 			description: "Activate a user's account",
 			body: {
 				type: "object",
@@ -93,7 +93,7 @@ async function routes(fastify, options) {
 		method: "PATCH",
 		url: "/users/:user_id",
 		schema: {
-			tags: ["users"],
+			tags: ["users_general"],
 			description: "Update a user by ID",
 			params: {
 				user_id: {
@@ -114,7 +114,7 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/users/request-password-reset",
 		schema: {
-			tags: ["users"],
+			tags: ["users_general"],
 			description: "Send a password reset email",
 			body: {
 				type: "object",
@@ -137,7 +137,7 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/users/change-password",
 		schema: {
-			tags: ["users"],
+			tags: ["users_general"],
 			description: "Update the user password",
 			body: {
 				type: "object",
@@ -167,7 +167,7 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/users/verify-mobile-phone",
 		schema: {
-			tags: ["users"],
+			tags: ["users_general"],
 			description: "Verify the user's phone number",
 			body: {
 				type: "object",
@@ -192,7 +192,7 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/users/invite-new-user",
 		schema: {
-			tags: ["users"],
+			tags: ["users_general"],
 			description:
 				"Deprecated, you should use POST /users/:user_id/collaborators/. Invite a new user",
 			body: {
@@ -225,7 +225,7 @@ async function routes(fastify, options) {
 		method: "DELETE",
 		url: "/users/:user_id",
 		schema: {
-			tags: ["users"],
+			tags: ["users_general"],
 			description: "Delete a user's account by ID",
 			params: {
 				user_id: {

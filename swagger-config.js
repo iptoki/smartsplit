@@ -18,22 +18,22 @@ module.exports = {
 		produces: ["application/json"],
 		tags: [
 			{ name: "auth", description: "Manage authorization" },
-			{ name: "users", description: "Manage users accounts" },
+			{ name: "users_general", description: "Manage users accounts" },
+			{ name: "users_emails", description: "Manage users emails" },
 			{ name: "collaborators", description: "Manage user's collaborators" },
 			{ name: "contributors", description: "Manage user's contributors" },
-			{ name: "users_emails", description: "Manage users emails" },
 			{ name: "right_holders", description: "Manage right holders" },
-			{ name: "workpieces", description: "Manage workpieces" },
-			{
-				name: "workpiece_documentation",
-				description: "Manage workpiece's documentation",
-			},
-			{ name: "workpiece_files", description: "Manage workpiece's files" },
+			{ name: "workpieces_general", description: "Manage workpieces" },
 			{
 				name: "right_splits",
 				description: "Manage right splits of a workpiece",
 			},
-			{ name: "lists", description: "Manage lists of the system" },
+			{
+				name: "workpiece_documentation",
+				description: "Manage workpiece's documentation",
+			},
+			{ name: "workpieces_documentation_files", description: "Manage workpiece's files" },
+			{ name: "entities", description: "Manage lists of the system" },
 		],
 		servers: [
 			{

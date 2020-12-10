@@ -9,7 +9,7 @@ async function routes(fastify, options) {
 		method: "GET",
 		url: "/workpieces/:workpiece_id/documentation",
 		schema: {
-			tags: ["workpieces", "workpiece_documentation"],
+			tags: ["workpiece_documentation"],
 			description: "Get a workpiece's documentation",
 			params: {
 				workpiece_id: {
@@ -29,7 +29,7 @@ async function routes(fastify, options) {
 		method: "GET",
 		url: "/workpieces/:workpiece_id/documentation/:field",
 		schema: {
-			tags: ["workpieces", "workpiece_documentation"],
+			tags: ["workpiece_documentation"],
 			description: "Get a workpiece's documentation",
 			params: {
 				workpiece_id: {
@@ -63,7 +63,7 @@ async function routes(fastify, options) {
 		method: "PATCH",
 		url: "/workpieces/:workpiece_id/documentation",
 		schema: {
-			tags: ["workpieces", "workpiece_documentation"],
+			tags: ["workpiece_documentation"],
 			description: "Update a workpiece's documentation",
 			params: {
 				workpiece_id: {
@@ -119,7 +119,7 @@ async function routes(fastify, options) {
 		method: "GET",
 		url: "/workpieces/:workpiece_id/documentation/files/:file_id",
 		schema: {
-			tags: ["workpieces", "workpieces_files"],
+			tags: ["workpieces_documentation_files"],
 			description: "Get a workpiece's file by ID",
 			params: {
 				workpiece_id: {
@@ -140,7 +140,7 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/workpieces/:workpiece_id/documentation/files/",
 		schema: {
-			tags: ["workpieces", "workpieces_files"],
+			tags: ["workpieces_documentation_files"],
 			description: "Create and add a new file to a workpiece's documentation",
 			params: {
 				workpiece_id: {
@@ -164,7 +164,7 @@ async function routes(fastify, options) {
 		method: "PATCH",
 		url: "/workpieces/:workpiece_id/documentation/files/:file_id",
 		schema: {
-			tags: ["workpieces", "workpieces_files"],
+			tags: ["workpieces_documentation_files"],
 			description: "Update a workpiece's file by ID",
 			params: {
 				workpiece_id: {

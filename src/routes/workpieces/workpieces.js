@@ -10,7 +10,7 @@ async function routes(fastify, options) {
 		method: "GET",
 		url: "/workpieces/by-owner/:user_id/" /* TODO: remove that ugly `/` */,
 		schema: {
-			tags: ["workpieces"],
+			tags: ["workpieces_general"],
 			description: "Get workpieces by owner",
 			params: {
 				user_id: {
@@ -30,7 +30,7 @@ async function routes(fastify, options) {
 		method: "GET",
 		url: "/workpieces/:workpiece_id",
 		schema: {
-			tags: ["workpieces"],
+			tags: ["workpieces_general"],
 			description: "Get workpiece by ID",
 			params: {
 				workpiece_id: {
@@ -50,7 +50,7 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/workpieces/",
 		schema: {
-			tags: ["workpieces"],
+			tags: ["workpieces_general"],
 			description: "Create a new workpiece in the system",
 			body: WorkpieceSchemas.workpieceRequestBody,
 			response: {
@@ -66,7 +66,7 @@ async function routes(fastify, options) {
 		method: "PATCH",
 		url: "/workpieces/:workpiece_id",
 		schema: {
-			tags: ["workpieces"],
+			tags: ["workpieces_general"],
 			description: "Update a workpiece by ID",
 			params: {
 				workpiece_id: {
@@ -87,7 +87,7 @@ async function routes(fastify, options) {
 		method: "DELETE",
 		url: "/workpieces/:workpiece_id",
 		schema: {
-			tags: ["workpieces"],
+			tags: ["workpieces_general"],
 			description: "Delete a workpiece by ID",
 			params: {
 				workpiece_id: {

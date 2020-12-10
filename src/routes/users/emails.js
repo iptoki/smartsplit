@@ -12,7 +12,7 @@ async function routes(fastify, options) {
 		method: "GET",
 		url: "/users/:user_id/emails/",
 		schema: {
-			tags: ["users", "users_emails"],
+			tags: ["users_emails"],
 			description: "Get a user's email list",
 			params: {
 				user_id: {
@@ -32,7 +32,7 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/users/:user_id/emails/",
 		schema: {
-			tags: ["users", "users_emails"],
+			tags: ["users_emails"],
 			description: "Create a new email in a user's account",
 			params: {
 				user_id: {
@@ -62,7 +62,7 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/users/:user_id/emails/:email",
 		schema: {
-			tags: ["users", "users_emails"],
+			tags: ["users_emails"],
 			description: "Activate a user's email",
 			params: {
 				user_id: {
@@ -93,7 +93,7 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/users/:user_id/emails/primary",
 		schema: {
-			tags: ["users", "users_emails"],
+			tags: ["users_emails"],
 			description: "Set a user email to the primary one",
 			params: {
 				user_id: {
@@ -123,7 +123,7 @@ async function routes(fastify, options) {
 		method: "GET",
 		url: "/users/:user_id/emails/primary",
 		schema: {
-			tags: ["users", "users_emails"],
+			tags: ["users_emails"],
 			description: "Get the user primary email",
 			params: {
 				user_id: {
@@ -145,7 +145,7 @@ async function routes(fastify, options) {
 		method: "DELETE",
 		url: "/users/:user_id/emails/:email",
 		schema: {
-			tags: ["users", "users_emails"],
+			tags: ["users_emails"],
 			description: "Delete a user's email",
 			params: {
 				user_id: {

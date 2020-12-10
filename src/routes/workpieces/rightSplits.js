@@ -10,7 +10,7 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/workpieces/:workpiece_id/rightSplit",
 		schema: {
-			tags: ["workpieces", "right_splits"],
+			tags: ["right_splits"],
 			description: "Create a new right splits in a workpiece",
 			params: {
 				workpiece_id: {
@@ -31,7 +31,7 @@ async function routes(fastify, options) {
 		method: "PUT",
 		url: "/workpieces/:workpiece_id/rightSplit",
 		schema: {
-			tags: ["workpieces", "right_splits"],
+			tags: ["right_splits"],
 			description: "Update a workpiece's right splits",
 			params: {
 				workpiece_id: {
@@ -52,7 +52,7 @@ async function routes(fastify, options) {
 		method: "DELETE",
 		url: "/workpieces/:workpiece_id/rightSplit",
 		schema: {
-			tags: ["workpieces", "right_splits"],
+			tags: ["right_splits"],
 			description: "Delete a workpiece's right splits",
 			params: {
 				workpiece_id: {
@@ -72,7 +72,7 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/workpieces/:workpiece_id/rightSplit/submit",
 		schema: {
-			tags: ["workpieces", "right_splits"],
+			tags: ["right_splits"],
 			description: "Submit a workpiece's right splits to the right holders",
 			params: {
 				workpiece_id: {
@@ -92,7 +92,7 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/workpieces/:workpiece_id/rightSplit/vote",
 		schema: {
-			tags: ["workpieces", "right_splits"],
+			tags: ["right_splits"],
 			description: "Vote for accepting or refusing a right split",
 			params: {
 				workpiece_id: {
@@ -113,7 +113,7 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/workpieces/:workpiece_id/rightSplit/swap-user",
 		schema: {
-			tags: ["workpieces", "right_splits"],
+			tags: ["right_splits"],
 			description:
 				"Substitute a right holders in a split by replacing it by an other one",
 			params: {

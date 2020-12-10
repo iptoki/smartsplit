@@ -10,7 +10,7 @@ async function routes(fastify, options) {
 		method: "GET",
 		url: "/entities/:list_type/",
 		schema: {
-			tags: ["lists"],
+			tags: ["entities"],
 			description: "Get a list by type",
 			params: {
 				list_type: {
@@ -31,7 +31,7 @@ async function routes(fastify, options) {
 		method: "GET",
 		url: "/entities/:entity_id",
 		schema: {
-			tags: ["lists"],
+			tags: ["entities"],
 			description: "Get a list entity by ID",
 			params: {
 				entity_id: {
@@ -52,7 +52,7 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/entities/:list_type/",
 		schema: {
-			tags: ["lists"],
+			tags: ["entities"],
 			description: "Create a new entity",
 			params: {
 				list_type: {
@@ -74,7 +74,7 @@ async function routes(fastify, options) {
 		method: "PATCH",
 		url: "/entities/:entity_id",
 		schema: {
-			tags: ["lists"],
+			tags: ["entities"],
 			description: "Update a list entity by ID",
 			params: {
 				entity_id: {
@@ -96,7 +96,7 @@ async function routes(fastify, options) {
 		method: "DELETE",
 		url: "/entities/:entity_id",
 		schema: {
-			tags: ["lists"],
+			tags: ["entities"],
 			description: "Delete a list entity by ID",
 			params: {
 				entity_id: {

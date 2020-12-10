@@ -13,7 +13,7 @@ async function routes(fastify, options) {
 		method: "GET",
 		url: "/users/:user_id/contributors/",
 		schema: {
-			tags: ["users", "contributors"],
+			tags: ["contributors"],
 			description: "Get a user's contributors",
 			params: {
 				user_id: {
@@ -36,7 +36,7 @@ async function routes(fastify, options) {
 		method: "GET",
 		url: "/users/:user_id/contributors/:contributor_id",
 		schema: {
-			tags: ["users", "contributors"],
+			tags: ["contributors"],
 			description: "Get a user's contributor by ID",
 			params: {
 				user_id: {
@@ -59,7 +59,7 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/users/:user_id/contributors/",
 		schema: {
-			tags: ["users", "contributors"],
+			tags: ["contributors"],
 			description:
 				"Create a new contributor and add it to the authenticated user's contributors",
 			params: {
@@ -95,7 +95,7 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/users/:user_id/contributors/:contributor_id/upgrade",
 		schema: {
-			tags: ["users", "contributors"],
+			tags: ["contributors"],
 			description: "Upgrade a contributor's account to a collaborator",
 			params: {
 				user_id: {
@@ -141,7 +141,7 @@ async function routes(fastify, options) {
 		method: "PATCH",
 		url: "/users/:user_id/contributors/:contributor_id",
 		schema: {
-			tags: ["users", "contributors"],
+			tags: ["contributors"],
 			description: "Update a user's contributor by ID",
 			params: {
 				user_id: {
@@ -179,7 +179,7 @@ async function routes(fastify, options) {
 		method: "DELETE",
 		url: "/users/:user_id/contributors/:contributor_id",
 		schema: {
-			tags: ["users", "contributors"],
+			tags: ["contributors"],
 			description: "Delete a user's contributor by ID",
 			params: {
 				user_id: {

@@ -13,7 +13,7 @@ async function routes(fastify, options) {
 		method: "GET",
 		url: "/users/:user_id/collaborators/",
 		schema: {
-			tags: ["users", "collaborators"],
+			tags: ["collaborators"],
 			description: "Get a user's collaborators",
 			params: {
 				user_id: {
@@ -36,7 +36,7 @@ async function routes(fastify, options) {
 		method: "GET",
 		url: "/users/:user_id/collaborators/:collaborator_id",
 		schema: {
-			tags: ["users", "collaborators"],
+			tags: ["collaborators"],
 			description: "Get a user's collaborator by ID",
 			params: {
 				user_id: {
@@ -59,7 +59,7 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/users/:user_id/collaborators/",
 		schema: {
-			tags: ["users", "collaborators"],
+			tags: ["collaborators"],
 			description:
 				"Create a new collaborator and add it to the authenticated user's collaborators",
 			params: {
@@ -99,7 +99,7 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/users/:user_id/collaborators/:collaborator_id",
 		schema: {
-			tags: ["users", "collaborators"],
+			tags: ["collaborators"],
 			description:
 				"Add an existing user to the authenticated user's collaborators",
 			params: {
@@ -123,7 +123,7 @@ async function routes(fastify, options) {
 		method: "DELETE",
 		url: "/users/:user_id/collaborators/:collaborator_id",
 		schema: {
-			tags: ["users", "collaborators"],
+			tags: ["collaborators"],
 			description: "Delete a user's collaborator by ID",
 			params: {
 				user_id: {

@@ -24,7 +24,7 @@ async function routes(fastify, options) {
 		url: "/auth/refresh",
 		schema: {
 			tags: ["auth"],
-			description: "Refresh an access toke",
+			description: "Refresh an access token",
 			response: {
 				200: AuthSchema.sessionInfo,
 			},
