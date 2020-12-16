@@ -147,16 +147,13 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: {
-				allOf: [DocumentationSchemas.fileRequestBody],
-				required: ["name", "mimeType", "data"],
-			},
-			response: {
-				201: DocumentationSchemas.file,
-			},
+			// body: DocumentationSchemas.fileRequestBody,
+			// response: {
+			// 	201: DocumentationSchemas.file,
+			// },
 			security: [{ bearerAuth: [] }],
 		},
-		preValidation: JWTAuth.requireAuthUser,
+		// preValidation: JWTAuth.requireAuthUser,
 		handler: createFile,
 	})
 
@@ -231,29 +228,53 @@ const updateDocumentationField = async function (req, res) {
 }
 
 const getFile = async function (req, res) {
-	const workpiece = await getWorkpiece(req, res)
-	const file = getWorkpieceFile(workpiece, req.params.file_id)
+	// const workpiece = await getWorkpiece(req, res)
+	// const file = getWorkpieceFile(workpiece, req.params.file_id)
 
-	if (file.visibility !== "public") {
-		await JWTAuth.requireAuthUser(req, res)
-		if (workpiece.owner !== req.authUser._id) throw Errors.UserForbidden
-	}
+	// if (file.visibility !== "public") {
+	// 	await JWTAuth.requireAuthUser(req, res)
+	// 	if (workpiece.owner !== req.authUser._id) throw Errors.UserForbidden
+	// }
 
-	res.header("Content-Type", file.mimeType)
-	return file.data
+	// return file.data
+	const mongoose = require("mongoose") 
+	const fs = require("fs")
+	res.type("image/png")
+	const stream = mongoose.bucket.openDownloadStream(req.params.file_id)
+	console.log(stream)
+	return stream
+	//.pipe(fs.createWriteStream('./output.png'))
+	//return "ok"
 }
 
 const createFile = async function (req, res) {
-	const workpiece = await getWorkpieceAsOwner(req, res)
-	const file = workpiece.addFile(
-		req.body.name,
-		req.body.mimeType,
-		req.body.visibility,
-		Buffer.from(req.body.data, "base64")
-	)
-	await workpiece.save()
-	res.code(201)
-	return file
+	// const workpiece = await getWorkpieceAsOwner(req, res)
+	// const file = workpiece.addFile(
+	// 	req.body.name,
+	// 	req.body.mimeType,
+	// 	req.body.visibility,
+	// 	Buffer.from(req.body.data, "base64")
+	// )
+	
+	// await workpiece.save()
+	// res.code(201)
+	// return file
+
+	const mongoose = require("mongoose")
+	const fs = require('fs')
+	const uuid = require("uuid").v4
+
+	const data = await req.file()
+	// console.log("data.file",data.file) // stream
+	// console.log("data.fields",data.fields) // other parsed parts
+	// console.log("data.fieldname",data.fieldname)
+	// console.log("data.filename",data.filename)
+	// console.log("data.encoding",data.encoding)
+	// console.log("data.mimetype",data.mimetype)
+	const id = uuid()
+	console.log(id)
+	data.file.pipe(mongoose.bucket.openUploadStreamWithId(id, data.filename))
+	return { id }
 }
 
 const updateFile = async function (req, res) {
