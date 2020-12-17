@@ -13,9 +13,11 @@ mongoose
 	})
 	.then(() => {
 		Object.defineProperty(mongoose, "bucket", {
-			value: new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
-				bucketName: "protectedWork",
-			}),
+			value: {
+				protectedWork: new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+					bucketName: "protectedWork",
+				}),
+			},
 		})
 	})
 

@@ -126,7 +126,11 @@ WorkpieceSchema.methods.addFile = function (data) {
 		},
 	}
 	data.file.pipe(
-		mongoose.bucket.openUploadStreamWithId(file_id, data.filename, options)
+		mongoose.bucket.protectedWork.openUploadStreamWithId(
+			file_id,
+			data.filename,
+			options
+		)
 	)
 	const length = this.documentation.files.art.push(file_id)
 	return this.documentation.files.art[length - 1]
@@ -267,7 +271,7 @@ WorkpieceSchema.methods.populateInfo = async function () {
 }
 
 WorkpieceSchema.methods.getFileStream = function (file_id) {
-	return mongoose.bucket.openDownloadStream(file_id)
+	return mongoose.bucket.protectedWork.openDownloadStream(file_id)
 }
 
 module.exports = mongoose.model("Workpiece", WorkpieceSchema)
