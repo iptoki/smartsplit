@@ -24,10 +24,6 @@ const EntitySchema = new mongoose.Schema(
 	{ discriminatorKey: "type", toJSON: { virtuals: true } }
 )
 
-EntitySchema.virtual("entity_id").get(function () {
-	return this._id
-})
-
 EntitySchema.query.publicOnly = function () {
 	return this.where({ users: false })
 }

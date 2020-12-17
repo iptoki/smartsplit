@@ -46,10 +46,6 @@ const WorkpieceSchema = new mongoose.Schema(
 	{ timestamps: true, toJSON: { virtuals: true } }
 )
 
-WorkpieceSchema.virtual("workpiece_id").get(function () {
-	return this._id
-})
-
 WorkpieceSchema.query.byOwner = function (user_id) {
 	return this.where({ owner: user_id })
 }
@@ -119,14 +115,17 @@ WorkpieceSchema.methods.setVote = function (rightHolderId, rightsVote) {
 	}
 }
 
-WorkpieceSchema.methods.addFile = function (name, mimeType, visibility, data) {
-	const l = this.documentation.files.art.push({
-		name: name,
-		size: data.length,
-		mimeType: mimeType,
-		visibility: visibility,
-		data: data,
-	})
+WorkpieceSchema.methods.addFile = function (data) {
+	const file_id = uuid()
+	const options = {
+		metadata: {
+			encoding: data.encoding,
+			mimetype: data.mimetype,
+			visibility: data.fields.visibility.value || "private",
+		}
+	}
+	data.file.pipe(mongoose.bucket.openUploadStreamWithId(file_id, data.filename, options))
+	const l = this.documentation.files.art.push(file_id)
 	return this.documentation.files.art[l - 1]
 }
 
@@ -221,9 +220,14 @@ WorkpieceSchema.methods.updateDocumentation = async function (data) {
 
 WorkpieceSchema.methods.populateDocumentation = async function () {
 	await this.populateCreation()
+	await this.populateFiles()
 	// await this.populatePerformance()
 	// await this.populateRecording()
 	// await this.populateInfo()
+}
+
+WorkpieceSchema.methods.populateFiles = async function () {
+	await this.populate("documentation.files.art").execPopulate()
 }
 
 WorkpieceSchema.methods.populateCreation = async function () {
@@ -257,6 +261,10 @@ WorkpieceSchema.methods.populateRecording = async function () {
 WorkpieceSchema.methods.populateInfo = async function () {
 	await this.populate("documentation.info.mainGenre").execPopulate()
 	await this.populate("documentation.info.secondaryGenres").execPopulate()
+}
+
+WorkpieceSchema.methods.getFileStream = function (file_id) {
+	return mongoose.bucket.openDownloadStream(file_id)
 }
 
 module.exports = mongoose.model("Workpiece", WorkpieceSchema)

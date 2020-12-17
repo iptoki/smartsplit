@@ -6,8 +6,6 @@ const fastify = require("fastify")({ logger: Config.logger })
 
 // Connect database
 const mongoose = require("mongoose")
-//const Grid = require('gridfs-stream')
-//Grid.mongo = mongoose.mongo
 mongoose.connect(process.env["MONGODB_PATH"] || Config.mongodb.uri, {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,

@@ -157,10 +157,6 @@ UserSchema.virtual("fullName").get(function () {
 	return "Guest"
 })
 
-UserSchema.virtual("user_id").get(function () {
-	return this._id
-})
-
 UserSchema.virtual("rightHolder_id").get(function () {
 	return this._id
 })

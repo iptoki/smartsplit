@@ -148,12 +148,12 @@ async function routes(fastify, options) {
 				},
 			},
 			// body: DocumentationSchemas.fileRequestBody,
-			// response: {
-			// 	201: DocumentationSchemas.file,
-			// },
+			response: {
+				201: DocumentationSchemas.file,
+			},
 			security: [{ bearerAuth: [] }],
 		},
-		// preValidation: JWTAuth.requireAuthUser,
+		preValidation: JWTAuth.requireAuthUser,
 		handler: createFile,
 	})
 
@@ -186,13 +186,11 @@ async function routes(fastify, options) {
 
 const { getWorkpiece, getWorkpieceAsOwner } = require("./workpieces")
 
-const getWorkpieceFile = function (workpiece, file_id) {
-	for (file of workpiece.documentation.files.art) {
-		if (file._id === file_id) {
-			return file
-		}
-	}
-	throw Errors.WorkpieceFileNotFound
+const getWorkpieceFile = async function (workpiece, file_id) {
+	const index = workpiece.documentation.files.art.indexOf(file_id)
+	if(index < 0) throw Errors.WorkpieceFileNotFound
+	await workpiece.populateFiles()
+	return workpiece.documentation.files.art[index-1]
 }
 
 const getDocumentation = async function (req, res) {
@@ -228,68 +226,45 @@ const updateDocumentationField = async function (req, res) {
 }
 
 const getFile = async function (req, res) {
-	// const workpiece = await getWorkpiece(req, res)
-	// const file = getWorkpieceFile(workpiece, req.params.file_id)
+	const workpiece = await getWorkpiece(req, res)
+	const file = await getWorkpieceFile(workpiece, req.params.file_id)
 
-	// if (file.visibility !== "public") {
-	// 	await JWTAuth.requireAuthUser(req, res)
-	// 	if (workpiece.owner !== req.authUser._id) throw Errors.UserForbidden
-	// }
+	if (file.metadata.visibility !== "public") {
+		await JWTAuth.requireAuthUser(req, res)
+		if (workpiece.owner !== req.authUser._id) throw Errors.UserForbidden
+	}
 
-	// return file.data
-	const mongoose = require("mongoose") 
-	const fs = require("fs")
-	res.type("image/png")
-	const stream = mongoose.bucket.openDownloadStream(req.params.file_id)
-	console.log(stream)
-	return stream
-	//.pipe(fs.createWriteStream('./output.png'))
-	//return "ok"
+	res.type(file.metadata.mimetype)
+	return workpiece.getFileStream(req.params.file_id)
 }
 
 const createFile = async function (req, res) {
-	// const workpiece = await getWorkpieceAsOwner(req, res)
-	// const file = workpiece.addFile(
-	// 	req.body.name,
-	// 	req.body.mimeType,
-	// 	req.body.visibility,
-	// 	Buffer.from(req.body.data, "base64")
-	// )
-	
-	// await workpiece.save()
-	// res.code(201)
-	// return file
-
-	const mongoose = require("mongoose")
-	const fs = require('fs')
-	const uuid = require("uuid").v4
-
+	const workpiece = await getWorkpieceAsOwner(req, res)
 	const data = await req.file()
-	// console.log("data.file",data.file) // stream
-	// console.log("data.fields",data.fields) // other parsed parts
-	// console.log("data.fieldname",data.fieldname)
-	// console.log("data.filename",data.filename)
-	// console.log("data.encoding",data.encoding)
-	// console.log("data.mimetype",data.mimetype)
-	const id = uuid()
-	console.log(id)
-	data.file.pipe(mongoose.bucket.openUploadStreamWithId(id, data.filename))
-	return { id }
+
+	if(data.file.truncated === true) throw Errors.FileTooLarge
+
+	const file_id = workpiece.addFile(data)
+	await workpiece.save()
+	
+	res.code(201)
+	return await getWorkpieceFile(workpiece, file_id)
 }
 
 const updateFile = async function (req, res) {
-	const workpiece = await getWorkpieceAsOwner(req, res)
-	const file = getWorkpieceFile(workpiece, req.params.file_id)
-	for (field of ["name", "mimeType", "visibility"]) {
-		if (req.body[field]) file[field] = req.body[field]
-	}
-	if (req.body.data) {
-		const data = Buffer.from(req.body.data, "base64")
-		file.data = data
-		file.size = data.length
-	}
-	await workpiece.save()
-	return file
+	/* TODO */
+	// const workpiece = await getWorkpieceAsOwner(req, res)
+	// const file = getWorkpieceFile(workpiece, req.params.file_id)
+	// for (field of ["filename", "visibility"]) {
+	// 	if (req.body[field]) file[field] = req.body[field]
+	// }
+	// if (req.body.data) {
+	// 	const data = Buffer.from(req.body.data, "base64")
+	// 	file.data = data
+	// 	file.size = data.length
+	// }
+	// await workpiece.save()
+	// return file
 }
 
 /************************ Custom serializer ************************/
@@ -301,7 +276,7 @@ const updateFile = async function (req, res) {
 	See /src/schemas/workpieces/documentation.js for more information
 */
 
-function documentationFieldSerializer(test) {
+function documentationFieldSerializer({ schema, method, url, httpStatus }) {
 	const fastJson = require("fast-json-stringify")
 	return (response) => {
 		const stringify = fastJson(DocumentationSchemas[response.field])
