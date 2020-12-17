@@ -188,9 +188,9 @@ const { getWorkpiece, getWorkpieceAsOwner } = require("./workpieces")
 
 const getWorkpieceFile = async function (workpiece, file_id) {
 	const index = workpiece.documentation.files.art.indexOf(file_id)
-	if(index < 0) throw Errors.WorkpieceFileNotFound
+	if (index < 0) throw Errors.WorkpieceFileNotFound
 	await workpiece.populateFiles()
-	return workpiece.documentation.files.art[index-1]
+	return workpiece.documentation.files.art[index - 1]
 }
 
 const getDocumentation = async function (req, res) {
@@ -242,11 +242,11 @@ const createFile = async function (req, res) {
 	const workpiece = await getWorkpieceAsOwner(req, res)
 	const data = await req.file()
 
-	if(data.file.truncated === true) throw Errors.FileTooLarge
+	if (data.file.truncated === true) throw Errors.FileTooLarge
 
 	const file_id = workpiece.addFile(data)
 	await workpiece.save()
-	
+
 	res.code(201)
 	return await getWorkpieceFile(workpiece, file_id)
 }

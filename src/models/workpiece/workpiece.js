@@ -117,16 +117,19 @@ WorkpieceSchema.methods.setVote = function (rightHolderId, rightsVote) {
 
 WorkpieceSchema.methods.addFile = function (data) {
 	const file_id = uuid()
+	if (data.fields.visibility === undefined) data.fields.visibility = {}
 	const options = {
 		metadata: {
 			encoding: data.encoding,
 			mimetype: data.mimetype,
 			visibility: data.fields.visibility.value || "private",
-		}
+		},
 	}
-	data.file.pipe(mongoose.bucket.openUploadStreamWithId(file_id, data.filename, options))
-	const l = this.documentation.files.art.push(file_id)
-	return this.documentation.files.art[l - 1]
+	data.file.pipe(
+		mongoose.bucket.openUploadStreamWithId(file_id, data.filename, options)
+	)
+	const length = this.documentation.files.art.push(file_id)
+	return this.documentation.files.art[length - 1]
 }
 
 WorkpieceSchema.methods.isRemovable = function () {

@@ -6,14 +6,18 @@ const fastify = require("fastify")({ logger: Config.logger })
 
 // Connect database
 const mongoose = require("mongoose")
-mongoose.connect(process.env["MONGODB_PATH"] || Config.mongodb.uri, {
-	useNewUrlParser: true,
-	useUnifiedTopology: true,
-}).then(() => {
-	Object.defineProperty(mongoose, 'bucket', {
-		value: new mongoose.mongo.GridFSBucket(mongoose.connection.db, {bucketName: 'protectedWork'})
+mongoose
+	.connect(process.env["MONGODB_PATH"] || Config.mongodb.uri, {
+		useNewUrlParser: true,
+		useUnifiedTopology: true,
 	})
-})
+	.then(() => {
+		Object.defineProperty(mongoose, "bucket", {
+			value: new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+				bucketName: "protectedWork",
+			}),
+		})
+	})
 
 // Register plugins
 fastify.register(require("fastify-formbody"), {
@@ -26,16 +30,16 @@ fastify.register(require("fastify-cors"), {
 })
 
 // Register multipart support plugin
-fastify.register(require('fastify-multipart'), {
-  limits: {
-    // fieldNameSize: int, // Max field name size in bytes
-    // fieldSize: int,     // Max field value size in bytes
-    // fields: int,        // Max number of non-file fields
-    fileSize: 512000000,   // Max file size
-    files: 1,              // Max number of file fields
-    // headerPairs: int    // Max number of header key=>value pairs
-  }
-});
+fastify.register(require("fastify-multipart"), {
+	limits: {
+		// fieldNameSize: int, // Max field name size in bytes
+		// fieldSize: int,     // Max field value size in bytes
+		// fields: int,        // Max number of non-file fields
+		fileSize: 512000000, // Max file size
+		files: 1, // Max number of file fields
+		// headerPairs: int    // Max number of header key=>value pairs
+	},
+})
 
 // Register swagger for auto documentation with OAS 3.0
 fastify.register(require("fastify-oas"), require("./swagger-config"))

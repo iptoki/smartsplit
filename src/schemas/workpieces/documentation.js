@@ -6,12 +6,12 @@ module.exports.file = {
 		file_id: {
 			type: "string",
 		},
-		filename: {type: "string"},
+		filename: { type: "string" },
 		metadata: {
 			type: "object",
 			properties: {
-				encoding: {type: "string"},
-				mimetype: {type: "string"},
+				encoding: { type: "string" },
+				mimetype: { type: "string" },
 				visibility: {
 					type: "string",
 					enum: ["public", "hidden", "private"],

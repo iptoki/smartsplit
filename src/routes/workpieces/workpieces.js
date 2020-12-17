@@ -168,8 +168,7 @@ const deleteWorkpiece = async function (req, res) {
 
 const getWorkpiecesByOwner = async function (req, res) {
 	const workpieces = await Workpiece.find().byOwner(req.params.user_id)
-	for(const workpiece of workpieces)
-		await workpiece.populateDocumentation()
+	for (const workpiece of workpieces) await workpiece.populateDocumentation()
 	return workpieces
 }
 

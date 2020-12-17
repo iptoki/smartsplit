@@ -158,10 +158,12 @@ const ReleaseSchema = new mongoose.Schema(
 
 const FilesSchema = new mongoose.Schema(
 	{
-		art: [{
-			type: String,
-			ref: GFSFile,
-		}],
+		art: [
+			{
+				type: String,
+				ref: GFSFile,
+			},
+		],
 		audio: [ExternalFileSchema],
 		scores: [ExternalFileSchema],
 		midi: [ExternalFileSchema],
