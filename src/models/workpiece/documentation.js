@@ -17,25 +17,31 @@ const FileSchema = new mongoose.Schema(
 		_id: {
 			type: String,
 			alias: "file_id",
-			default: uuid,
 		},
-		name: {
-			type: String,
-		},
-		mimeType: {
-			type: String,
-		},
-		size: {
+		length: {
 			type: Number,
+			alias: "size",
 		},
-		visibility: {
-			type: String,
-			enum: ["public", "hidden", "private"],
-		},
-		data: Buffer,
+		chunkSize: Number,
+		uploadDate: Date,
+		filename: String,
+		md5: String,
+		metadata: new mongoose.Schema(
+			{
+				encoding: String,
+				mimetype: String,
+				visibility: {
+					type: String,
+					enum: ["public", "hidden", "private"],
+				},
+			},
+			{ _id: false }
+		),
 	},
-	{ toJSON: { virtuals: true } }
+	{ strict: false, toJSON: { virtuals: true } }
 )
+
+const GFSFile = new mongoose.model("GFSFile", FileSchema, "protectedWork.files")
 
 const RecordSchema = new mongoose.Schema(
 	{
@@ -152,7 +158,12 @@ const ReleaseSchema = new mongoose.Schema(
 
 const FilesSchema = new mongoose.Schema(
 	{
-		art: [FileSchema],
+		art: [
+			{
+				type: String,
+				ref: GFSFile,
+			},
+		],
 		audio: [ExternalFileSchema],
 		scores: [ExternalFileSchema],
 		midi: [ExternalFileSchema],
@@ -241,15 +252,11 @@ const DocumentationSchema = new mongoose.Schema(
 	{ _id: false }
 )
 
-FileSchema.virtual("file_id").get(function () {
-	return this._id
-})
-
 FileSchema.virtual("url").get(function () {
 	return (
 		Config.apiUrl +
 		"/workpieces/" +
-		this.parent().parent().parent().id +
+		this.parent().id +
 		"/documentation/files/" +
 		this._id
 	)

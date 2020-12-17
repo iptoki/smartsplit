@@ -147,10 +147,7 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: {
-				allOf: [DocumentationSchemas.fileRequestBody],
-				required: ["name", "mimeType", "data"],
-			},
+			// body: DocumentationSchemas.fileRequestBody,
 			response: {
 				201: DocumentationSchemas.file,
 			},
@@ -189,13 +186,11 @@ async function routes(fastify, options) {
 
 const { getWorkpiece, getWorkpieceAsOwner } = require("./workpieces")
 
-const getWorkpieceFile = function (workpiece, file_id) {
-	for (file of workpiece.documentation.files.art) {
-		if (file._id === file_id) {
-			return file
-		}
-	}
-	throw Errors.WorkpieceFileNotFound
+const getWorkpieceFile = async function (workpiece, file_id) {
+	const index = workpiece.documentation.files.art.indexOf(file_id)
+	if (index < 0) throw Errors.WorkpieceFileNotFound
+	await workpiece.populateFiles()
+	return workpiece.documentation.files.art[index - 1]
 }
 
 const getDocumentation = async function (req, res) {
@@ -232,43 +227,44 @@ const updateDocumentationField = async function (req, res) {
 
 const getFile = async function (req, res) {
 	const workpiece = await getWorkpiece(req, res)
-	const file = getWorkpieceFile(workpiece, req.params.file_id)
+	const file = await getWorkpieceFile(workpiece, req.params.file_id)
 
-	if (file.visibility !== "public") {
+	if (file.metadata.visibility !== "public") {
 		await JWTAuth.requireAuthUser(req, res)
 		if (workpiece.owner !== req.authUser._id) throw Errors.UserForbidden
 	}
 
-	res.header("Content-Type", file.mimeType)
-	return file.data
+	res.type(file.metadata.mimetype)
+	return workpiece.getFileStream(req.params.file_id)
 }
 
 const createFile = async function (req, res) {
 	const workpiece = await getWorkpieceAsOwner(req, res)
-	const file = workpiece.addFile(
-		req.body.name,
-		req.body.mimeType,
-		req.body.visibility,
-		Buffer.from(req.body.data, "base64")
-	)
+	const data = await req.file()
+
+	if (data.file.truncated === true) throw Errors.FileTooLarge
+
+	const file_id = workpiece.addFile(data)
 	await workpiece.save()
+
 	res.code(201)
-	return file
+	return await getWorkpieceFile(workpiece, file_id)
 }
 
 const updateFile = async function (req, res) {
-	const workpiece = await getWorkpieceAsOwner(req, res)
-	const file = getWorkpieceFile(workpiece, req.params.file_id)
-	for (field of ["name", "mimeType", "visibility"]) {
-		if (req.body[field]) file[field] = req.body[field]
-	}
-	if (req.body.data) {
-		const data = Buffer.from(req.body.data, "base64")
-		file.data = data
-		file.size = data.length
-	}
-	await workpiece.save()
-	return file
+	/* TODO */
+	// const workpiece = await getWorkpieceAsOwner(req, res)
+	// const file = getWorkpieceFile(workpiece, req.params.file_id)
+	// for (field of ["filename", "visibility"]) {
+	// 	if (req.body[field]) file[field] = req.body[field]
+	// }
+	// if (req.body.data) {
+	// 	const data = Buffer.from(req.body.data, "base64")
+	// 	file.data = data
+	// 	file.size = data.length
+	// }
+	// await workpiece.save()
+	// return file
 }
 
 /************************ Custom serializer ************************/
@@ -280,7 +276,7 @@ const updateFile = async function (req, res) {
 	See /src/schemas/workpieces/documentation.js for more information
 */
 
-function documentationFieldSerializer(test) {
+function documentationFieldSerializer({ schema, method, url, httpStatus }) {
 	const fastJson = require("fast-json-stringify")
 	return (response) => {
 		const stringify = fastJson(DocumentationSchemas[response.field])

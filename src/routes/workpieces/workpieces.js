@@ -44,6 +44,10 @@ async function routes(fastify, options) {
 		},
 		preValidation: JWTAuth.requireAuthUser,
 		handler: getWorkpiece,
+		preSerialization: async function (req, res, payload) {
+			await payload.populateDocumentation()
+			return payload
+		},
 	})
 
 	fastify.route({
@@ -163,7 +167,9 @@ const deleteWorkpiece = async function (req, res) {
 }
 
 const getWorkpiecesByOwner = async function (req, res) {
-	return await Workpiece.find().byOwner(req.params.user_id)
+	const workpieces = await Workpiece.find().byOwner(req.params.user_id)
+	for (const workpiece of workpieces) await workpiece.populateDocumentation()
+	return workpieces
 }
 
 module.exports = {

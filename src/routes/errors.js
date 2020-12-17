@@ -95,3 +95,6 @@ module.exports.ConflictingRightSplitState = new HTTPErrors.Conflict(
 module.exports.VoteAlreadySubmited = new HTTPErrors.PreconditionFailed(
 	"This right holder's vote has already been submited and cannot be submited again"
 )
+module.exports.FileTooLarge = new HTTPErrors.PayloadTooLarge(
+	"File is to large too be uploaded"
+)
