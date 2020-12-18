@@ -1,4 +1,5 @@
 const UserSchema = require("../users")
+const EntitiesSchema = require("../lists")
 
 module.exports.file = {
 	type: "object",
@@ -55,6 +56,48 @@ module.exports.musicGenre = {
 	},
 }
 
+module.exports.performerTool = {
+	type: "object",
+	properties: {
+		instrument: {
+			anyOf: [{ type: "string" }, EntitiesSchema.instruments],
+		},
+		role: {
+			type: "string",
+		},
+		notes: {
+			type: "string",
+		},
+	},
+}
+
+module.exports.performer = {
+	type: "object",
+	properties: {
+		user: {
+			anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
+		},
+		type: {
+			type: "string",
+			enum: ["principale", "featured", "bandMember"],
+		},
+		isSinger: {
+			type: "boolean",
+		},
+		isMusician: {
+			type: "boolean",
+		},
+		vocals: {
+			type: "array",
+			items: this.performerTool,
+		},
+		instruments: {
+			type: "array",
+			items: this.performerTool,
+		},
+	},
+}
+
 module.exports.record = {
 	type: "object",
 	properties: {
@@ -64,12 +107,21 @@ module.exports.record = {
 		engineers: {
 			type: "array",
 			items: {
-				type: "string",
+				anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
 			},
 		},
 		date: {
-			type: "string",
-			format: "date",
+			type: "object",
+			properties: {
+				from: {
+					type: "string",
+					format: "date",
+				},
+				to: {
+					type: "string",
+					format: "date",
+				},
+			},
 		},
 		notes: {
 			type: "array",
@@ -114,17 +166,12 @@ module.exports.creation = {
 module.exports.performance = {
 	type: "object",
 	properties: {
-		principle: {
-			type: "array",
-			items: {
-				type: "string",
-			},
+		conductor: {
+			anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
 		},
-		accompanying: {
+		performers: {
 			type: "array",
-			items: {
-				type: "string",
-			},
+			items: this.performer,
 		},
 	},
 }
