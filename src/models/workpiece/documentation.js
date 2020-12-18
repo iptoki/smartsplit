@@ -45,17 +45,20 @@ const GFSFile = new mongoose.model("GFSFile", FileSchema, "protectedWork.files")
 
 const RecordSchema = new mongoose.Schema(
 	{
-		studio: {
-			type: String,
-			ref: "",
-		},
+		studio: String,
 		engineers: [
 			{
 				type: String,
 				ref: "User",
 			},
 		],
-		date: String,
+		date: new mongoose.Schema(
+			{
+				from: Date,
+				to: Date,
+			},
+			{ _id: false }
+		),
 		notes: [String],
 	},
 	{ _id: false }
@@ -139,6 +142,13 @@ const RecordingSchema = new mongoose.Schema(
 				ref: "User",
 			},
 		],
+		producers: [
+			{
+				type: String,
+				ref: "User",
+			},
+		],
+		isrc: String,
 		recording: [RecordSchema],
 		mixing: [RecordSchema],
 		mastering: [RecordSchema],
