@@ -129,26 +129,6 @@ async function routes(fastify, options) {
 
 /************************ Handlers ************************/
 
-async function searchEntity(req, res) {
-	let regex = ""
-	if (req.query.search_terms) {
-		let search_terms = [req.query.search_terms]
-		if (req.query.search_terms.includes(" "))
-			search_terms = search_terms.concat(req.query.search_terms.split(" "))
-		regex = new RegExp(search_terms.join("|"))
-	}
-
-	return await Entity.find({
-		$or: [
-			{ name: { $regex: regex, $options: "i" } },
-			{ langs.en: { $regex: regex, $options: "i" } },
-			{ langs.fr: { $regex: regex, $options: "i" } },
-		],
-	})
-		.skip(parseInt(req.query.skip))
-		.limit(parseInt(req.query.limit))
-}
-
 async function createEntity(req, res) {
 	if (req.query.admin === true && !req.authUser.isAdmin)
 		throw Errors.UserForbidden
@@ -211,8 +191,8 @@ async function getEntities(req, res) {
 	Entity.find({
 		$or: [
 			{ name: { $regex: regex, $options: "i" } },
-			{ langs.en: { $regex: regex, $options: "i" } },
-			{ langs.fr: { $regex: regex, $options: "i" } },
+			{ "langs.en": { $regex: regex, $options: "i" } },
+			{ "langs.fr": { $regex: regex, $options: "i" } },
 		],
 	})
 		.skip(parseInt(req.query.skip))
