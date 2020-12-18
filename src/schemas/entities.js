@@ -10,6 +10,12 @@ module.exports.genericEntityFields = {
 	entity_id: {
 		type: "string",
 	},
+	tags: {
+		type: "array",
+		items: {
+			type: "string",
+		},
+	},
 	users: {
 		oneOf: [
 			{
@@ -82,23 +88,33 @@ module.exports["digital-distributor"] = {
 	},
 }
 
-module.exports.instruments = {
+module.exports.link = {
+	type: "object",
+	properties: {
+		name: {
+			type: "string",
+		},
+		id: {
+			type: "string",
+		},
+		uri: {
+			type: "string",
+		},
+	},
+}
+
+module.exports.instrument = {
 	type: "object",
 	properties: {
 		...this.genericEntityFields,
-		name: this.locale,
-		uris: {
-			type: "array",
-			items: {
-				type: "string",
-			},
+		name: {
+			type: "string",
 		},
-		parents: {
+		links: {
 			type: "array",
-			items: {
-				type: "string",
-			},
+			items: this.link,
 		},
+		langs: this.locale,
 	},
 }
 
@@ -106,13 +122,14 @@ module.exports["musical-genre"] = {
 	type: "object",
 	properties: {
 		...this.genericEntityFields,
-		name: this.locale,
-		uris: {
-			type: "array",
-			items: {
-				type: "string",
-			},
+		name: {
+			type: "string",
 		},
+		links: {
+			type: "array",
+			items: this.link,
+		},
+		langs: this.locale,
 		parents: {
 			type: "array",
 			items: {

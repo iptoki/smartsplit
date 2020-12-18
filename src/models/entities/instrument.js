@@ -3,34 +3,30 @@ const Entity = require("./entity")
 const LocaleSchema = require("./locale")
 
 /**
- * Represents an entity of instruments list in the system
+ * Represents an instrument's entity in the system
  */
-const InstrumentsEntity = new mongoose.Schema(
+const InstrumentEntity = new mongoose.Schema(
 	{
-		name: {
-			type: LocaleSchema,
-		},
-
-		uris: {
-			type: [String],
-		},
-
-		parents: {
-			type: [
+		name: String,
+		links: [
+			new mongoose.Schema(
 				{
-					type: String,
-					ref: "musical-genre",
+					name: String,
+					id: String,
+					uri: String,
 				},
-			],
-		},
+				{ _id: false }
+			),
+		],
+		langs: LocaleSchema,
 	},
 	{ discriminatorKey: "type" }
 )
 
-InstrumentsEntity.methods.setFields = function (body) {
+InstrumentEntity.methods.setFields = function (body) {
 	for (let field in ["name", "uris", "parents", ...Entity.getFields()]) {
 		if (body[field]) this[field] = body[field]
 	}
 }
 
-module.exports = Entity.discriminator("instrument", InstrumentsEntity)
+module.exports = Entity.discriminator("instrument", InstrumentEntity)

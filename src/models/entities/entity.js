@@ -11,11 +11,10 @@ const EntitySchema = new mongoose.Schema(
 			alias: "entity_id",
 			default: uuid,
 		},
-
+		tags: [String],
 		users: {
 			type: mongoose.Mixed,
 		},
-
 		adminReview: {
 			type: String,
 			default: null,
