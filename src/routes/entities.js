@@ -8,13 +8,27 @@ const Errors = require("./errors")
 async function routes(fastify, options) {
 	fastify.route({
 		method: "GET",
-		url: "/entities/:list_type/",
+		url: "/entities/:entity_type/",
 		schema: {
 			tags: ["entities"],
-			description: "Get a list of entities by type",
+			description: "Get a list of entities by type and optional search terms",
 			params: {
-				list_type: {
+				entity_type: {
 					type: "string",
+				},
+			},
+			querystring: {
+				search_terms: { type: "string" },
+				limit: {
+					type: "integer",
+					default: 50,
+					minimum: 1,
+					maximum: 250,
+				},
+				skip: {
+					type: "integer",
+					default: 0,
+					minimum: 0,
 				},
 			},
 			response: {
@@ -22,9 +36,9 @@ async function routes(fastify, options) {
 			},
 			security: [{ bearerAuth: [] }],
 		},
-		serializerCompiler: listSerializer,
 		preValidation: JWTAuth.getAuthUser,
-		handler: getList,
+		handler: getEntities,
+		serializerCompiler: entitySerializer,
 	})
 
 	fastify.route({
@@ -43,19 +57,19 @@ async function routes(fastify, options) {
 			},
 			security: [{ bearerAuth: [] }],
 		},
-		serializerCompiler: entitySerializer,
 		preValidation: JWTAuth.getAuthUser,
-		handler: getListEntity,
+		handler: getEntityById,
+		serializerCompiler: entitySerializer,
 	})
 
 	fastify.route({
 		method: "POST",
-		url: "/entities/:list_type/",
+		url: "/entities/:entity_type/",
 		schema: {
 			tags: ["entities"],
 			description: "Create a new entity",
 			params: {
-				list_type: {
+				entity_type: {
 					type: "string",
 				},
 			},
@@ -67,7 +81,7 @@ async function routes(fastify, options) {
 		},
 		serializerCompiler: entitySerializer,
 		preValidation: JWTAuth.requireAuthUser,
-		handler: createListEntity,
+		handler: createEntity,
 	})
 
 	fastify.route({
@@ -89,7 +103,7 @@ async function routes(fastify, options) {
 		},
 		serializerCompiler: entitySerializer,
 		preValidation: JWTAuth.requireAuthUser,
-		handler: updateListEntity,
+		handler: updateEntity,
 	})
 
 	fastify.route({
@@ -109,33 +123,33 @@ async function routes(fastify, options) {
 			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthUser,
-		handler: deleteListEntity,
+		handler: deleteEntity,
 	})
 }
 
 /************************ Handlers ************************/
 
-async function createListEntity(req, res) {
+async function createEntity(req, res) {
 	if (req.query.admin === true && !req.authUser.isAdmin)
 		throw Errors.UserForbidden
 
-	if (!req.authUser.isAdmin && req.params.list_type === "digital-distributor")
+	if (!req.authUser.isAdmin && req.params.entity_type === "digital-distributor")
 		throw Errors.UserForbidden
 
 	const base =
-		req.query.admin === true || req.params.list_type === "digital-distributor"
+		req.query.admin === true || req.params.entity_type === "digital-distributor"
 			? { users: false }
 			: { users: [req.authUser._id] }
 
-	const listModel = Entity.getEntityModel(req.params.list_type)
-	if (!listModel) throw Errors.ListNotFound
+	const entityModel = Entity.getEntityModel(req.params.entity_type)
+	if (!entityModel) throw Errors.EntityTypeNotFound
 
-	const entity = new listModel({ ...base, ...req.body })
+	const entity = new entityModel({ ...base, ...req.body })
 
 	try {
 		await entity.save()
 	} catch (e) {
-		if (e && e.code === 11000) throw Errors.ConflictingListEntity
+		if (e && e.code === 11000) throw Errors.ConflictingEntity
 		throw e
 	}
 
@@ -143,10 +157,10 @@ async function createListEntity(req, res) {
 	return filterAdminFields(entity, req.authUser)
 }
 
-async function getListEntity(req, res) {
+async function getEntityById(req, res) {
 	const entity = await Entity.findById(req.params.entity_id)
 
-	if (!entity) throw Errors.ListEntityNotFound
+	if (!entity) throw Errors.EntityNotFound
 
 	if (
 		!req.authUser ||
@@ -160,21 +174,39 @@ async function getListEntity(req, res) {
 	return filterAdminFields(entity, req.authUser)
 }
 
-async function getList(req, res) {
-	let query = Entity.find({ type: req.params.list_type })
+async function getEntities(req, res) {
+	let query = Entity.find({ type: req.params.entity_type })
 
 	if (!req.authUser) query = query.publicOnly()
 	else if (!req.authUser.isAdmin) query = query.byUserId(req.authUser._id)
 
-	const list = await query.exec()
-	return list.map((entity) => filterAdminFields(entity, req.authUser))
+	let regex = ""
+	if (req.query.search_terms) {
+		let search_terms = [req.query.search_terms]
+		if (req.query.search_terms.includes(" "))
+			search_terms = search_terms.concat(req.query.search_terms.split(" "))
+		regex = new RegExp(search_terms.join("|"))
+	}
+
+	Entity.find({
+		$or: [
+			{ name: { $regex: regex, $options: "i" } },
+			{ "langs.en": { $regex: regex, $options: "i" } },
+			{ "langs.fr": { $regex: regex, $options: "i" } },
+		],
+	})
+		.skip(parseInt(req.query.skip))
+		.limit(parseInt(req.query.limit))
+
+	const entities = await query.exec()
+	return entities.map((entity) => filterAdminFields(entity, req.authUser))
 }
 
-async function updateListEntity(req, res) {
-	if (!req.authUser.isAdmin && req.params.list_type === "digital-distributor")
+async function updateEntity(req, res) {
+	if (!req.authUser.isAdmin && req.params.entity_type === "digital-distributor")
 		throw Errors.UserForbidden
 
-	const entity = await getListEntity(req, res)
+	const entity = await getEntityById(req, res)
 
 	if (!req.authUser.isAdmin) {
 		delete req.body.adminReview
@@ -187,11 +219,11 @@ async function updateListEntity(req, res) {
 	return filterAdminFields(entity, req.authUser)
 }
 
-async function deleteListEntity(req, res) {
-	if (!req.authUser.isAdmin && req.params.list_type === "digital-distributor")
+async function deleteEntity(req, res) {
+	if (!req.authUser.isAdmin && req.params.entity_type === "digital-distributor")
 		throw Errors.UserForbidden
 
-	const entity = await getListEntity(req, res)
+	const entity = await getEntityById(req, res)
 
 	await entity.remove()
 	res.code(204).send()

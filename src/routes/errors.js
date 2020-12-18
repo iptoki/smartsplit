@@ -29,10 +29,12 @@ module.exports.EmailAlreadyActivated = new HTTPErrors.PreconditionFailed(
 	"This email is already active and cannot be activated again"
 )
 
-/* List related errors */
-module.exports.ListNotFound = new HTTPErrors.NotFound("List not found")
-module.exports.ListEntityNotFound = new HTTPErrors.NotFound("Entity not found")
-module.exports.ConflictingListEntity = new HTTPErrors.Conflict(
+/* Entities related errors */
+module.exports.EntityTypeNotFound = new HTTPErrors.NotFound(
+	"Entity type not found"
+)
+module.exports.EntityNotFound = new HTTPErrors.NotFound("Entity not found")
+module.exports.ConflictingEntity = new HTTPErrors.Conflict(
 	"An entity already exists with this ID"
 )
 
