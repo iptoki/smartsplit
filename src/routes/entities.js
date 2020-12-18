@@ -1,6 +1,6 @@
 const JWTAuth = require("../service/JWTAuth")
-const Entity = require("../models/lists/entity")
-const ListSchema = require("../schemas/lists")
+const Entity = require("../models/entities/entity")
+const EntitiesSchema = require("../schemas/entities")
 const Errors = require("./errors")
 
 /************************ Routes ************************/
@@ -11,14 +11,14 @@ async function routes(fastify, options) {
 		url: "/entities/:list_type/",
 		schema: {
 			tags: ["entities"],
-			description: "Get a list by type",
+			description: "Get a list of entities by type",
 			params: {
 				list_type: {
 					type: "string",
 				},
 			},
 			response: {
-				200: ListSchema.list,
+				200: EntitiesSchema.list,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -32,14 +32,14 @@ async function routes(fastify, options) {
 		url: "/entities/:entity_id",
 		schema: {
 			tags: ["entities"],
-			description: "Get a list entity by ID",
+			description: "Get an entity by ID",
 			params: {
 				entity_id: {
 					type: "string",
 				},
 			},
 			response: {
-				200: ListSchema.entity,
+				200: EntitiesSchema.entity,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -59,9 +59,9 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: ListSchema.entityRequestBody,
+			body: EntitiesSchema.entityRequestBody,
 			response: {
-				201: ListSchema.entity,
+				201: EntitiesSchema.entity,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -75,15 +75,15 @@ async function routes(fastify, options) {
 		url: "/entities/:entity_id",
 		schema: {
 			tags: ["entities"],
-			description: "Update a list entity by ID",
+			description: "Update an entity by ID",
 			params: {
 				entity_id: {
 					type: "string",
 				},
 			},
-			body: ListSchema.entityRequestBody,
+			body: EntitiesSchema.entityRequestBody,
 			response: {
-				200: ListSchema.entity,
+				200: EntitiesSchema.entity,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -97,7 +97,7 @@ async function routes(fastify, options) {
 		url: "/entities/:entity_id",
 		schema: {
 			tags: ["entities"],
-			description: "Delete a list entity by ID",
+			description: "Delete an entity by ID",
 			params: {
 				entity_id: {
 					type: "string",
@@ -119,11 +119,11 @@ async function createListEntity(req, res) {
 	if (req.query.admin === true && !req.authUser.isAdmin)
 		throw Errors.UserForbidden
 
-	if (!req.authUser.isAdmin && req.params.list_type === "digital-distributors")
+	if (!req.authUser.isAdmin && req.params.list_type === "digital-distributor")
 		throw Errors.UserForbidden
 
 	const base =
-		req.query.admin === true || req.params.list_type === "digital-distributors"
+		req.query.admin === true || req.params.list_type === "digital-distributor"
 			? { users: false }
 			: { users: [req.authUser._id] }
 
@@ -171,7 +171,7 @@ async function getList(req, res) {
 }
 
 async function updateListEntity(req, res) {
-	if (!req.authUser.isAdmin && req.params.list_type === "digital-distributors")
+	if (!req.authUser.isAdmin && req.params.list_type === "digital-distributor")
 		throw Errors.UserForbidden
 
 	const entity = await getListEntity(req, res)
@@ -188,7 +188,7 @@ async function updateListEntity(req, res) {
 }
 
 async function deleteListEntity(req, res) {
-	if (!req.authUser.isAdmin && req.params.list_type === "digital-distributors")
+	if (!req.authUser.isAdmin && req.params.list_type === "digital-distributor")
 		throw Errors.UserForbidden
 
 	const entity = await getListEntity(req, res)
@@ -203,13 +203,13 @@ async function deleteListEntity(req, res) {
 	fast-json-stringify does not support schema with `oneOf` being at the root.
 	As a workaround, we mimic the `oneOf` mechanism  by defining a custom serializer 
 	where we dinamicaly determine which schema should be serialized.
-	See /src/schemas/lists.js for more information
+	See /src/schemas/entities.js for more information
 */
 
 function entitySerializer({ schema, method, url, httpStatus }) {
 	const fastJson = require("fast-json-stringify")
 	return (entity) => {
-		const stringify = fastJson(ListSchema[entity.type])
+		const stringify = fastJson(EntitiesSchema[entity.type])
 		return stringify(entity)
 	}
 }
@@ -220,7 +220,7 @@ function listSerializer({ schema, method, url, httpStatus }) {
 		if (list.length === 0) return JSON.stringify(list)
 		const stringify = fastJson({
 			type: "array",
-			items: ListSchema[list[0].type],
+			items: EntitiesSchema[list[0].type],
 		})
 		return stringify(list)
 	}

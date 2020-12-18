@@ -3,9 +3,9 @@ const Entity = require("./entity")
 const LocaleSchema = require("./locale")
 
 /**
- * Represents an entity of distribution service providers in the system
+ * Represents an entity of distribution service provider in the system
  */
-const DigitalDistributorsEntity = new mongoose.Schema(
+const DigitalDistributorEntity = new mongoose.Schema(
 	{
 		name: {
 			type: String,
@@ -46,7 +46,7 @@ const DigitalDistributorsEntity = new mongoose.Schema(
 	{ discriminatorKey: "type" }
 )
 
-DigitalDistributorsEntity.methods.setFields = function (body) {
+DigitalDistributorEntity.methods.setFields = function (body) {
 	const fields = [
 		"name",
 		"icon",
@@ -64,6 +64,6 @@ DigitalDistributorsEntity.methods.setFields = function (body) {
 }
 
 module.exports = Entity.discriminator(
-	"digital-distributors",
-	DigitalDistributorsEntity
+	"digital-distributor",
+	DigitalDistributorEntity
 )

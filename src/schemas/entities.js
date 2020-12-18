@@ -10,6 +10,12 @@ module.exports.genericEntityFields = {
 	entity_id: {
 		type: "string",
 	},
+	tags: {
+		type: "array",
+		items: {
+			type: "string",
+		},
+	},
 	users: {
 		oneOf: [
 			{
@@ -29,7 +35,7 @@ module.exports.genericEntityFields = {
 	},
 }
 
-module.exports["content-languages"] = {
+module.exports["content-language"] = {
 	type: "object",
 	properties: {
 		...this.genericEntityFields,
@@ -43,7 +49,7 @@ module.exports["content-languages"] = {
 	},
 }
 
-module.exports["digital-distributors"] = {
+module.exports["digital-distributor"] = {
 	type: "object",
 	properties: {
 		...this.genericEntityFields,
@@ -82,37 +88,48 @@ module.exports["digital-distributors"] = {
 	},
 }
 
-module.exports.instruments = {
+module.exports.link = {
 	type: "object",
 	properties: {
-		...this.genericEntityFields,
-		name: this.locale,
-		uris: {
-			type: "array",
-			items: {
-				type: "string",
-			},
+		name: {
+			type: "string",
 		},
-		parents: {
-			type: "array",
-			items: {
-				type: "string",
-			},
+		id: {
+			type: "string",
+		},
+		uri: {
+			type: "string",
 		},
 	},
 }
 
-module.exports["musical-genres"] = {
+module.exports.instrument = {
 	type: "object",
 	properties: {
 		...this.genericEntityFields,
-		name: this.locale,
-		uris: {
-			type: "array",
-			items: {
-				type: "string",
-			},
+		name: {
+			type: "string",
 		},
+		links: {
+			type: "array",
+			items: this.link,
+		},
+		langs: this.locale,
+	},
+}
+
+module.exports["musical-genre"] = {
+	type: "object",
+	properties: {
+		...this.genericEntityFields,
+		name: {
+			type: "string",
+		},
+		links: {
+			type: "array",
+			items: this.link,
+		},
+		langs: this.locale,
 		parents: {
 			type: "array",
 			items: {
@@ -129,10 +146,10 @@ module.exports.list = {
 
 module.exports.entity = {
 	anyOf: [
-		this["content-languages"],
-		this["digital-distributors"],
-		this.instruments,
-		this["musical-genres"],
+		this["content-language"],
+		this["digital-distributor"],
+		this.instrument,
+		this["musical-genre"],
 	],
 }
 
