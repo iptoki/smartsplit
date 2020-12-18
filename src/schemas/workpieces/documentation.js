@@ -1,5 +1,5 @@
 const UserSchema = require("../users")
-const EntitiesSchema = require("../lists")
+const EntitiesSchema = require("../entities")
 
 module.exports.file = {
 	type: "object",
@@ -60,7 +60,7 @@ module.exports.performerTool = {
 	type: "object",
 	properties: {
 		instrument: {
-			anyOf: [{ type: "string" }, EntitiesSchema.instruments],
+			anyOf: [{ type: "string" }, EntitiesSchema.instrument],
 		},
 		role: {
 			type: "string",

@@ -54,7 +54,7 @@ EntitySchema.methods.setFields = function (body) {
 
 module.exports = mongoose.model("Entity", EntitySchema)
 
-require("./content-languages")
-require("./digital-distributors")
-require("./musical-genres")
-require("./instruments")
+require("./content-language")
+require("./digital-distributor")
+require("./musical-genre")
+require("./instrument")

@@ -19,7 +19,7 @@ const InstrumentsEntity = new mongoose.Schema(
 			type: [
 				{
 					type: String,
-					ref: "musical-genres",
+					ref: "musical-genre",
 				},
 			],
 		},
@@ -33,4 +33,4 @@ InstrumentsEntity.methods.setFields = function (body) {
 	}
 }
 
-module.exports = Entity.discriminator("instruments", InstrumentsEntity)
+module.exports = Entity.discriminator("instrument", InstrumentsEntity)

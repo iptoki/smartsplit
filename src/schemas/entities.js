@@ -29,7 +29,7 @@ module.exports.genericEntityFields = {
 	},
 }
 
-module.exports["content-languages"] = {
+module.exports["content-language"] = {
 	type: "object",
 	properties: {
 		...this.genericEntityFields,
@@ -43,7 +43,7 @@ module.exports["content-languages"] = {
 	},
 }
 
-module.exports["digital-distributors"] = {
+module.exports["digital-distributor"] = {
 	type: "object",
 	properties: {
 		...this.genericEntityFields,
@@ -102,7 +102,7 @@ module.exports.instruments = {
 	},
 }
 
-module.exports["musical-genres"] = {
+module.exports["musical-genre"] = {
 	type: "object",
 	properties: {
 		...this.genericEntityFields,
@@ -129,10 +129,10 @@ module.exports.list = {
 
 module.exports.entity = {
 	anyOf: [
-		this["content-languages"],
-		this["digital-distributors"],
-		this.instruments,
-		this["musical-genres"],
+		this["content-language"],
+		this["digital-distributor"],
+		this.instrument,
+		this["musical-genre"],
 	],
 }
 

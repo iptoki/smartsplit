@@ -64,6 +64,6 @@ DigitalDistributorsEntity.methods.setFields = function (body) {
 }
 
 module.exports = Entity.discriminator(
-	"digital-distributors",
+	"digital-distributor",
 	DigitalDistributorsEntity
 )
