@@ -38,7 +38,7 @@ async function routes(fastify, options) {
 		},
 		preValidation: JWTAuth.getAuthUser,
 		handler: getEntities,
-		serializerCompiler: entitySerializer,
+		serializerCompiler: listSerializer,
 	})
 
 	fastify.route({
@@ -125,6 +125,23 @@ async function routes(fastify, options) {
 		preValidation: JWTAuth.requireAuthUser,
 		handler: deleteEntity,
 	})
+
+	// Secret route available for admins only
+	// Seed a list of entities in the database. 
+	// Data set that will be seeded are located in /smartsplit/data/
+	fastify.route({
+		method: "POST",
+		url: "/entities/:entity_type/seed",
+		schema: {
+			params: {
+				entity_type: {
+					type: "string",
+				},
+			},
+		},
+		preValidation: JWTAuth.requireAuthAdmin,
+		handler: seedEntities,
+	})
 }
 
 /************************ Handlers ************************/
@@ -175,11 +192,6 @@ async function getEntityById(req, res) {
 }
 
 async function getEntities(req, res) {
-	let query = Entity.find({ type: req.params.entity_type })
-
-	if (!req.authUser) query = query.publicOnly()
-	else if (!req.authUser.isAdmin) query = query.byUserId(req.authUser._id)
-
 	let regex = ""
 	if (req.query.search_terms) {
 		let search_terms = [req.query.search_terms]
@@ -188,7 +200,8 @@ async function getEntities(req, res) {
 		regex = new RegExp(search_terms.join("|"))
 	}
 
-	Entity.find({
+	let query = Entity.find({
+		type: (req.params.entity_type).slice(0, -1),
 		$or: [
 			{ name: { $regex: regex, $options: "i" } },
 			{ "langs.en": { $regex: regex, $options: "i" } },
@@ -197,6 +210,9 @@ async function getEntities(req, res) {
 	})
 		.skip(parseInt(req.query.skip))
 		.limit(parseInt(req.query.limit))
+
+	if (!req.authUser) query = query.publicOnly()
+	else if (!req.authUser.isAdmin) query = query.byUserId(req.authUser._id)
 
 	const entities = await query.exec()
 	return entities.map((entity) => filterAdminFields(entity, req.authUser))
@@ -227,6 +243,20 @@ async function deleteEntity(req, res) {
 
 	await entity.remove()
 	res.code(204).send()
+}
+
+async function seedEntities(req, res) {
+	const fs = require('fs')
+	const uuid = require("uuid").v4
+	const data = fs.readFileSync(`./data/${req.params.entity_type}s.json`, 'utf8')
+	const entities = JSON.parse(data)
+	const entityModel = Entity.getEntityModel(req.params.entity_type)
+	for(obj of entities){
+		const base = { _id: uuid(), users: false }
+		const entity = new entityModel({ ...base, ...obj })
+		await entity.save()
+	}
+	return "success"
 }
 
 /************************ Custom serializer ************************/
