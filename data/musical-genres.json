@@ -1,0 +1,796 @@
+[
+  {"name":"acid house","langs":{"en":"acid house","fr":"acid house"}},
+  {"name":"acid jazz","langs":{"en":"acid jazz","fr":"acid jazz"}},
+  {"name":"acid rock","langs":{"en":"acid rock","fr":"acid rock"}},
+  {"name":"acid techno","langs":{"en":"acid techno","fr":"acid techno"}},
+  {
+    "name":"acoustic blues",
+    "langs":{"en":"acoustic blues","fr":"acoustic blues"}
+  },
+  {"name":"acoustic rock","langs":{"en":"acoustic rock","fr":"acoustic rock"}},
+  {"name":"afoxê","langs":{"en":"afoxê","fr":"afoxê"}},
+  {"name":"afrobeat","langs":{"en":"afrobeat","fr":"afrobeat"}},
+  {
+    "name":"alternative country",
+    "langs":{"en":"alternative country","fr":"alternative country"}
+  },
+  {
+    "name":"alternative dance",
+    "langs":{"en":"alternative dance","fr":"alternative dance"}
+  },
+  {
+    "name":"alternative folk",
+    "langs":{"en":"alternative folk","fr":"alternative folk"}
+  },
+  {
+    "name":"alternative hip hop",
+    "langs":{"en":"alternative hip hop","fr":"alternative hip hop"}
+  },
+  {
+    "name":"alternative metal",
+    "langs":{"en":"alternative metal","fr":"alternative metal"}
+  },
+  {
+    "name":"alternative pop",
+    "langs":{"en":"alternative pop","fr":"alternative pop"}
+  },
+  {
+    "name":"alternative punk",
+    "langs":{"en":"alternative punk","fr":"alternative punk"}
+  },
+  {
+    "name":"alternative rock",
+    "langs":{"en":"alternative rock","fr":"alternative rock"}
+  },
+  {"name":"ambient","langs":{"en":"ambient","fr":"ambient"}},
+  {"name":"ambient dub","langs":{"en":"ambient dub","fr":"ambient dub"}},
+  {"name":"ambient house","langs":{"en":"ambient house","fr":"ambient house"}},
+  {
+    "name":"ambient techno",
+    "langs":{"en":"ambient techno","fr":"ambient techno"}
+  },
+  {"name":"americana","langs":{"en":"americana","fr":"americana"}},
+  {"name":"anarcho-punk","langs":{"en":"anarcho-punk","fr":"anarcho-punk"}},
+  {"name":"aor","langs":{"en":"aor","fr":"aor"}},
+  {"name":"arena rock","langs":{"en":"arena rock","fr":"arena rock"}},
+  {"name":"art pop","langs":{"en":"art pop","fr":"art pop"}},
+  {"name":"art punk","langs":{"en":"art punk","fr":"art punk"}},
+  {"name":"art rock","langs":{"en":"art rock","fr":"art rock"}},
+  {
+    "name":"atmospheric black metal",
+    "langs":{"en":"atmospheric black metal","fr":"atmospheric black metal"}
+  },
+  {"name":"audiobook","langs":{"en":"audiobook","fr":"audiobook"}},
+  {"name":"avant-garde","langs":{"en":"avant-garde","fr":"avant-garde"}},
+  {
+    "name":"avant-garde jazz",
+    "langs":{"en":"avant-garde jazz","fr":"avant-garde jazz"}
+  },
+  {
+    "name":"avant-garde metal",
+    "langs":{"en":"avant-garde metal","fr":"avant-garde metal"}
+  },
+  {
+    "name":"avant-garde pop",
+    "langs":{"en":"avant-garde pop","fr":"avant-garde pop"}
+  },
+  {"name":"avant-prog","langs":{"en":"avant-prog","fr":"avant-prog"}},
+  {"name":"bachata","langs":{"en":"bachata","fr":"bachata"}},
+  {"name":"ballad","langs":{"en":"ballad","fr":"ballad"}},
+  {"name":"barbershop","langs":{"en":"barbershop","fr":"barbershop"}},
+  {"name":"baroque","langs":{"en":"baroque","fr":"baroque"}},
+  {"name":"bass house","langs":{"en":"bass house","fr":"bass house"}},
+  {"name":"beat music","langs":{"en":"beat music","fr":"beat music"}},
+  {"name":"bebop","langs":{"en":"bebop","fr":"bebop"}},
+  {"name":"bhangra","langs":{"en":"bhangra","fr":"bhangra"}},
+  {"name":"big band","langs":{"en":"big band","fr":"big band"}},
+  {"name":"big beat","langs":{"en":"big beat","fr":"big beat"}},
+  {"name":"black metal","langs":{"en":"black metal","fr":"black metal"}},
+  {
+    "name":"blackened death metal",
+    "langs":{"en":"blackened death metal","fr":"blackened death metal"}
+  },
+  {"name":"blackgaze","langs":{"en":"blackgaze","fr":"blackgaze"}},
+  {
+    "name":"blue-eyed soul",
+    "langs":{"en":"blue-eyed soul","fr":"blue-eyed soul"}
+  },
+  {"name":"bluegrass","langs":{"en":"bluegrass","fr":"bluegrass"}},
+  {"name":"blues","langs":{"en":"blues","fr":"blues"}},
+  {"name":"blues rock","langs":{"en":"blues rock","fr":"blues rock"}},
+  {"name":"bolero","langs":{"en":"bolero","fr":"bolero"}},
+  {"name":"bolero son","langs":{"en":"bolero son","fr":"bolero son"}},
+  {"name":"bongo flava","langs":{"en":"bongo flava","fr":"bongo flava"}},
+  {"name":"boogie rock","langs":{"en":"boogie rock","fr":"boogie rock"}},
+  {"name":"boogie-woogie","langs":{"en":"boogie-woogie","fr":"boogie-woogie"}},
+  {"name":"boom bap","langs":{"en":"boom bap","fr":"boom bap"}},
+  {"name":"bossa nova","langs":{"en":"bossa nova","fr":"bossa nova"}},
+  {"name":"bounce","langs":{"en":"bounce","fr":"bounce"}},
+  {"name":"breakbeat","langs":{"en":"breakbeat","fr":"breakbeat"}},
+  {
+    "name":"breakbeat hardcore",
+    "langs":{"en":"breakbeat hardcore","fr":"breakbeat hardcore"}
+  },
+  {"name":"breakcore","langs":{"en":"breakcore","fr":"breakcore"}},
+  {"name":"breaks","langs":{"en":"breaks","fr":"breaks"}},
+  {"name":"britpop","langs":{"en":"britpop","fr":"britpop"}},
+  {"name":"broken beat","langs":{"en":"broken beat","fr":"broken beat"}},
+  {"name":"brostep","langs":{"en":"brostep","fr":"brostep"}},
+  {
+    "name":"brutal death metal",
+    "langs":{"en":"brutal death metal","fr":"brutal death metal"}
+  },
+  {"name":"bubblegum pop","langs":{"en":"bubblegum pop","fr":"bubblegum pop"}},
+  {"name":"cajun","langs":{"en":"cajun","fr":"cajun"}},
+  {"name":"calypso","langs":{"en":"calypso","fr":"calypso"}},
+  {"name":"candombe","langs":{"en":"candombe","fr":"candombe"}},
+  {
+    "name":"canterbury scene",
+    "langs":{"en":"canterbury scene","fr":"canterbury scene"}
+  },
+  {"name":"cantopop","langs":{"en":"cantopop","fr":"cantopop"}},
+  {
+    "name":"carnatic classical",
+    "langs":{"en":"carnatic classical","fr":"carnatic classical"}
+  },
+  {"name":"celtic","langs":{"en":"celtic","fr":"celtic"}},
+  {"name":"celtic punk","langs":{"en":"celtic punk","fr":"celtic punk"}},
+  {"name":"chachachá","langs":{"en":"chachachá","fr":"chachachá"}},
+  {"name":"chamber pop","langs":{"en":"chamber pop","fr":"chamber pop"}},
+  {"name":"champeta","langs":{"en":"champeta","fr":"champeta"}},
+  {"name":"changüí","langs":{"en":"changüí","fr":"changüí"}},
+  {"name":"chanson","langs":{"en":"chanson","fr":"chanson"}},
+  {"name":"chicago blues","langs":{"en":"chicago blues","fr":"chicago blues"}},
+  {"name":"chillout","langs":{"en":"chillout","fr":"chillout"}},
+  {"name":"chiptune","langs":{"en":"chiptune","fr":"chiptune"}},
+  {
+    "name":"chopped and screwed",
+    "langs":{"en":"chopped and screwed","fr":"chopped and screwed"}
+  },
+  {
+    "name":"christian rock",
+    "langs":{"en":"christian rock","fr":"christian rock"}
+  },
+  {
+    "name":"christmas music",
+    "langs":{"en":"christmas music","fr":"christmas music"}
+  },
+  {"name":"chutney","langs":{"en":"chutney","fr":"chutney"}},
+  {"name":"city pop","langs":{"en":"city pop","fr":"city pop"}},
+  {"name":"classic blues","langs":{"en":"classic blues","fr":"classic blues"}},
+  {
+    "name":"classic country",
+    "langs":{"en":"classic country","fr":"classic country"}
+  },
+  {"name":"classic jazz","langs":{"en":"classic jazz","fr":"classic jazz"}},
+  {"name":"classic rock","langs":{"en":"classic rock","fr":"classic rock"}},
+  {"name":"classical","langs":{"en":"classical","fr":"classical"}},
+  {
+    "name":"classical crossover",
+    "langs":{"en":"classical crossover","fr":"classical crossover"}
+  },
+  {"name":"club","langs":{"en":"club","fr":"club"}},
+  {"name":"comedy","langs":{"en":"comedy","fr":"comedy"}},
+  {"name":"comedy rock","langs":{"en":"comedy rock","fr":"comedy rock"}},
+  {"name":"compas","langs":{"en":"compas","fr":"compas"}},
+  {"name":"complextro","langs":{"en":"complextro","fr":"complextro"}},
+  {
+    "name":"conscious hip hop",
+    "langs":{"en":"conscious hip hop","fr":"conscious hip hop"}
+  },
+  {
+    "name":"contemporary christian",
+    "langs":{"en":"contemporary christian","fr":"contemporary christian"}
+  },
+  {
+    "name":"contemporary classical",
+    "langs":{"en":"contemporary classical","fr":"contemporary classical"}
+  },
+  {
+    "name":"contemporary folk",
+    "langs":{"en":"contemporary folk","fr":"contemporary folk"}
+  },
+  {
+    "name":"contemporary gospel",
+    "langs":{"en":"contemporary gospel","fr":"contemporary gospel"}
+  },
+  {
+    "name":"contemporary jazz",
+    "langs":{"en":"contemporary jazz","fr":"contemporary jazz"}
+  },
+  {
+    "name":"contemporary r&b",
+    "langs":{"en":"contemporary r&b","fr":"contemporary r&b"}
+  },
+  {"name":"contra","langs":{"en":"contra","fr":"contra"}},
+  {"name":"cool jazz","langs":{"en":"cool jazz","fr":"cool jazz"}},
+  {"name":"country","langs":{"en":"country","fr":"country"}},
+  {"name":"country blues","langs":{"en":"country blues","fr":"country blues"}},
+  {"name":"country folk","langs":{"en":"country folk","fr":"country folk"}},
+  {"name":"country pop","langs":{"en":"country pop","fr":"country pop"}},
+  {"name":"country rock","langs":{"en":"country rock","fr":"country rock"}},
+  {"name":"coupé-décalé","langs":{"en":"coupé-décalé","fr":"coupé-décalé"}},
+  {"name":"cowpunk","langs":{"en":"cowpunk","fr":"cowpunk"}},
+  {
+    "name":"crossover prog",
+    "langs":{"en":"crossover prog","fr":"crossover prog"}
+  },
+  {"name":"crust punk","langs":{"en":"crust punk","fr":"crust punk"}},
+  {"name":"cumbia","langs":{"en":"cumbia","fr":"cumbia"}},
+  {
+    "name":"cumbia villera",
+    "langs":{"en":"cumbia villera","fr":"cumbia villera"}
+  },
+  {"name":"cyberpunk","langs":{"en":"cyberpunk","fr":"cyberpunk"}},
+  {"name":"d-beat","langs":{"en":"d-beat","fr":"d-beat"}},
+  {"name":"dance","langs":{"en":"dance","fr":"dance"}},
+  {"name":"dance-pop","langs":{"en":"dance-pop","fr":"dance-pop"}},
+  {"name":"dance-punk","langs":{"en":"dance-punk","fr":"dance-punk"}},
+  {"name":"dancehall","langs":{"en":"dancehall","fr":"dancehall"}},
+  {"name":"dansband","langs":{"en":"dansband","fr":"dansband"}},
+  {"name":"dark ambient","langs":{"en":"dark ambient","fr":"dark ambient"}},
+  {"name":"dark electro","langs":{"en":"dark electro","fr":"dark electro"}},
+  {"name":"dark folk","langs":{"en":"dark folk","fr":"dark folk"}},
+  {"name":"dark wave","langs":{"en":"dark wave","fr":"dark wave"}},
+  {"name":"death metal","langs":{"en":"death metal","fr":"death metal"}},
+  {
+    "name":"death-doom metal",
+    "langs":{"en":"death-doom metal","fr":"death-doom metal"}
+  },
+  {"name":"deathcore","langs":{"en":"deathcore","fr":"deathcore"}},
+  {"name":"deathgrind","langs":{"en":"deathgrind","fr":"deathgrind"}},
+  {"name":"deathrock","langs":{"en":"deathrock","fr":"deathrock"}},
+  {"name":"deep house","langs":{"en":"deep house","fr":"deep house"}},
+  {"name":"delta blues","langs":{"en":"delta blues","fr":"delta blues"}},
+  {"name":"descarga","langs":{"en":"descarga","fr":"descarga"}},
+  {"name":"desert rock","langs":{"en":"desert rock","fr":"desert rock"}},
+  {
+    "name":"detroit techno",
+    "langs":{"en":"detroit techno","fr":"detroit techno"}
+  },
+  {
+    "name":"digital hardcore",
+    "langs":{"en":"digital hardcore","fr":"digital hardcore"}
+  },
+  {"name":"disco","langs":{"en":"disco","fr":"disco"}},
+  {"name":"doo-wop","langs":{"en":"doo-wop","fr":"doo-wop"}},
+  {"name":"doom metal","langs":{"en":"doom metal","fr":"doom metal"}},
+  {"name":"downtempo","langs":{"en":"downtempo","fr":"downtempo"}},
+  {"name":"dream pop","langs":{"en":"dream pop","fr":"dream pop"}},
+  {"name":"drill","langs":{"en":"drill","fr":"drill"}},
+  {
+    "name":"drill and bass",
+    "langs":{"en":"drill and bass","fr":"drill and bass"}
+  },
+  {"name":"drone","langs":{"en":"drone","fr":"drone"}},
+  {"name":"drum and bass","langs":{"en":"drum and bass","fr":"drum and bass"}},
+  {"name":"dub","langs":{"en":"dub","fr":"dub"}},
+  {"name":"dub techno","langs":{"en":"dub techno","fr":"dub techno"}},
+  {"name":"dubstep","langs":{"en":"dubstep","fr":"dubstep"}},
+  {"name":"dungeon synth","langs":{"en":"dungeon synth","fr":"dungeon synth"}},
+  {
+    "name":"east coast hip hop",
+    "langs":{"en":"east coast hip hop","fr":"east coast hip hop"}
+  },
+  {"name":"ebm","langs":{"en":"ebm","fr":"ebm"}},
+  {"name":"edm","langs":{"en":"edm","fr":"edm"}},
+  {
+    "name":"electric blues",
+    "langs":{"en":"electric blues","fr":"electric blues"}
+  },
+  {"name":"electro","langs":{"en":"electro","fr":"electro"}},
+  {"name":"electro house","langs":{"en":"electro house","fr":"electro house"}},
+  {"name":"electro swing","langs":{"en":"electro swing","fr":"electro swing"}},
+  {"name":"electro-funk","langs":{"en":"electro-funk","fr":"electro-funk"}},
+  {
+    "name":"electro-industrial",
+    "langs":{"en":"electro-industrial","fr":"electro-industrial"}
+  },
+  {"name":"electroclash","langs":{"en":"electroclash","fr":"electroclash"}},
+  {"name":"electronic","langs":{"en":"electronic","fr":"electronic"}},
+  {
+    "name":"electronic rock",
+    "langs":{"en":"electronic rock","fr":"electronic rock"}
+  },
+  {"name":"electronica","langs":{"en":"electronica","fr":"electronica"}},
+  {"name":"electronicore","langs":{"en":"electronicore","fr":"electronicore"}},
+  {"name":"electropop","langs":{"en":"electropop","fr":"electropop"}},
+  {"name":"electropunk","langs":{"en":"electropunk","fr":"electropunk"}},
+  {"name":"emo","langs":{"en":"emo","fr":"emo"}},
+  {"name":"emo pop","langs":{"en":"emo pop","fr":"emo pop"}},
+  {"name":"emocore","langs":{"en":"emocore","fr":"emocore"}},
+  {"name":"enka","langs":{"en":"enka","fr":"enka"}},
+  {"name":"ethereal","langs":{"en":"ethereal","fr":"ethereal"}},
+  {"name":"euro house","langs":{"en":"euro house","fr":"euro house"}},
+  {"name":"eurobeat","langs":{"en":"eurobeat","fr":"eurobeat"}},
+  {"name":"eurodance","langs":{"en":"eurodance","fr":"eurodance"}},
+  {"name":"europop","langs":{"en":"europop","fr":"europop"}},
+  {"name":"exotica","langs":{"en":"exotica","fr":"exotica"}},
+  {"name":"experimental","langs":{"en":"experimental","fr":"experimental"}},
+  {
+    "name":"experimental rock",
+    "langs":{"en":"experimental rock","fr":"experimental rock"}
+  },
+  {"name":"fado","langs":{"en":"fado","fr":"fado"}},
+  {"name":"filk","langs":{"en":"filk","fr":"filk"}},
+  {"name":"flamenco","langs":{"en":"flamenco","fr":"flamenco"}},
+  {"name":"folk","langs":{"en":"folk","fr":"folk"}},
+  {"name":"folk metal","langs":{"en":"folk metal","fr":"folk metal"}},
+  {"name":"folk pop","langs":{"en":"folk pop","fr":"folk pop"}},
+  {"name":"folk punk","langs":{"en":"folk punk","fr":"folk punk"}},
+  {"name":"folk rock","langs":{"en":"folk rock","fr":"folk rock"}},
+  {"name":"folktronica","langs":{"en":"folktronica","fr":"folktronica"}},
+  {"name":"freak folk","langs":{"en":"freak folk","fr":"freak folk"}},
+  {
+    "name":"free improvisation",
+    "langs":{"en":"free improvisation","fr":"free improvisation"}
+  },
+  {"name":"free jazz","langs":{"en":"free jazz","fr":"free jazz"}},
+  {"name":"funk","langs":{"en":"funk","fr":"funk"}},
+  {"name":"funk carioca","langs":{"en":"funk carioca","fr":"funk carioca"}},
+  {"name":"funk metal","langs":{"en":"funk metal","fr":"funk metal"}},
+  {"name":"funk rock","langs":{"en":"funk rock","fr":"funk rock"}},
+  {"name":"funk soul","langs":{"en":"funk soul","fr":"funk soul"}},
+  {"name":"funky house","langs":{"en":"funky house","fr":"funky house"}},
+  {"name":"fusion","langs":{"en":"fusion","fr":"fusion"}},
+  {"name":"future bass","langs":{"en":"future bass","fr":"future bass"}},
+  {"name":"future garage","langs":{"en":"future garage","fr":"future garage"}},
+  {"name":"future jazz","langs":{"en":"future jazz","fr":"future jazz"}},
+  {"name":"futurepop","langs":{"en":"futurepop","fr":"futurepop"}},
+  {"name":"g-funk","langs":{"en":"g-funk","fr":"g-funk"}},
+  {"name":"gabber","langs":{"en":"gabber","fr":"gabber"}},
+  {"name":"gangsta rap","langs":{"en":"gangsta rap","fr":"gangsta rap"}},
+  {"name":"garage","langs":{"en":"garage","fr":"garage"}},
+  {"name":"garage house","langs":{"en":"garage house","fr":"garage house"}},
+  {"name":"garage punk","langs":{"en":"garage punk","fr":"garage punk"}},
+  {"name":"garage rock","langs":{"en":"garage rock","fr":"garage rock"}},
+  {"name":"glam","langs":{"en":"glam","fr":"glam"}},
+  {"name":"glam metal","langs":{"en":"glam metal","fr":"glam metal"}},
+  {"name":"glam rock","langs":{"en":"glam rock","fr":"glam rock"}},
+  {"name":"glitch","langs":{"en":"glitch","fr":"glitch"}},
+  {"name":"goa trance","langs":{"en":"goa trance","fr":"goa trance"}},
+  {"name":"goregrind","langs":{"en":"goregrind","fr":"goregrind"}},
+  {"name":"gospel","langs":{"en":"gospel","fr":"gospel"}},
+  {"name":"gothic","langs":{"en":"gothic","fr":"gothic"}},
+  {"name":"gothic metal","langs":{"en":"gothic metal","fr":"gothic metal"}},
+  {"name":"gothic rock","langs":{"en":"gothic rock","fr":"gothic rock"}},
+  {"name":"grebo","langs":{"en":"grebo","fr":"grebo"}},
+  {"name":"grime","langs":{"en":"grime","fr":"grime"}},
+  {"name":"grindcore","langs":{"en":"grindcore","fr":"grindcore"}},
+  {"name":"groove metal","langs":{"en":"groove metal","fr":"groove metal"}},
+  {"name":"group sounds","langs":{"en":"group sounds","fr":"group sounds"}},
+  {"name":"grunge","langs":{"en":"grunge","fr":"grunge"}},
+  {"name":"guaguancó","langs":{"en":"guaguancó","fr":"guaguancó"}},
+  {"name":"guajira","langs":{"en":"guajira","fr":"guajira"}},
+  {"name":"guaracha","langs":{"en":"guaracha","fr":"guaracha"}},
+  {
+    "name":"happy hardcore",
+    "langs":{"en":"happy hardcore","fr":"happy hardcore"}
+  },
+  {"name":"hard bop","langs":{"en":"hard bop","fr":"hard bop"}},
+  {"name":"hard house","langs":{"en":"hard house","fr":"hard house"}},
+  {"name":"hard rock","langs":{"en":"hard rock","fr":"hard rock"}},
+  {"name":"hard trance","langs":{"en":"hard trance","fr":"hard trance"}},
+  {
+    "name":"hardcore hip hop",
+    "langs":{"en":"hardcore hip hop","fr":"hardcore hip hop"}
+  },
+  {"name":"hardcore punk","langs":{"en":"hardcore punk","fr":"hardcore punk"}},
+  {
+    "name":"hardcore techno",
+    "langs":{"en":"hardcore techno","fr":"hardcore techno"}
+  },
+  {"name":"hardstyle","langs":{"en":"hardstyle","fr":"hardstyle"}},
+  {"name":"harsh noise","langs":{"en":"harsh noise","fr":"harsh noise"}},
+  {
+    "name":"harsh noise wall",
+    "langs":{"en":"harsh noise wall","fr":"harsh noise wall"}
+  },
+  {"name":"hauntology","langs":{"en":"hauntology","fr":"hauntology"}},
+  {"name":"heavy metal","langs":{"en":"heavy metal","fr":"heavy metal"}},
+  {"name":"heavy psych","langs":{"en":"heavy psych","fr":"heavy psych"}},
+  {"name":"heavy rock","langs":{"en":"heavy rock","fr":"heavy rock"}},
+  {"name":"hi-nrg","langs":{"en":"hi-nrg","fr":"hi-nrg"}},
+  {
+    "name":"hindustani classical",
+    "langs":{"en":"hindustani classical","fr":"hindustani classical"}
+  },
+  {"name":"hip hop","langs":{"en":"hip hop","fr":"hip hop"}},
+  {"name":"hip house","langs":{"en":"hip house","fr":"hip house"}},
+  {"name":"honky tonk","langs":{"en":"honky tonk","fr":"honky tonk"}},
+  {"name":"hopepunk","langs":{"en":"hopepunk","fr":"hopepunk"}},
+  {"name":"horror punk","langs":{"en":"horror punk","fr":"horror punk"}},
+  {"name":"horrorcore","langs":{"en":"horrorcore","fr":"horrorcore"}},
+  {"name":"house","langs":{"en":"house","fr":"house"}},
+  {"name":"idm","langs":{"en":"idm","fr":"idm"}},
+  {"name":"illbient","langs":{"en":"illbient","fr":"illbient"}},
+  {"name":"indie","langs":{"en":"indie","fr":"indie"}},
+  {"name":"indie folk","langs":{"en":"indie folk","fr":"indie folk"}},
+  {"name":"indie pop","langs":{"en":"indie pop","fr":"indie pop"}},
+  {"name":"indie rock","langs":{"en":"indie rock","fr":"indie rock"}},
+  {"name":"indietronica","langs":{"en":"indietronica","fr":"indietronica"}},
+  {"name":"indorock","langs":{"en":"indorock","fr":"indorock"}},
+  {"name":"industrial","langs":{"en":"industrial","fr":"industrial"}},
+  {
+    "name":"industrial metal",
+    "langs":{"en":"industrial metal","fr":"industrial metal"}
+  },
+  {
+    "name":"industrial musical",
+    "langs":{"en":"industrial musical","fr":"industrial musical"}
+  },
+  {
+    "name":"industrial rock",
+    "langs":{"en":"industrial rock","fr":"industrial rock"}
+  },
+  {
+    "name":"industrial techno",
+    "langs":{"en":"industrial techno","fr":"industrial techno"}
+  },
+  {"name":"instrumental","langs":{"en":"instrumental","fr":"instrumental"}},
+  {
+    "name":"instrumental jazz",
+    "langs":{"en":"instrumental jazz","fr":"instrumental jazz"}
+  },
+  {
+    "name":"instrumental rock",
+    "langs":{"en":"instrumental rock","fr":"instrumental rock"}
+  },
+  {"name":"irish folk","langs":{"en":"irish folk","fr":"irish folk"}},
+  {"name":"italo-disco","langs":{"en":"italo-disco","fr":"italo-disco"}},
+  {"name":"j-pop","langs":{"en":"j-pop","fr":"j-pop"}},
+  {"name":"j-rock","langs":{"en":"j-rock","fr":"j-rock"}},
+  {"name":"jazz","langs":{"en":"jazz","fr":"jazz"}},
+  {"name":"jazz blues","langs":{"en":"jazz blues","fr":"jazz blues"}},
+  {"name":"jazz fusion","langs":{"en":"jazz fusion","fr":"jazz fusion"}},
+  {"name":"jazz rap","langs":{"en":"jazz rap","fr":"jazz rap"}},
+  {"name":"jazz rock","langs":{"en":"jazz rock","fr":"jazz rock"}},
+  {"name":"jazz-funk","langs":{"en":"jazz-funk","fr":"jazz-funk"}},
+  {"name":"joik","langs":{"en":"joik","fr":"joik"}},
+  {"name":"jungle","langs":{"en":"jungle","fr":"jungle"}},
+  {"name":"k-pop","langs":{"en":"k-pop","fr":"k-pop"}},
+  {"name":"kawaii metal","langs":{"en":"kawaii metal","fr":"kawaii metal"}},
+  {"name":"kayōkyoku","langs":{"en":"kayōkyoku","fr":"kayōkyoku"}},
+  {"name":"kizomba","langs":{"en":"kizomba","fr":"kizomba"}},
+  {"name":"klezmer","langs":{"en":"klezmer","fr":"klezmer"}},
+  {"name":"krautrock","langs":{"en":"krautrock","fr":"krautrock"}},
+  {"name":"latin","langs":{"en":"latin","fr":"latin"}},
+  {"name":"latin jazz","langs":{"en":"latin jazz","fr":"latin jazz"}},
+  {"name":"latin pop","langs":{"en":"latin pop","fr":"latin pop"}},
+  {"name":"latin rock","langs":{"en":"latin rock","fr":"latin rock"}},
+  {"name":"leftfield","langs":{"en":"leftfield","fr":"leftfield"}},
+  {"name":"line dance","langs":{"en":"line dance","fr":"line dance"}},
+  {"name":"lo-fi","langs":{"en":"lo-fi","fr":"lo-fi"}},
+  {"name":"lo-fi hip hop","langs":{"en":"lo-fi hip hop","fr":"lo-fi hip hop"}},
+  {"name":"lounge","langs":{"en":"lounge","fr":"lounge"}},
+  {"name":"lovers rock","langs":{"en":"lovers rock","fr":"lovers rock"}},
+  {"name":"luk krung","langs":{"en":"luk krung","fr":"luk krung"}},
+  {"name":"luk thung","langs":{"en":"luk thung","fr":"luk thung"}},
+  {"name":"madchester","langs":{"en":"madchester","fr":"madchester"}},
+  {
+    "name":"mainstream rock",
+    "langs":{"en":"mainstream rock","fr":"mainstream rock"}
+  },
+  {"name":"maloya","langs":{"en":"maloya","fr":"maloya"}},
+  {"name":"mambo","langs":{"en":"mambo","fr":"mambo"}},
+  {"name":"mandopop","langs":{"en":"mandopop","fr":"mandopop"}},
+  {
+    "name":"martial industrial",
+    "langs":{"en":"martial industrial","fr":"martial industrial"}
+  },
+  {"name":"maskanda","langs":{"en":"maskanda","fr":"maskanda"}},
+  {"name":"math rock","langs":{"en":"math rock","fr":"math rock"}},
+  {"name":"mathcore","langs":{"en":"mathcore","fr":"mathcore"}},
+  {"name":"medieval","langs":{"en":"medieval","fr":"medieval"}},
+  {
+    "name":"melodic black metal",
+    "langs":{"en":"melodic black metal","fr":"melodic black metal"}
+  },
+  {
+    "name":"melodic death metal",
+    "langs":{"en":"melodic death metal","fr":"melodic death metal"}
+  },
+  {
+    "name":"melodic metalcore",
+    "langs":{"en":"melodic metalcore","fr":"melodic metalcore"}
+  },
+  {"name":"melodic rock","langs":{"en":"melodic rock","fr":"melodic rock"}},
+  {
+    "name":"melodic trance",
+    "langs":{"en":"melodic trance","fr":"melodic trance"}
+  },
+  {"name":"mento","langs":{"en":"mento","fr":"mento"}},
+  {"name":"merengue","langs":{"en":"merengue","fr":"merengue"}},
+  {"name":"metal","langs":{"en":"metal","fr":"metal"}},
+  {"name":"metalcore","langs":{"en":"metalcore","fr":"metalcore"}},
+  {"name":"miami bass","langs":{"en":"miami bass","fr":"miami bass"}},
+  {"name":"microhouse","langs":{"en":"microhouse","fr":"microhouse"}},
+  {"name":"milonga","langs":{"en":"milonga","fr":"milonga"}},
+  {"name":"min'yō","langs":{"en":"min'yō","fr":"min'yō"}},
+  {"name":"mincecore","langs":{"en":"mincecore","fr":"mincecore"}},
+  {"name":"minimal","langs":{"en":"minimal","fr":"minimal"}},
+  {
+    "name":"minimal techno",
+    "langs":{"en":"minimal techno","fr":"minimal techno"}
+  },
+  {"name":"minimal wave","langs":{"en":"minimal wave","fr":"minimal wave"}},
+  {"name":"modern blues","langs":{"en":"modern blues","fr":"modern blues"}},
+  {
+    "name":"modern classical",
+    "langs":{"en":"modern classical","fr":"modern classical"}
+  },
+  {
+    "name":"modern country",
+    "langs":{"en":"modern country","fr":"modern country"}
+  },
+  {"name":"motown","langs":{"en":"motown","fr":"motown"}},
+  {"name":"mpb","langs":{"en":"mpb","fr":"mpb"}},
+  {"name":"musical","langs":{"en":"musical","fr":"musical"}},
+  {"name":"neo soul","langs":{"en":"neo soul","fr":"neo soul"}},
+  {
+    "name":"neo-progressive rock",
+    "langs":{"en":"neo-progressive rock","fr":"neo-progressive rock"}
+  },
+  {
+    "name":"neo-rockabilly",
+    "langs":{"en":"neo-rockabilly","fr":"neo-rockabilly"}
+  },
+  {
+    "name":"neo-traditional country",
+    "langs":{"en":"neo-traditional country","fr":"neo-traditional country"}
+  },
+  {"name":"neofolk","langs":{"en":"neofolk","fr":"neofolk"}},
+  {"name":"nerdcore","langs":{"en":"nerdcore","fr":"nerdcore"}},
+  {"name":"neurofunk","langs":{"en":"neurofunk","fr":"neurofunk"}},
+  {"name":"new age","langs":{"en":"new age","fr":"new age"}},
+  {
+    "name":"new jack swing",
+    "langs":{"en":"new jack swing","fr":"new jack swing"}
+  },
+  {"name":"new romantic","langs":{"en":"new romantic","fr":"new romantic"}},
+  {"name":"new wave","langs":{"en":"new wave","fr":"new wave"}},
+  {"name":"nightcore","langs":{"en":"nightcore","fr":"nightcore"}},
+  {"name":"no wave","langs":{"en":"no wave","fr":"no wave"}},
+  {"name":"noise","langs":{"en":"noise","fr":"noise"}},
+  {"name":"noise pop","langs":{"en":"noise pop","fr":"noise pop"}},
+  {"name":"noise rock","langs":{"en":"noise rock","fr":"noise rock"}},
+  {"name":"noisecore","langs":{"en":"noisecore","fr":"noisecore"}},
+  {"name":"non-music","langs":{"en":"non-music","fr":"non-music"}},
+  {"name":"norteño","langs":{"en":"norteño","fr":"norteño"}},
+  {"name":"northern soul","langs":{"en":"northern soul","fr":"northern soul"}},
+  {"name":"nu disco","langs":{"en":"nu disco","fr":"nu disco"}},
+  {"name":"nu jazz","langs":{"en":"nu jazz","fr":"nu jazz"}},
+  {"name":"nu metal","langs":{"en":"nu metal","fr":"nu metal"}},
+  {"name":"nueva canción","langs":{"en":"nueva canción","fr":"nueva canción"}},
+  {"name":"occult rock","langs":{"en":"occult rock","fr":"occult rock"}},
+  {"name":"oi","langs":{"en":"oi","fr":"oi"}},
+  {
+    "name":"old school death metal",
+    "langs":{"en":"old school death metal","fr":"old school death metal"}
+  },
+  {"name":"old-time","langs":{"en":"old-time","fr":"old-time"}},
+  {"name":"opera","langs":{"en":"opera","fr":"opera"}},
+  {"name":"orchestral","langs":{"en":"orchestral","fr":"orchestral"}},
+  {
+    "name":"outlaw country",
+    "langs":{"en":"outlaw country","fr":"outlaw country"}
+  },
+  {"name":"p-funk","langs":{"en":"p-funk","fr":"p-funk"}},
+  {"name":"pachanga","langs":{"en":"pachanga","fr":"pachanga"}},
+  {"name":"pagode","langs":{"en":"pagode","fr":"pagode"}},
+  {"name":"phonk","langs":{"en":"phonk","fr":"phonk"}},
+  {"name":"polka","langs":{"en":"polka","fr":"polka"}},
+  {"name":"pop","langs":{"en":"pop","fr":"pop"}},
+  {"name":"pop metal","langs":{"en":"pop metal","fr":"pop metal"}},
+  {"name":"pop punk","langs":{"en":"pop punk","fr":"pop punk"}},
+  {"name":"pop rap","langs":{"en":"pop rap","fr":"pop rap"}},
+  {"name":"pop rock","langs":{"en":"pop rock","fr":"pop rock"}},
+  {"name":"pop soul","langs":{"en":"pop soul","fr":"pop soul"}},
+  {"name":"pornogrind","langs":{"en":"pornogrind","fr":"pornogrind"}},
+  {"name":"post-bop","langs":{"en":"post-bop","fr":"post-bop"}},
+  {
+    "name":"post-classical",
+    "langs":{"en":"post-classical","fr":"post-classical"}
+  },
+  {"name":"post-grunge","langs":{"en":"post-grunge","fr":"post-grunge"}},
+  {"name":"post-hardcore","langs":{"en":"post-hardcore","fr":"post-hardcore"}},
+  {"name":"post-metal","langs":{"en":"post-metal","fr":"post-metal"}},
+  {"name":"post-punk","langs":{"en":"post-punk","fr":"post-punk"}},
+  {"name":"post-rock","langs":{"en":"post-rock","fr":"post-rock"}},
+  {
+    "name":"power electronics",
+    "langs":{"en":"power electronics","fr":"power electronics"}
+  },
+  {"name":"power metal","langs":{"en":"power metal","fr":"power metal"}},
+  {"name":"power pop","langs":{"en":"power pop","fr":"power pop"}},
+  {"name":"powerviolence","langs":{"en":"powerviolence","fr":"powerviolence"}},
+  {
+    "name":"production music",
+    "langs":{"en":"production music","fr":"production music"}
+  },
+  {"name":"progressive","langs":{"en":"progressive","fr":"progressive"}},
+  {
+    "name":"progressive folk",
+    "langs":{"en":"progressive folk","fr":"progressive folk"}
+  },
+  {
+    "name":"progressive house",
+    "langs":{"en":"progressive house","fr":"progressive house"}
+  },
+  {
+    "name":"progressive metal",
+    "langs":{"en":"progressive metal","fr":"progressive metal"}
+  },
+  {
+    "name":"progressive rock",
+    "langs":{"en":"progressive rock","fr":"progressive rock"}
+  },
+  {
+    "name":"progressive trance",
+    "langs":{"en":"progressive trance","fr":"progressive trance"}
+  },
+  {"name":"psy-trance","langs":{"en":"psy-trance","fr":"psy-trance"}},
+  {"name":"psychedelic","langs":{"en":"psychedelic","fr":"psychedelic"}},
+  {
+    "name":"psychedelic folk",
+    "langs":{"en":"psychedelic folk","fr":"psychedelic folk"}
+  },
+  {
+    "name":"psychedelic pop",
+    "langs":{"en":"psychedelic pop","fr":"psychedelic pop"}
+  },
+  {
+    "name":"psychedelic rock",
+    "langs":{"en":"psychedelic rock","fr":"psychedelic rock"}
+  },
+  {"name":"psychobilly","langs":{"en":"psychobilly","fr":"psychobilly"}},
+  {"name":"psytrance","langs":{"en":"psytrance","fr":"psytrance"}},
+  {"name":"punk","langs":{"en":"punk","fr":"punk"}},
+  {"name":"punk rock","langs":{"en":"punk rock","fr":"punk rock"}},
+  {"name":"qawwali","langs":{"en":"qawwali","fr":"qawwali"}},
+  {"name":"queercore","langs":{"en":"queercore","fr":"queercore"}},
+  {"name":"r&b","langs":{"en":"r&b","fr":"r&b"}},
+  {"name":"ragga","langs":{"en":"ragga","fr":"ragga"}},
+  {"name":"ragga hip-hop","langs":{"en":"ragga hip-hop","fr":"ragga hip-hop"}},
+  {"name":"ragga jungle","langs":{"en":"ragga jungle","fr":"ragga jungle"}},
+  {"name":"ragtime","langs":{"en":"ragtime","fr":"ragtime"}},
+  {"name":"ranchera","langs":{"en":"ranchera","fr":"ranchera"}},
+  {"name":"rap rock","langs":{"en":"rap rock","fr":"rap rock"}},
+  {"name":"rapcore","langs":{"en":"rapcore","fr":"rapcore"}},
+  {"name":"rave","langs":{"en":"rave","fr":"rave"}},
+  {"name":"raï","langs":{"en":"raï","fr":"raï"}},
+  {"name":"red song","langs":{"en":"red song","fr":"red song"}},
+  {"name":"reggae","langs":{"en":"reggae","fr":"reggae"}},
+  {"name":"reggaeton","langs":{"en":"reggaeton","fr":"reggaeton"}},
+  {
+    "name":"rhythmic noise",
+    "langs":{"en":"rhythmic noise","fr":"rhythmic noise"}
+  },
+  {
+    "name":"ritual ambient",
+    "langs":{"en":"ritual ambient","fr":"ritual ambient"}
+  },
+  {"name":"rock","langs":{"en":"rock","fr":"rock"}},
+  {"name":"rock and roll","langs":{"en":"rock and roll","fr":"rock and roll"}},
+  {"name":"rockabilly","langs":{"en":"rockabilly","fr":"rockabilly"}},
+  {"name":"rocksteady","langs":{"en":"rocksteady","fr":"rocksteady"}},
+  {
+    "name":"romantic classical",
+    "langs":{"en":"romantic classical","fr":"romantic classical"}
+  },
+  {"name":"roots reggae","langs":{"en":"roots reggae","fr":"roots reggae"}},
+  {"name":"rumba","langs":{"en":"rumba","fr":"rumba"}},
+  {"name":"ryūkōka","langs":{"en":"ryūkōka","fr":"ryūkōka"}},
+  {"name":"salsa","langs":{"en":"salsa","fr":"salsa"}},
+  {"name":"samba","langs":{"en":"samba","fr":"samba"}},
+  {"name":"schlager","langs":{"en":"schlager","fr":"schlager"}},
+  {"name":"screamo","langs":{"en":"screamo","fr":"screamo"}},
+  {"name":"shibuya-kei","langs":{"en":"shibuya-kei","fr":"shibuya-kei"}},
+  {"name":"shoegaze","langs":{"en":"shoegaze","fr":"shoegaze"}},
+  {
+    "name":"singer-songwriter",
+    "langs":{"en":"singer-songwriter","fr":"singer-songwriter"}
+  },
+  {"name":"ska","langs":{"en":"ska","fr":"ska"}},
+  {"name":"ska punk","langs":{"en":"ska punk","fr":"ska punk"}},
+  {"name":"skacore","langs":{"en":"skacore","fr":"skacore"}},
+  {"name":"slow waltz","langs":{"en":"slow waltz","fr":"slow waltz"}},
+  {"name":"sludge metal","langs":{"en":"sludge metal","fr":"sludge metal"}},
+  {"name":"smooth jazz","langs":{"en":"smooth jazz","fr":"smooth jazz"}},
+  {"name":"smooth soul","langs":{"en":"smooth soul","fr":"smooth soul"}},
+  {"name":"soca","langs":{"en":"soca","fr":"soca"}},
+  {"name":"soft rock","langs":{"en":"soft rock","fr":"soft rock"}},
+  {"name":"son cubano","langs":{"en":"son cubano","fr":"son cubano"}},
+  {"name":"son montuno","langs":{"en":"son montuno","fr":"son montuno"}},
+  {"name":"soul","langs":{"en":"soul","fr":"soul"}},
+  {"name":"soul jazz","langs":{"en":"soul jazz","fr":"soul jazz"}},
+  {"name":"southern rock","langs":{"en":"southern rock","fr":"southern rock"}},
+  {"name":"southern soul","langs":{"en":"southern soul","fr":"southern soul"}},
+  {"name":"space age pop","langs":{"en":"space age pop","fr":"space age pop"}},
+  {"name":"space rock","langs":{"en":"space rock","fr":"space rock"}},
+  {"name":"speed garage","langs":{"en":"speed garage","fr":"speed garage"}},
+  {"name":"speed metal","langs":{"en":"speed metal","fr":"speed metal"}},
+  {"name":"spoken word","langs":{"en":"spoken word","fr":"spoken word"}},
+  {"name":"steampunk","langs":{"en":"steampunk","fr":"steampunk"}},
+  {"name":"stoner metal","langs":{"en":"stoner metal","fr":"stoner metal"}},
+  {"name":"stoner rock","langs":{"en":"stoner rock","fr":"stoner rock"}},
+  {"name":"street punk","langs":{"en":"street punk","fr":"street punk"}},
+  {"name":"surf rock","langs":{"en":"surf rock","fr":"surf rock"}},
+  {"name":"swamp pop","langs":{"en":"swamp pop","fr":"swamp pop"}},
+  {"name":"swamp rock","langs":{"en":"swamp rock","fr":"swamp rock"}},
+  {"name":"swing","langs":{"en":"swing","fr":"swing"}},
+  {
+    "name":"symphonic black metal",
+    "langs":{"en":"symphonic black metal","fr":"symphonic black metal"}
+  },
+  {
+    "name":"symphonic metal",
+    "langs":{"en":"symphonic metal","fr":"symphonic metal"}
+  },
+  {
+    "name":"symphonic prog",
+    "langs":{"en":"symphonic prog","fr":"symphonic prog"}
+  },
+  {
+    "name":"symphonic rock",
+    "langs":{"en":"symphonic rock","fr":"symphonic rock"}
+  },
+  {"name":"symphony","langs":{"en":"symphony","fr":"symphony"}},
+  {"name":"synth-pop","langs":{"en":"synth-pop","fr":"synth-pop"}},
+  {"name":"synthwave","langs":{"en":"synthwave","fr":"synthwave"}},
+  {"name":"tango","langs":{"en":"tango","fr":"tango"}},
+  {"name":"tech house","langs":{"en":"tech house","fr":"tech house"}},
+  {
+    "name":"technical death metal",
+    "langs":{"en":"technical death metal","fr":"technical death metal"}
+  },
+  {"name":"techno","langs":{"en":"techno","fr":"techno"}},
+  {"name":"teen pop","langs":{"en":"teen pop","fr":"teen pop"}},
+  {"name":"thrash metal","langs":{"en":"thrash metal","fr":"thrash metal"}},
+  {"name":"thrashcore","langs":{"en":"thrashcore","fr":"thrashcore"}},
+  {"name":"timba","langs":{"en":"timba","fr":"timba"}},
+  {
+    "name":"traditional country",
+    "langs":{"en":"traditional country","fr":"traditional country"}
+  },
+  {"name":"trance","langs":{"en":"trance","fr":"trance"}},
+  {"name":"trap","langs":{"en":"trap","fr":"trap"}},
+  {"name":"trap edm","langs":{"en":"trap edm","fr":"trap edm"}},
+  {
+    "name":"tribal ambient",
+    "langs":{"en":"tribal ambient","fr":"tribal ambient"}
+  },
+  {"name":"tribal house","langs":{"en":"tribal house","fr":"tribal house"}},
+  {"name":"trip hop","langs":{"en":"trip hop","fr":"trip hop"}},
+  {"name":"turntablism","langs":{"en":"turntablism","fr":"turntablism"}},
+  {"name":"uk drill","langs":{"en":"uk drill","fr":"uk drill"}},
+  {"name":"uk funky","langs":{"en":"uk funky","fr":"uk funky"}},
+  {"name":"uk garage","langs":{"en":"uk garage","fr":"uk garage"}},
+  {
+    "name":"underground hip hop",
+    "langs":{"en":"underground hip hop","fr":"underground hip hop"}
+  },
+  {"name":"vallenato","langs":{"en":"vallenato","fr":"vallenato"}},
+  {"name":"vaporwave","langs":{"en":"vaporwave","fr":"vaporwave"}},
+  {"name":"viking metal","langs":{"en":"viking metal","fr":"viking metal"}},
+  {"name":"visual kei","langs":{"en":"visual kei","fr":"visual kei"}},
+  {"name":"vocal house","langs":{"en":"vocal house","fr":"vocal house"}},
+  {"name":"vocal jazz","langs":{"en":"vocal jazz","fr":"vocal jazz"}},
+  {"name":"vocal trance","langs":{"en":"vocal trance","fr":"vocal trance"}},
+  {"name":"waltz","langs":{"en":"waltz","fr":"waltz"}},
+  {
+    "name":"west coast hip hop",
+    "langs":{"en":"west coast hip hop","fr":"west coast hip hop"}
+  },
+  {
+    "name":"west coast swing",
+    "langs":{"en":"west coast swing","fr":"west coast swing"}
+  },
+  {"name":"western swing","langs":{"en":"western swing","fr":"western swing"}},
+  {"name":"yacht rock","langs":{"en":"yacht rock","fr":"yacht rock"}},
+  {"name":"yé-yé","langs":{"en":"yé-yé","fr":"yé-yé"}},
+  {"name":"zamrock","langs":{"en":"zamrock","fr":"zamrock"}},
+  {"name":"zeuhl","langs":{"en":"zeuhl","fr":"zeuhl"}},
+  {"name":"zouk","langs":{"en":"zouk","fr":"zouk"}},
+  {"name":"zydeco","langs":{"en":"zydeco","fr":"zydeco"}}
+]
