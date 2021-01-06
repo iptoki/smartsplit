@@ -1,7 +1,7 @@
 const DefaultConfig = {
 	defaultLanguage: "fr",
 
-	clientUrl: process.env.CLIENT_URL || "https://www.smartsplit.org",
+	clientUrl: process.env.CLIENT_URL || "http://www-dev.smartsplit.org",
 
 	apiUrl: process.env.API_BASE_URL || "https://apiv2-dev.smartsplit.org/v1",
 
