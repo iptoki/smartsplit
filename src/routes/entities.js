@@ -133,6 +133,7 @@ async function routes(fastify, options) {
 		method: "POST",
 		url: "/entities/:entity_type/seed",
 		schema: {
+			hide: true,
 			params: {
 				entity_type: {
 					type: "string",

@@ -147,7 +147,6 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			// body: DocumentationSchemas.fileRequestBody,
 			response: {
 				201: DocumentationSchemas.file,
 			},
