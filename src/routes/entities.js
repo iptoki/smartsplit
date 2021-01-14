@@ -127,7 +127,7 @@ async function routes(fastify, options) {
 	})
 
 	// Secret route available for admins only
-	// Seed a list of entities in the database. 
+	// Seed a list of entities in the database.
 	// Data set that will be seeded are located in /smartsplit/data/
 	fastify.route({
 		method: "POST",
@@ -202,7 +202,7 @@ async function getEntities(req, res) {
 	}
 
 	let query = Entity.find({
-		type: (req.params.entity_type).slice(0, -1),
+		type: req.params.entity_type.slice(0, -1),
 		$or: [
 			{ name: { $regex: regex, $options: "i" } },
 			{ "langs.en": { $regex: regex, $options: "i" } },
@@ -247,12 +247,12 @@ async function deleteEntity(req, res) {
 }
 
 async function seedEntities(req, res) {
-	const fs = require('fs')
+	const fs = require("fs")
 	const uuid = require("uuid").v4
-	const data = fs.readFileSync(`./data/${req.params.entity_type}s.json`, 'utf8')
+	const data = fs.readFileSync(`./data/${req.params.entity_type}s.json`, "utf8")
 	const entities = JSON.parse(data)
 	const entityModel = Entity.getEntityModel(req.params.entity_type)
-	for(obj of entities){
+	for (obj of entities) {
 		const base = { _id: uuid(), users: false }
 		const entity = new entityModel({ ...base, ...obj })
 		await entity.save()
