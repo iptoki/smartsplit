@@ -30,7 +30,7 @@ const WorkpieceSchema = new mongoose.Schema(
 		},
 		entityTags: {
 			type: [String],
-			ref: "ListEntity",
+			ref: "Entity",
 		},
 		rightSplit: {
 			type: RightSplitSchema,
@@ -79,7 +79,7 @@ WorkpieceSchema.methods.setRightSplit = async function (body) {
 	this.rightSplit = {
 		_state: "draft",
 		copyright: [],
-		interpretation: [],
+		performance: [],
 		recording: [],
 	}
 	this.rightHolders = []
@@ -94,6 +94,8 @@ WorkpieceSchema.methods.setRightSplit = async function (body) {
 			this.rightSplit[rightType].push({
 				rightHolder: entry.rightHolder,
 				roles: entry.roles,
+				status: entry.status,
+				function: entry.function,
 				vote: this.owner === entry.rightHolder ? "accepted" : "undecided",
 				shares: entry.shares,
 			})
