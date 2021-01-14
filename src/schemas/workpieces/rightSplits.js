@@ -1,8 +1,10 @@
+const UserSchema = require("../users")
+
 module.exports.copyrightSplit = {
 	type: "object",
 	properties: {
 		rightHolder: {
-			type: "string",
+			anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
 		},
 		roles: {
 			type: "array",
@@ -27,7 +29,7 @@ module.exports.performanceSplit = {
 	type: "object",
 	properties: {
 		rightHolder: {
-			type: "string",
+			anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
 		},
 		roles: {
 			type: "array",
@@ -56,7 +58,7 @@ module.exports.recordingSplit = {
 	type: "object",
 	properties: {
 		rightHolder: {
-			type: "string",
+			anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
 		},
 		function: {
 			type: "string",
