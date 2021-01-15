@@ -68,7 +68,7 @@ const PerformerToolSchema = new mongoose.Schema(
 	{
 		instrument: {
 			type: String,
-			ref: "",
+			ref: "Entity",
 		},
 		role: {
 			type: String,
@@ -187,12 +187,12 @@ const InfoSchema = new mongoose.Schema(
 		BPM: Number,
 		mainGenre: {
 			type: String,
-			ref: "",
+			ref: "Entity",
 		},
 		secondaryGenres: [
 			{
 				type: String,
-				ref: "",
+				ref: "Entity",
 			},
 		],
 		influences: [String],
@@ -294,8 +294,7 @@ DocumentationSchema.methods.addFile = function (data) {
 }
 
 DocumentationSchema.methods.deleteFile = async function (file_id) {
-	if(!this.files.art.includes(file_id))
-		throw new Error("file not found")
+	if (!this.files.art.includes(file_id)) throw new Error("file not found")
 	this.files.art.filter((id) => id === file_id)
 	await mongoose.bucket.protectedWork.delete(file_id)
 }

@@ -288,7 +288,7 @@ const updateFile = async function (req, res) {
 
 const deleteFile = async function (req, res) {
 	const workpiece = await getWorkpieceAsOwner(req, res)
-	if(!workpiece.documentation.files.art.includes(req.params.file_id))
+	if (!workpiece.documentation.files.art.includes(req.params.file_id))
 		throw Errors.WorkpieceFileNotFound
 	await workpiece.deleteFile(req.params.file_id)
 	res.code(204).send()
