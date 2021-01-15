@@ -179,6 +179,26 @@ async function routes(fastify, options) {
 		preValidation: JWTAuth.requireAuthUser,
 		handler: updateFile,
 	})
+
+	fastify.route({
+		method: "DELETE",
+		url: "/workpieces/:workpiece_id/documentation/files/:file_id",
+		schema: {
+			tags: ["workpieces_documentation_files"],
+			description: "Delete a workpiece's file by ID",
+			params: {
+				workpiece_id: {
+					type: "string",
+				},
+				file_id: {
+					type: "string",
+				},
+			},
+			security: [{ bearerAuth: [] }],
+		},
+		preValidation: JWTAuth.requireAuthUser,
+		handler: deleteFile,
+	})
 }
 
 /************************ Handlers ************************/
@@ -264,6 +284,14 @@ const updateFile = async function (req, res) {
 	// }
 	// await workpiece.save()
 	// return file
+}
+
+const deleteFile = async function (req, res) {
+	const workpiece = await getWorkpieceAsOwner(req, res)
+	if (!workpiece.documentation.files.art.includes(req.params.file_id))
+		throw Errors.WorkpieceFileNotFound
+	await workpiece.deleteFile(req.params.file_id)
+	res.code(204).send()
 }
 
 /************************ Custom serializer ************************/
