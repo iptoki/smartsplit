@@ -272,6 +272,34 @@ FileSchema.virtual("url").get(function () {
 	)
 })
 
+DocumentationSchema.methods.addFile = function (data) {
+	const file_id = uuid()
+	if (data.fields.visibility === undefined) data.fields.visibility = {}
+	const options = {
+		metadata: {
+			encoding: data.encoding,
+			mimetype: data.mimetype,
+			visibility: data.fields.visibility.value || "private",
+		},
+	}
+	data.file.pipe(
+		mongoose.bucket.protectedWork.openUploadStreamWithId(
+			file_id,
+			data.filename,
+			options
+		)
+	)
+	const length = this.files.art.push(file_id)
+	return this.files.art[length - 1]
+}
+
+DocumentationSchema.methods.deleteFile = async function (file_id) {
+	if(!this.files.art.includes(file_id))
+		throw new Error("file not found")
+	this.files.art.filter((id) => id === file_id)
+	await mongoose.bucket.protectedWork.delete(file_id)
+}
+
 DocumentationSchema.methods.updateCreation = async function (data) {
 	for (let field of ["date", "iswc"])
 		if (field !== undefined) this.creation[field] = data[field]
