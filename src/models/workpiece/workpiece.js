@@ -83,8 +83,8 @@ WorkpieceSchema.methods.setRightSplit = async function (body) {
 		recording: [],
 	}
 	this.rightHolders = []
-
 	for (let rightType of RightTypes.list) {
+		if (!Array.isArray(body[rightType])) continue
 		for (let entry of body[rightType]) {
 			if (!(await User.exists({ _id: entry.rightHolder }))) throw UserNotFound
 
