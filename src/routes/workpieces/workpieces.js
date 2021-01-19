@@ -11,6 +11,26 @@ async function routes(fastify, options) {
 		url: "/workpieces/by-owner/:user_id/" /* TODO: remove that ugly `/` */,
 		schema: {
 			tags: ["workpieces_general"],
+			description: "*** DEPRECATED *** Get workpieces by owner",
+			params: {
+				user_id: {
+					type: "string",
+				},
+			},
+			response: {
+				200: { type: "array", items: WorkpieceSchemas.workpiece },
+			},
+			security: [{ bearerAuth: [] }],
+		},
+		preValidation: JWTAuth.requireAuthUser,
+		handler: getWorkpiecesByOwner,
+	})
+
+	fastify.route({
+		method: "GET",
+		url: "/workpieces/by-owner/:user_id",
+		schema: {
+			tags: ["workpieces_general"],
 			description: "Get workpieces by owner",
 			params: {
 				user_id: {
