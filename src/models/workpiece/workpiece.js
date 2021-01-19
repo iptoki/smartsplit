@@ -217,9 +217,9 @@ WorkpieceSchema.methods.updateDocumentation = async function (data) {
 WorkpieceSchema.methods.populateDocumentation = async function () {
 	await this.populateCreation()
 	await this.populateFiles()
-	// await this.populatePerformance()
-	// await this.populateRecording()
-	// await this.populateInfo()
+	await this.populatePerformance()
+	await this.populateRecording()
+	await this.populateInfo()
 }
 
 WorkpieceSchema.methods.populateFiles = async function () {
@@ -236,19 +236,19 @@ WorkpieceSchema.methods.populatePerformance = async function () {
 	await this.populate("documentation.performance.conductor").execPopulate()
 	for (let performer of this.documentation.performance.performers) {
 		await performer.populate("user")
-		for (let instrument of this.instruments) {
-			await instrument.populate("instrument").execPopulate()
-			await instrument.populate("role").execPopulate()
+		for (let field of ["instruments", "vocals"]) {
+			for (let obj of performer[field]) {
+				await obj.populate("instrument").execPopulate()
+				// await obj.populate("role").execPopulate()
+			}
 		}
 	}
-	// TODO performer.vocals
 }
 
 WorkpieceSchema.methods.populateRecording = async function () {
 	await this.populate("documentation.recording.directors").execPopulate()
 	for (let field of ["recording", "mixing", "mastering"]) {
 		for (let record of this.documentation.recording[field]) {
-			await record.populate("studio").execPopulate()
 			await record.populate("engineers").execPopulate()
 		}
 	}
