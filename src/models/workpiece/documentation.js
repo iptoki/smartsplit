@@ -306,7 +306,7 @@ DocumentationSchema.methods.deleteFile = async function (file_id) {
 DocumentationSchema.methods.updateCreation = async function (data) {
 	for (let field of ["date", "iswc"])
 		if (field !== undefined) this.creation[field] = data[field]
-	for (field of ["authors", "composers", "publishers"]){
+	for (field of ["authors", "composers", "publishers"]) {
 		if (!Array.isArray(data[field])) continue
 		for (const uid of data[field])
 			if (!(await User.exists({ _id: uid }))) throw Errors.UserNotFound
