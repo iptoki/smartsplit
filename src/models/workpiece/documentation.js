@@ -276,12 +276,14 @@ FileSchema.virtual("url").get(function () {
 
 DocumentationSchema.methods.addFile = function (data) {
 	const file_id = uuid()
-	if (data.fields.visibility === undefined) data.fields.visibility = {}
+	let visibility = "private"
+	if (data.fields !== undefined && data.fields.visibility !== undefined)
+		visibility = data.fields.visibility.value
 	const options = {
 		metadata: {
 			encoding: data.encoding,
 			mimetype: data.mimetype,
-			visibility: data.fields.visibility.value || "private",
+			visibility: visibility,
 		},
 	}
 	data.file.pipe(
@@ -305,47 +307,45 @@ DocumentationSchema.methods.updateCreation = async function (data) {
 	for (let field of ["date", "iswc"])
 		if (field !== undefined) this.creation[field] = data[field]
 	for (field of ["authors", "composers", "publishers"])
-		if (Array.isArray(data[field])) {
-			for (const uid of data[field])
-				if (!(await User.exists({ _id: uid }))) throw Errors.UserNotFound
-			this.creation[field] = data[field]
-		}
+		if (!Array.isArray(data[field])) continue
+	for (const uid of data[field])
+		if (!(await User.exists({ _id: uid }))) throw Errors.UserNotFound
+	this.creation[field] = data[field]
 }
 
 DocumentationSchema.methods.updatePerformance = async function (data) {
 	if (data.conductor !== undefined) this.performance.conductor = data.conductor
-	if (Array.isArray(data.performers)) {
-		for (const performer of data.performers) {
-			if (!(await User.exists({ _id: performer.user })))
-				throw Errors.UserNotFound
-			for (field of ["instruments", "vocals"]) {
-				for (const obj of performer[field]) {
-					if (!(await Instrument.exists({ _id: obj.instrument })))
-						throw Errors.EntityNotFound
-				}
+
+	if (!Array.isArray(data.performers)) return
+
+	for (const performer of data.performers) {
+		if (!(await User.exists({ _id: performer.user }))) throw Errors.UserNotFound
+		for (field of ["instruments", "vocals"]) {
+			if (!Array.isArray(data.performers)) continue
+			for (const obj of performer[field]) {
+				if (!(await Instrument.exists({ _id: obj.instrument })))
+					throw Errors.EntityNotFound
 			}
 		}
-		this.performance.performers = data.performers
 	}
+	this.performance.performers = data.performers
 }
 
 DocumentationSchema.methods.updateRecording = async function (data) {
 	for (const field of ["directors", "producers"]) {
-		if (Array.isArray(data[field])) {
-			for (const uid of data[field])
-				if (!(await User.exists({ _id: uid }))) throw Errors.UserNotFound
-			this.recording[field] = data[field]
-		}
+		if (!Array.isArray(data[field])) continue
+		for (const uid of data[field])
+			if (!(await User.exists({ _id: uid }))) throw Errors.UserNotFound
+		this.recording[field] = data[field]
 	}
 	if (data.isrc !== undefined) this.isrc = data.isrc
 	for (const field of ["recording", "mixing", "mastering"]) {
-		if (Array.isArray(data[field])) {
-			for (const obj of data[field]) {
-				for (const uid of obj.engineers)
-					if (!(await User.exists({ _id: uid }))) throw Errors.UserNotFound
-			}
-			this.recording[field] = data[field]
+		if (!Array.isArray(data[field])) continue
+		for (const obj of data[field]) {
+			for (const uid of obj.engineers)
+				if (!(await User.exists({ _id: uid }))) throw Errors.UserNotFound
 		}
+		this.recording[field] = data[field]
 	}
 }
 
@@ -367,13 +367,14 @@ DocumentationSchema.methods.updateInfo = async function (data) {
 			throw Errors.EntityNotFound
 		this.info.mainGenre = data.mainGenre
 	}
-	if (Array.isArray(data.secondaryGenres)) {
-		for (const genre of data.secondaryGenres) {
-			if (!(await MusicalGenre.exists({ _id: genre })))
-				throw Errors.EntityNotFound
-		}
-		this.info.secondaryGenres = data.secondaryGenres
+
+	if (!Array.isArray(data.secondaryGenres)) return
+
+	for (const genre of data.secondaryGenres) {
+		if (!(await MusicalGenre.exists({ _id: genre })))
+			throw Errors.EntityNotFound
 	}
+	this.info.secondaryGenres = data.secondaryGenres
 }
 
 DocumentationSchema.methods.updateLyrics = async function (data) {
