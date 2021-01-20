@@ -235,7 +235,9 @@ module.exports.userPublicProfile = {
 			type: "string",
 			enum: ["en", "fr"],
 		},
-		professional_identity: this.professional_identity,
+		// TODO: this one is tricky, can't find an elegant solution for the moment
+		// Disabling it for the moment, I prefer that rather than leaking some user's private info
+		// professional_identity: this.professional_identity,
 		isni: {
 			type: "string",
 		},

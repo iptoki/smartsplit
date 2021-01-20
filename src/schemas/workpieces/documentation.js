@@ -44,24 +44,10 @@ module.exports.externalFile = {
 	},
 }
 
-module.exports.musicGenre = {
-	type: "object",
-	properties: {
-		id: {
-			type: "string",
-		},
-		name: {
-			type: "string",
-		},
-	},
-}
-
 module.exports.performerTool = {
 	type: "object",
 	properties: {
-		instrument: {
-			anyOf: [{ type: "string" }, EntitiesSchema.instrument],
-		},
+		instrument: EntitiesSchema.instrument,
 		role: {
 			type: "string",
 		},
@@ -250,10 +236,10 @@ module.exports.info = {
 		BPM: {
 			type: "number",
 		},
-		mainGenre: this.musicGenre,
+		mainGenre: EntitiesSchema["musical-genre"],
 		secondaryGenres: {
 			type: "array",
-			items: this.musicGenre,
+			items: EntitiesSchema["musical-genre"],
 		},
 		influences: {
 			type: "array",

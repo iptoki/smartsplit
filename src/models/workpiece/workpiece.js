@@ -83,7 +83,7 @@ WorkpieceSchema.methods.setRightSplit = async function (body) {
 		recording: [],
 	}
 	this.rightHolders = []
-	
+
 	for (let rightType of RightTypes.list) {
 		if (!Array.isArray(body[rightType])) continue
 		for (let entry of body[rightType]) {
@@ -235,12 +235,16 @@ WorkpieceSchema.methods.populateCreation = async function () {
 
 WorkpieceSchema.methods.populatePerformance = async function () {
 	await this.populate("documentation.performance.conductor").execPopulate()
-	for (let performer of this.documentation.performance.performers) {
-		await performer.populate("user")
+	const doc = this.documentation.performance.performers
+	const path = "documentation.performance.performers"
+	for (let i = 0; i < doc.length; i++) {
+		await this.populate(`${path}.${i}.user`).execPopulate()
 		for (let field of ["instruments", "vocals"]) {
-			for (let obj of performer[field]) {
-				await obj.populate("instrument").execPopulate()
-				// await obj.populate("role").execPopulate()
+			for (let j = 0; j < doc[i][field].length; j++) {
+				await this.populate(
+					`${path}.${i}.${field}.${j}.instrument`
+				).execPopulate()
+				// await this.populate(`${path}.${i}.${field}.${j}.role`).execPopulate()
 			}
 		}
 	}
@@ -249,8 +253,10 @@ WorkpieceSchema.methods.populatePerformance = async function () {
 WorkpieceSchema.methods.populateRecording = async function () {
 	await this.populate("documentation.recording.directors").execPopulate()
 	for (let field of ["recording", "mixing", "mastering"]) {
-		for (let record of this.documentation.recording[field]) {
-			await record.populate("engineers").execPopulate()
+		for (let i = 0; i < this.documentation.recording[field].length; i++) {
+			await this.populate(
+				`documentation.recording.${field}.${i}.engineers`
+			).execPopulate()
 		}
 	}
 }
