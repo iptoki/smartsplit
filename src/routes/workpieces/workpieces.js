@@ -159,7 +159,6 @@ const createWorkpiece = async function (req, res) {
 	req.body.owner = req.authUser._id
 	const workpiece = new Workpiece(req.body)
 	await workpiece.save()
-	console.log(workpiece)
 	res.code(201)
 	return workpiece
 }

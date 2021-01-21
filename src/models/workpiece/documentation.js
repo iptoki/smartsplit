@@ -6,13 +6,13 @@ const MusicalGenre = require("../entities/musical-genre")
 const Config = require("../../config")
 const Errors = require("../../routes/errors")
 
-const ExternalFileSchema = new mongoose.Schema(
-	{
-		url: String,
-		public: Boolean,
-	},
-	{ _id: false }
-)
+// const ExternalFileSchema = new mongoose.Schema(
+// 	{
+// 		url: String,
+// 		public: Boolean,
+// 	},
+// 	{ _id: false }
+// )
 
 const FileSchema = new mongoose.Schema(
 	{
@@ -176,9 +176,30 @@ const FilesSchema = new mongoose.Schema(
 				ref: GFSFile,
 			},
 		],
-		audio: [ExternalFileSchema],
-		scores: [ExternalFileSchema],
-		midi: [ExternalFileSchema],
+		audio: [
+			{
+				type: String,
+				ref: GFSFile,
+			},
+		],
+		scores: [
+			{
+				type: String,
+				ref: GFSFile,
+			},
+		],
+		midi: [
+			{
+				type: String,
+				ref: GFSFile,
+			},
+		],
+		lyrics: [
+			{
+				type: String,
+				ref: GFSFile,
+			},
+		],
 	},
 	{ _id: false }
 )
@@ -274,7 +295,15 @@ FileSchema.virtual("url").get(function () {
 	)
 })
 
-DocumentationSchema.methods.addFile = function (data) {
+DocumentationSchema.methods.getFileStream = function (file_id) {
+	return mongoose.bucket.protectedWork.openDownloadStream(file_id)
+}
+
+DocumentationSchema.methods.getFile = async function (file_id) {
+	return await GFSFile.findById(file_id)
+}
+
+DocumentationSchema.methods.addFile = async function (type, data) {
 	const file_id = uuid()
 	let visibility = "private"
 	if (data.fields !== undefined && data.fields.visibility !== undefined)
@@ -293,13 +322,18 @@ DocumentationSchema.methods.addFile = function (data) {
 			options
 		)
 	)
-	const length = this.files.art.push(file_id)
-	return this.files.art[length - 1]
+	let file = null
+	while(!file){
+		await new Promise(r => setTimeout(r, 500))
+		file = await this.getFile(file_id)
+	}
+	const length = this.files[type].push(file_id)
+	return this.files[type][length - 1]
 }
 
 DocumentationSchema.methods.deleteFile = async function (file_id) {
-	if (!this.files.art.includes(file_id)) throw new Error("file not found")
-	this.files.art.filter((id) => id === file_id)
+	for (const type of ["art", "audio", "scores", "midi", "lyrics"])
+		this.files[type] = this.files[type].filter((id) => id !== file_id)
 	await mongoose.bucket.protectedWork.delete(file_id)
 }
 

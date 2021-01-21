@@ -118,14 +118,6 @@ WorkpieceSchema.methods.setVote = function (rightHolderId, rightsVote) {
 	}
 }
 
-WorkpieceSchema.methods.addFile = function (data) {
-	return this.documentation.addFile()
-}
-
-WorkpieceSchema.methods.deleteFile = async function (file_id) {
-	await this.documentation.deleteFile(file_id)
-}
-
 WorkpieceSchema.methods.isRemovable = function () {
 	return this.canAcceptNewSplit()
 }
@@ -225,6 +217,10 @@ WorkpieceSchema.methods.populateDocumentation = async function () {
 
 WorkpieceSchema.methods.populateFiles = async function () {
 	await this.populate("documentation.files.art").execPopulate()
+	await this.populate("documentation.files.audio").execPopulate()
+	await this.populate("documentation.files.scores").execPopulate()
+	await this.populate("documentation.files.midi").execPopulate()
+	await this.populate("documentation.files.lyrics").execPopulate()
 }
 
 WorkpieceSchema.methods.populateCreation = async function () {
@@ -264,10 +260,6 @@ WorkpieceSchema.methods.populateRecording = async function () {
 WorkpieceSchema.methods.populateInfo = async function () {
 	await this.populate("documentation.info.mainGenre").execPopulate()
 	await this.populate("documentation.info.secondaryGenres").execPopulate()
-}
-
-WorkpieceSchema.methods.getFileStream = function (file_id) {
-	return mongoose.bucket.protectedWork.openDownloadStream(file_id)
 }
 
 module.exports = mongoose.model("Workpiece", WorkpieceSchema)
