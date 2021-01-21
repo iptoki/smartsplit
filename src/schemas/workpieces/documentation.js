@@ -32,17 +32,17 @@ module.exports.file = {
 	},
 }
 
-module.exports.externalFile = {
-	type: "object",
-	properties: {
-		url: {
-			type: "string",
-		},
-		public: {
-			type: "boolean",
-		},
-	},
-}
+// module.exports.externalFile = {
+// 	type: "object",
+// 	properties: {
+// 		url: {
+// 			type: "string",
+// 		},
+// 		public: {
+// 			type: "boolean",
+// 		},
+// 	},
+// }
 
 module.exports.performerTool = {
 	type: "object",
@@ -214,15 +214,19 @@ module.exports.files = {
 		},
 		audio: {
 			type: "array",
-			items: this.externalFile,
+			items: this.file,
 		},
 		scores: {
 			type: "array",
-			items: this.externalFile,
+			items: this.file,
 		},
 		midi: {
 			type: "array",
-			items: this.externalFile,
+			items: this.file,
+		},
+		lyrics: {
+			type: "array",
+			items: this.file,
 		},
 	},
 }
@@ -320,19 +324,16 @@ module.exports.documentationField = {
 module.exports.fileRequestBody = {
 	type: "object",
 	properties: {
-		name: {
+		filename: {
 			type: "string",
 		},
 		visibility: {
 			type: "string",
 			enum: ["public", "hidden", "private"],
-			default: "private",
 		},
-		mimeType: {
+		type: {
 			type: "string",
-		},
-		data: {
-			type: "string",
+			enum: ["art", "audio", "scores", "midi", "lyrics"],
 		},
 	},
 	additionalProperties: false,
