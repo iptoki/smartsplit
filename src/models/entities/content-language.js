@@ -17,10 +17,6 @@ const ContentLanguageSchema = new mongoose.Schema(
 	{ discriminatorKey: "type" }
 )
 
-// ContentLanguageSchema.virtual("entity_id").get(function () {
-// 	return this._id
-// })
-
 ContentLanguageSchema.methods.setFields = function (body) {
 	for (let field of ["name", "altNames", ...Entity.getFields()]) {
 		if (body[field]) this[field] = body[field]

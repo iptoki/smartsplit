@@ -10,35 +10,35 @@ module.exports.genericEntityFields = {
 	entity_id: {
 		type: "string",
 	},
-	tags: {
-		type: "array",
-		items: {
-			type: "string",
-		},
-	},
-	users: {
-		oneOf: [
-			{
-				type: "boolean",
-				enum: [false],
-			},
-			{
-				type: "array",
-				items: {
-					type: "string",
-				},
-			},
-		],
-	},
-	adminReview: {
-		type: "string",
-	},
+	// tags: {
+	// 	type: "array",
+	// 	items: {
+	// 		type: "string",
+	// 	},
+	// },
+	// users: {
+	// 	oneOf: [
+	// 		{
+	// 			type: "boolean",
+	// 			enum: [false],
+	// 		},
+	// 		{
+	// 			type: "array",
+	// 			items: {
+	// 				type: "string",
+	// 			},
+	// 		},
+	// 	],
+	// },
+	// adminReview: {
+	// 	type: "string",
+	// },
 }
 
 module.exports["content-language"] = {
 	type: "object",
 	properties: {
-		// ...this.genericEntityFields,
+		...this.genericEntityFields,
 		name: this.locale,
 		altNames: {
 			type: "array",
@@ -52,7 +52,7 @@ module.exports["content-language"] = {
 module.exports["digital-distributor"] = {
 	type: "object",
 	properties: {
-		// ...this.genericEntityFields,
+		...this.genericEntityFields,
 		name: {
 			type: "string",
 		},
@@ -106,7 +106,7 @@ module.exports.link = {
 module.exports.instrument = {
 	type: "object",
 	properties: {
-		// ...this.genericEntityFields,
+		...this.genericEntityFields,
 		name: {
 			type: "string",
 		},
@@ -121,7 +121,7 @@ module.exports.instrument = {
 module.exports["musical-genre"] = {
 	type: "object",
 	properties: {
-		// ...this.genericEntityFields,
+		...this.genericEntityFields,
 		name: {
 			type: "string",
 		},
