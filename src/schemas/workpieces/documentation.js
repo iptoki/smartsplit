@@ -330,7 +330,6 @@ module.exports.fileRequestBody = {
 		visibility: {
 			type: "string",
 			enum: ["public", "hidden", "private"],
-			default: "private",
 		},
 		type: {
 			type: "string",

@@ -323,8 +323,8 @@ DocumentationSchema.methods.addFile = async function (type, data) {
 		)
 	)
 	let file = null
-	while(!file){
-		await new Promise(r => setTimeout(r, 500))
+	while (!file) {
+		await new Promise((r) => setTimeout(r, 500))
 		file = await this.getFile(file_id)
 	}
 	const length = this.files[type].push(file_id)

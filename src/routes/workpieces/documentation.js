@@ -309,7 +309,7 @@ const updateFile = async function (req, res) {
 			(id) => id !== file._id
 		)
 		location.type = req.body.type
-		location.index = workpiece.documentation.files[req.body.type].length - 1 
+		location.index = workpiece.documentation.files[req.body.type].length - 1
 	}
 	await file.save()
 	await workpiece.save()
