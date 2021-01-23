@@ -168,8 +168,17 @@ module.exports.recording = {
 		directors: {
 			type: "array",
 			items: {
-				type: "string",
+				anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
 			},
+		},
+		producers: {
+			type: "array",
+			items: {
+				anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
+			},
+		},
+		isrc: {
+			type: "string",
 		},
 		recording: {
 			type: "array",
