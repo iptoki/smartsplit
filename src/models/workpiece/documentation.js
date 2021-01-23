@@ -356,7 +356,7 @@ DocumentationSchema.methods.updatePerformance = async function (data) {
 	for (const performer of data.performers) {
 		if (!(await User.exists({ _id: performer.user }))) throw Errors.UserNotFound
 		for (field of ["instruments", "vocals"]) {
-			if (!Array.isArray(data.performers)) continue
+			if (!Array.isArray(performer[field])) continue
 			for (const obj of performer[field]) {
 				if (!(await Instrument.exists({ _id: obj.instrument })))
 					throw Errors.EntityNotFound
@@ -373,7 +373,7 @@ DocumentationSchema.methods.updateRecording = async function (data) {
 			if (!(await User.exists({ _id: uid }))) throw Errors.UserNotFound
 		this.recording[field] = data[field]
 	}
-	if (data.isrc !== undefined) this.isrc = data.isrc
+	if (data.isrc !== undefined) this.recording.isrc = data.isrc
 	for (const field of ["recording", "mixing", "mastering"]) {
 		if (!Array.isArray(data[field])) continue
 		for (const obj of data[field]) {
@@ -381,6 +381,9 @@ DocumentationSchema.methods.updateRecording = async function (data) {
 				if (!(await User.exists({ _id: uid }))) throw Errors.UserNotFound
 		}
 		this.recording[field] = data[field]
+		console.log("field", field)
+		console.log("data[field]", data[field])
+		console.log("this.recording[field]", this.recording[field])
 	}
 }
 

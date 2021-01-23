@@ -248,6 +248,7 @@ WorkpieceSchema.methods.populatePerformance = async function () {
 
 WorkpieceSchema.methods.populateRecording = async function () {
 	await this.populate("documentation.recording.directors").execPopulate()
+	await this.populate("documentation.recording.producers").execPopulate()
 	for (let field of ["recording", "mixing", "mastering"]) {
 		for (let i = 0; i < this.documentation.recording[field].length; i++) {
 			await this.populate(
