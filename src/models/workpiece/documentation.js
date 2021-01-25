@@ -164,6 +164,7 @@ const ReleaseSchema = new mongoose.Schema(
 		label: String,
 		format: String,
 		support: String,
+		distributor:String,
 	},
 	{ _id: false }
 )

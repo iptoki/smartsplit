@@ -211,6 +211,9 @@ module.exports.release = {
 		support: {
 			type: "string",
 		},
+		distributor:{
+			type: "string",
+		},
 	},
 }
 
