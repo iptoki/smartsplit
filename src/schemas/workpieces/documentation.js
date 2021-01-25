@@ -214,6 +214,9 @@ module.exports.release = {
 		distributor:{
 			type: "string",
 		},
+		upc:{
+			type: "string",
+		},
 	},
 }
 

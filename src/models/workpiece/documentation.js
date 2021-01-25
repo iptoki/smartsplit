@@ -165,6 +165,7 @@ const ReleaseSchema = new mongoose.Schema(
 		format: String,
 		support: String,
 		distributor:String,
+		upc:String
 	},
 	{ _id: false }
 )
