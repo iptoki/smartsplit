@@ -89,7 +89,7 @@ const PerformerSchema = new mongoose.Schema(
 		},
 		type: {
 			type: String,
-			enum: ["principale", "featured", "bandMember"],
+			enum: ["mainArtist", "featured", "groupMember","session"],
 		},
 		isSinger: Boolean,
 		isMusician: Boolean,
