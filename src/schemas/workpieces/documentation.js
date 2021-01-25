@@ -65,7 +65,7 @@ module.exports.performer = {
 		},
 		type: {
 			type: "string",
-			enum: ["principale", "featured", "bandMember"],
+			enum: ["mainArtist", "featured", "groupMember","session"],
 		},
 		isSinger: {
 			type: "boolean",
