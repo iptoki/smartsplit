@@ -282,7 +282,10 @@ const DocumentationSchema = new mongoose.Schema(
 			type: LyricsSchema,
 			default: {},
 		},
-		streaming: [StreamingSchema],
+		streaming: {
+			type: StreamingSchema,
+			default: {},
+		},
 	},
 	{ _id: false }
 )
@@ -427,7 +430,7 @@ DocumentationSchema.methods.updateLyrics = async function (data) {
 }
 
 DocumentationSchema.methods.updateStreaming = async function (data) {
-	if (Array.isArray(data.links)) this.streaming = data.links
+	if (Array.isArray(data.links)) this.streaming.links = data.links
 }
 
 module.exports = DocumentationSchema
