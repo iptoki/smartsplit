@@ -65,7 +65,7 @@ module.exports.performer = {
 		},
 		type: {
 			type: "string",
-			enum: ["mainArtist", "featured", "groupMember","session"],
+			enum: ["mainArtist", "featured", "groupMember", "session"],
 		},
 		isSinger: {
 			type: "boolean",
@@ -211,10 +211,10 @@ module.exports.release = {
 		support: {
 			type: "string",
 		},
-		distributor:{
+		distributor: {
 			type: "string",
 		},
-		upc:{
+		upc: {
 			type: "string",
 		},
 	},

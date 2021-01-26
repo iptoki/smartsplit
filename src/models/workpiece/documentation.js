@@ -89,7 +89,7 @@ const PerformerSchema = new mongoose.Schema(
 		},
 		type: {
 			type: String,
-			enum: ["mainArtist", "featured", "groupMember","session"],
+			enum: ["mainArtist", "featured", "groupMember", "session"],
 		},
 		isSinger: Boolean,
 		isMusician: Boolean,
@@ -164,8 +164,8 @@ const ReleaseSchema = new mongoose.Schema(
 		label: String,
 		format: String,
 		support: String,
-		distributor:String,
-		upc:String
+		distributor: String,
+		upc: String,
 	},
 	{ _id: false }
 )
@@ -383,14 +383,18 @@ DocumentationSchema.methods.updateRecording = async function (data) {
 				if (!(await User.exists({ _id: uid }))) throw Errors.UserNotFound
 		}
 		this.recording[field] = data[field]
-		console.log("field", field)
-		console.log("data[field]", data[field])
-		console.log("this.recording[field]", this.recording[field])
 	}
 }
 
 DocumentationSchema.methods.updateRelease = async function (data) {
-	for (let field of ["date", "label", "format", "support"])
+	for (let field of [
+		"date",
+		"label",
+		"format",
+		"support",
+		"distributor",
+		"upc",
+	])
 		if (field !== undefined) this.release[field] = data[field]
 }
 
