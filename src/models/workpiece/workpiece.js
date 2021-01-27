@@ -201,7 +201,6 @@ WorkpieceSchema.methods.updateDocumentation = async function (data) {
 	await this.documentation.updatePerformance(data.performance || {})
 	await this.documentation.updateRecording(data.recording || {})
 	await this.documentation.updateRelease(data.release || {})
-	await this.documentation.updateFiles(data.files || {})
 	await this.documentation.updateInfo(data.info || {})
 	await this.documentation.updateLyrics(data.lyrics || {})
 	await this.documentation.updateStreaming(data.streaming || {})

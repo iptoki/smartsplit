@@ -305,7 +305,7 @@ module.exports.userRequestBody = {
 			type: "string",
 		},
 		birthDate: {
-			oneOf:[
+			oneOf: [
 				{
 					type: "string",
 					format: "date",
