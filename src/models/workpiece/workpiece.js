@@ -32,6 +32,7 @@ const WorkpieceSchema = new mongoose.Schema(
 			type: [String],
 			ref: "Entity",
 		},
+		version: Number,
 		rightSplit: {
 			type: RightSplitSchema,
 		},
@@ -205,6 +206,38 @@ WorkpieceSchema.methods.updateDocumentation = async function (data) {
 	await this.documentation.updateInfo(data.info || {})
 	await this.documentation.updateLyrics(data.lyrics || {})
 	await this.documentation.updateStreaming(data.streaming || {})
+}
+
+WorkpieceSchema.methods.populateAll = async function () {
+	await this.populate("owner").execPopulate()
+	await this.populateDocumentation()
+	await this.populateRightSplit()
+	await this.populateArchivedRightSplits()
+}
+
+WorkpieceSchema.methods.populateRightSplit = async function () {
+	if (!this.rightSplit) return
+	for (let rightType of RightTypes.list) {
+		if (!Array.isArray(this.rightSplit[rightType])) continue
+		for (let i = 0; i < this.rightSplit[rightType].length; i++) {
+			await this.populate(
+				`rightSplit.${rightType}.${i}.rightHolder`
+			).execPopulate()
+		}
+	}
+}
+
+WorkpieceSchema.methods.populateArchivedRightSplits = async function () {
+	for (let i = 0; i < this.archivedSplits.length; i++) {
+		for (let rightType of RightTypes.list) {
+			if (!Array.isArray(this.archivedSplits[i][rightType])) continue
+			for (let j = 0; j < this.archivedSplits[i][rightType].length; j++) {
+				await this.populate(
+					`archivedSplits.${i}.${rightType}.${j}.rightHolder`
+				).execPopulate()
+			}
+		}
+	}
 }
 
 WorkpieceSchema.methods.populateDocumentation = async function () {

@@ -65,7 +65,7 @@ async function routes(fastify, options) {
 		preValidation: JWTAuth.requireAuthUser,
 		handler: getWorkpiece,
 		preSerialization: async function (req, res, payload) {
-			await payload.populateDocumentation()
+			await payload.populateAll()
 			return payload
 		},
 	})
@@ -159,6 +159,7 @@ const createWorkpiece = async function (req, res) {
 	req.body.owner = req.authUser._id
 	const workpiece = new Workpiece(req.body)
 	await workpiece.save()
+	await workpiece.populateAll()
 	res.code(201)
 	return workpiece
 }
@@ -173,6 +174,8 @@ const updateWorkpiece = async function (req, res) {
 		await workpiece.updateDocumentation(req.body.documentation)
 
 	await workpiece.save()
+	await workpiece.populateAll()
+
 	return workpiece
 }
 
@@ -187,7 +190,7 @@ const deleteWorkpiece = async function (req, res) {
 
 const getWorkpiecesByOwner = async function (req, res) {
 	const workpieces = await Workpiece.find().byOwner(req.params.user_id)
-	for (const workpiece of workpieces) await workpiece.populateDocumentation()
+	for (const workpiece of workpieces) await workpiece.populateAll()
 	return workpieces
 }
 

@@ -158,6 +158,7 @@ const createRightSplit = async function (req, res) {
 
 	await workpiece.setRightSplit(req.body)
 	await workpiece.save()
+	await workpiece.populateRightSplit()
 
 	res.code(201)
 	return workpiece.rightSplit
@@ -170,6 +171,7 @@ const updateRightSplit = async function (req, res) {
 
 	await workpiece.setRightSplit(req.body)
 	await workpiece.save()
+	await workpiece.populateRightSplit()
 
 	return workpiece.rightSplit
 }
