@@ -305,8 +305,16 @@ module.exports.userRequestBody = {
 			type: "string",
 		},
 		birthDate: {
-			type: "string",
-			format: "date",
+			oneOf:[
+				{
+					type: "string",
+					format: "date",
+				},
+				{
+					type: "string",
+					enum: [""],
+				},
+			],
 		},
 		address: {
 			type: "string",
