@@ -240,9 +240,7 @@ const getDocumentation = async function (req, res) {
 
 const getDocumentationField = async function (req, res) {
 	const workpiece = await getWorkpiece(req, res)
-	console.log(workpiece.documentation.creation)
 	await workpiece.populateDocumentation()
-	console.log(workpiece.documentation.creation)
 	return {
 		field: req.params.field,
 		data: workpiece.documentation[req.params.field],
