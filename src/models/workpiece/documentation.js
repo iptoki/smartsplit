@@ -344,7 +344,7 @@ DocumentationSchema.methods.deleteFile = async function (file_id) {
 
 DocumentationSchema.methods.updateCreation = async function (data) {
 	for (let field of ["date", "iswc"])
-		if (field !== undefined) this.creation[field] = data[field]
+		if (data[field] !== undefined) this.creation[field] = data[field]
 	for (field of ["authors", "composers", "publishers"]) {
 		if (!Array.isArray(data[field])) continue
 		for (const uid of data[field])
@@ -398,17 +398,12 @@ DocumentationSchema.methods.updateRelease = async function (data) {
 		"distributor",
 		"upc",
 	])
-		if (field !== undefined) this.release[field] = data[field]
-}
-
-DocumentationSchema.methods.updateFiles = async function (data) {
-	for (let field of ["audio", "scores", "midi"])
-		if (field !== undefined) this.info[field] = data[field]
+		if (data[field] !== undefined) this.release[field] = data[field]
 }
 
 DocumentationSchema.methods.updateInfo = async function (data) {
 	for (let field of ["length", "BPM", "influences"])
-		if (field !== undefined) this.info[field] = data[field]
+		if (data[field] !== undefined) this.info[field] = data[field]
 	if (data.mainGenre !== undefined) {
 		if (!(await MusicalGenre.exists({ _id: data.mainGenre })))
 			throw Errors.EntityNotFound
@@ -426,7 +421,7 @@ DocumentationSchema.methods.updateInfo = async function (data) {
 
 DocumentationSchema.methods.updateLyrics = async function (data) {
 	for (let field of ["text", "languages", "access"])
-		if (field !== undefined) this.lyrics[field] = data[field]
+		if (data[field] !== undefined) this.lyrics[field] = data[field]
 }
 
 DocumentationSchema.methods.updateStreaming = async function (data) {
