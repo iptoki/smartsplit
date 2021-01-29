@@ -2,7 +2,20 @@
 const Config = require("./src/config")
 const JWTAuth = require("./src/service/JWTAuth")
 
-const fastify = require("fastify")({ logger: Config.logger })
+const fastify = require("fastify")({
+	logger: Config.logger,
+	ajv: {
+		customOptions: {
+			removeAdditional: false, // remove additional properties
+			useDefaults: true, // replace missing properties and items with the values from corresponding default keyword
+			coerceTypes: true, // change data type of data to match type keyword
+			nullable: true, // support keyword "nullable" from Open API 3 specification.
+		},
+		// plugins: [
+		// 	require("ajv-merge-patch")[(require("ajv-keywords"), "instanceof")],
+		// ],
+	},
+})
 
 // Connect database
 const mongoose = require("mongoose")
@@ -54,6 +67,9 @@ fastify.addHook("preValidation", function (req, res, next) {
 
 // Register routes
 fastify.register(require("./src/routes/index"), { prefix: "/v1" })
+
+// Register custom plugins
+fastify.register(require("./src/plugins/dynamic-response-schema"))
 
 // Start up server
 fastify.listen(Config.listen.port, Config.listen.host, function (err, address) {

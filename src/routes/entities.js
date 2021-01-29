@@ -15,6 +15,12 @@ async function routes(fastify, options) {
 			params: {
 				entity_type: {
 					type: "string",
+					enum: [
+						"instrument",
+						"digital-distributor",
+						"musical-genre",
+						"content-language",
+					],
 				},
 			},
 			querystring: {
@@ -71,6 +77,12 @@ async function routes(fastify, options) {
 			params: {
 				entity_type: {
 					type: "string",
+					enum: [
+						"instrument",
+						"digital-distributor",
+						"musical-genre",
+						"content-language",
+					],
 				},
 			},
 			body: EntitiesSchema.entityRequestBody,
@@ -137,6 +149,12 @@ async function routes(fastify, options) {
 			params: {
 				entity_type: {
 					type: "string",
+					enum: [
+						"instrument",
+						"digital-distributor",
+						"musical-genre",
+						"content-language",
+					],
 				},
 			},
 		},
@@ -189,6 +207,7 @@ async function getEntityById(req, res) {
 	)
 		throw Errors.UserForbidden
 
+	res.schema(EntitiesSchema[entity.type])
 	return filterAdminFields(entity, req.authUser)
 }
 
@@ -202,7 +221,7 @@ async function getEntities(req, res) {
 	}
 
 	let query = Entity.find({
-		type: req.params.entity_type.slice(0, -1),
+		type: req.params.entity_type,
 		$or: [
 			{ name: { $regex: regex, $options: "i" } },
 			{ "langs.en": { $regex: regex, $options: "i" } },
@@ -216,6 +235,7 @@ async function getEntities(req, res) {
 	else if (!req.authUser.isAdmin) query = query.byUserId(req.authUser._id)
 
 	const entities = await query.exec()
+	res.schema(EntitiesSchema[req.params.entity_type])
 	return entities.map((entity) => filterAdminFields(entity, req.authUser))
 }
 

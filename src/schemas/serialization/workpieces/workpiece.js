@@ -1,5 +1,5 @@
 const DocumentationSchema = require("./documentation").documentation
-const RightSplitSchema = require("./rightSplits").rightSplit
+const RightSplitSchema = require("./rightSplit").rightSplit
 
 module.exports.workpiece = {
 	type: "object",
@@ -17,16 +17,12 @@ module.exports.workpiece = {
 			type: "array",
 			items: {
 				type: "string",
-				format: "uuid",
-				example: "e87b56fe-1ce0-4ec7-8393-e18dc7415041",
 			},
 		},
 		entityTags: {
 			type: "array",
 			items: {
 				type: "string",
-				format: "uuid",
-				example: "e87b56fe-1ce0-4ec7-8393-e18dc7415041",
 			},
 		},
 		rightSplit: RightSplitSchema,
@@ -35,16 +31,6 @@ module.exports.workpiece = {
 			items: RightSplitSchema,
 		},
 		documentation: DocumentationSchema,
-	},
-}
-
-module.exports.workpieceRequestBody = {
-	type: "object",
-	properties: {
-		title: {
-			type: "string",
-			default: "ExampleTitle",
-		},
 	},
 	additionalProperties: false,
 }

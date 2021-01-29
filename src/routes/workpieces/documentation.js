@@ -49,14 +49,13 @@ async function routes(fastify, options) {
 					],
 				},
 			},
-			response: {
-				200: DocumentationSchemas.documentationField,
-			},
+			// response: {
+			// 	200: DocumentationSchemas.documentationField,
+			// },
 			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthUser,
 		handler: getDocumentationField,
-		serializerCompiler: documentationFieldSerializer,
 	})
 
 	fastify.route({
@@ -241,6 +240,8 @@ const getDocumentation = async function (req, res) {
 const getDocumentationField = async function (req, res) {
 	const workpiece = await getWorkpiece(req, res)
 	await workpiece.populateDocumentation()
+	res.schema(DocumentationSchemas[req.params.field])
+	return workpiece.documentation[req.params.field]
 	return {
 		field: req.params.field,
 		data: workpiece.documentation[req.params.field],
@@ -324,23 +325,6 @@ const deleteFile = async function (req, res) {
 	await workpiece.documentation.deleteFile(req.params.file_id)
 	await workpiece.save()
 	res.code(204).send()
-}
-
-/************************ Custom serializer ************************/
-
-/*
-	fast-json-stringify does not support schema with `oneOf` being at the root.
-	As a workaround, we mimic the `oneOf` mechanism  by defining a custom serializer 
-	where we dinamicaly determine which schema should be serialized.
-	See /src/schemas/workpieces/documentation.js for more information
-*/
-
-function documentationFieldSerializer({ schema, method, url, httpStatus }) {
-	const fastJson = require("fast-json-stringify")
-	return (response) => {
-		const stringify = fastJson(DocumentationSchemas[response.field])
-		return stringify(response.data)
-	}
 }
 
 module.exports = routes

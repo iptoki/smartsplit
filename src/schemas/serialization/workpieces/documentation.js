@@ -1,53 +1,11 @@
-const UserSchema = require("../users")
-const EntitiesSchema = require("../entities")
-
-module.exports.file = {
-	type: "object",
-	properties: {
-		file_id: {
-			type: "string",
-		},
-		filename: { type: "string" },
-		metadata: {
-			type: "object",
-			properties: {
-				encoding: { type: "string" },
-				mimetype: { type: "string" },
-				visibility: {
-					type: "string",
-					enum: ["public", "hidden", "private"],
-				},
-			},
-		},
-		uploadDate: {
-			type: "string",
-			format: "date-time",
-		},
-		size: {
-			type: "number",
-		},
-		url: {
-			type: "string",
-		},
-	},
-}
-
-// module.exports.externalFile = {
-// 	type: "object",
-// 	properties: {
-// 		url: {
-// 			type: "string",
-// 		},
-// 		public: {
-// 			type: "boolean",
-// 		},
-// 	},
-// }
+const { public_user } = require("../user")
+const EntitySchema = require("../entity")
+const FileSchema = require("../file")
 
 module.exports.performerTool = {
 	type: "object",
 	properties: {
-		instrument: EntitiesSchema.instrument,
+		instrument: EntitySchema.instrument,
 		role: {
 			type: "string",
 		},
@@ -55,14 +13,13 @@ module.exports.performerTool = {
 			type: "string",
 		},
 	},
+	additionalProperties: false,
 }
 
 module.exports.performer = {
 	type: "object",
 	properties: {
-		user: {
-			anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
-		},
+		user: public_user,
 		type: {
 			type: "string",
 			enum: ["mainArtist", "featured", "groupMember", "session"],
@@ -82,6 +39,7 @@ module.exports.performer = {
 			items: this.performerTool,
 		},
 	},
+	additionalProperties: false,
 }
 
 module.exports.record = {
@@ -92,9 +50,7 @@ module.exports.record = {
 		},
 		engineers: {
 			type: "array",
-			items: {
-				anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
-			},
+			items: public_user,
 		},
 		date: {
 			type: "object",
@@ -116,6 +72,7 @@ module.exports.record = {
 			},
 		},
 	},
+	additionalProperties: false,
 }
 
 module.exports.creation = {
@@ -127,39 +84,33 @@ module.exports.creation = {
 		},
 		authors: {
 			type: "array",
-			items: {
-				anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
-			},
+			items: public_user,
 		},
 		composers: {
 			type: "array",
-			items: {
-				anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
-			},
+			items: public_user,
 		},
 		publishers: {
 			type: "array",
-			items: {
-				anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
-			},
+			items: public_user,
 		},
 		iswc: {
 			type: "string",
 		},
 	},
+	additionalProperties: false,
 }
 
 module.exports.performance = {
 	type: "object",
 	properties: {
-		conductor: {
-			anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
-		},
+		conductor: public_user,
 		performers: {
 			type: "array",
 			items: this.performer,
 		},
 	},
+	additionalProperties: false,
 }
 
 module.exports.recording = {
@@ -167,15 +118,11 @@ module.exports.recording = {
 	properties: {
 		directors: {
 			type: "array",
-			items: {
-				anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
-			},
+			items: public_user,
 		},
 		producers: {
 			type: "array",
-			items: {
-				anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
-			},
+			items: public_user,
 		},
 		isrc: {
 			type: "string",
@@ -193,6 +140,7 @@ module.exports.recording = {
 			items: this.record,
 		},
 	},
+	additionalProperties: false,
 }
 
 module.exports.release = {
@@ -218,6 +166,7 @@ module.exports.release = {
 			type: "string",
 		},
 	},
+	additionalProperties: false,
 }
 
 module.exports.files = {
@@ -225,25 +174,26 @@ module.exports.files = {
 	properties: {
 		art: {
 			type: "array",
-			items: this.file,
+			items: FileSchema,
 		},
 		audio: {
 			type: "array",
-			items: this.file,
+			items: FileSchema,
 		},
 		scores: {
 			type: "array",
-			items: this.file,
+			items: FileSchema,
 		},
 		midi: {
 			type: "array",
-			items: this.file,
+			items: FileSchema,
 		},
 		lyrics: {
 			type: "array",
-			items: this.file,
+			items: FileSchema,
 		},
 	},
+	additionalProperties: false,
 }
 
 module.exports.info = {
@@ -255,10 +205,10 @@ module.exports.info = {
 		BPM: {
 			type: "number",
 		},
-		mainGenre: EntitiesSchema["musical-genre"],
+		mainGenre: EntitySchema["musical-genre"],
 		secondaryGenres: {
 			type: "array",
-			items: EntitiesSchema["musical-genre"],
+			items: EntitySchema["musical-genre"],
 		},
 		influences: {
 			type: "array",
@@ -267,6 +217,7 @@ module.exports.info = {
 			},
 		},
 	},
+	additionalProperties: false,
 }
 
 module.exports.lyrics = {
@@ -287,6 +238,7 @@ module.exports.lyrics = {
 			default: "private",
 		},
 	},
+	additionalProperties: false,
 }
 
 module.exports.streaming = {
@@ -307,6 +259,7 @@ module.exports.streaming = {
 			},
 		},
 	},
+	additionalProperties: false,
 }
 
 module.exports.documentation = {
@@ -320,36 +273,6 @@ module.exports.documentation = {
 		info: this.info,
 		lyrics: this.lyrics,
 		streaming: this.streaming,
-	},
-}
-
-module.exports.documentationField = {
-	anyOf: [
-		this.creation,
-		this.performance,
-		this.recording,
-		this.release,
-		this.files,
-		this.info,
-		this.lyrics,
-		this.streaming,
-	],
-}
-
-module.exports.fileRequestBody = {
-	type: "object",
-	properties: {
-		filename: {
-			type: "string",
-		},
-		visibility: {
-			type: "string",
-			enum: ["public", "hidden", "private"],
-		},
-		type: {
-			type: "string",
-			enum: ["art", "audio", "scores", "midi", "lyrics"],
-		},
 	},
 	additionalProperties: false,
 }
