@@ -1,5 +1,6 @@
 const { public_user } = require("../user")
 const EntitySchema = require("../entity")
+const EntityTypes = require("../../constants/entityTypes")
 const FileSchema = require("../file")
 
 module.exports.performerTool = {
@@ -205,10 +206,10 @@ module.exports.info = {
 		BPM: {
 			type: "number",
 		},
-		mainGenre: EntitySchema["musical-genre"],
+		mainGenre: EntitySchema[EntityTypes.MUSICAL_GENRE],
 		secondaryGenres: {
 			type: "array",
-			items: EntitySchema["musical-genre"],
+			items: EntitySchema[EntityTypes.MUSICAL_GENRE],
 		},
 		influences: {
 			type: "array",

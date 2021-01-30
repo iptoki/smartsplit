@@ -4,9 +4,7 @@ const AccountStatus = require("../constants/accountStatus")
 const private_user = {
 	type: "object",
 	properties: {
-		user_id: {
-			type: "string",
-		},
+user_id: CommonSchema.uuid1,
 		firstName: {
 			type: "string",
 		},

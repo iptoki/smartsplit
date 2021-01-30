@@ -1,5 +1,6 @@
 const mongoose = require("mongoose")
 const Entity = require("./entity")
+const EntityTypes = require("../../constants/entityTypes")
 const LocaleSchema = require("./locale")
 
 /**
@@ -23,10 +24,13 @@ const InstrumentEntity = new mongoose.Schema(
 	{ discriminatorKey: "type" }
 )
 
+InstrumentEntity.methods.getFields = function () {
+	return [...Entity.getFields(), "name", "links", "langs"]
+}
 InstrumentEntity.methods.setFields = function (body) {
-	for (let field in ["name", "uris", "parents", ...Entity.getFields()]) {
-		if (body[field]) this[field] = body[field]
+	for (let field of this.getFields()) {
+		if (body[field] !== undefined) this[field] = body[field]
 	}
 }
 
-module.exports = Entity.discriminator("instrument", InstrumentEntity)
+module.exports = Entity.discriminator(EntityTypes.INSTRUMENT, InstrumentEntity)

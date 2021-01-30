@@ -1,3 +1,4 @@
+const EntityTypes = require("../../constants/entityTypes")
 const EntitySchema = require("../serialization/entity")
 
 module.exports.entity = {
@@ -25,21 +26,21 @@ const instrument = {
 
 const musical_genre = {
 	$patch: {
-		source: EntitySchema["musical-genre"],
+		source: EntitySchema[EntityTypes.MUSICAL_GENRE],
 	},
 	with: [{ op: "remove", path: "/properties/entity_id" }],
 }
 
 const content_language = {
 	$patch: {
-		source: EntitySchema["content-language"],
+		source: EntitySchema[EntityTypes.CONTENT_LANGUAGE],
 	},
 	with: [{ op: "remove", path: "/properties/entity_id" }],
 }
 
 const digital_distributor = {
 	$patch: {
-		source: EntitySchema["digital-distributor"],
+		source: EntitySchema[EntityTypes.DIGITAL_DISTRIBUTOR],
 	},
 	with: [{ op: "remove", path: "/properties/entity_id" }],
 }

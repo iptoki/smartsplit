@@ -1,6 +1,8 @@
 const Errors = require("../errors")
 const JWTAuth = require("../../service/JWTAuth")
-const DocumentationSchemas = require("../../schemas/workpieces/documentation")
+const DocumentationValidationSchema = require("../../schemas/validation/workpieces/documentation")
+const DocumentationSerializationSchema = require("../../schemas/serialization/workpieces/documentation")
+const FileSerializationSchema = require("../../schemas/serialization/file")
 
 /************************ Routes ************************/
 
@@ -17,7 +19,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: DocumentationSchemas.documentation,
+				200: DocumentationSerializationSchema.documentation,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -50,7 +52,7 @@ async function routes(fastify, options) {
 				},
 			},
 			// response: {
-			// 	200: DocumentationSchemas.documentationField,
+			// 	200: DocumentationSerializationSchema.documentationField,
 			// },
 			security: [{ bearerAuth: [] }],
 		},
@@ -69,9 +71,9 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: DocumentationSchemas.documentation,
+			body: DocumentationValidationSchema.documentation,
 			response: {
-				200: DocumentationSchemas.documentation,
+				200: DocumentationSerializationSchema.documentation,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -103,10 +105,10 @@ async function routes(fastify, options) {
 					],
 				},
 			},
-			body: DocumentationSchemas.documentationField,
-			response: {
-				200: DocumentationSchemas.documentationField,
-			},
+			body: DocumentationValidationSchema.documentationField,
+			// response: {
+			// 	200: DocumentationSerializationSchema.documentationField,
+			// },
 			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthUser,
@@ -154,7 +156,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				201: DocumentationSchemas.file,
+				201: FileSerializationSchema.file,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -179,9 +181,9 @@ async function routes(fastify, options) {
 					},
 				},
 			},
-			body: DocumentationSchemas.fileRequestBody,
+			body: DocumentationValidationSchema.file,
 			response: {
-				200: DocumentationSchemas.file,
+				200: FileSerializationSchema.file,
 			},
 			security: [{ bearerAuth: [] }],
 		},

@@ -1,7 +1,9 @@
 const JWTAuth = require("../../service/JWTAuth")
 const User = require("../../models/user")
 const AccountStatus = require("../../constants/accountStatus")
-const UserSchema = require("../../schemas/users")
+const UserValidationSchema = require("../../schemas/validation/user")
+const UserSerializationSchema = require("../../schemas/serialization/user")
+const CommonSchema = require("../../schemas/commons")
 const Errors = require("../errors")
 const { UserTemplates } = require("../../models/notifications/templates")
 const { getUser } = require("./users")
@@ -16,14 +18,12 @@ async function routes(fastify, options) {
 			tags: ["collaborators"],
 			description: "Get a user's collaborators",
 			params: {
-				user_id: {
-					type: "string",
-				},
+				user_id: CommonSchema.uuid1,
 			},
 			response: {
 				200: {
 					type: "array",
-					items: UserSchema.userPublicProfile,
+					items: UserSerializationSchema.public_user,
 				},
 			},
 			security: [{ bearerAuth: [] }],
@@ -39,15 +39,11 @@ async function routes(fastify, options) {
 			tags: ["collaborators"],
 			description: "Get a user's collaborator by ID",
 			params: {
-				user_id: {
-					type: "string",
-				},
-				collaborator_id: {
-					type: "string",
-				},
+				user_id: CommonSchema.uuid1,
+				collaborator_id: CommonSchema.uuid2,
 			},
 			response: {
-				200: UserSchema.userPublicProfile,
+				200: UserSerializationSchema.public_user,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -63,31 +59,11 @@ async function routes(fastify, options) {
 			description:
 				"Create a new collaborator and add it to the authenticated user's collaborators",
 			params: {
-				user_id: {
-					type: "string",
-				},
+				user_id: CommonSchema.uuid1,
 			},
-			body: {
-				type: "object",
-				required: ["email"],
-				properties: {
-					firstName: {
-						type: "string",
-					},
-					lastName: {
-						type: "string",
-					},
-					artistName: {
-						type: "string",
-					},
-					email: {
-						type: "string",
-					},
-				},
-				additionalProperties: false,
-			},
+			body: UserValidationSchema.collaborator,
 			response: {
-				201: UserSchema.user,
+				201: UserSerializationSchema.private_user,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -103,15 +79,14 @@ async function routes(fastify, options) {
 			description:
 				"Add an existing user to the authenticated user's collaborators",
 			params: {
-				user_id: {
-					type: "string",
-				},
-				collaborator_id: {
-					type: "string",
-				},
+				user_id: CommonSchema.uuid1,
+				collaborator_id: CommonSchema.uuid2,
 			},
 			response: {
-				200: UserSchema.user,
+				200: {
+					type: "array",
+					items: UserSerializationSchema.public_user 
+				},
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -126,12 +101,8 @@ async function routes(fastify, options) {
 			tags: ["collaborators"],
 			description: "Delete a user's collaborator by ID",
 			params: {
-				user_id: {
-					type: "string",
-				},
-				collaborator_id: {
-					type: "string",
-				},
+				user_id: CommonSchema.uuid1,
+				collaborator_id: CommonSchema.uuid2,
 			},
 			response: {
 				204: {},
@@ -161,9 +132,6 @@ async function getCollaboratorById(req, res) {
 		throw Errors.CollaboratorNotFound
 
 	const collaborator = await User.findById(req.params.collaborator_id)
-
-	if (!collaborator.professional_identity.public)
-		collab.professional_identity = undefined
 
 	return collaborator
 }
@@ -200,8 +168,9 @@ async function addCollaboratorById(req, res) {
 
 	await user.addCollaborators([req.params.collaborator_id])
 	await user.save()
+	await user.populate("collaborators").execPopulate()
 
-	return user
+	return user.collaborators
 }
 
 async function deleteCollaboratorById(req, res) {

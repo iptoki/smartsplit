@@ -1,5 +1,6 @@
 const mongoose = require("mongoose")
 const Entity = require("./entity")
+const EntityTypes = require("../../constants/entityTypes")
 const LocaleSchema = require("./locale")
 
 /**
@@ -17,10 +18,14 @@ const ContentLanguageSchema = new mongoose.Schema(
 	{ discriminatorKey: "type" }
 )
 
+ContentLanguageSchema.methods.getFields = function () {
+	return [...Entity.getFields(), "name", "altNames"]
+}
+
 ContentLanguageSchema.methods.setFields = function (body) {
-	for (let field of ["name", "altNames", ...Entity.getFields()]) {
-		if (body[field]) this[field] = body[field]
+	for (let field of this.getFields()) {
+		if (body[field] !== undefined) this[field] = body[field]
 	}
 }
 
-module.exports = Entity.discriminator("content-language", ContentLanguageSchema)
+module.exports = Entity.discriminator(EntityTypes.CONTENT_LANGUAGE, ContentLanguageSchema)

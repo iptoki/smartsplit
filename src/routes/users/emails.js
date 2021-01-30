@@ -1,7 +1,8 @@
 const JWTAuth = require("../../service/JWTAuth")
 const EmailVerification = require("../../models/emailVerification")
 const { UserTemplates } = require("../../models/notifications/templates")
-const UserSchema = require("../../schemas/users")
+const { emailStatusList } = require("../../schemas/serialization/user")
+const CommonSchema = require("../../schemas/commons")
 const Errors = require("../errors")
 const { getUser } = require("./users")
 
@@ -15,12 +16,10 @@ async function routes(fastify, options) {
 			tags: ["users_emails"],
 			description: "Get a user's email list",
 			params: {
-				user_id: {
-					type: "string",
-				},
+				user_id: CommonSchema.uuid1,
 			},
 			response: {
-				200: UserSchema.emailStatusList,
+				200: emailStatusList,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -35,22 +34,18 @@ async function routes(fastify, options) {
 			tags: ["users_emails"],
 			description: "Create a new email in a user's account",
 			params: {
-				user_id: {
-					type: "string",
-				},
+				user_id: CommonSchema.uuid1,
 			},
 			body: {
 				type: "object",
 				required: ["email"],
 				properties: {
-					email: {
-						type: "string",
-					},
+					email: CommonSchema.email,
 				},
 				additionalProperties: false,
 			},
 			response: {
-				201: UserSchema.emailStatusList,
+				201: emailStatusList,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -65,12 +60,8 @@ async function routes(fastify, options) {
 			tags: ["users_emails"],
 			description: "Activate a user's email",
 			params: {
-				user_id: {
-					type: "string",
-				},
-				email: {
-					type: "string",
-				},
+				user_id: CommonSchema.uuid1,
+				email: CommonSchema.email,
 			},
 			body: {
 				type: "object",
@@ -83,7 +74,7 @@ async function routes(fastify, options) {
 				additionalProperties: false,
 			},
 			response: {
-				200: UserSchema.emailStatusList,
+				200: emailStatusList,
 			},
 		},
 		handler: activateUserEmail,
@@ -96,22 +87,18 @@ async function routes(fastify, options) {
 			tags: ["users_emails"],
 			description: "Set a user email to the primary one",
 			params: {
-				user_id: {
-					type: "string",
-				},
+				user_id: CommonSchema.uuid1,
 			},
 			body: {
 				type: "object",
 				required: ["email"],
 				properties: {
-					email: {
-						type: "string",
-					},
+					email: CommonSchema.email,
 				},
 				additionalProperties: false,
 			},
 			response: {
-				200: UserSchema.emailStatusList,
+				200: emailStatusList,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -126,9 +113,7 @@ async function routes(fastify, options) {
 			tags: ["users_emails"],
 			description: "Get the user primary email",
 			params: {
-				user_id: {
-					type: "string",
-				},
+				user_id: CommonSchema.uuid1,
 			},
 			response: {
 				200: {
@@ -148,12 +133,8 @@ async function routes(fastify, options) {
 			tags: ["users_emails"],
 			description: "Delete a user's email",
 			params: {
-				user_id: {
-					type: "string",
-				},
-				email: {
-					type: "string",
-				},
+				user_id: CommonSchema.uuid1,
+				email: CommonSchema.email,
 			},
 			response: {
 				204: {},

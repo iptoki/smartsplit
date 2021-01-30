@@ -1,4 +1,6 @@
-module.exports["content-language"] = {
+const EntityTypes = require("../../constants/entityTypes")
+
+module.exports[EntityTypes.CONTENT_LANGUAGE] = {
 	type: "object",
 	properties: {
 		entity_id: {
@@ -15,7 +17,7 @@ module.exports["content-language"] = {
 	additionalProperties: false,
 }
 
-module.exports["digital-distributor"] = {
+module.exports[EntityTypes.DIGITAL_DISTRIBUTOR] = {
 	type: "object",
 	properties: {
 		entity_id: {
@@ -57,7 +59,7 @@ module.exports["digital-distributor"] = {
 	additionalProperties: false,
 }
 
-module.exports.instrument = {
+module.exports[EntityTypes.INSTRUMENT] = {
 	type: "object",
 	properties: {
 		entity_id: {
@@ -75,7 +77,7 @@ module.exports.instrument = {
 	additionalProperties: false,
 }
 
-module.exports["musical-genre"] = {
+module.exports[EntityTypes.MUSICAL_GENRE] = {
 	type: "object",
 	properties: {
 		entity_id: {

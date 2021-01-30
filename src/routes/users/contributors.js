@@ -1,7 +1,9 @@
 const JWTAuth = require("../../service/JWTAuth")
 const User = require("../../models/user")
 const AccountStatus = require("../../constants/accountStatus")
-const UserSchema = require("../../schemas/users")
+const UserValidationSchema = require("../../schemas/validation/user")
+const UserSerializationSchema = require("../../schemas/serialization/user")
+const CommonSchema = require("../../schemas/commons")
 const Errors = require("../errors")
 const { getUser } = require("./users")
 const { UserTemplates } = require("../../models/notifications/templates")
@@ -16,9 +18,7 @@ async function routes(fastify, options) {
 			tags: ["contributors"],
 			description: "Get a user's contributors",
 			params: {
-				user_id: {
-					type: "string",
-				},
+				user_id: CommonSchema.uuid1,
 			},
 			response: {
 				200: {
@@ -39,12 +39,8 @@ async function routes(fastify, options) {
 			tags: ["contributors"],
 			description: "Get a user's contributor by ID",
 			params: {
-				user_id: {
-					type: "string",
-				},
-				contributor_id: {
-					type: "string",
-				},
+				user_id: CommonSchema.uuid1,
+				contributor_id: CommonSchema.uuid2,
 			},
 			response: {
 				200: UserSchema.contributor,
@@ -63,25 +59,9 @@ async function routes(fastify, options) {
 			description:
 				"Create a new contributor and add it to the authenticated user's contributors",
 			params: {
-				user_id: {
-					type: "string",
-				},
+				user_id: CommonSchema.uuid1,
 			},
-			body: {
-				type: "object",
-				properties: {
-					firstName: {
-						type: "string",
-					},
-					lastName: {
-						type: "string",
-					},
-					artistName: {
-						type: "string",
-					},
-				},
-				additionalProperties: false,
-			},
+			body: UserValidationSchema.contributor,
 			response: {
 				201: UserSchema.contributor,
 			},
@@ -98,12 +78,8 @@ async function routes(fastify, options) {
 			tags: ["contributors"],
 			description: "Upgrade a contributor's account to a collaborator",
 			params: {
-				user_id: {
-					type: "string",
-				},
-				contributor_id: {
-					type: "string",
-				},
+				user_id: CommonSchema.uuid1,
+				contributor_id: CommonSchema.uuid2,
 			},
 			body: {
 				type: "object",
@@ -121,13 +97,13 @@ async function routes(fastify, options) {
 					properties: {
 						collaborators: {
 							type: "array",
-							items: UserSchema.userPublicProfile,
+							items: UserSerializationSchema.public_user,
 						},
 						contributors: {
 							type: "array",
-							items: UserSchema.contributor,
+							items: UserSerializationSchema.public_user,
 						},
-						user: UserSchema.userPublicProfile,
+						user: UserSerializationSchema.public_user,
 					},
 				},
 			},
@@ -144,28 +120,10 @@ async function routes(fastify, options) {
 			tags: ["contributors"],
 			description: "Update a user's contributor by ID",
 			params: {
-				user_id: {
-					type: "string",
-				},
-				contributor_id: {
-					type: "string",
-				},
+				user_id: CommonSchema.uuid1,
+				contributor_id: CommonSchema.uuid2,
 			},
-			body: {
-				type: "object",
-				properties: {
-					firstName: {
-						type: "string",
-					},
-					lastName: {
-						type: "string",
-					},
-					artistName: {
-						type: "string",
-					},
-				},
-				additionalProperties: false,
-			},
+			body: UserValidationSchema.contributor,
 			response: {
 				200: UserSchema.contributor,
 			},
@@ -182,12 +140,8 @@ async function routes(fastify, options) {
 			tags: ["contributors"],
 			description: "Delete a user's contributor by ID",
 			params: {
-				user_id: {
-					type: "string",
-				},
-				contributor_id: {
-					type: "string",
-				},
+				user_id: CommonSchema.uuid1,
+				contributor_id: CommonSchema.uuid2,
 			},
 			response: {
 				204: {},

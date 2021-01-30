@@ -1,6 +1,8 @@
 const JWTAuth = require("../service/JWTAuth")
 const Entity = require("../models/entities/entity")
-const EntitiesSchema = require("../schemas/entities")
+const EntityTypes = require("../constants/entityTypes")
+const EntityValidationSchema = require("../schemas/validation/entity")
+const EntitySerializationSchema = require("../schemas/serialization/entity")
 const Errors = require("./errors")
 
 /************************ Routes ************************/
@@ -15,12 +17,7 @@ async function routes(fastify, options) {
 			params: {
 				entity_type: {
 					type: "string",
-					enum: [
-						"instrument",
-						"digital-distributor",
-						"musical-genre",
-						"content-language",
-					],
+					enum: EntityTypes.list,
 				},
 			},
 			querystring: {
@@ -38,7 +35,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: EntitiesSchema.list,
+				200: EntitySerializationSchema.list,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -59,7 +56,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: EntitiesSchema.entity,
+				200: EntitySerializationSchema.entity,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -77,17 +74,12 @@ async function routes(fastify, options) {
 			params: {
 				entity_type: {
 					type: "string",
-					enum: [
-						"instrument",
-						"digital-distributor",
-						"musical-genre",
-						"content-language",
-					],
+					enum: EntityTypes.list,
 				},
 			},
-			body: EntitiesSchema.entityRequestBody,
+			body: EntityValidationSchema.entityRequestBody,
 			response: {
-				201: EntitiesSchema.entity,
+				201: EntitySerializationSchema.entity,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -107,9 +99,9 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: EntitiesSchema.entityRequestBody,
+			body: EntityValidationSchema.entityRequestBody,
 			response: {
-				200: EntitiesSchema.entity,
+				200: EntitySerializationSchema.entity,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -149,12 +141,7 @@ async function routes(fastify, options) {
 			params: {
 				entity_type: {
 					type: "string",
-					enum: [
-						"instrument",
-						"digital-distributor",
-						"musical-genre",
-						"content-language",
-					],
+					enum: EntityTypes.list,
 				},
 			},
 		},
@@ -169,11 +156,11 @@ async function createEntity(req, res) {
 	if (req.query.admin === true && !req.authUser.isAdmin)
 		throw Errors.UserForbidden
 
-	if (!req.authUser.isAdmin && req.params.entity_type === "digital-distributor")
+	if (!req.authUser.isAdmin && req.params.entity_type === EntityTypes.DIGITAL_DISTRIBUTOR)
 		throw Errors.UserForbidden
 
 	const base =
-		req.query.admin === true || req.params.entity_type === "digital-distributor"
+		req.query.admin === true || req.params.entity_type === EntityTypes.DIGITAL_DISTRIBUTOR
 			? { users: false }
 			: { users: [req.authUser._id] }
 
@@ -240,7 +227,7 @@ async function getEntities(req, res) {
 }
 
 async function updateEntity(req, res) {
-	if (!req.authUser.isAdmin && req.params.entity_type === "digital-distributor")
+	if (!req.authUser.isAdmin && req.params.entity_type === EntityTypes.DIGITAL_DISTRIBUTOR)
 		throw Errors.UserForbidden
 
 	const entity = await getEntityById(req, res)
@@ -257,7 +244,7 @@ async function updateEntity(req, res) {
 }
 
 async function deleteEntity(req, res) {
-	if (!req.authUser.isAdmin && req.params.entity_type === "digital-distributor")
+	if (!req.authUser.isAdmin && req.params.entity_type === EntityTypes.DIGITAL_DISTRIBUTOR)
 		throw Errors.UserForbidden
 
 	const entity = await getEntityById(req, res)

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose")
 const Entity = require("./entity")
+const EntityTypes = require("../../constants/entityTypes")
 const LocaleSchema = require("./locale")
 
 /**
@@ -10,35 +11,27 @@ const DigitalDistributorEntity = new mongoose.Schema(
 		name: {
 			type: String,
 		},
-
 		icon: {
 			type: String,
 		},
-
 		localizedName: {
 			type: LocaleSchema,
 		},
-
 		domains: {
 			type: [String],
 		},
-
 		markets: {
 			type: [String],
 		},
-
 		streaming: {
 			type: Boolean,
 		},
-
 		download: {
 			type: Boolean,
 		},
-
 		other: {
 			type: Boolean,
 		},
-
 		blockchain: {
 			type: Boolean,
 		},
@@ -46,8 +39,9 @@ const DigitalDistributorEntity = new mongoose.Schema(
 	{ discriminatorKey: "type" }
 )
 
-DigitalDistributorEntity.methods.setFields = function (body) {
-	const fields = [
+DigitalDistributorEntity.methods.getFields = function () {
+	return [
+		...Entity.getFields(),
 		"name",
 		"icon",
 		"localizedName",
@@ -58,12 +52,14 @@ DigitalDistributorEntity.methods.setFields = function (body) {
 		"other",
 		"blockchain",
 	]
-	for (let field in fields.concat(Entity.getFields())) {
-		if (body[field]) this[field] = body[field]
+}
+DigitalDistributorEntity.methods.setFields = function (body) {
+	for (let field of this.getFields()) {
+		if (body[field] !== undefined) this[field] = body[field]
 	}
 }
 
 module.exports = Entity.discriminator(
-	"digital-distributor",
+	EntityTypes.DIGITAL_DISTRIBUTOR,
 	DigitalDistributorEntity
 )

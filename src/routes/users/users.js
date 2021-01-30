@@ -1,8 +1,9 @@
 const User = require("../../models/user")
 const { UserTemplates } = require("../../models/notifications/templates")
 const EmailVerification = require("../../models/emailVerification")
-const UserSchema = require("../../schemas/users")
-const AuthSchema = require("../../schemas/auth")
+const UserSerializationSchema = require("../../schemas/serialization/user")
+const UserValidationSchema = require("../../schemas/validation/user")
+const AuthSerializationSchema = require("../../schemas/serialization/auth")
 const AccountStatus = require("../../constants/accountStatus")
 const Errors = require("../errors")
 const JWTAuth = require("../../service/JWTAuth")
@@ -17,12 +18,10 @@ async function routes(fastify, options) {
 			tags: ["users_general"],
 			description: "Get a user by ID",
 			params: {
-				user_id: {
-					type: "string",
-				},
+				user_id: CommonSchema.uuid1,
 			},
 			response: {
-				200: UserSchema.user,
+				200: AuthSerializationSchema.public_user,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -38,9 +37,7 @@ async function routes(fastify, options) {
 			tags: ["users_general"],
 			description: "Get a user's avatar by ID",
 			params: {
-				user_id: {
-					type: "string",
-				},
+				user_id: CommonSchema.uuid1,
 			},
 		},
 		reponse: {
@@ -56,11 +53,11 @@ async function routes(fastify, options) {
 			tags: ["users_general"],
 			description: "Create a new user in the system",
 			body: {
-				allOf: [UserSchema.userRequestBody],
+				allOf: [UserValidationSchema.private_user],
 				required: ["email", "password"],
 			},
 			response: {
-				201: UserSchema.user,
+				201: UserSerializationSchema.private_user,
 			},
 		},
 		handler: createUser,
@@ -83,7 +80,7 @@ async function routes(fastify, options) {
 				additionalProperties: false,
 			},
 			response: {
-				200: AuthSchema.sessionInfo,
+				200: AuthSerializationSchema.sessionInfo,
 			},
 		},
 		handler: activateUserAccount,
@@ -96,13 +93,11 @@ async function routes(fastify, options) {
 			tags: ["users_general"],
 			description: "Update a user by ID",
 			params: {
-				user_id: {
-					type: "string",
-				},
+				user_id: CommonSchema.uuid1,
 			},
-			body: UserSchema.userRequestBody,
+			body: UserValidationSchema.private_user,
 			response: {
-				200: UserSchema.user,
+				200: UserSerializationSchema.private_user,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -156,7 +151,7 @@ async function routes(fastify, options) {
 				additionalProperties: false,
 			},
 			response: {
-				200: AuthSchema.sessionInfo,
+				200: AuthSerializationSchema.sessionInfo,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -189,48 +184,13 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "POST",
-		url: "/users/invite-new-user",
-		schema: {
-			tags: ["users_general"],
-			description:
-				"Deprecated, you should use POST /users/:user_id/collaborators/. Invite a new user",
-			body: {
-				type: "object",
-				required: ["email"],
-				properties: {
-					firstName: {
-						type: "string",
-					},
-					lastName: {
-						type: "string",
-					},
-					artistName: {
-						type: "string",
-					},
-					email: {
-						type: "string",
-					},
-				},
-				additionalProperties: false,
-			},
-			response: {
-				201: UserSchema.user,
-			},
-		},
-		handler: inviteNewUser,
-	})
-
-	fastify.route({
 		method: "DELETE",
 		url: "/users/:user_id",
 		schema: {
 			tags: ["users_general"],
 			description: "Delete a user's account by ID",
 			params: {
-				user_id: {
-					type: "string",
-				},
+				user_id: CommonSchema.uuid1,
 			},
 			response: {
 				204: {},
@@ -384,9 +344,8 @@ async function updateUser(req, res) {
 		"projects",
 		"uri",
 	])
-		if (field in req.body) {
-			if (req.body[field]) user[field] = req.body[field]
-			else user[field] = undefined
+		if (req.body[field] !== undefined) {
+			user[field] = req.body[field]
 		}
 
 	await user.save()
@@ -470,29 +429,6 @@ async function deleteUserAccount(req, res) {
 	await user.deleteAccount()
 
 	res.code(204).send()
-}
-
-// !! DEPRECATED !!
-async function inviteNewUser(req, res) {
-	if (await User.findOne().byEmail(req.body.email)) throw Errors.ConflictingUser
-
-	const user = new User({
-		firstName: req.body.firstName || req.body.email.split("@")[0],
-		lastName: req.body.lastName,
-		accountStatus: AccountStatus.SPLIT_INVITED,
-	})
-
-	const emailVerif = await user.addPendingEmail(req.body.email)
-
-	await user.save()
-	await emailVerif.save()
-
-	await user.sendNotification(UserTemplates.SPLIT_INVITED, {
-		to: { name: user.fullName, email: emailVerif._id },
-	})
-
-	res.code(201)
-	return user
 }
 
 module.exports = {

@@ -1,7 +1,8 @@
 const Errors = require("../errors")
 const User = require("../../models/user")
 const JWTAuth = require("../../service/JWTAuth")
-const RightSplitSchemas = require("../../schemas/workpieces/rightSplits")
+const RightSplitValidationSchema = require("../../schemas/validation/workpieces/rightSplit")
+const RightSplitSerializationSchema = require("../../schemas/serialization/workpieces/rightSplit")
 
 /************************ Routes ************************/
 
@@ -17,9 +18,9 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: RightSplitSchemas.rightSplitRequestBody,
+			body: RightSplitValidationSchema.rightSplit,
 			response: {
-				201: RightSplitSchemas.rightSplit,
+				201: RightSplitSerializationSchema.rightSplit,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -38,9 +39,9 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: RightSplitSchemas.rightSplitRequestBody,
+			body: RightSplitValidationSchema.rightSplit,
 			response: {
-				200: RightSplitSchemas.rightSplit,
+				200: RightSplitSerializationSchema.rightSplit,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -99,7 +100,7 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: RightSplitSchemas.rightSplitVoteBody,
+			body: RightSplitValidationSchema.vote,
 			response: {
 				204: {},
 			},

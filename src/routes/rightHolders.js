@@ -43,9 +43,7 @@ async function routes(fastify, options) {
 			tags: ["right_holders"],
 			description: "Get a right holder by ID",
 			params: {
-				user_id: {
-					type: "string",
-				},
+user_id: CommonSchema.uuid1,
 			},
 			response: {
 				200: UserSchema.rightHolder,

@@ -1,5 +1,6 @@
 const Workpiece = require("../../models/workpiece/workpiece")
-const WorkpieceSchemas = require("../../schemas/workpieces/workpieces")
+const WorkpieceValidationSchema = require("../../schemas/validation/workpieces/workpiece")
+const WorkpieceSerializationSchema = require("../../schemas/serialization/workpieces/workpiece")
 const Errors = require("../errors")
 const JWTAuth = require("../../service/JWTAuth")
 
@@ -8,37 +9,15 @@ const JWTAuth = require("../../service/JWTAuth")
 async function routes(fastify, options) {
 	fastify.route({
 		method: "GET",
-		url: "/workpieces/by-owner/:user_id/" /* TODO: remove that ugly `/` */,
-		schema: {
-			tags: ["workpieces_general"],
-			description: "*** DEPRECATED *** Get workpieces by owner",
-			params: {
-				user_id: {
-					type: "string",
-				},
-			},
-			response: {
-				200: { type: "array", items: WorkpieceSchemas.workpiece },
-			},
-			security: [{ bearerAuth: [] }],
-		},
-		preValidation: JWTAuth.requireAuthUser,
-		handler: getWorkpiecesByOwner,
-	})
-
-	fastify.route({
-		method: "GET",
 		url: "/workpieces/by-owner/:user_id",
 		schema: {
 			tags: ["workpieces_general"],
 			description: "Get workpieces by owner",
 			params: {
-				user_id: {
-					type: "string",
-				},
+				user_id: CommonSchema.uuid1,
 			},
 			response: {
-				200: { type: "array", items: WorkpieceSchemas.workpiece },
+				200: { type: "array", items: WorkpieceSerializationSchema.workpiece },
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -58,7 +37,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: WorkpieceSchemas.workpiece,
+				200: WorkpieceSerializationSchema.workpiece,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -76,9 +55,9 @@ async function routes(fastify, options) {
 		schema: {
 			tags: ["workpieces_general"],
 			description: "Create a new workpiece in the system",
-			body: WorkpieceSchemas.workpieceRequestBody,
+			body: WorkpieceValidationSchema.workpiece,
 			response: {
-				201: WorkpieceSchemas.workpiece,
+				201: WorkpieceSerializationSchema.workpiece,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -97,9 +76,9 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: WorkpieceSchemas.workpieceRequestBody,
+			body: WorkpieceValidationSchema.workpiece,
 			response: {
-				200: WorkpieceSchemas.workpiece,
+				200: WorkpieceSerializationSchema.workpiece,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -167,7 +146,7 @@ const updateWorkpiece = async function (req, res) {
 	const workpiece = await getWorkpieceAsOwner(req, res)
 
 	for (let field of ["title", "entityTags"])
-		if (req.body[field]) workpiece[field] = req.body[field]
+		if (req.body[field] !== undefined) workpiece[field] = req.body[field]
 
 	if (req.body.documentation !== undefined)
 		await workpiece.updateDocumentation(req.body.documentation)

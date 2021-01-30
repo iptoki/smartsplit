@@ -1,6 +1,7 @@
 const JWTAuth = require("../service/JWTAuth")
 const User = require("../models/user")
-const AuthSchema = require("../schemas/auth")
+const AuthSerializationSchema = require("../schemas/serialization/auth")
+const AuthValidationSchema = require("../schemas/validation/auth")
 const Errors = require("./errors")
 
 async function routes(fastify, options) {
@@ -26,7 +27,7 @@ async function routes(fastify, options) {
 			tags: ["auth"],
 			description: "Refresh an access token",
 			response: {
-				200: AuthSchema.sessionInfo,
+				200: AuthValidationSchema.sessionInfo,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -40,9 +41,9 @@ async function routes(fastify, options) {
 		schema: {
 			tags: ["auth"],
 			description: "Login a user",
-			body: AuthSchema.login,
+			body: AuthValidationSchema.login,
 			response: {
-				200: AuthSchema.sessionInfo,
+				200: AuthValidationSchema.sessionInfo,
 			},
 		},
 		handler: login,
