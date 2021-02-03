@@ -39,4 +39,7 @@ MusicalGenreEntity.methods.setFields = function (body) {
 	}
 }
 
-module.exports = Entity.discriminator(EntityTypes.MUSICAL_GENRE, MusicalGenreEntity)
+module.exports = Entity.discriminator(
+	EntityTypes.MUSICAL_GENRE,
+	MusicalGenreEntity
+)

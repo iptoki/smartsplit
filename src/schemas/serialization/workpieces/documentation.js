@@ -1,7 +1,7 @@
 const { public_user } = require("../user")
 const EntitySchema = require("../entity")
-const EntityTypes = require("../../constants/entityTypes")
 const FileSchema = require("../file")
+const EntityTypes = require("../../../constants/entityTypes")
 
 module.exports.performerTool = {
 	type: "object",

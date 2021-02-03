@@ -4,6 +4,7 @@ const EmailVerification = require("../../models/emailVerification")
 const UserSerializationSchema = require("../../schemas/serialization/user")
 const UserValidationSchema = require("../../schemas/validation/user")
 const AuthSerializationSchema = require("../../schemas/serialization/auth")
+const CommonSchema = require("../../schemas/commons")
 const AccountStatus = require("../../constants/accountStatus")
 const Errors = require("../errors")
 const JWTAuth = require("../../service/JWTAuth")
@@ -53,11 +54,11 @@ async function routes(fastify, options) {
 			tags: ["users_general"],
 			description: "Create a new user in the system",
 			body: {
-				allOf: [UserValidationSchema.private_user],
+				allOf: [UserValidationSchema.user],
 				required: ["email", "password"],
 			},
 			response: {
-				201: UserSerializationSchema.private_user,
+				201: UserSerializationSchema.user,
 			},
 		},
 		handler: createUser,
@@ -95,9 +96,9 @@ async function routes(fastify, options) {
 			params: {
 				user_id: CommonSchema.uuid1,
 			},
-			body: UserValidationSchema.private_user,
+			body: UserValidationSchema.user,
 			response: {
-				200: UserSerializationSchema.private_user,
+				200: UserSerializationSchema.user,
 			},
 			security: [{ bearerAuth: [] }],
 		},

@@ -113,7 +113,6 @@ async function routes(fastify, options) {
 		},
 		preValidation: JWTAuth.requireAuthUser,
 		handler: updateDocumentationField,
-		serializerCompiler: documentationFieldSerializer,
 	})
 
 	fastify.route({

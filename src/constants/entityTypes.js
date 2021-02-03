@@ -19,12 +19,7 @@ class EntityTypes extends Constant {
 		return CONTENT_LANGUAGE
 	}
 	static get list() {
-		return [
-			INSTRUMENT,
-			DIGITAL_DISTRIBUTOR,
-			MUSICAL_GENRE,
-			CONTENT_LANGUAGE,
-		]
+		return [INSTRUMENT, DIGITAL_DISTRIBUTOR, MUSICAL_GENRE, CONTENT_LANGUAGE]
 	}
 	static get constantName() {
 		return "EntityTypes"

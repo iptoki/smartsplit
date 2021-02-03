@@ -1,5 +1,4 @@
-const UserSchema = require("../users")
-const RightSplitSchema = require("../../serialization/workpiece/rightSplit")
+const RightSplitSchema = require("../../serialization/workpieces/rightSplit")
 
 module.exports.copyrightSplit = {
 	$patch: { source: RightSplitSchema.copyrightSplit },

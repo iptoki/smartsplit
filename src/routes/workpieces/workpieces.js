@@ -1,6 +1,7 @@
 const Workpiece = require("../../models/workpiece/workpiece")
 const WorkpieceValidationSchema = require("../../schemas/validation/workpieces/workpiece")
 const WorkpieceSerializationSchema = require("../../schemas/serialization/workpieces/workpiece")
+const CommonSchema = require("../../schemas/commons")
 const Errors = require("../errors")
 const JWTAuth = require("../../service/JWTAuth")
 

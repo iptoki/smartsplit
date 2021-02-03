@@ -11,9 +11,7 @@ const fastify = require("fastify")({
 			coerceTypes: true, // change data type of data to match type keyword
 			nullable: true, // support keyword "nullable" from Open API 3 specification.
 		},
-		// plugins: [
-		// 	require("ajv-merge-patch")[(require("ajv-keywords"), "instanceof")],
-		// ],
+		plugins: [require("ajv-merge-patch")],
 	},
 })
 

@@ -8,7 +8,7 @@
 	"private": true,
 	"dependencies": {
 		"@sendgrid/mail": "^7.0.0",
-		"any-schema-you-like": "^0.1.0",
+		"ajv-merge-patch": "^4.1.0",
 		"bcrypt": "^4.0.1",
 		"fastify": "^3.3.0",
 		"fastify-cors": "^4.1.0",

@@ -28,4 +28,7 @@ ContentLanguageSchema.methods.setFields = function (body) {
 	}
 }
 
-module.exports = Entity.discriminator(EntityTypes.CONTENT_LANGUAGE, ContentLanguageSchema)
+module.exports = Entity.discriminator(
+	EntityTypes.CONTENT_LANGUAGE,
+	ContentLanguageSchema
+)

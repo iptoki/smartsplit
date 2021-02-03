@@ -63,7 +63,7 @@ async function routes(fastify, options) {
 			},
 			body: UserValidationSchema.collaborator,
 			response: {
-				201: UserSerializationSchema.private_user,
+				201: UserSerializationSchema.user,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -85,7 +85,7 @@ async function routes(fastify, options) {
 			response: {
 				200: {
 					type: "array",
-					items: UserSerializationSchema.public_user 
+					items: UserSerializationSchema.public_user,
 				},
 			},
 			security: [{ bearerAuth: [] }],

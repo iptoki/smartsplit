@@ -22,9 +22,9 @@ module.exports.collaborator = {
 	with: [{ op: "add", path: "/properties/email", value: { type: "string" } }],
 }
 
-module.exports.private_user = {
+module.exports.user = {
 	$patch: {
-		source: UserSchema.private_user,
+		source: UserSchema.user,
 	},
 	with: [
 		{ op: "remove", path: "/properties/user_id" },

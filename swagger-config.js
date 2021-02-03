@@ -22,7 +22,6 @@ module.exports = {
 			{ name: "users_emails", description: "Manage users emails" },
 			{ name: "collaborators", description: "Manage user's collaborators" },
 			{ name: "contributors", description: "Manage user's contributors" },
-			{ name: "right_holders", description: "Manage right holders" },
 			{ name: "workpieces_general", description: "Manage workpieces" },
 			{
 				name: "right_splits",

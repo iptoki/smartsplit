@@ -27,7 +27,7 @@ async function routes(fastify, options) {
 			tags: ["auth"],
 			description: "Refresh an access token",
 			response: {
-				200: AuthValidationSchema.sessionInfo,
+				200: AuthSerializationSchema.sessionInfo,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -43,7 +43,7 @@ async function routes(fastify, options) {
 			description: "Login a user",
 			body: AuthValidationSchema.login,
 			response: {
-				200: AuthValidationSchema.sessionInfo,
+				200: AuthSerializationSchema.sessionInfo,
 			},
 		},
 		handler: login,

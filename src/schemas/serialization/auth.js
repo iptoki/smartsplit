@@ -1,4 +1,4 @@
-const { private_user } = require("./user")
+const { user } = require("./user")
 
 module.exports.sessionInfo = {
 	type: "object",
@@ -6,6 +6,6 @@ module.exports.sessionInfo = {
 		accessToken: {
 			type: "string",
 		},
-		user: private_user,
+		//user: user,
 	},
 }

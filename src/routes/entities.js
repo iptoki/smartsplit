@@ -8,62 +8,63 @@ const Errors = require("./errors")
 /************************ Routes ************************/
 
 async function routes(fastify, options) {
-	fastify.route({
-		method: "GET",
-		url: "/entities/:entity_type/",
-		schema: {
-			tags: ["entities"],
-			description: "Get a list of entities by type and optional search terms",
-			params: {
-				entity_type: {
-					type: "string",
-					enum: EntityTypes.list,
-				},
-			},
-			querystring: {
-				search_terms: { type: "string" },
-				limit: {
-					type: "integer",
-					default: 50,
-					minimum: 1,
-					maximum: 250,
-				},
-				skip: {
-					type: "integer",
-					default: 0,
-					minimum: 0,
-				},
-			},
-			response: {
-				200: EntitySerializationSchema.list,
-			},
-			security: [{ bearerAuth: [] }],
-		},
-		preValidation: JWTAuth.getAuthUser,
-		handler: getEntities,
-		serializerCompiler: listSerializer,
-	})
+	// fastify.route({
+	// 	method: "GET",
+	// 	url: "/entities/:entity_type/",
+	// 	schema: {
+	// 		tags: ["entities"],
+	// 		description: "Get a list of entities by type and optional search terms",
+	// 		params: {
+	// 			entity_type: {
+	// 				type: "string",
+	// 				enum: EntityTypes.list,
+	// 			},
+	// 		},
+	// 		querystring: {
+	// 			search_terms: { type: "string" },
+	// 			limit: {
+	// 				type: "integer",
+	// 				default: 50,
+	// 				minimum: 1,
+	// 				maximum: 250,
+	// 			},
+	// 			skip: {
+	// 				type: "integer",
+	// 				default: 0,
+	// 				minimum: 0,
+	// 			},
+	// 		},
+	// 		response: {
+	// 			200: {
+	// 				type: "array",
+	// 				items: EntitySerializationSchema[EntityTypes.INSTRUMENT],
+	// 			},
+	// 		},
+	// 		security: [{ bearerAuth: [] }],
+	// 	},
+	// 	preValidation: JWTAuth.getAuthUser,
+	// 	handler: getEntities,
+	// })
 
-	fastify.route({
-		method: "GET",
-		url: "/entities/:entity_id",
-		schema: {
-			tags: ["entities"],
-			description: "Get an entity by ID",
-			params: {
-				entity_id: {
-					type: "string",
-				},
-			},
-			response: {
-				200: EntitySerializationSchema.entity,
-			},
-			security: [{ bearerAuth: [] }],
-		},
-		preValidation: JWTAuth.getAuthUser,
-		handler: getEntityById,
-		serializerCompiler: entitySerializer,
-	})
+	// fastify.route({
+	// 	method: "GET",
+	// 	url: "/entities/:entity_id",
+	// 	schema: {
+	// 		tags: ["entities"],
+	// 		description: "Get an entity by ID",
+	// 		params: {
+	// 			entity_id: {
+	// 				type: "string",
+	// 			},
+	// 		},
+	// 		response: {
+	// 			200: EntitySerializationSchema[EntityTypes.INSTRUMENT],
+	// 		},
+	// 		security: [{ bearerAuth: [] }],
+	// 	},
+	// 	preValidation: JWTAuth.getAuthUser,
+	// 	handler: getEntityById,
+	// })
 
 	fastify.route({
 		method: "POST",
@@ -77,13 +78,12 @@ async function routes(fastify, options) {
 					enum: EntityTypes.list,
 				},
 			},
-			body: EntityValidationSchema.entityRequestBody,
+			body: Object.assign({}, EntityValidationSchema.entity),
 			response: {
-				201: EntitySerializationSchema.entity,
+				201: EntitySerializationSchema[EntityTypes.INSTRUMENT],
 			},
 			security: [{ bearerAuth: [] }],
 		},
-		serializerCompiler: entitySerializer,
 		preValidation: JWTAuth.requireAuthUser,
 		handler: createEntity,
 	})
@@ -99,55 +99,54 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: EntityValidationSchema.entityRequestBody,
+			body: Object.assign({}, EntityValidationSchema.entity),
 			response: {
-				200: EntitySerializationSchema.entity,
+				200: EntitySerializationSchema[EntityTypes.INSTRUMENT],
 			},
 			security: [{ bearerAuth: [] }],
 		},
-		serializerCompiler: entitySerializer,
 		preValidation: JWTAuth.requireAuthUser,
 		handler: updateEntity,
 	})
 
-	fastify.route({
-		method: "DELETE",
-		url: "/entities/:entity_id",
-		schema: {
-			tags: ["entities"],
-			description: "Delete an entity by ID",
-			params: {
-				entity_id: {
-					type: "string",
-				},
-			},
-			response: {
-				204: {},
-			},
-			security: [{ bearerAuth: [] }],
-		},
-		preValidation: JWTAuth.requireAuthUser,
-		handler: deleteEntity,
-	})
+	// fastify.route({
+	// 	method: "DELETE",
+	// 	url: "/entities/:entity_id",
+	// 	schema: {
+	// 		tags: ["entities"],
+	// 		description: "Delete an entity by ID",
+	// 		params: {
+	// 			entity_id: {
+	// 				type: "string",
+	// 			},
+	// 		},
+	// 		response: {
+	// 			204: {},
+	// 		},
+	// 		security: [{ bearerAuth: [] }],
+	// 	},
+	// 	preValidation: JWTAuth.requireAuthUser,
+	// 	handler: deleteEntity,
+	// })
 
 	// Secret route available for admins only
 	// Seed a list of entities in the database.
 	// Data set that will be seeded are located in /smartsplit/data/
-	fastify.route({
-		method: "POST",
-		url: "/entities/:entity_type/seed",
-		schema: {
-			hide: true,
-			params: {
-				entity_type: {
-					type: "string",
-					enum: EntityTypes.list,
-				},
-			},
-		},
-		preValidation: JWTAuth.requireAuthAdmin,
-		handler: seedEntities,
-	})
+	// fastify.route({
+	// 	method: "POST",
+	// 	url: "/entities/:entity_type/seed",
+	// 	schema: {
+	// 		hide: true,
+	// 		params: {
+	// 			entity_type: {
+	// 				type: "string",
+	// 				enum: EntityTypes.list,
+	// 			},
+	// 		},
+	// 	},
+	// 	preValidation: JWTAuth.requireAuthAdmin,
+	// 	handler: seedEntities,
+	// })
 }
 
 /************************ Handlers ************************/
@@ -156,11 +155,15 @@ async function createEntity(req, res) {
 	if (req.query.admin === true && !req.authUser.isAdmin)
 		throw Errors.UserForbidden
 
-	if (!req.authUser.isAdmin && req.params.entity_type === EntityTypes.DIGITAL_DISTRIBUTOR)
+	if (
+		!req.authUser.isAdmin &&
+		req.params.entity_type === EntityTypes.DIGITAL_DISTRIBUTOR
+	)
 		throw Errors.UserForbidden
 
 	const base =
-		req.query.admin === true || req.params.entity_type === EntityTypes.DIGITAL_DISTRIBUTOR
+		req.query.admin === true ||
+		req.params.entity_type === EntityTypes.DIGITAL_DISTRIBUTOR
 			? { users: false }
 			: { users: [req.authUser._id] }
 
@@ -177,6 +180,7 @@ async function createEntity(req, res) {
 	}
 
 	res.code(201)
+	res.schema(EntitySerializationSchema[entity.type])
 	return filterAdminFields(entity, req.authUser)
 }
 
@@ -194,7 +198,7 @@ async function getEntityById(req, res) {
 	)
 		throw Errors.UserForbidden
 
-	res.schema(EntitiesSchema[entity.type])
+	res.schema(EntitySerializationSchema[entity.type])
 	return filterAdminFields(entity, req.authUser)
 }
 
@@ -222,12 +226,16 @@ async function getEntities(req, res) {
 	else if (!req.authUser.isAdmin) query = query.byUserId(req.authUser._id)
 
 	const entities = await query.exec()
-	res.schema(EntitiesSchema[req.params.entity_type])
+
+	res.schema({ type: "array", items: EntitySerializationSchema[req.params.entity_type] })
 	return entities.map((entity) => filterAdminFields(entity, req.authUser))
 }
 
 async function updateEntity(req, res) {
-	if (!req.authUser.isAdmin && req.params.entity_type === EntityTypes.DIGITAL_DISTRIBUTOR)
+	if (
+		!req.authUser.isAdmin &&
+		req.params.entity_type === EntityTypes.DIGITAL_DISTRIBUTOR
+	)
 		throw Errors.UserForbidden
 
 	const entity = await getEntityById(req, res)
@@ -240,11 +248,15 @@ async function updateEntity(req, res) {
 	entity.setFields(req.body)
 	await entity.save()
 
+	res.schema(EntitySerializationSchema[entity.type])
 	return filterAdminFields(entity, req.authUser)
 }
 
 async function deleteEntity(req, res) {
-	if (!req.authUser.isAdmin && req.params.entity_type === EntityTypes.DIGITAL_DISTRIBUTOR)
+	if (
+		!req.authUser.isAdmin &&
+		req.params.entity_type === EntityTypes.DIGITAL_DISTRIBUTOR
+	)
 		throw Errors.UserForbidden
 
 	const entity = await getEntityById(req, res)
@@ -265,35 +277,6 @@ async function seedEntities(req, res) {
 		await entity.save()
 	}
 	return "success"
-}
-
-/************************ Custom serializer ************************/
-
-/*
-	fast-json-stringify does not support schema with `oneOf` being at the root.
-	As a workaround, we mimic the `oneOf` mechanism  by defining a custom serializer 
-	where we dinamicaly determine which schema should be serialized.
-	See /src/schemas/entities.js for more information
-*/
-
-function entitySerializer({ schema, method, url, httpStatus }) {
-	const fastJson = require("fast-json-stringify")
-	return (entity) => {
-		const stringify = fastJson(EntitiesSchema[entity.type])
-		return stringify(entity)
-	}
-}
-
-function listSerializer({ schema, method, url, httpStatus }) {
-	const fastJson = require("fast-json-stringify")
-	return (list) => {
-		if (list.length === 0) return JSON.stringify(list)
-		const stringify = fastJson({
-			type: "array",
-			items: EntitiesSchema[list[0].type],
-		})
-		return stringify(list)
-	}
 }
 
 /************************ Helpers ************************/

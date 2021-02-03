@@ -1,11 +1,33 @@
 const EntityTypes = require("../../constants/entityTypes")
+const CommonSchema = require("../commons")
+
+const locale = {
+	type: "object",
+	properties: {
+		fr: { type: "string" },
+		en: { type: "string" },
+	},
+	additionalProperties: false,
+}
+
+const link = {
+	type: "object",
+	properties: {
+		name: {
+			type: "string",
+		},
+		id: {
+			type: "string",
+		},
+		uri: CommonSchema.URL,
+	},
+	additionalProperties: false,
+}
 
 module.exports[EntityTypes.CONTENT_LANGUAGE] = {
 	type: "object",
 	properties: {
-		entity_id: {
-			type: "string",
-		},
+		entity_id: CommonSchema.uuid1,
 		name: locale,
 		altNames: {
 			type: "array",
@@ -20,9 +42,7 @@ module.exports[EntityTypes.CONTENT_LANGUAGE] = {
 module.exports[EntityTypes.DIGITAL_DISTRIBUTOR] = {
 	type: "object",
 	properties: {
-		entity_id: {
-			type: "string",
-		},
+		entity_id: CommonSchema.uuid1,
 		name: {
 			type: "string",
 		},
@@ -62,9 +82,7 @@ module.exports[EntityTypes.DIGITAL_DISTRIBUTOR] = {
 module.exports[EntityTypes.INSTRUMENT] = {
 	type: "object",
 	properties: {
-		entity_id: {
-			type: "string",
-		},
+		entity_id: CommonSchema.uuid1,
 		name: {
 			type: "string",
 		},
@@ -80,9 +98,7 @@ module.exports[EntityTypes.INSTRUMENT] = {
 module.exports[EntityTypes.MUSICAL_GENRE] = {
 	type: "object",
 	properties: {
-		entity_id: {
-			type: "string",
-		},
+		entity_id: CommonSchema.uuid1,
 		name: {
 			type: "string",
 		},
@@ -96,31 +112,6 @@ module.exports[EntityTypes.MUSICAL_GENRE] = {
 			items: {
 				type: "string",
 			},
-		},
-	},
-	additionalProperties: false,
-}
-
-const locale = {
-	type: "object",
-	properties: {
-		fr: { type: "string" },
-		en: { type: "string" },
-	},
-	additionalProperties: false,
-}
-
-const link = {
-	type: "object",
-	properties: {
-		name: {
-			type: "string",
-		},
-		id: {
-			type: "string",
-		},
-		uri: {
-			type: "string",
 		},
 	},
 	additionalProperties: false,
