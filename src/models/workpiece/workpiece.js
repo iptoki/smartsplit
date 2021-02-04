@@ -271,6 +271,7 @@ WorkpieceSchema.methods.updateDocumentation = async function (data) {
 
 WorkpieceSchema.methods.populateAll = async function () {
 	await this.populate("owner").execPopulate()
+	await this.populate("rightHolders").execPopulate()
 	await this.populateDocumentation()
 	await this.populateRightSplit()
 	await this.populateArchivedRightSplits()

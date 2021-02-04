@@ -170,7 +170,7 @@ module.exports.rightSplit = {
 			type: "number",
 		},
 		owner: {
-			type: "string",
+			anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
 		},
 		copyright: {
 			type: "array",
@@ -208,15 +208,30 @@ module.exports.rightSplitRequestBody = {
 
 module.exports.rightSplitVoteBody = {
 	copyright: {
-		type: "string",
-		enum: ["accepted", "rejected"],
+		vote: {
+			type: "string",
+			enum: ["accepted", "rejected"],
+		},
+		comment: {
+			type: "string",
+		},
 	},
 	performance: {
-		type: "string",
-		enum: ["accepted", "rejected"],
+		vote: {
+			type: "string",
+			enum: ["accepted", "rejected"],
+		},
+		comment: {
+			type: "string",
+		},
 	},
 	recording: {
-		type: "string",
-		enum: ["accepted", "rejected"],
+		vote: {
+			type: "string",
+			enum: ["accepted", "rejected"],
+		},
+		comment: {
+			type: "string",
+		},
 	},
 }
