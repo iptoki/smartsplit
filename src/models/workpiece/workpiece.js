@@ -278,6 +278,7 @@ WorkpieceSchema.methods.populateAll = async function () {
 
 WorkpieceSchema.methods.populateRightSplit = async function () {
 	if (!this.rightSplit) return
+	await this.populate("rightSplit.owner").execPopulate()
 	for (let rightType of RightTypes.list) {
 		if (!Array.isArray(this.rightSplit[rightType])) continue
 		for (let i = 0; i < this.rightSplit[rightType].length; i++) {
