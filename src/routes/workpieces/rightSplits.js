@@ -24,11 +24,11 @@ async function routes(fastify, options) {
 			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthUser,
-		handler: createRightSplit,
+		handler: create,
 	})
 
 	fastify.route({
-		method: "PUT",
+		method: "PATCH",
 		url: "/workpieces/:workpiece_id/rightSplit",
 		schema: {
 			tags: ["right_splits"],
@@ -45,7 +45,7 @@ async function routes(fastify, options) {
 			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthUser,
-		handler: updateRightSplit,
+		handler: update,
 	})
 
 	fastify.route({
@@ -65,7 +65,7 @@ async function routes(fastify, options) {
 			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthUser,
-		handler: deleteRightSplit,
+		handler: remove,
 	})
 
 	fastify.route({
@@ -85,7 +85,7 @@ async function routes(fastify, options) {
 			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthUser,
-		handler: submitRightSplit,
+		handler: submit,
 	})
 
 	fastify.route({
@@ -106,7 +106,7 @@ async function routes(fastify, options) {
 			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthUser,
-		handler: voteRightSplit,
+		handler: vote,
 	})
 
 	fastify.route({
@@ -137,7 +137,7 @@ async function routes(fastify, options) {
 			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthUser,
-		handler: swapRightSplitUser,
+		handler: swapUser,
 	})
 }
 
@@ -149,12 +149,26 @@ const {
 	getWorkpieceAsRightHolder,
 } = require("./workpieces")
 
-const createRightSplit = async function (req, res) {
-	const workpiece = await getWorkpieceAsOwner(req, res)
+const getWorkpieceAsAuthorizedUser = async function (req, res) {
+	let workpiece
+	try {
+		workpiece = await getWorkpieceAsOwner(req, res)
+	} catch (e) {
+		workpiece = await getWorkpieceAsRightHolder(req, res)
+	}
+	return workpiece
+}
 
-	if (!workpiece.canAcceptNewSplit()) throw Errors.ConflictingRightSplitState
+const getWorkpieceAsSplitOwner = async function (req, res) {
+	const workpiece = await getWorkpiece(req, res)
+	if (!workpiece.rightSplit || workpiece.rightSplit.owner !== req.authUser._id)
+		throw Errors.UserForbidden
+	return workpiece
+}
 
-	if (workpiece.rightSplit) workpiece.archivedSplits.push(workpiece.rightSplit)
+const create = async function (req, res) {
+	const workpiece = await getWorkpieceAsAuthorizedUser(req, res)
+	req.body.owner = req.authUser._id
 
 	await workpiece.setRightSplit(req.body)
 	await workpiece.save()
@@ -164,10 +178,8 @@ const createRightSplit = async function (req, res) {
 	return workpiece.rightSplit
 }
 
-const updateRightSplit = async function (req, res) {
-	const workpiece = await getWorkpieceAsOwner(req, res)
-
-	if (!workpiece.canUpdateRightSplit()) throw Errors.ConflictingRightSplitState
+const update = async function (req, res) {
+	const workpiece = await getWorkpieceAsSplitOwner(req, res)
 
 	await workpiece.setRightSplit(req.body)
 	await workpiece.save()
@@ -176,22 +188,17 @@ const updateRightSplit = async function (req, res) {
 	return workpiece.rightSplit
 }
 
-const deleteRightSplit = async function (req, res) {
-	const workpiece = await getWorkpieceAsOwner(req, res)
+const remove = async function (req, res) {
+	const workpiece = await getWorkpieceAsSplitOwner(req, res)
 
-	if (!workpiece.canUpdateRightSplit()) throw Errors.ConflictingRightSplitState
-
-	workpiece.archivedSplits.push(workpiece.rightSplit)
-	workpiece.rightSplit = undefined
+	workpiece.deleteRightSplit()
 	await workpiece.save()
 
 	res.code(204).send()
 }
 
-const submitRightSplit = async function (req, res) {
-	const workpiece = await getWorkpieceAsOwner(req, res)
-
-	if (!workpiece.canUpdateRightSplit()) throw Errors.ConflictingRightSplitState
+const submit = async function (req, res) {
+	const workpiece = await getWorkpieceAsSplitOwner(req, res)
 
 	await workpiece.submitRightSplit()
 	await workpiece.save()
@@ -199,19 +206,16 @@ const submitRightSplit = async function (req, res) {
 	res.code(204).send()
 }
 
-const voteRightSplit = async function (req, res) {
+const vote = async function (req, res) {
 	const workpiece = await getWorkpieceAsRightHolder(req, res)
 
-	if (!workpiece.canVoteRightSplit()) throw Errors.ConflictingRightSplitState
-
-	workpiece.setVote(req.authUser._id, req.body)
-	await workpiece.updateRightSplitState()
+	await workpiece.setVote(req.authUser._id, req.body)
 	await workpiece.save()
 
 	res.code(204).send()
 }
 
-const swapRightSplitUser = async function (req, res) {
+const swapUser = async function (req, res) {
 	const workpiece = await getWorkpiece(req, res)
 
 	if (!workpiece.canVoteRightSplit()) throw Errors.ConflictingRightSplitState

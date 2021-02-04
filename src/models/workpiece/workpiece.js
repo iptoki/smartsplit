@@ -1,12 +1,15 @@
 const mongoose = require("mongoose")
 const uuid = require("uuid").v4
 const User = require("../user")
-const SplitTemplates = require("../notifications/templates")
-const { UserNotFound } = require("../../routes/errors")
+const { SplitTemplates } = require("../notifications/templates")
 const JWT = require("../../utils/jwt")
 const RightSplitSchema = require("./rightSplit")
 const DocumentationSchema = require("./documentation")
 const RightTypes = require("../../constants/rightTypes")
+const {
+	UserNotFound,
+	ConflictingRightSplitState,
+} = require("../../routes/errors")
 
 const JWT_SPLIT_TYPE = "workpiece:split-invite"
 
@@ -24,15 +27,18 @@ const WorkpieceSchema = new mongoose.Schema(
 			type: String,
 			ref: "User",
 		},
-		rightHolders: {
-			type: [String],
-			ref: "User",
-		},
-		entityTags: {
-			type: [String],
-			ref: "Entity",
-		},
-		version: Number,
+		rightHolders: [
+			{
+				type: String,
+				ref: "User",
+			},
+		],
+		entityTags: [
+			{
+				type: String,
+				ref: "Entity",
+			},
+		],
 		rightSplit: {
 			type: RightSplitSchema,
 		},
@@ -51,9 +57,23 @@ WorkpieceSchema.query.byOwner = function (user_id) {
 	return this.where({ owner: user_id })
 }
 
+WorkpieceSchema.methods.getOwnerId = function () {
+	return this.populated("owner") ? this.owner._id : this.owner
+}
+
+WorkpieceSchema.methods.getSplitOwnerId = function () {
+	return this.populated("rightSplit.owner")
+		? this.rightSplit.owner._id
+		: this.rightSplit.owner
+}
+
 WorkpieceSchema.methods.isOwnerPartOfRightHolders = function () {
-	for (rh of this.rightHolders) {
-		if (rh._id === this.owner._id) return true
+	if (!this.rightHolders) return false
+	const ownerId = this.getOwnerId()
+	if (!this.populated("rightHolders"))
+		return this.rightHolders.includes(ownerId)
+	for (let rh of this.rightHolders) {
+		if (rh._id === ownerId) return true
 	}
 	return false
 }
@@ -76,85 +96,118 @@ WorkpieceSchema.methods.decodeToken = function (token) {
 	return JWT.decode(JWT_SPLIT_TYPE, token)
 }
 
-WorkpieceSchema.methods.setRightSplit = async function (body) {
-	this.rightSplit = {
-		_state: "draft",
-		copyright: [],
-		performance: [],
-		recording: [],
+WorkpieceSchema.methods.setRightSplit = async function (data) {
+	if (
+		this.rightSplit &&
+		!["draft", "rejected"].includes(this.rightSplit._state)
+	)
+		throw ConflictingRightSplitState
+
+	if (this.rightSplit && this.rightSplit._state === "rejected") {
+		if (!data.owner || !(await User.exists({ _id: data.owner })))
+			throw UserNotFound
+		this.archivedSplits.push(this.rightSplit)
+		this.rightSplit = {
+			owner: data.owner,
+			_state: "draft",
+			version: this.rightSplit.version + 1,
+		}
 	}
+	if (!this.rightSplit) {
+		const nArchived = this.archivedSplits.length
+		const version =
+			nArchived > 0 ? this.archivedSplits[nArchived - 1].version + 1 : 1
+		this.rightSplit = { owner: data.owner, _state: "draft", version }
+	}
+
+	const owner_id = this.getSplitOwnerId()
+
+	for (let rightType of RightTypes.list) {
+		if (!Array.isArray(data[rightType])) continue
+		this.rightSplit[rightType] = []
+		for (let item of data[rightType]) {
+			if (!(await User.exists({ _id: item.rightHolder }))) throw UserNotFound
+			this.rightSplit[rightType].push({
+				rightHolder: item.rightHolder,
+				roles: item.roles,
+				status: item.status,
+				function: item.function,
+				vote: owner_id === item.rightHolder ? "accepted" : "undecided",
+				shares: item.shares,
+			})
+		}
+	}
+
+	this.updateRightHolders()
+}
+
+WorkpieceSchema.methods.updateRightHolders = function () {
 	this.rightHolders = []
 
 	for (let rightType of RightTypes.list) {
-		if (!Array.isArray(body[rightType])) continue
-		for (let entry of body[rightType]) {
-			if (!(await User.exists({ _id: entry.rightHolder }))) throw UserNotFound
-
-			if (!this.rightHolders.includes(entry.rightHolder))
-				this.rightHolders.push(entry.rightHolder)
-
-			this.rightSplit[rightType].push({
-				rightHolder: entry.rightHolder,
-				roles: entry.roles,
-				status: entry.status,
-				function: entry.function,
-				vote: this.owner === entry.rightHolder ? "accepted" : "undecided",
-				shares: entry.shares,
-			})
+		if (!Array.isArray(this.rightSplit[rightType])) continue
+		for (let item of this.rightSplit[rightType]) {
+			if (!this.rightHolders.includes(item.rightHolder))
+				this.rightHolders.push(item.rightHolder)
 		}
 	}
 }
 
-WorkpieceSchema.methods.setVote = function (rightHolderId, rightsVote) {
-	for (let type of RightTypes.list) {
-		for (let entry of this.rightSplit[type]) {
-			if (entry.rightHolder === rightHolderId && rightsVote[type]) {
-				if (entry.vote === "undecided") {
-					entry.vote = rightsVote[type].vote
-					entry.comment = rightsVote[type].comment
+WorkpieceSchema.methods.setVote = async function (rightHolderId, data) {
+	if (!this.rightSplit || this.rightSplit._state !== "voting")
+		throw ConflictingRightSplitState
+
+	for (let rightType of RightTypes.list) {
+		for (let item of this.rightSplit[rightType]) {
+			if (item.rightHolder === rightHolderId && data[rightType]) {
+				if (item.vote === "undecided") {
+					item.vote = data[rightType].vote
+					item.comment = data[rightType].comment
 				}
 				break
 			}
 		}
 	}
+
+	await this.updateRightSplitState()
 }
 
 WorkpieceSchema.methods.isRemovable = function () {
-	return this.canAcceptNewSplit()
-}
-
-WorkpieceSchema.methods.canAcceptNewSplit = function () {
 	return (
 		!this.rightSplit || ["draft", "rejected"].includes(this.rightSplit._state)
 	)
-}
-
-WorkpieceSchema.methods.canUpdateRightSplit = function () {
-	return this.rightSplit && this.rightSplit._state === "draft"
 }
 
 WorkpieceSchema.methods.canVoteRightSplit = function () {
 	return this.rightSplit && this.rightSplit._state === "voting"
 }
 
-WorkpieceSchema.methods.emailRightHolders = async function (notificationType) {
+WorkpieceSchema.methods.emailRightHolders = async function (
+	notificationType,
+	skipSplitOwner
+) {
 	if (!this.populated("rightHolders"))
 		await this.populate("rightHolders").execPopulate()
-	for (rh of this.rightHolders)
+	for (let rh of this.rightHolders) {
+		if (rh._id === this.getSplitOwnerId() && skipSplitOwner) continue
 		await rh.sendNotification(notificationType, {
 			workpiece: this,
 		})
+	}
 }
 
 WorkpieceSchema.methods.emailOwner = async function (notificationType) {
+	if (!this.populated("owner")) await this.populate("owner").execPopulate()
 	await this.owner.sendNotification(notificationType, {
 		workpiece: this,
 	})
 }
 
 WorkpieceSchema.methods.submitRightSplit = async function () {
+	if (!this.rightSplit || this.rightSplit._state !== "draft")
+		throw ConflictingRightSplitState
 	this.rightSplit._state = "voting"
-	await this.emailRightHolders(SplitTemplates.CREATED)
+	await this.emailRightHolders(SplitTemplates.CREATED, true)
 }
 
 WorkpieceSchema.methods.swapRightHolder = async function (originalId, swapId) {
@@ -162,9 +215,9 @@ WorkpieceSchema.methods.swapRightHolder = async function (originalId, swapId) {
 	this.rightHolders[index] = swapId
 
 	for (let type of RightTypes.list) {
-		for (let entry of this.rightSplit[type]) {
-			if (entry.rightHolder === originalId) {
-				entry.rightHolder = swapId
+		for (let item of this.rightSplit[type]) {
+			if (item.rightHolder === originalId) {
+				item.rightHolder = swapId
 				break
 			}
 		}
@@ -178,23 +231,31 @@ WorkpieceSchema.methods.updateRightSplitState = async function () {
 	let accepted = true
 
 	for (let type of RightTypes.list) {
-		for (let entry of this.rightSplit[type]) {
-			if (entry.vote === "rejected") this.rightSplit._state = "rejected"
-			else if (entry.vote === "undecided") accepted = false
+		for (let item of this.rightSplit[type]) {
+			if (item.vote === "rejected") this.rightSplit._state = "rejected"
+			else if (item.vote === "undecided") accepted = false
 		}
 	}
 
 	if (accepted) this.rightSplit._state = "accepted"
 
-	if (this.rightSplit._state !== initialState) {
-		const template =
-			this.rightSplit._state === "accepted"
-				? SplitTemplates.ACCEPTED
-				: SplitTemplates.REJECTED
+	if (this.rightSplit._state !== initialState) await this.emailSplitResult()
+}
 
-		await this.emailRightHolders(template)
-		if (!this.isOwnerPartOfRightHolders()) await this.emailOwner(template)
-	}
+WorkpieceSchema.methods.emailSplitResult = async function () {
+	let template
+	if (this.rightSplit._state === "accepted") template = SplitTemplates.ACCEPTED
+	else if (this.rightSplit._state === "rejected")
+		template = SplitTemplates.REJECTED
+	else return
+	await this.emailRightHolders(template, false)
+	if (!this.isOwnerPartOfRightHolders()) await this.emailOwner(template)
+}
+
+WorkpieceSchema.methods.deleteRightSplit = function () {
+	if (this.rightSplit && this.rightSplit._state !== "draft")
+		throw ConflictingRightSplitState
+	this.rightSplit = undefined
 }
 
 WorkpieceSchema.methods.updateDocumentation = async function (data) {

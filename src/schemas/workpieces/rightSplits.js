@@ -166,6 +166,12 @@ module.exports.rightSplit = {
 			type: "string",
 			enum: ["draft", "voting", "accepted", "rejected"],
 		},
+		version: {
+			type: "number",
+		},
+		owner: {
+			type: "string",
+		},
 		copyright: {
 			type: "array",
 			items: this.copyrightSplit,

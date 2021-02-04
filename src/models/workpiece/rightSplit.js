@@ -71,6 +71,11 @@ const RightSplitSchema = new mongoose.Schema(
 			type: String,
 			enum: ["draft", "voting", "accepted", "rejected"],
 		},
+		version: Number,
+		owner: {
+			type: String,
+			ref: "User",
+		},
 		copyright: [CopyrightSplitSchema],
 		performance: [PerformanceSplitSchema],
 		recording: [RecordingSplitSchema],
