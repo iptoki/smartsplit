@@ -114,6 +114,9 @@ RightSplitSchema.methods.getRightHolders = function () {
 }
 
 RightSplitSchema.methods.update = async function (data) {
+	if (data.privacy !== undefined) this.privacy = data.privacy
+	if (data.copyrightDividingMethod !== undefined)
+		this.copyrightDividingMethod = data.copyrightDividingMethod
 	const owner_id = this.getOwnerId()
 	for (let rightType of RightTypes.list) {
 		if (!Array.isArray(data[rightType])) continue
