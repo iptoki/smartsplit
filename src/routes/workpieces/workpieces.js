@@ -48,6 +48,26 @@ async function routes(fastify, options) {
 
 	fastify.route({
 		method: "GET",
+		url: "/workpieces/by-right-holder/:user_id",
+		schema: {
+			tags: ["workpieces_general"],
+			description: "Get workpieces by collaborator",
+			params: {
+				user_id: {
+					type: "string",
+				},
+			},
+			response: {
+				200: { type: "array", items: WorkpieceSchemas.workpiece },
+			},
+			security: [{ bearerAuth: [] }],
+		},
+		preValidation: JWTAuth.requireAuthUser,
+		handler: getWorkpiecesByRightHolder,
+	})
+
+	fastify.route({
+		method: "GET",
 		url: "/workpieces/:workpiece_id",
 		schema: {
 			tags: ["workpieces_general"],
@@ -190,6 +210,12 @@ const deleteWorkpiece = async function (req, res) {
 
 const getWorkpiecesByOwner = async function (req, res) {
 	const workpieces = await Workpiece.find().byOwner(req.params.user_id)
+	for (const workpiece of workpieces) await workpiece.populateAll()
+	return workpieces
+}
+
+const getWorkpiecesByRightHolder = async function (req, res) {
+	const workpieces = await Workpiece.find().byRightHolders(req.params.user_id)
 	for (const workpiece of workpieces) await workpiece.populateAll()
 	return workpieces
 }
