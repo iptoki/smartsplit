@@ -209,9 +209,7 @@ const submit = async function (req, res) {
 const vote = async function (req, res) {
 	const workpiece = await getWorkpieceAsRightHolder(req, res)
 
-	const initialState = workpiece.rightSplit._state
-
-	workpiece.setVote(req.authUser._id, req.body)
+	workpiece.setSplitVote(req.authUser._id, req.body)
 	await workpiece.save()
 
 	res.code(204).send()

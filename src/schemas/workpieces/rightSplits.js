@@ -172,6 +172,14 @@ module.exports.rightSplit = {
 		owner: {
 			anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
 		},
+		privacy: {
+			type: "string",
+			enum: ["private", "public"],
+		},
+		copyrightDividingMethod: {
+			type: "string",
+			enum: ["manual", "role", "equal"],
+		},
 		copyright: {
 			type: "array",
 			items: this.copyrightSplit,
@@ -190,6 +198,14 @@ module.exports.rightSplit = {
 module.exports.rightSplitRequestBody = {
 	type: "object",
 	properties: {
+		privacy: {
+			type: "string",
+			enum: ["private", "public"],
+		},
+		copyrightDividingMethod: {
+			type: "string",
+			enum: ["manual", "role", "equal"],
+		},
 		copyright: {
 			type: "array",
 			items: this.copyrightSplitRequestBody,
