@@ -153,7 +153,7 @@ WorkpieceSchema.methods.updateRightHolders = function () {
 	}
 }
 
-WorkpieceSchema.methods.setVote = async function (rightHolderId, data) {
+WorkpieceSchema.methods.setVote = function (rightHolderId, data) {
 	if (!this.rightSplit || this.rightSplit._state !== "voting")
 		throw ConflictingRightSplitState
 
@@ -169,7 +169,7 @@ WorkpieceSchema.methods.setVote = async function (rightHolderId, data) {
 		}
 	}
 
-	await this.updateRightSplitState()
+	this.updateRightSplitState()
 }
 
 WorkpieceSchema.methods.isRemovable = function () {
@@ -190,7 +190,7 @@ WorkpieceSchema.methods.emailRightHolders = async function (
 		await this.populate("rightHolders").execPopulate()
 	for (let rh of this.rightHolders) {
 		if (rh._id === this.getSplitOwnerId() && skipSplitOwner) continue
-		await rh.sendNotification(notificationType, {
+		rh.sendNotification(notificationType, {
 			workpiece: this,
 		})
 	}
@@ -198,16 +198,16 @@ WorkpieceSchema.methods.emailRightHolders = async function (
 
 WorkpieceSchema.methods.emailOwner = async function (notificationType) {
 	if (!this.populated("owner")) await this.populate("owner").execPopulate()
-	await this.owner.sendNotification(notificationType, {
+	this.owner.sendNotification(notificationType, {
 		workpiece: this,
 	})
 }
 
-WorkpieceSchema.methods.submitRightSplit = async function () {
+WorkpieceSchema.methods.submitRightSplit = function () {
 	if (!this.rightSplit || this.rightSplit._state !== "draft")
 		throw ConflictingRightSplitState
 	this.rightSplit._state = "voting"
-	await this.emailRightHolders(SplitTemplates.CREATED, true)
+	this.emailRightHolders(SplitTemplates.CREATED, true)
 }
 
 WorkpieceSchema.methods.swapRightHolder = async function (originalId, swapId) {
@@ -224,7 +224,7 @@ WorkpieceSchema.methods.swapRightHolder = async function (originalId, swapId) {
 	}
 }
 
-WorkpieceSchema.methods.updateRightSplitState = async function () {
+WorkpieceSchema.methods.updateRightSplitState = function () {
 	if (!this.rightSplit) return
 
 	const initialState = this.rightSplit._state
@@ -232,24 +232,26 @@ WorkpieceSchema.methods.updateRightSplitState = async function () {
 
 	for (let type of RightTypes.list) {
 		for (let item of this.rightSplit[type]) {
-			if (item.vote === "rejected") this.rightSplit._state = "rejected"
-			else if (item.vote === "undecided") accepted = false
+			if (item.vote === "rejected") {
+				this.rightSplit._state = "rejected"
+				accepted = false
+			} else if (item.vote === "undecided") accepted = false
 		}
 	}
 
 	if (accepted) this.rightSplit._state = "accepted"
 
-	if (this.rightSplit._state !== initialState) await this.emailSplitResult()
+	this.emailSplitResult()
 }
 
 WorkpieceSchema.methods.emailSplitResult = async function () {
-	let template
-	if (this.rightSplit._state === "accepted") template = SplitTemplates.ACCEPTED
-	else if (this.rightSplit._state === "rejected")
-		template = SplitTemplates.REJECTED
-	else return
-	await this.emailRightHolders(template, false)
-	if (!this.isOwnerPartOfRightHolders()) await this.emailOwner(template)
+	if (!["accepted", "rejected"].includes(this.rightSplit._state)) return
+	const template =
+		this.rightSplit._state === "accepted"
+			? SplitTemplates.ACCEPTED
+			: SplitTemplates.REJECTED
+	this.emailRightHolders(template, false)
+	if (!this.isOwnerPartOfRightHolders()) this.emailOwner(template)
 }
 
 WorkpieceSchema.methods.deleteRightSplit = function () {

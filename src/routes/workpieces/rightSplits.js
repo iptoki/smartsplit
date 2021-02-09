@@ -200,7 +200,7 @@ const remove = async function (req, res) {
 const submit = async function (req, res) {
 	const workpiece = await getWorkpieceAsSplitOwner(req, res)
 
-	await workpiece.submitRightSplit()
+	workpiece.submitRightSplit()
 	await workpiece.save()
 
 	res.code(204).send()
@@ -209,7 +209,9 @@ const submit = async function (req, res) {
 const vote = async function (req, res) {
 	const workpiece = await getWorkpieceAsRightHolder(req, res)
 
-	await workpiece.setVote(req.authUser._id, req.body)
+	const initialState = workpiece.rightSplit._state
+
+	workpiece.setVote(req.authUser._id, req.body)
 	await workpiece.save()
 
 	res.code(204).send()
