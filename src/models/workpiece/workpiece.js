@@ -57,6 +57,10 @@ WorkpieceSchema.query.byOwner = function (user_id) {
 	return this.where({ owner: user_id })
 }
 
+WorkpieceSchema.query.byRightHolders = function (user_id) {
+	return this.where({ rightHolders: {$in : [user_id]}, owner : {$ne : user_id} })
+}
+
 WorkpieceSchema.methods.getOwnerId = function () {
 	return this.populated("owner") ? this.owner._id : this.owner
 }
