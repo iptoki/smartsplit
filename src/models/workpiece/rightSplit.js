@@ -155,15 +155,16 @@ RightSplitSchema.methods.setVote = function (rightHolderId, data) {
 
 RightSplitSchema.methods.updateState = function () {
 	let accepted = true
-
-	for (let type of RightTypes.list) {
-		for (let item of this[type]) {
-			if (item.vote === "rejected") {
-				this._state = "rejected"
-				accepted = false
-			} else if (item.vote === "undecided") accepted = false
+	loop1:
+		for (let type of RightTypes.list) {
+			for (let item of this[type]) {
+				if(item.vote !== "accepted") accepted = false
+				if (item.vote === "rejected") {
+					this._state = "rejected"
+					break loop1
+				}
+			}
 		}
-	}
 
 	if (accepted) this._state = "accepted"
 }

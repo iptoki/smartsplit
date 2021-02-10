@@ -223,31 +223,35 @@ module.exports.rightSplitRequestBody = {
 }
 
 module.exports.rightSplitVoteBody = {
-	copyright: {
-		vote: {
-			type: "string",
-			enum: ["accepted", "rejected"],
+	type: "object",
+	properties: {	
+		copyright: {
+			vote: {
+				type: "string",
+				enum: ["accepted", "rejected"],
+			},
+			comment: {
+				type: "string",
+			},
 		},
-		comment: {
-			type: "string",
+		performance: {
+			vote: {
+				type: "string",
+				enum: ["accepted", "rejected"],
+			},
+			comment: {
+				type: "string",
+			},
+		},
+		recording: {
+			vote: {
+				type: "string",
+				enum: ["accepted", "rejected"],
+			},
+			comment: {
+				type: "string",
+			},
 		},
 	},
-	performance: {
-		vote: {
-			type: "string",
-			enum: ["accepted", "rejected"],
-		},
-		comment: {
-			type: "string",
-		},
-	},
-	recording: {
-		vote: {
-			type: "string",
-			enum: ["accepted", "rejected"],
-		},
-		comment: {
-			type: "string",
-		},
-	},
+	additionalProperties: false,
 }
