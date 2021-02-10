@@ -147,7 +147,8 @@ WorkpieceSchema.methods.canVoteRightSplit = function () {
 
 WorkpieceSchema.methods.emailRightHolders = async function (
 	notificationType,
-	skipSplitOwner
+	skipSplitOwner,
+	overwrite = {}
 ) {
 	if (!this.populated("rightHolders"))
 		await this.populate("rightHolders").execPopulate()
@@ -155,6 +156,7 @@ WorkpieceSchema.methods.emailRightHolders = async function (
 		if (rh._id === this.rightSplit.getOwnerId() && skipSplitOwner) continue
 		rh.sendNotification(notificationType, {
 			workpiece: this,
+			to: { name: rh.fullName, email: overwrite[rh._id] || rh.email },
 		})
 	}
 }
@@ -166,11 +168,11 @@ WorkpieceSchema.methods.emailOwner = async function (notificationType) {
 	})
 }
 
-WorkpieceSchema.methods.submitRightSplit = function () {
+WorkpieceSchema.methods.submitRightSplit = function (overwrite) {
 	if (!this.rightSplit || this.rightSplit._state !== "draft")
 		throw ConflictingRightSplitState
 	this.rightSplit._state = "voting"
-	this.emailRightHolders(SplitTemplates.CREATED, true)
+	this.emailRightHolders(SplitTemplates.CREATED, true, overwrite)
 }
 
 WorkpieceSchema.methods.swapRightHolder = async function (originalId, swapId) {

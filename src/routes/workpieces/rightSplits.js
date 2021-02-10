@@ -1,5 +1,6 @@
 const Errors = require("../errors")
 const User = require("../../models/user")
+const { UserTemplates } = require("../../models/notifications/templates")
 const JWTAuth = require("../../service/JWTAuth")
 const RightSplitSchemas = require("../../schemas/workpieces/rightSplits")
 
@@ -79,6 +80,7 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
+			body: RightSplitSchemas.rightSplitSubmitBody,
 			response: {
 				204: {},
 			},
@@ -200,7 +202,22 @@ const remove = async function (req, res) {
 const submit = async function (req, res) {
 	const workpiece = await getWorkpieceAsSplitOwner(req, res)
 
-	workpiece.submitRightSplit()
+	let emails = {}
+	for (item of req.body) emails[item.user_id] = item.email
+
+	await workpiece.populate("rightHolders").execPopulate()
+
+	for (let rh of workpiece.rightHolders) {
+		if (emails[rh._id] && !rh.emails.includes(emails[rh._id])) {
+			const pending = await rh.addPendingEmail(emails[rh._id])
+			await pending.save()
+			rh.sendNotification(UserTemplates.ACTIVATE_EMAIL, {
+				to: { name: rh.fullName, email: emails[rh._id] },
+			})
+		}
+	}
+
+	workpiece.submitRightSplit(emails)
 	await workpiece.save()
 
 	res.code(204).send()

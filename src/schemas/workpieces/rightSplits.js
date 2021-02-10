@@ -224,7 +224,7 @@ module.exports.rightSplitRequestBody = {
 
 module.exports.rightSplitVoteBody = {
 	type: "object",
-	properties: {	
+	properties: {
 		copyright: {
 			vote: {
 				type: "string",
@@ -249,6 +249,22 @@ module.exports.rightSplitVoteBody = {
 				enum: ["accepted", "rejected"],
 			},
 			comment: {
+				type: "string",
+			},
+		},
+	},
+	additionalProperties: false,
+}
+
+module.exports.rightSplitSubmitBody = {
+	type: "array",
+	items: {
+		type: "object",
+		properties: {
+			user_id: {
+				type: "string",
+			},
+			email: {
 				type: "string",
 			},
 		},
