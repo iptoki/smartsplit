@@ -21,6 +21,10 @@ const WorkpieceSchema = new mongoose.Schema(
 			alias: "workpiece_id",
 			default: uuid,
 		},
+		type: {
+			type: String,
+			enum: ["original-creation", "remix", "cover"],
+		},
 		title: {
 			type: String,
 		},
@@ -32,12 +36,6 @@ const WorkpieceSchema = new mongoose.Schema(
 			{
 				type: String,
 				ref: "User",
-			},
-		],
-		entityTags: [
-			{
-				type: String,
-				ref: "Entity",
 			},
 		],
 		rightSplit: {

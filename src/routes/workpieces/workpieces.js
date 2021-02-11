@@ -187,7 +187,7 @@ const createWorkpiece = async function (req, res) {
 const updateWorkpiece = async function (req, res) {
 	const workpiece = await getWorkpieceAsOwner(req, res)
 
-	for (let field of ["title", "entityTags"])
+	for (let field of ["title"])
 		if (req.body[field]) workpiece[field] = req.body[field]
 
 	if (req.body.documentation !== undefined)

@@ -36,6 +36,10 @@ const FileSchema = new mongoose.Schema(
 					type: String,
 					enum: ["public", "hidden", "private"],
 				},
+				version: {
+					type: String,
+					enum: ["idea", "demo", "rough-mix", "master"],
+				},
 			},
 			{ _id: false }
 		),
