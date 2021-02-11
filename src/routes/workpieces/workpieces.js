@@ -191,7 +191,7 @@ const updateWorkpiece = async function (req, res) {
 		if (req.body[field]) workpiece[field] = req.body[field]
 
 	if (req.body.documentation !== undefined)
-		await workpiece.updateDocumentation(req.body.documentation)
+		await workpiece.documentation.update(req.body.documentation)
 
 	await workpiece.save()
 	await workpiece.populateAll()

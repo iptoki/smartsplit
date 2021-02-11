@@ -205,16 +205,6 @@ WorkpieceSchema.methods.deleteRightSplit = function () {
 	this.rightSplit = undefined
 }
 
-WorkpieceSchema.methods.updateDocumentation = async function (data) {
-	await this.documentation.updateCreation(data.creation || {})
-	await this.documentation.updatePerformance(data.performance || {})
-	await this.documentation.updateRecording(data.recording || {})
-	await this.documentation.updateRelease(data.release || {})
-	await this.documentation.updateInfo(data.info || {})
-	await this.documentation.updateLyrics(data.lyrics || {})
-	await this.documentation.updateStreaming(data.streaming || {})
-}
-
 WorkpieceSchema.methods.populateAll = async function () {
 	await this.populate("owner").execPopulate()
 	await this.populate("rightHolders").execPopulate()
@@ -226,6 +216,7 @@ WorkpieceSchema.methods.populateAll = async function () {
 WorkpieceSchema.methods.populateRightSplit = async function () {
 	if (!this.rightSplit) return
 	await this.populate("rightSplit.owner").execPopulate()
+	await this.populate("rightSplit.label.rightHolder").execPopulate()
 	for (let rightType of RightTypes.list) {
 		if (!Array.isArray(this.rightSplit[rightType])) continue
 		for (let i = 0; i < this.rightSplit[rightType].length; i++) {

@@ -84,6 +84,24 @@ module.exports.recordingSplit = {
 	},
 }
 
+module.exports.label = {
+	type: "object",
+	properties: {
+		rightHolder: {
+			anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
+		},
+		agreementDuration: {
+			type: "string",
+		},
+		notifViaEmail: {
+			type: "boolean",
+		},
+		notifViaText: {
+			type: "boolean",
+		},
+	},
+}
+
 module.exports.copyrightSplitRequestBody = {
 	type: "object",
 	properties: {
@@ -180,6 +198,7 @@ module.exports.rightSplit = {
 			type: "string",
 			enum: ["manual", "role", "equal"],
 		},
+		label: this.label,
 		copyright: {
 			type: "array",
 			items: this.copyrightSplit,
@@ -206,6 +225,7 @@ module.exports.rightSplitRequestBody = {
 			type: "string",
 			enum: ["manual", "role", "equal"],
 		},
+		label: this.label,
 		copyright: {
 			type: "array",
 			items: this.copyrightSplitRequestBody,

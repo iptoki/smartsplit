@@ -249,7 +249,7 @@ const getDocumentationField = async function (req, res) {
 
 const updateDocumentation = async function (req, res) {
 	const workpiece = await getWorkpieceAsOwner(req, res)
-	await workpiece.updateDocumentation(req.body)
+	await workpiece.documentation.update(req.body)
 	await workpiece.save()
 	await workpiece.populateDocumentation()
 	return workpiece.documentation

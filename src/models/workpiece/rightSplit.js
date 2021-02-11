@@ -71,6 +71,16 @@ const RecordingSplitSchema = new mongoose.Schema(
 	{ _id: false }
 )
 
+const LabelSchema = new mongoose.Schema({
+	rightHolder: {
+		type: String,
+		ref: "User",
+	},
+	agreementDuration: String,
+	notifViaEmail: Boolean,
+	notifViaText: Boolean,
+})
+
 const RightSplitSchema = new mongoose.Schema(
 	{
 		_state: {
@@ -90,6 +100,7 @@ const RightSplitSchema = new mongoose.Schema(
 			type: String,
 			enum: ["manual", "role", "equal"],
 		},
+		label: LabelSchema,
 		copyright: [CopyrightSplitSchema],
 		performance: [PerformanceSplitSchema],
 		recording: [RecordingSplitSchema],
@@ -103,6 +114,8 @@ RightSplitSchema.methods.getOwnerId = function () {
 
 RightSplitSchema.methods.getRightHolders = function () {
 	let rightHolders = []
+	if (this.label && this.label.rightHolder)
+		rightHolders.push(this.label.rightHolder)
 	for (let rightType of RightTypes.list) {
 		if (!Array.isArray(this[rightType])) continue
 		for (let item of this[rightType]) {
@@ -117,6 +130,11 @@ RightSplitSchema.methods.update = async function (data) {
 	if (data.privacy !== undefined) this.privacy = data.privacy
 	if (data.copyrightDividingMethod !== undefined)
 		this.copyrightDividingMethod = data.copyrightDividingMethod
+	if (data.label !== undefined) {
+		if (!(await User.exists({ _id: data.label.rightHolder })))
+			throw UserNotFound
+		this.label = data.label
+	}
 	const owner_id = this.getOwnerId()
 	for (let rightType of RightTypes.list) {
 		if (!Array.isArray(data[rightType])) continue

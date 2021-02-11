@@ -342,6 +342,16 @@ DocumentationSchema.methods.deleteFile = async function (file_id) {
 	await mongoose.bucket.protectedWork.delete(file_id)
 }
 
+DocumentationSchema.methods.update = async function (data) {
+	await this.updateCreation(data.creation || {})
+	await this.updatePerformance(data.performance || {})
+	await this.updateRecording(data.recording || {})
+	await this.updateRelease(data.release || {})
+	await this.updateInfo(data.info || {})
+	await this.updateLyrics(data.lyrics || {})
+	await this.updateStreaming(data.streaming || {})
+}
+
 DocumentationSchema.methods.updateCreation = async function (data) {
 	for (let field of ["date", "iswc"])
 		if (data[field] !== undefined) this.creation[field] = data[field]
