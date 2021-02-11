@@ -20,6 +20,26 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
+			querystring: {
+				search_terms: { type: "string" },
+				degree: {
+					type: "integer",
+					minimum: 0,
+					maximum: 3,
+					default: 0,
+				},
+				limit: {
+					type: "integer",
+					minimum: 1,
+					maximum: 250,
+					default: 50,
+				},
+				skip: {
+					type: "integer",
+					minimum: 0,
+					default: 0,
+				},
+			},
 			response: {
 				200: {
 					type: "array",
@@ -147,12 +167,12 @@ async function routes(fastify, options) {
 
 async function getCollaborators(req, res) {
 	const user = await getUser(req, res)
-	await user.populate("collaborators").execPopulate()
-	for (let collab of user.collaborators) {
-		if (!collab.professional_identity.public)
-			collab.professional_identity = undefined
-	}
-	return user.collaborators
+	return await user.getCollaborators(
+		parseInt(req.query.degree),
+		req.query.search_terms,
+		parseInt(req.query.limit),
+		parseInt(req.query.skip)
+	)
 }
 
 async function getCollaboratorById(req, res) {
