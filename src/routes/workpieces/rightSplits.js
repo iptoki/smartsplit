@@ -1,5 +1,6 @@
 const Errors = require("../errors")
 const User = require("../../models/user")
+const { UserTemplates } = require("../../models/notifications/templates")
 const JWTAuth = require("../../service/JWTAuth")
 const RightSplitSchemas = require("../../schemas/workpieces/rightSplits")
 
@@ -24,11 +25,11 @@ async function routes(fastify, options) {
 			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthUser,
-		handler: createRightSplit,
+		handler: create,
 	})
 
 	fastify.route({
-		method: "PUT",
+		method: "PATCH",
 		url: "/workpieces/:workpiece_id/rightSplit",
 		schema: {
 			tags: ["right_splits"],
@@ -45,7 +46,7 @@ async function routes(fastify, options) {
 			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthUser,
-		handler: updateRightSplit,
+		handler: update,
 	})
 
 	fastify.route({
@@ -65,7 +66,7 @@ async function routes(fastify, options) {
 			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthUser,
-		handler: deleteRightSplit,
+		handler: remove,
 	})
 
 	fastify.route({
@@ -79,13 +80,14 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
+			body: RightSplitSchemas.rightSplitSubmitBody,
 			response: {
 				204: {},
 			},
 			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthUser,
-		handler: submitRightSplit,
+		handler: submit,
 	})
 
 	fastify.route({
@@ -106,7 +108,7 @@ async function routes(fastify, options) {
 			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthUser,
-		handler: voteRightSplit,
+		handler: vote,
 	})
 
 	fastify.route({
@@ -137,7 +139,7 @@ async function routes(fastify, options) {
 			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthUser,
-		handler: swapRightSplitUser,
+		handler: swapUser,
 	})
 }
 
@@ -149,67 +151,88 @@ const {
 	getWorkpieceAsRightHolder,
 } = require("./workpieces")
 
-const createRightSplit = async function (req, res) {
-	const workpiece = await getWorkpieceAsOwner(req, res)
+const getWorkpieceAsAuthorizedUser = async function (req, res) {
+	let workpiece
+	try {
+		workpiece = await getWorkpieceAsOwner(req, res)
+	} catch (e) {
+		workpiece = await getWorkpieceAsRightHolder(req, res)
+	}
+	return workpiece
+}
 
-	if (!workpiece.canAcceptNewSplit()) throw Errors.ConflictingRightSplitState
+const getWorkpieceAsSplitOwner = async function (req, res) {
+	const workpiece = await getWorkpiece(req, res)
+	if (!workpiece.rightSplit || workpiece.rightSplit.owner !== req.authUser._id)
+		throw Errors.UserForbidden
+	return workpiece
+}
 
-	if (workpiece.rightSplit) workpiece.archivedSplits.push(workpiece.rightSplit)
+const create = async function (req, res) {
+	const workpiece = await getWorkpieceAsAuthorizedUser(req, res)
+	req.body.owner = req.authUser._id
 
 	await workpiece.setRightSplit(req.body)
 	await workpiece.save()
+	await workpiece.populateRightSplit()
 
 	res.code(201)
 	return workpiece.rightSplit
 }
 
-const updateRightSplit = async function (req, res) {
-	const workpiece = await getWorkpieceAsOwner(req, res)
-
-	if (!workpiece.canUpdateRightSplit()) throw Errors.ConflictingRightSplitState
+const update = async function (req, res) {
+	const workpiece = await getWorkpieceAsSplitOwner(req, res)
 
 	await workpiece.setRightSplit(req.body)
 	await workpiece.save()
+	await workpiece.populateRightSplit()
 
 	return workpiece.rightSplit
 }
 
-const deleteRightSplit = async function (req, res) {
-	const workpiece = await getWorkpieceAsOwner(req, res)
+const remove = async function (req, res) {
+	const workpiece = await getWorkpieceAsSplitOwner(req, res)
 
-	if (!workpiece.canUpdateRightSplit()) throw Errors.ConflictingRightSplitState
-
-	workpiece.archivedSplits.push(workpiece.rightSplit)
-	workpiece.rightSplit = undefined
+	workpiece.deleteRightSplit()
 	await workpiece.save()
 
 	res.code(204).send()
 }
 
-const submitRightSplit = async function (req, res) {
-	const workpiece = await getWorkpieceAsOwner(req, res)
+const submit = async function (req, res) {
+	const workpiece = await getWorkpieceAsSplitOwner(req, res)
 
-	if (!workpiece.canUpdateRightSplit()) throw Errors.ConflictingRightSplitState
+	let emails = {}
+	for (item of req.body) emails[item.user_id] = item.email
 
-	await workpiece.submitRightSplit()
+	await workpiece.populate("rightHolders").execPopulate()
+
+	for (let rh of workpiece.rightHolders) {
+		if (emails[rh._id] && !rh.emails.includes(emails[rh._id])) {
+			const pending = await rh.addPendingEmail(emails[rh._id])
+			await pending.save()
+			rh.sendNotification(UserTemplates.ACTIVATE_EMAIL, {
+				to: { name: rh.fullName, email: emails[rh._id] },
+			})
+		}
+	}
+
+	workpiece.submitRightSplit(emails)
 	await workpiece.save()
 
 	res.code(204).send()
 }
 
-const voteRightSplit = async function (req, res) {
+const vote = async function (req, res) {
 	const workpiece = await getWorkpieceAsRightHolder(req, res)
 
-	if (!workpiece.canVoteRightSplit()) throw Errors.ConflictingRightSplitState
-
-	workpiece.setVote(req.authUser._id, req.body)
-	await workpiece.updateRightSplitState()
+	workpiece.setSplitVote(req.authUser._id, req.body)
 	await workpiece.save()
 
 	res.code(204).send()
 }
 
-const swapRightSplitUser = async function (req, res) {
+const swapUser = async function (req, res) {
 	const workpiece = await getWorkpiece(req, res)
 
 	if (!workpiece.canVoteRightSplit()) throw Errors.ConflictingRightSplitState

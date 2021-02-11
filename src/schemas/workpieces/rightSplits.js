@@ -166,6 +166,20 @@ module.exports.rightSplit = {
 			type: "string",
 			enum: ["draft", "voting", "accepted", "rejected"],
 		},
+		version: {
+			type: "number",
+		},
+		owner: {
+			anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
+		},
+		privacy: {
+			type: "string",
+			enum: ["private", "public"],
+		},
+		copyrightDividingMethod: {
+			type: "string",
+			enum: ["manual", "role", "equal"],
+		},
 		copyright: {
 			type: "array",
 			items: this.copyrightSplit,
@@ -184,6 +198,14 @@ module.exports.rightSplit = {
 module.exports.rightSplitRequestBody = {
 	type: "object",
 	properties: {
+		privacy: {
+			type: "string",
+			enum: ["private", "public"],
+		},
+		copyrightDividingMethod: {
+			type: "string",
+			enum: ["manual", "role", "equal"],
+		},
 		copyright: {
 			type: "array",
 			items: this.copyrightSplitRequestBody,
@@ -201,16 +223,51 @@ module.exports.rightSplitRequestBody = {
 }
 
 module.exports.rightSplitVoteBody = {
-	copyright: {
-		type: "string",
-		enum: ["accepted", "rejected"],
+	type: "object",
+	properties: {
+		copyright: {
+			vote: {
+				type: "string",
+				enum: ["accepted", "rejected"],
+			},
+			comment: {
+				type: "string",
+			},
+		},
+		performance: {
+			vote: {
+				type: "string",
+				enum: ["accepted", "rejected"],
+			},
+			comment: {
+				type: "string",
+			},
+		},
+		recording: {
+			vote: {
+				type: "string",
+				enum: ["accepted", "rejected"],
+			},
+			comment: {
+				type: "string",
+			},
+		},
 	},
-	performance: {
-		type: "string",
-		enum: ["accepted", "rejected"],
+	additionalProperties: false,
+}
+
+module.exports.rightSplitSubmitBody = {
+	type: "array",
+	items: {
+		type: "object",
+		properties: {
+			user_id: {
+				type: "string",
+			},
+			email: {
+				type: "string",
+			},
+		},
 	},
-	recording: {
-		type: "string",
-		enum: ["accepted", "rejected"],
-	},
+	additionalProperties: false,
 }

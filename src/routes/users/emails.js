@@ -182,7 +182,7 @@ async function createUserEmail(req, res) {
 	const emailVerif = await user.addPendingEmail(req.body.email)
 
 	await emailVerif.save()
-	await user.sendNotification(UserTemplates.ACTIVATE_EMAIL, {
+	user.sendNotification(UserTemplates.ACTIVATE_EMAIL, {
 		to: { name: user.fullName, email: emailVerif._id },
 	})
 

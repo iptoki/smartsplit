@@ -18,12 +18,13 @@
 		"http-errors": "^1.8.0",
 		"jsonwebtoken": "^8.5.1",
 		"mongoose": "^5.9.7",
+		"nodemon": "^2.0.7",
 		"prettier": "^2.0.5",
 		"twilio": "^3.43.0",
 		"uuid": "^7.0.3"
 	},
 	"scripts": {
-		"start": "node .",
+		"start": "nodemon .",
 		"format": "prettier --write src/ *.js *.json"
 	}
 }

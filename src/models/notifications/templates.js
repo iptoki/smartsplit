@@ -30,7 +30,7 @@ const TemplateMap = {
 					data: {
 						split: {
 							workTitle: options.workpiece.title,
-							splitInitiator: options.workpiece.owner.fullName,
+							splitInitiator: options.workpiece.rightSplit.owner.fullName,
 						},
 						splitUrl: "" /* TODO */,
 					},
