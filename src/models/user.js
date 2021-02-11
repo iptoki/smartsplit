@@ -432,6 +432,68 @@ UserSchema.methods.setProfessionalIdentity = function (professional_identity) {
 		this.professional_identity.public = professional_identity.public
 }
 
+UserSchema.methods.getCollaboratorByDegree = async function (degree = 0) {
+	if (!this.populated("collaborators"))
+		await this.populate("collaborators").execPopulate()
+	let collaboratorMap = [this.collaborators]
+	for (let d = 1; d < degree; d++) {
+		for (let collaborator of collaboratorMap[d - 1]) {
+			await collaborator.populate("collaborators").execPopulate()
+			collaboratorMap[d] = collaboratorMap[d].concat(collaborator.collaborators)
+		}
+	}
+	return collaboratorMap
+}
+
+UserSchema.methods.getCollaborators = async function (
+	degree = 0,
+	search_terms = "",
+	limit = 1,
+	skip = 0
+) {
+	const collaboratorMap = await this.getCollaboratorByDegree(degree)
+
+	let regex = ""
+	if (search_terms) {
+		let s_t = [search_terms]
+		if (search_terms.includes(" ")) s_t = s_t.concat(search_terms.split(" "))
+		regex = new RegExp(s_t.join("|"))
+	}
+
+	let result = []
+	let _limit = limit + skip
+	let visitedIds = []
+
+	for (let collaborators of collaboratorMap) {
+		if (_limit < 1) break
+		let ids = []
+		for (let collab of collaborators) {
+			if (!visitedIds.includes(collab._id)) {
+				ids.push(collab._id)
+				visitedIds.push(collab._id)
+			}
+		}
+		const matches = await this.model("User")
+			.find({
+				$and: [
+					{ _id: { $in: ids } },
+					{
+						$or: [
+							{ firstName: { $regex: regex, $options: "i" } },
+							{ lastName: { $regex: regex, $options: "i" } },
+							{ artistName: { $regex: regex, $options: "i" } },
+						],
+					},
+				],
+			})
+			.limit(_limit)
+		_limit = _limit - matches.length
+		result = result.concat(matches)
+	}
+
+	result.splice(0, skip)
+	return result
+}
 /**
  * Add collaborators to the user
  */
