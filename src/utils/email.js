@@ -1,6 +1,14 @@
 const Config = require("../config")
 const sendgrid = require("@sendgrid/mail")
-sendgrid.setApiKey(Config.sendgrid.apikey)
+
+try {
+	sendgrid.setApiKey(Config.sendgrid.apikey)
+} catch (err) {
+	console.log(
+		"Invalid credentials for Sendgrid account, sending email won't work, check your config.js file: " +
+			err
+	)
+}
 
 /**
  * Sends an email using SendGrid.

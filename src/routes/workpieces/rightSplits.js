@@ -207,7 +207,7 @@ const submit = async function (req, res) {
 
 	await workpiece.populate("rightHolders").execPopulate()
 
-	for (let rh of workpiece.rightHolders) {
+	for (const rh of workpiece.rightHolders) {
 		if (emails[rh._id] && !rh.emails.includes(emails[rh._id])) {
 			const pending = await rh.addPendingEmail(emails[rh._id])
 			await pending.save()

@@ -1,9 +1,15 @@
 const Config = require("../config")
 const User = require("../models/user")
-const client = require("twilio")(
-	Config.twilio.accountSid,
-	Config.twilio.authToken
-)
+
+let client
+try {
+	client = require("twilio")(Config.twilio.accountSid, Config.twilio.authToken)
+} catch (err) {
+	console.error(
+		"Invalid credentials for Twilio account, sending SMS won't work, check your config.js file: " +
+			err
+	)
+}
 
 /**
  * Sends an SMS to the specified number

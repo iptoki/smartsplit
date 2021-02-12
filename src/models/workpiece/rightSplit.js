@@ -127,20 +127,20 @@ RightSplitSchema.methods.getRightHolders = function () {
 }
 
 RightSplitSchema.methods.update = async function (data) {
-	if (data.privacy !== undefined) this.privacy = data.privacy
-	if (data.copyrightDividingMethod !== undefined)
-		this.copyrightDividingMethod = data.copyrightDividingMethod
-	if (data.label !== undefined) {
-		if (!(await User.exists({ _id: data.label.rightHolder })))
-			throw UserNotFound
-		this.label = data.label
+	for (const field of ["privacy", "copyrightDividingMethod", "label"]) {
+		if (data[field] !== undefined) this[field] = data[field]
 	}
+
+	let promises = []
+	if (data.label !== undefined)
+		promises.push(User.ensureExist(data.label.rightHolder))
+
 	const owner_id = this.getOwnerId()
 	for (let rightType of RightTypes.list) {
 		if (!Array.isArray(data[rightType])) continue
 		this[rightType] = []
 		for (let item of data[rightType]) {
-			if (!(await User.exists({ _id: item.rightHolder }))) throw UserNotFound
+			promises.push(User.ensureExist(item.rightHolder))
 			this[rightType].push({
 				rightHolder: item.rightHolder,
 				roles: item.roles,
@@ -151,6 +151,8 @@ RightSplitSchema.methods.update = async function (data) {
 			})
 		}
 	}
+
+	await Promise.all(promises)
 }
 
 RightSplitSchema.methods.setVote = function (rightHolderId, data) {
