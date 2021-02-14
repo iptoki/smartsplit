@@ -210,14 +210,16 @@ const deleteWorkpiece = async function (req, res) {
 
 const getWorkpiecesByOwner = async function (req, res) {
 	const workpieces = await Workpiece.find().byOwner(req.params.user_id)
-	for (const workpiece of workpieces) await workpiece.populateAll()
-	return workpieces
+	let promises = []
+	for (const workpiece of workpieces) promises.push(workpiece.populateAll())
+	return await Promise.all(promises)
 }
 
 const getWorkpiecesByRightHolder = async function (req, res) {
 	const workpieces = await Workpiece.find().byRightHolders(req.params.user_id)
-	for (const workpiece of workpieces) await workpiece.populateAll()
-	return workpieces
+	let promises = []
+	for (const workpiece of workpieces) promises.push(workpiece.populateAll())
+	return await Promise.all(promises)
 }
 
 module.exports = {

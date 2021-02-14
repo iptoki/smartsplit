@@ -78,7 +78,7 @@ WorkpieceSchema.methods.isOwnerPartOfRightHolders = function () {
 	return false
 }
 
-WorkpieceSchema.methods.createToken = async function (
+WorkpieceSchema.methods.createToken = function (
 	rightHolderId,
 	expires = "7 days"
 ) {
@@ -173,7 +173,7 @@ WorkpieceSchema.methods.submitRightSplit = function (overwrite) {
 	this.emailRightHolders(SplitTemplates.CREATED, true, overwrite)
 }
 
-WorkpieceSchema.methods.swapRightHolder = async function (originalId, swapId) {
+WorkpieceSchema.methods.swapRightHolder = function (originalId, swapId) {
 	const index = this.rightHolders.indexOf(originalId)
 	this.rightHolders[index] = swapId
 
@@ -187,7 +187,7 @@ WorkpieceSchema.methods.swapRightHolder = async function (originalId, swapId) {
 	}
 }
 
-WorkpieceSchema.methods.emailSplitResult = async function () {
+WorkpieceSchema.methods.emailSplitResult = function () {
 	if (!["accepted", "rejected"].includes(this.rightSplit._state)) return
 	const template =
 		this.rightSplit._state === "accepted"
@@ -203,93 +203,31 @@ WorkpieceSchema.methods.deleteRightSplit = function () {
 	this.rightSplit = undefined
 }
 
-WorkpieceSchema.methods.populateAll = async function () {
-	await Promise.all([
-		this.populate("owner").execPopulate(),
-		this.populate("rightHolders").execPopulate(),
-		this.populateDocumentation(),
-		this.populateRightSplit(),
-		this.populateArchivedRightSplits(),
-	])
+WorkpieceSchema.methods.getPathsToPopulate = function () {
+	return [
+		"owner",
+		"rightHolders",
+		...this.documentation.getPathsToPopulate(),
+		...(this.rightSplit ? this.rightSplit.getPathsToPopulate() : []),
+		...this.getArchivedRightSplitsPathsToPopulate(),
+	]
 }
 
-WorkpieceSchema.methods.populateRightSplit = function () {
-	if (!this.rightSplit) return
-	this.populate("rightSplit.owner").execPopulate()
-	this.populate("rightSplit.label.rightHolder").execPopulate()
-	for (let rightType of RightTypes.list) {
-		if (!Array.isArray(this.rightSplit[rightType])) continue
-		for (let i = 0; i < this.rightSplit[rightType].length; i++) {
-			this.populate(`rightSplit.${rightType}.${i}.rightHolder`).execPopulate()
-		}
-	}
+WorkpieceSchema.methods.populateAll = function () {
+	return this.populate(this.getPathsToPopulate()).execPopulate()
 }
 
-WorkpieceSchema.methods.populateArchivedRightSplits = function () {
+WorkpieceSchema.methods.getArchivedRightSplitsPathsToPopulate = function () {
+	let paths = []
 	for (let i = 0; i < this.archivedSplits.length; i++) {
+		paths.push(`archivedSplits.${i}.owner`)
 		for (let rightType of RightTypes.list) {
 			if (!Array.isArray(this.archivedSplits[i][rightType])) continue
-			for (let j = 0; j < this.archivedSplits[i][rightType].length; j++) {
-				this.populate(
-					`archivedSplits.${i}.${rightType}.${j}.rightHolder`
-				).execPopulate()
-			}
+			for (let j = 0; j < this.archivedSplits[i][rightType].length; j++)
+				paths.push(`archivedSplits.${i}.${rightType}.${j}.rightHolder`)
 		}
 	}
-}
-
-WorkpieceSchema.methods.populateDocumentation = function () {
-	this.populateCreation()
-	this.populateFiles()
-	this.populatePerformance()
-	this.populateRecording()
-	this.populateInfo()
-}
-
-WorkpieceSchema.methods.populateFiles = function () {
-	this.populate("documentation.files.art").execPopulate()
-	this.populate("documentation.files.audio").execPopulate()
-	this.populate("documentation.files.scores").execPopulate()
-	this.populate("documentation.files.midi").execPopulate()
-	this.populate("documentation.files.lyrics").execPopulate()
-}
-
-WorkpieceSchema.methods.populateCreation = function () {
-	this.populate("documentation.creation.authors").execPopulate()
-	this.populate("documentation.creation.composers").execPopulate()
-	this.populate("documentation.creation.publishers").execPopulate()
-}
-
-WorkpieceSchema.methods.populatePerformance = function () {
-	this.populate("documentation.performance.conductor").execPopulate()
-	const doc = this.documentation.performance.performers
-	const path = "documentation.performance.performers"
-	for (let i = 0; i < doc.length; i++) {
-		this.populate(`${path}.${i}.user`).execPopulate()
-		for (let field of ["instruments", "vocals"]) {
-			for (let j = 0; j < doc[i][field].length; j++) {
-				this.populate(`${path}.${i}.${field}.${j}.instrument`).execPopulate()
-				// this.populate(`${path}.${i}.${field}.${j}.role`).execPopulate()
-			}
-		}
-	}
-}
-
-WorkpieceSchema.methods.populateRecording = async function () {
-	this.populate("documentation.recording.directors").execPopulate()
-	this.populate("documentation.recording.producers").execPopulate()
-	for (let field of ["recording", "mixing", "mastering"]) {
-		for (let i = 0; i < this.documentation.recording[field].length; i++) {
-			this.populate(
-				`documentation.recording.${field}.${i}.engineers`
-			).execPopulate()
-		}
-	}
-}
-
-WorkpieceSchema.methods.populateInfo = async function () {
-	this.populate("documentation.info.mainGenre").execPopulate()
-	this.populate("documentation.info.secondaryGenres").execPopulate()
+	return paths
 }
 
 module.exports = mongoose.model("Workpiece", WorkpieceSchema)

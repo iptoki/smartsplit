@@ -459,4 +459,64 @@ DocumentationSchema.methods.updateStreaming = function (data) {
 	if (Array.isArray(data.links)) this.streaming.links = data.links
 }
 
+DocumentationSchema.methods.getPathsToPopulate = function () {
+	return [
+		...this.getFilesPathsToPopulate(),
+		...this.getCreationPathsToPopulate(),
+		...this.getPerformancePathsToPopulate(),
+		...this.getRecordingPathsToPopulate(),
+		...this.getInfoPathsToPopulate(),
+	]
+}
+
+DocumentationSchema.methods.getFilesPathsToPopulate = function () {
+	return [
+		"documentation.files.art",
+		"documentation.files.audio",
+		"documentation.files.scores",
+		"documentation.files.midi",
+		"documentation.files.lyrics",
+	]
+}
+
+DocumentationSchema.methods.getCreationPathsToPopulate = function () {
+	return [
+		"documentation.creation.authors",
+		"documentation.creation.composers",
+		"documentation.creation.publishers",
+	]
+}
+
+DocumentationSchema.methods.getPerformancePathsToPopulate = function () {
+	let paths = ["documentation.performance.conductor"]
+	const doc = this.performance.performers
+	const path = "documentation.performance.performers"
+	for (let i = 0; i < doc.length; i++) {
+		this.populate(`${path}.${i}.user`).execPopulate()
+		for (let field of ["instruments", "vocals"]) {
+			for (let j = 0; j < doc[i][field].length; j++) {
+				paths.push(`${path}.${i}.${field}.${j}.instrument`)
+				// paths.push(`${path}.${i}.${field}.${j}.role`)
+			}
+		}
+	}
+	return paths
+}
+
+DocumentationSchema.methods.getRecordingPathsToPopulate = function () {
+	let paths = [
+		"documentation.recording.directors",
+		"documentation.recording.producers",
+	]
+	for (let field of ["recording", "mixing", "mastering"]) {
+		for (let i = 0; i < this.recording[field].length; i++)
+			paths.push(`documentation.recording.${field}.${i}.engineers`)
+	}
+	return paths
+}
+
+DocumentationSchema.methods.getInfoPathsToPopulate = function () {
+	return ["documentation.info.mainGenre", "documentation.info.secondaryGenres"]
+}
+
 module.exports = DocumentationSchema

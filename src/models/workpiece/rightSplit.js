@@ -188,4 +188,15 @@ RightSplitSchema.methods.updateState = function () {
 	if (accepted) this._state = "accepted"
 }
 
+RightSplitSchema.methods.getPathsToPopulate = function () {
+	let paths = ["rightSplit.owner", "rightSplit.label.rightHolder"]
+	for (let rightType of RightTypes.list) {
+		if (!Array.isArray(this[rightType])) continue
+		for (let i = 0; i < this[rightType].length; i++) {
+			paths.push(`rightSplit.${rightType}.${i}.rightHolder`)
+		}
+	}
+	return paths
+}
+
 module.exports = RightSplitSchema
