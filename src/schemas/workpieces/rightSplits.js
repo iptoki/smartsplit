@@ -99,7 +99,11 @@ module.exports.label = {
 		notifViaText: {
 			type: "boolean",
 		},
+		shares: {
+			type: "number"
+		},
 	},
+	additionalProperties: false,
 }
 
 module.exports.copyrightSplitRequestBody = {

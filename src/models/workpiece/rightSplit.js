@@ -79,6 +79,7 @@ const LabelSchema = new mongoose.Schema({
 	agreementDuration: String,
 	notifViaEmail: Boolean,
 	notifViaText: Boolean,
+	shares: Number,
 })
 
 const RightSplitSchema = new mongoose.Schema(
