@@ -174,10 +174,11 @@ const create = async function (req, res) {
 
 	await workpiece.setRightSplit(req.body)
 	await workpiece.save()
-	await workpiece.populateRightSplit()
-
 	res.code(201)
-	return workpiece.rightSplit
+	
+	return await workpiece
+		.populate(workpiece.rightSplit.getPathsToPopulate())
+		.execPopulate()
 }
 
 const update = async function (req, res) {
@@ -185,7 +186,9 @@ const update = async function (req, res) {
 
 	await workpiece.setRightSplit(req.body)
 	await workpiece.save()
-	await workpiece.populateRightSplit()
+	await workpiece
+		.populate(workpiece.rightSplit.getPathsToPopulate())
+		.execPopulate()
 
 	return workpiece.rightSplit
 }
@@ -207,7 +210,7 @@ const submit = async function (req, res) {
 
 	await workpiece.populate("rightHolders").execPopulate()
 
-	for (let rh of workpiece.rightHolders) {
+	for (const rh of workpiece.rightHolders) {
 		if (emails[rh._id] && !rh.emails.includes(emails[rh._id])) {
 			const pending = await rh.addPendingEmail(emails[rh._id])
 			await pending.save()

@@ -21,6 +21,10 @@ const WorkpieceSchema = new mongoose.Schema(
 			alias: "workpiece_id",
 			default: uuid,
 		},
+		type: {
+			type: String,
+			enum: ["original-creation", "remix", "cover"],
+		},
 		title: {
 			type: String,
 		},
@@ -32,12 +36,6 @@ const WorkpieceSchema = new mongoose.Schema(
 			{
 				type: String,
 				ref: "User",
-			},
-		],
-		entityTags: [
-			{
-				type: String,
-				ref: "Entity",
 			},
 		],
 		rightSplit: {
@@ -80,7 +78,7 @@ WorkpieceSchema.methods.isOwnerPartOfRightHolders = function () {
 	return false
 }
 
-WorkpieceSchema.methods.createToken = async function (
+WorkpieceSchema.methods.createToken = function (
 	rightHolderId,
 	expires = "7 days"
 ) {
@@ -175,7 +173,7 @@ WorkpieceSchema.methods.submitRightSplit = function (overwrite) {
 	this.emailRightHolders(SplitTemplates.CREATED, true, overwrite)
 }
 
-WorkpieceSchema.methods.swapRightHolder = async function (originalId, swapId) {
+WorkpieceSchema.methods.swapRightHolder = function (originalId, swapId) {
 	const index = this.rightHolders.indexOf(originalId)
 	this.rightHolders[index] = swapId
 
@@ -189,7 +187,7 @@ WorkpieceSchema.methods.swapRightHolder = async function (originalId, swapId) {
 	}
 }
 
-WorkpieceSchema.methods.emailSplitResult = async function () {
+WorkpieceSchema.methods.emailSplitResult = function () {
 	if (!["accepted", "rejected"].includes(this.rightSplit._state)) return
 	const template =
 		this.rightSplit._state === "accepted"
@@ -205,95 +203,31 @@ WorkpieceSchema.methods.deleteRightSplit = function () {
 	this.rightSplit = undefined
 }
 
-WorkpieceSchema.methods.populateAll = async function () {
-	await this.populate("owner").execPopulate()
-	await this.populate("rightHolders").execPopulate()
-	await this.populateDocumentation()
-	await this.populateRightSplit()
-	await this.populateArchivedRightSplits()
+WorkpieceSchema.methods.getPathsToPopulate = function () {
+	return [
+		"owner",
+		"rightHolders",
+		...this.documentation.getPathsToPopulate(),
+		...(this.rightSplit ? this.rightSplit.getPathsToPopulate() : []),
+		...this.getArchivedRightSplitsPathsToPopulate(),
+	]
 }
 
-WorkpieceSchema.methods.populateRightSplit = async function () {
-	if (!this.rightSplit) return
-	await this.populate("rightSplit.owner").execPopulate()
-	await this.populate("rightSplit.label.rightHolder").execPopulate()
-	for (let rightType of RightTypes.list) {
-		if (!Array.isArray(this.rightSplit[rightType])) continue
-		for (let i = 0; i < this.rightSplit[rightType].length; i++) {
-			await this.populate(
-				`rightSplit.${rightType}.${i}.rightHolder`
-			).execPopulate()
-		}
-	}
+WorkpieceSchema.methods.populateAll = function () {
+	return this.populate(this.getPathsToPopulate()).execPopulate()
 }
 
-WorkpieceSchema.methods.populateArchivedRightSplits = async function () {
+WorkpieceSchema.methods.getArchivedRightSplitsPathsToPopulate = function () {
+	let paths = []
 	for (let i = 0; i < this.archivedSplits.length; i++) {
+		paths.push(`archivedSplits.${i}.owner`)
 		for (let rightType of RightTypes.list) {
 			if (!Array.isArray(this.archivedSplits[i][rightType])) continue
-			for (let j = 0; j < this.archivedSplits[i][rightType].length; j++) {
-				await this.populate(
-					`archivedSplits.${i}.${rightType}.${j}.rightHolder`
-				).execPopulate()
-			}
+			for (let j = 0; j < this.archivedSplits[i][rightType].length; j++)
+				paths.push(`archivedSplits.${i}.${rightType}.${j}.rightHolder`)
 		}
 	}
-}
-
-WorkpieceSchema.methods.populateDocumentation = async function () {
-	await this.populateCreation()
-	await this.populateFiles()
-	await this.populatePerformance()
-	await this.populateRecording()
-	await this.populateInfo()
-}
-
-WorkpieceSchema.methods.populateFiles = async function () {
-	await this.populate("documentation.files.art").execPopulate()
-	await this.populate("documentation.files.audio").execPopulate()
-	await this.populate("documentation.files.scores").execPopulate()
-	await this.populate("documentation.files.midi").execPopulate()
-	await this.populate("documentation.files.lyrics").execPopulate()
-}
-
-WorkpieceSchema.methods.populateCreation = async function () {
-	await this.populate("documentation.creation.authors").execPopulate()
-	await this.populate("documentation.creation.composers").execPopulate()
-	await this.populate("documentation.creation.publishers").execPopulate()
-}
-
-WorkpieceSchema.methods.populatePerformance = async function () {
-	await this.populate("documentation.performance.conductor").execPopulate()
-	const doc = this.documentation.performance.performers
-	const path = "documentation.performance.performers"
-	for (let i = 0; i < doc.length; i++) {
-		await this.populate(`${path}.${i}.user`).execPopulate()
-		for (let field of ["instruments", "vocals"]) {
-			for (let j = 0; j < doc[i][field].length; j++) {
-				await this.populate(
-					`${path}.${i}.${field}.${j}.instrument`
-				).execPopulate()
-				// await this.populate(`${path}.${i}.${field}.${j}.role`).execPopulate()
-			}
-		}
-	}
-}
-
-WorkpieceSchema.methods.populateRecording = async function () {
-	await this.populate("documentation.recording.directors").execPopulate()
-	await this.populate("documentation.recording.producers").execPopulate()
-	for (let field of ["recording", "mixing", "mastering"]) {
-		for (let i = 0; i < this.documentation.recording[field].length; i++) {
-			await this.populate(
-				`documentation.recording.${field}.${i}.engineers`
-			).execPopulate()
-		}
-	}
-}
-
-WorkpieceSchema.methods.populateInfo = async function () {
-	await this.populate("documentation.info.mainGenre").execPopulate()
-	await this.populate("documentation.info.secondaryGenres").execPopulate()
+	return paths
 }
 
 module.exports = mongoose.model("Workpiece", WorkpieceSchema)

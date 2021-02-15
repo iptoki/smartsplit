@@ -20,14 +20,6 @@ module.exports.workpiece = {
 				anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
 			},
 		},
-		entityTags: {
-			type: "array",
-			items: {
-				type: "string",
-				format: "uuid",
-				example: "e87b56fe-1ce0-4ec7-8393-e18dc7415041",
-			},
-		},
 		version: {
 			type: "number",
 		},

@@ -187,7 +187,7 @@ const createWorkpiece = async function (req, res) {
 const updateWorkpiece = async function (req, res) {
 	const workpiece = await getWorkpieceAsOwner(req, res)
 
-	for (let field of ["title", "entityTags"])
+	for (let field of ["title"])
 		if (req.body[field]) workpiece[field] = req.body[field]
 
 	if (req.body.documentation !== undefined)
@@ -210,14 +210,16 @@ const deleteWorkpiece = async function (req, res) {
 
 const getWorkpiecesByOwner = async function (req, res) {
 	const workpieces = await Workpiece.find().byOwner(req.params.user_id)
-	for (const workpiece of workpieces) await workpiece.populateAll()
-	return workpieces
+	let promises = []
+	for (const workpiece of workpieces) promises.push(workpiece.populateAll())
+	return await Promise.all(promises)
 }
 
 const getWorkpiecesByRightHolder = async function (req, res) {
 	const workpieces = await Workpiece.find().byRightHolders(req.params.user_id)
-	for (const workpiece of workpieces) await workpiece.populateAll()
-	return workpieces
+	let promises = []
+	for (const workpiece of workpieces) promises.push(workpiece.populateAll())
+	return await Promise.all(promises)
 }
 
 module.exports = {

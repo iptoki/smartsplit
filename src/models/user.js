@@ -410,7 +410,7 @@ UserSchema.methods.setMobilePhone = async function (number, verified = false) {
 		verificationCode: { code: generateRandomCode(), createdAt: new Date() },
 	}
 
-	await this.sendSMS(UserTemplates.VERIFY_MOBILE_PHONE, false, false)
+	this.sendSMS(UserTemplates.VERIFY_MOBILE_PHONE, false, false)
 }
 
 /**
@@ -550,7 +550,7 @@ UserSchema.methods.setAvatar = async function (avatar) {
 /*
  * Sets the user's primary email
  */
-UserSchema.methods.setPrimaryEmail = async function (email) {
+UserSchema.methods.setPrimaryEmail = function (email) {
 	email = normalizeEmailAddress(email)
 	const index = this.emails.indexOf(email)
 	if (index < 0) throw Errors.EmailNotFound
@@ -651,18 +651,16 @@ UserSchema.methods.createActivationToken = function (
 /*
  * Sends a notification to the user through the medium set in the user's preferences
  */
-UserSchema.methods.sendNotification = async function (
-	templateName,
-	options = {}
-) {
-	try {
-		await this.sendSMS(templateName)
-		await this.sendEmail(templateName, options)
-		await this.sendPush(templateName)
-	} catch (err) {
-		console.error("Failed to send notification")
-		console.error(err)
-	}
+UserSchema.methods.sendNotification = function (templateName, options = {}) {
+	this.sendSMS(templateName).catch((err) =>
+		console.log("Error while sending SMS notification: " + err)
+	)
+	this.sendEmail(templateName, options).catch((err) =>
+		console.log("Error while sending email notification: " + err)
+	)
+	this.sendPush(templateName).catch((err) =>
+		console.log("Error while sending push notification: " + err)
+	)
 }
 
 /**
@@ -713,6 +711,13 @@ UserSchema.methods.sendPush = async function (templateName) {
 		return null
 
 	return "push not implemented"
+}
+
+UserSchema.statics.ensureExist = function (id) {
+	return this.exists({ _id: id }).then((exist) => {
+		if (!exist) return Promise.reject(Errors.UserNotFound)
+		else return Promise.resolve()
+	})
 }
 
 module.exports = mongoose.model("User", UserSchema)

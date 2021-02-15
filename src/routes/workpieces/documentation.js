@@ -228,19 +228,25 @@ const getWorkpieceFileLocation = function (workpiece, file_id) {
 const getWorkpieceFile = async function (workpiece, file_id) {
 	const location = getWorkpieceFileLocation(workpiece, file_id)
 	if (location.index < 0) throw Errors.WorkpieceFileNotFound
-	await workpiece.populateFiles()
+	await workpiece
+		.populate(workpiece.documentation.getFilesPathsToPopulate())
+		.execPopulate()
 	return workpiece.documentation.files[location.type][location.index]
 }
 
 const getDocumentation = async function (req, res) {
 	const workpiece = await getWorkpiece(req, res)
-	await workpiece.populateDocumentation()
+	await workpiece
+		.populate(workpiece.documentation.getPathsToPopulate())
+		.execPopulate()
 	return workpiece.documentation
 }
 
 const getDocumentationField = async function (req, res) {
 	const workpiece = await getWorkpiece(req, res)
-	await workpiece.populateDocumentation()
+	await workpiece
+		.populate(workpiece.documentation.getPathsToPopulate())
+		.execPopulate()
 	return {
 		field: req.params.field,
 		data: workpiece.documentation[req.params.field],
@@ -249,9 +255,13 @@ const getDocumentationField = async function (req, res) {
 
 const updateDocumentation = async function (req, res) {
 	const workpiece = await getWorkpieceAsOwner(req, res)
+
 	await workpiece.documentation.update(req.body)
 	await workpiece.save()
-	await workpiece.populateDocumentation()
+	await workpiece
+		.populate(workpiece.documentation.getPathsToPopulate())
+		.execPopulate()
+
 	return workpiece.documentation
 }
 
@@ -313,7 +323,9 @@ const updateFile = async function (req, res) {
 	}
 	await file.save()
 	await workpiece.save()
-	await workpiece.populateFiles()
+	await workpiece
+		.populate(workpiece.documentation.getFilesPathsToPopulate())
+		.execPopulate()
 	return workpiece.documentation.files[location.type][location.index]
 }
 

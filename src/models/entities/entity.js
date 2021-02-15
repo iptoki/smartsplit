@@ -1,5 +1,6 @@
 const mongoose = require("mongoose")
 const uuid = require("uuid").v4
+const { EntityNotFound } = require("../../routes/errors")
 
 /**
  * Represents a generic modifiable entity in the system
@@ -49,6 +50,13 @@ EntitySchema.methods.setFields = function (body) {
 	for (let field in ["users", "adminReview"]) {
 		if (body[field]) this[field] = body[field]
 	}
+}
+
+EntitySchema.statics.ensureExist = function (id) {
+	return this.exists({ _id: id }).then((exist) => {
+		if (!exist) return Promise.reject(Errors.EntityNotFound)
+		else return Promise.resolve()
+	})
 }
 
 module.exports = mongoose.model("Entity", EntitySchema)
