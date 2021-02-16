@@ -432,19 +432,18 @@ UserSchema.methods.setProfessionalIdentity = function (professional_identity) {
 		this.professional_identity.public = professional_identity.public
 }
 
-UserSchema.methods.getCollaboratorByDegree = async function (degree = 0) {
+UserSchema.methods.getCollaboratorsByDegree = async function (degree = 0) {
 	if (!this.populated("collaborators"))
 		await this.populate("collaborators").execPopulate()
 	let collaboratorMap = [this.collaborators]
-	for (let d = 1; d < degree; d++) {
-		if(!Array.isArray(collaboratorMap[d - 1]) || collaboratorMap[d - 1].length < 0) break
-		//let promises = []
+	for (let d = 1; d <= degree; d++) {
+		if(collaboratorMap[d - 1].length < 0) break
+		let promises = []
 		collaboratorMap[d] = []
-		for (let collaborator of collaboratorMap[d - 1]) {
-			await collaborator.populate("collaborators").execPopulate()
-			collaboratorMap[d] = collaboratorMap[d].concat(collaborator.collaborators)
-		}
-		//await Promise.all(promises)
+		for (let c of collaboratorMap[d - 1])
+			promises.push(c.populate("collaborators").execPopulate())
+		for(const c of await Promise.all(promises))
+			collaboratorMap[d] = collaboratorMap[d].concat(c.collaborators)
 	}
 	return collaboratorMap
 }
@@ -455,7 +454,7 @@ UserSchema.methods.getCollaborators = async function (
 	limit = 1,
 	skip = 0
 ) {
-	const collaboratorMap = await this.getCollaboratorByDegree(degree)
+	const collaboratorMap = await this.getCollaboratorsByDegree(degree)
 
 	let regex = ""
 	if (search_terms) {

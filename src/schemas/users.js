@@ -260,12 +260,14 @@ module.exports.userPublicProfile = {
 }
 
 module.exports.collaboratorProfile = {
-	allOf: [
-		this.userPublicProfile
-	],
+	type: "object",
 	properties: {
+		...this.userPublicProfile.properties,
 		emails: {
-			type: "string",
+			type: "array",
+			items: {
+				type: "string",
+			},
 		},
 	},
 }
