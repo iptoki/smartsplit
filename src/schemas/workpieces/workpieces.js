@@ -12,12 +12,12 @@ module.exports.workpiece = {
 			type: "string",
 		},
 		owner: {
-			anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
+			anyOf: [{ type: "string" }, UserSchema.collaboratorProfile],
 		},
 		rightHolders: {
 			type: "array",
 			items: {
-				anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
+				anyOf: [{ type: "string" }, UserSchema.collaboratorProfile],
 			},
 		},
 		version: {

@@ -61,7 +61,7 @@ module.exports.performer = {
 	type: "object",
 	properties: {
 		user: {
-			anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
+			anyOf: [{ type: "string" }, UserSchema.collaboratorProfile],
 		},
 		type: {
 			type: "string",
@@ -93,7 +93,7 @@ module.exports.record = {
 		engineers: {
 			type: "array",
 			items: {
-				anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
+				anyOf: [{ type: "string" }, UserSchema.collaboratorProfile],
 			},
 		},
 		date: {
@@ -128,19 +128,19 @@ module.exports.creation = {
 		authors: {
 			type: "array",
 			items: {
-				anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
+				anyOf: [{ type: "string" }, UserSchema.collaboratorProfile],
 			},
 		},
 		composers: {
 			type: "array",
 			items: {
-				anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
+				anyOf: [{ type: "string" }, UserSchema.collaboratorProfile],
 			},
 		},
 		publishers: {
 			type: "array",
 			items: {
-				anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
+				anyOf: [{ type: "string" }, UserSchema.collaboratorProfile],
 			},
 		},
 		iswc: {
@@ -153,7 +153,7 @@ module.exports.performance = {
 	type: "object",
 	properties: {
 		conductor: {
-			anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
+			anyOf: [{ type: "string" }, UserSchema.collaboratorProfile],
 		},
 		performers: {
 			type: "array",
@@ -168,13 +168,13 @@ module.exports.recording = {
 		directors: {
 			type: "array",
 			items: {
-				anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
+				anyOf: [{ type: "string" }, UserSchema.collaboratorProfile],
 			},
 		},
 		producers: {
 			type: "array",
 			items: {
-				anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
+				anyOf: [{ type: "string" }, UserSchema.collaboratorProfile],
 			},
 		},
 		isrc: {
