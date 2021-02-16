@@ -100,7 +100,36 @@ module.exports.label = {
 			type: "boolean",
 		},
 		shares: {
-			type: "number"
+			type: "number",
+		},
+		vote: {
+			type: "string",
+			enum: ["undecided", "accepted", "rejected"],
+		},
+		comment: {
+			type: "string",
+		},
+	},
+	additionalProperties: false,
+}
+
+module.exports.labelRequestBody = {
+	type: "object",
+	properties: {
+		rightHolder: {
+			anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
+		},
+		agreementDuration: {
+			type: "string",
+		},
+		notifViaEmail: {
+			type: "boolean",
+		},
+		notifViaText: {
+			type: "boolean",
+		},
+		shares: {
+			type: "number",
 		},
 	},
 	additionalProperties: false,
@@ -117,9 +146,6 @@ module.exports.copyrightSplitRequestBody = {
 			items: {
 				type: "string",
 			},
-		},
-		comment: {
-			type: "string",
 		},
 		shares: {
 			type: "number",
@@ -144,9 +170,6 @@ module.exports.performanceSplitRequestBody = {
 			type: "string",
 			enum: ["principal", "featured", "bandMember", "session"],
 		},
-		comment: {
-			type: "string",
-		},
 		shares: {
 			type: "number",
 		},
@@ -170,9 +193,6 @@ module.exports.recordingSplitRequestBody = {
 				"studio",
 				"illustratorDesigner",
 			],
-		},
-		comment: {
-			type: "string",
 		},
 		shares: {
 			type: "number",
@@ -229,7 +249,7 @@ module.exports.rightSplitRequestBody = {
 			type: "string",
 			enum: ["manual", "role", "equal"],
 		},
-		label: this.label,
+		label: this.labelRequestBody,
 		copyright: {
 			type: "array",
 			items: this.copyrightSplitRequestBody,
@@ -268,6 +288,15 @@ module.exports.rightSplitVoteBody = {
 			},
 		},
 		recording: {
+			vote: {
+				type: "string",
+				enum: ["accepted", "rejected"],
+			},
+			comment: {
+				type: "string",
+			},
+		},
+		label: {
 			vote: {
 				type: "string",
 				enum: ["accepted", "rejected"],

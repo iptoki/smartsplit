@@ -174,11 +174,12 @@ const create = async function (req, res) {
 
 	await workpiece.setRightSplit(req.body)
 	await workpiece.save()
-	res.code(201)
-	
-	return await workpiece
+	await workpiece
 		.populate(workpiece.rightSplit.getPathsToPopulate())
 		.execPopulate()
+
+	res.code(201)
+	return workpiece.rightSplit
 }
 
 const update = async function (req, res) {

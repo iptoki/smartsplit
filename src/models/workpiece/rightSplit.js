@@ -71,16 +71,24 @@ const RecordingSplitSchema = new mongoose.Schema(
 	{ _id: false }
 )
 
-const LabelSchema = new mongoose.Schema({
-	rightHolder: {
-		type: String,
-		ref: "User",
+const LabelSchema = new mongoose.Schema(
+	{
+		rightHolder: {
+			type: String,
+			ref: "User",
+		},
+		agreementDuration: String,
+		notifViaEmail: Boolean,
+		notifViaText: Boolean,
+		shares: Number,
+		vote: {
+			type: String,
+			enum: ["undecided", "accepted", "rejected"],
+		},
+		comment: String,
 	},
-	agreementDuration: String,
-	notifViaEmail: Boolean,
-	notifViaText: Boolean,
-	shares: Number,
-})
+	{ _id: false }
+)
 
 const RightSplitSchema = new mongoose.Schema(
 	{
@@ -128,15 +136,19 @@ RightSplitSchema.methods.getRightHolders = function () {
 }
 
 RightSplitSchema.methods.update = async function (data) {
+	const owner_id = this.getOwnerId()
+	let promises = []
+
 	for (const field of ["privacy", "copyrightDividingMethod", "label"]) {
 		if (data[field] !== undefined) this[field] = data[field]
 	}
 
-	let promises = []
-	if (data.label !== undefined)
-		promises.push(User.ensureExist(data.label.rightHolder))
+	if (data.label !== undefined) {
+		;(this.label.vote =
+			owner_id === data.label.rightHolder ? "accepted" : "undecided"),
+			promises.push(User.ensureExist(data.label.rightHolder))
+	}
 
-	const owner_id = this.getOwnerId()
 	for (let rightType of RightTypes.list) {
 		if (!Array.isArray(data[rightType])) continue
 		this[rightType] = []
@@ -169,6 +181,15 @@ RightSplitSchema.methods.setVote = function (rightHolderId, data) {
 				break
 			}
 		}
+	}
+	if (
+		data.label &&
+		this.label &&
+		this.label.vote === "undecided" &&
+		this.label.rightHolder === rightHolderId
+	) {
+		this.label.vote = data.label.vote
+		this.label.comment = data.label.comment
 	}
 
 	this.updateState()
