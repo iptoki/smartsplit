@@ -43,7 +43,7 @@ async function routes(fastify, options) {
 			response: {
 				200: {
 					type: "array",
-					items: UserSchema.userPublicProfile,
+					items: UserSchema.collaboratorProfile,
 				},
 			},
 			security: [{ bearerAuth: [] }],
@@ -67,7 +67,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: UserSchema.userPublicProfile,
+				200: UserSchema.collaboratorProfile,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -230,7 +230,7 @@ async function deleteCollaboratorById(req, res) {
 
 	if (index < 0) throw Errors.CollaboratorNotFound
 
-	user.splice(index, 1)
+	user.collaborators.splice(index, 1)
 	await user.save()
 
 	res.code(204).send()

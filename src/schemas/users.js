@@ -259,6 +259,17 @@ module.exports.userPublicProfile = {
 	},
 }
 
+module.exports.collaboratorProfile = {
+	allOf: [
+		this.userPublicProfile
+	],
+	properties: {
+		emails: {
+			type: "string",
+		},
+	},
+}
+
 module.exports.userRequestBody = {
 	type: "object",
 	properties: {

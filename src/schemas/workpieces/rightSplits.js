@@ -4,7 +4,7 @@ module.exports.copyrightSplit = {
 	type: "object",
 	properties: {
 		rightHolder: {
-			anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
+			anyOf: [{ type: "string" }, UserSchema.collaboratorProfile],
 		},
 		roles: {
 			type: "array",
@@ -29,7 +29,7 @@ module.exports.performanceSplit = {
 	type: "object",
 	properties: {
 		rightHolder: {
-			anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
+			anyOf: [{ type: "string" }, UserSchema.collaboratorProfile],
 		},
 		roles: {
 			type: "array",
@@ -58,7 +58,7 @@ module.exports.recordingSplit = {
 	type: "object",
 	properties: {
 		rightHolder: {
-			anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
+			anyOf: [{ type: "string" }, UserSchema.collaboratorProfile],
 		},
 		function: {
 			type: "string",
@@ -88,7 +88,7 @@ module.exports.label = {
 	type: "object",
 	properties: {
 		rightHolder: {
-			anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
+			anyOf: [{ type: "string" }, UserSchema.collaboratorProfile],
 		},
 		agreementDuration: {
 			type: "string",
@@ -117,7 +117,7 @@ module.exports.labelRequestBody = {
 	type: "object",
 	properties: {
 		rightHolder: {
-			anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
+			anyOf: [{ type: "string" }, UserSchema.collaboratorProfile],
 		},
 		agreementDuration: {
 			type: "string",
@@ -212,7 +212,7 @@ module.exports.rightSplit = {
 			type: "number",
 		},
 		owner: {
-			anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
+			anyOf: [{ type: "string" }, UserSchema.collaboratorProfile],
 		},
 		privacy: {
 			type: "string",
