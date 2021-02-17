@@ -437,12 +437,12 @@ UserSchema.methods.getCollaboratorsByDegree = async function (degree = 0) {
 		await this.populate("collaborators").execPopulate()
 	let collaboratorMap = [this.collaborators]
 	for (let d = 1; d <= degree; d++) {
-		if(collaboratorMap[d - 1].length < 0) break
+		if (collaboratorMap[d - 1].length < 0) break
 		let promises = []
 		collaboratorMap[d] = []
 		for (let c of collaboratorMap[d - 1])
 			promises.push(c.populate("collaborators").execPopulate())
-		for(const c of await Promise.all(promises))
+		for (const c of await Promise.all(promises))
 			collaboratorMap[d] = collaboratorMap[d].concat(c.collaborators)
 	}
 	return collaboratorMap

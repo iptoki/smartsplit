@@ -90,6 +90,21 @@ const LabelSchema = new mongoose.Schema(
 	{ _id: false }
 )
 
+const PrivacySchema = new mongoose.Schema(
+	{
+		rightHolder: {
+			type: String,
+			ref: "User",
+		},
+		vote: {
+			type: String,
+			enum: ["undecided", "accepted", "rejected"],
+		},
+		comment: String,
+	},
+	{ _id: false }
+)
+
 const RightSplitSchema = new mongoose.Schema(
 	{
 		_state: {
@@ -101,10 +116,7 @@ const RightSplitSchema = new mongoose.Schema(
 			type: String,
 			ref: "User",
 		},
-		privacy: {
-			type: String,
-			enum: ["private", "public"],
-		},
+		isPublic: Boolean,
 		copyrightDividingMethod: {
 			type: String,
 			enum: ["manual", "role", "equal"],
@@ -113,6 +125,7 @@ const RightSplitSchema = new mongoose.Schema(
 		copyright: [CopyrightSplitSchema],
 		performance: [PerformanceSplitSchema],
 		recording: [RecordingSplitSchema],
+		privacy: [PrivacySchema],
 	},
 	{ _id: false }
 )
@@ -121,32 +134,35 @@ RightSplitSchema.methods.getOwnerId = function () {
 	return typeof this.owner === "string" ? this.owner : this.owner._id
 }
 
-RightSplitSchema.methods.getRightHolders = function () {
-	let rightHolders = []
+RightSplitSchema.methods.getRightHolderIds = function () {
+	let rightHolderIds = []
 	if (this.label && this.label.rightHolder)
-		rightHolders.push(this.label.rightHolder)
+		rightHolderIds.push(this.label.rightHolder)
 	for (let rightType of RightTypes.list) {
 		if (!Array.isArray(this[rightType])) continue
 		for (let item of this[rightType]) {
-			if (!rightHolders.includes(item.rightHolder))
-				rightHolders.push(item.rightHolder)
+			const id =
+				typeof item.rightHolder === "string"
+					? item.rightHolder
+					: item.rightHolder._id
+			if (!rightHolderIds.includes(id)) rightHolderIds.push(id)
 		}
 	}
-	return rightHolders
+	return rightHolderIds
 }
 
 RightSplitSchema.methods.update = async function (data) {
 	const owner_id = this.getOwnerId()
 	let promises = []
 
-	for (const field of ["privacy", "copyrightDividingMethod", "label"]) {
+	for (const field of ["isPublic", "copyrightDividingMethod", "label"]) {
 		if (data[field] !== undefined) this[field] = data[field]
 	}
 
 	if (data.label !== undefined) {
-		;(this.label.vote =
-			owner_id === data.label.rightHolder ? "accepted" : "undecided"),
-			promises.push(User.ensureExist(data.label.rightHolder))
+		this.label.vote =
+			owner_id === data.label.rightHolder ? "accepted" : "undecided"
+		promises.push(User.ensureExist(data.label.rightHolder))
 	}
 
 	for (let rightType of RightTypes.list) {
@@ -165,13 +181,26 @@ RightSplitSchema.methods.update = async function (data) {
 		}
 	}
 
+	this.updatePrivacy()
 	await Promise.all(promises)
+}
+
+RightSplitSchema.methods.updatePrivacy = function () {
+	const owner_id = this.getOwnerId()
+	this.privacy = []
+	for (const id of this.getRightHolderIds()) {
+		this.privacy.push({
+			rightHolder: id,
+			vote: owner_id === id ? "accepted" : "undecided",
+		})
+	}
 }
 
 RightSplitSchema.methods.setVote = function (rightHolderId, data) {
 	if (this._state !== "voting") throw ConflictingRightSplitState
 
 	for (let rightType of RightTypes.list) {
+		if (!Array.isArray(this[rightType])) continue
 		for (let item of this[rightType]) {
 			if (item.rightHolder === rightHolderId && data[rightType]) {
 				if (item.vote === "undecided") {
@@ -197,16 +226,21 @@ RightSplitSchema.methods.setVote = function (rightHolderId, data) {
 
 RightSplitSchema.methods.updateState = function () {
 	let accepted = true
-	loop1: for (let type of RightTypes.list) {
+	for (let type of RightTypes.list) {
+		if (!Array.isArray(this[type])) continue
 		for (let item of this[type]) {
 			if (item.vote !== "accepted") accepted = false
 			if (item.vote === "rejected") {
 				this._state = "rejected"
-				break loop1
+				return
 			}
 		}
 	}
-
+	if (label.vote !== "accepted") accepted = false
+	if (label.vote === "rejected") {
+		this._state = "rejected"
+		return
+	}
 	if (accepted) this._state = "accepted"
 }
 

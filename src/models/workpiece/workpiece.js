@@ -121,7 +121,8 @@ WorkpieceSchema.methods.setRightSplit = async function (data) {
 	}
 
 	await this.rightSplit.update(data)
-	this.rightHolders = this.rightSplit.getRightHolders()
+	this.rightHolders = this.rightSplit.getRightHolderIds()
+	this.rightSplit.updatePrivacy()
 }
 
 WorkpieceSchema.methods.setSplitVote = function (rightHolderId, data) {
@@ -221,6 +222,7 @@ WorkpieceSchema.methods.getArchivedRightSplitsPathsToPopulate = function () {
 	let paths = []
 	for (let i = 0; i < this.archivedSplits.length; i++) {
 		paths.push(`archivedSplits.${i}.owner`)
+		paths.push(`archivedSplits.${i}.label.rightHolder`)
 		for (let rightType of RightTypes.list) {
 			if (!Array.isArray(this.archivedSplits[i][rightType])) continue
 			for (let j = 0; j < this.archivedSplits[i][rightType].length; j++)

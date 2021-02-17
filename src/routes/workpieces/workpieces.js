@@ -8,26 +8,6 @@ const JWTAuth = require("../../service/JWTAuth")
 async function routes(fastify, options) {
 	fastify.route({
 		method: "GET",
-		url: "/workpieces/by-owner/:user_id/" /* TODO: remove that ugly `/` */,
-		schema: {
-			tags: ["workpieces_general"],
-			description: "*** DEPRECATED *** Get workpieces by owner",
-			params: {
-				user_id: {
-					type: "string",
-				},
-			},
-			response: {
-				200: { type: "array", items: WorkpieceSchemas.workpiece },
-			},
-			security: [{ bearerAuth: [] }],
-		},
-		preValidation: JWTAuth.requireAuthUser,
-		handler: getWorkpiecesByOwner,
-	})
-
-	fastify.route({
-		method: "GET",
 		url: "/workpieces/by-owner/:user_id",
 		schema: {
 			tags: ["workpieces_general"],
@@ -96,7 +76,10 @@ async function routes(fastify, options) {
 		schema: {
 			tags: ["workpieces_general"],
 			description: "Create a new workpiece in the system",
-			body: WorkpieceSchemas.workpieceRequestBody,
+			body: {
+				allOf: [WorkpieceSchemas.workpieceRequestBody],
+				required: ["title"],
+			},
 			response: {
 				201: WorkpieceSchemas.workpiece,
 			},

@@ -11,14 +11,10 @@ module.exports.workpiece = {
 		title: {
 			type: "string",
 		},
-		owner: {
-			anyOf: [{ type: "string" }, UserSchema.collaboratorProfile],
-		},
+		owner: UserSchema.collaboratorProfile,
 		rightHolders: {
 			type: "array",
-			items: {
-				anyOf: [{ type: "string" }, UserSchema.collaboratorProfile],
-			},
+			items: UserSchema.collaboratorProfile,
 		},
 		version: {
 			type: "number",
@@ -37,7 +33,6 @@ module.exports.workpieceRequestBody = {
 	properties: {
 		title: {
 			type: "string",
-			default: "ExampleTitle",
 		},
 	},
 	additionalProperties: false,

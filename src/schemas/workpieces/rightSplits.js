@@ -3,9 +3,7 @@ const UserSchema = require("../users")
 module.exports.copyrightSplit = {
 	type: "object",
 	properties: {
-		rightHolder: {
-			anyOf: [{ type: "string" }, UserSchema.collaboratorProfile],
-		},
+		rightHolder: UserSchema.collaboratorProfile,
 		roles: {
 			type: "array",
 			items: {
@@ -28,9 +26,7 @@ module.exports.copyrightSplit = {
 module.exports.performanceSplit = {
 	type: "object",
 	properties: {
-		rightHolder: {
-			anyOf: [{ type: "string" }, UserSchema.collaboratorProfile],
-		},
+		rightHolder: UserSchema.collaboratorProfile,
 		roles: {
 			type: "array",
 			items: {
@@ -57,9 +53,7 @@ module.exports.performanceSplit = {
 module.exports.recordingSplit = {
 	type: "object",
 	properties: {
-		rightHolder: {
-			anyOf: [{ type: "string" }, UserSchema.collaboratorProfile],
-		},
+		rightHolder: UserSchema.collaboratorProfile,
 		function: {
 			type: "string",
 			enum: [
@@ -87,9 +81,7 @@ module.exports.recordingSplit = {
 module.exports.label = {
 	type: "object",
 	properties: {
-		rightHolder: {
-			anyOf: [{ type: "string" }, UserSchema.collaboratorProfile],
-		},
+		rightHolder: UserSchema.collaboratorProfile,
 		agreementDuration: {
 			type: "string",
 		},
@@ -110,14 +102,65 @@ module.exports.label = {
 			type: "string",
 		},
 	},
-	additionalProperties: false,
+}
+
+module.exports.privacy = {
+	type: "object",
+	properties: {
+		rightHolder: UserSchema.collaboratorProfile,
+		vote: {
+			type: "string",
+			enum: ["undecided", "accepted", "rejected"],
+		},
+		comment: {
+			type: "string",
+		},
+	},
+}
+
+module.exports.rightSplit = {
+	type: "object",
+	properties: {
+		_state: {
+			type: "string",
+			enum: ["draft", "voting", "accepted", "rejected"],
+		},
+		version: {
+			type: "number",
+		},
+		owner: UserSchema.collaboratorProfile,
+		isPublic: {
+			type: "boolean",
+		},
+		copyrightDividingMethod: {
+			type: "string",
+			enum: ["manual", "role", "equal"],
+		},
+		label: this.label,
+		copyright: {
+			type: "array",
+			items: this.copyrightSplit,
+		},
+		performance: {
+			type: "array",
+			items: this.performanceSplit,
+		},
+		recording: {
+			type: "array",
+			items: this.recordingSplit,
+		},
+		privacy: {
+			type: "array",
+			items: this.privacy,
+		},
+	},
 }
 
 module.exports.labelRequestBody = {
 	type: "object",
 	properties: {
 		rightHolder: {
-			anyOf: [{ type: "string" }, UserSchema.collaboratorProfile],
+			type: "string",
 		},
 		agreementDuration: {
 			type: "string",
@@ -201,49 +244,11 @@ module.exports.recordingSplitRequestBody = {
 	additionalProperties: false,
 }
 
-module.exports.rightSplit = {
-	type: "object",
-	properties: {
-		_state: {
-			type: "string",
-			enum: ["draft", "voting", "accepted", "rejected"],
-		},
-		version: {
-			type: "number",
-		},
-		owner: {
-			anyOf: [{ type: "string" }, UserSchema.collaboratorProfile],
-		},
-		privacy: {
-			type: "string",
-			enum: ["private", "public"],
-		},
-		copyrightDividingMethod: {
-			type: "string",
-			enum: ["manual", "role", "equal"],
-		},
-		label: this.label,
-		copyright: {
-			type: "array",
-			items: this.copyrightSplit,
-		},
-		performance: {
-			type: "array",
-			items: this.performanceSplit,
-		},
-		recording: {
-			type: "array",
-			items: this.recordingSplit,
-		},
-	},
-}
-
 module.exports.rightSplitRequestBody = {
 	type: "object",
 	properties: {
-		privacy: {
-			type: "string",
-			enum: ["private", "public"],
+		isPublic: {
+			type: "boolean",
 		},
 		copyrightDividingMethod: {
 			type: "string",
@@ -266,45 +271,28 @@ module.exports.rightSplitRequestBody = {
 	additionalProperties: false,
 }
 
+module.exports.vote = {
+	type: "object",
+	properties: {
+		vote: {
+			type: "string",
+			enum: ["accepted", "rejected"],
+		},
+		comment: {
+			type: "string",
+		},
+	},
+	additionalProperties: false,
+}
+
 module.exports.rightSplitVoteBody = {
 	type: "object",
 	properties: {
-		copyright: {
-			vote: {
-				type: "string",
-				enum: ["accepted", "rejected"],
-			},
-			comment: {
-				type: "string",
-			},
-		},
-		performance: {
-			vote: {
-				type: "string",
-				enum: ["accepted", "rejected"],
-			},
-			comment: {
-				type: "string",
-			},
-		},
-		recording: {
-			vote: {
-				type: "string",
-				enum: ["accepted", "rejected"],
-			},
-			comment: {
-				type: "string",
-			},
-		},
-		label: {
-			vote: {
-				type: "string",
-				enum: ["accepted", "rejected"],
-			},
-			comment: {
-				type: "string",
-			},
-		},
+		copyright: this.vote,
+		performance: this.vote,
+		recording: this.vote,
+		label: this.vote,
+		privacy: this.vote,
 	},
 	additionalProperties: false,
 }
