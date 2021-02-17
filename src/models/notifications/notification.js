@@ -1,7 +1,7 @@
 const mongoose = require("mongoose")
 const Config = require("../../config")
 
-module.exports.GENERAL_INTERACTIONS = "generalInterations"
+module.exports.GENERAL_INTERACTIONS = "generalInteractions"
 module.exports.ADMINISTRATIVE_MESSAGES = "administrativeMessages"
 module.exports.ACCOUNT_LOGIN = "accountLogin"
 module.exports.SMARTSPLIT_BLOG = "smartsplitBlog"
