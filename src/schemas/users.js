@@ -32,7 +32,7 @@ module.exports.permissions = {
 module.exports.notifications = {
 	type: "object",
 	properties: {
-		[Notifications.GENERAL_INTERATIONS]: {
+		[Notifications.GENERAL_INTERACTIONS]: {
 			type: "array",
 			items: {
 				type: "string",

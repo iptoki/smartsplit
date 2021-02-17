@@ -18,7 +18,7 @@ const UserTemplates = {
 
 const TemplateMap = {
 	[SplitTemplates.CREATED]: {
-		notificationType: Notification.GENERAL_INTERATIONS,
+		notificationType: Notification.GENERAL_INTERACTIONS,
 		email: {
 			template_id: {
 				en: "d-cf37277440d64095abac9531ba6457ea",
@@ -40,7 +40,7 @@ const TemplateMap = {
 	},
 
 	[SplitTemplates.ACCEPTED]: {
-		notificationType: Notification.GENERAL_INTERATIONS,
+		notificationType: Notification.GENERAL_INTERACTIONS,
 		email: {
 			template_id: {
 				en: "d-96d430a6f14d4268960e1403c1085276",
@@ -62,7 +62,7 @@ const TemplateMap = {
 	},
 
 	[SplitTemplates.REJECTED]: {
-		notificationType: Notification.GENERAL_INTERATIONS,
+		notificationType: Notification.GENERAL_INTERACTIONS,
 		email: {
 			template_id: {
 				en: "????",

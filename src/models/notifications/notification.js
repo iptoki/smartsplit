@@ -13,7 +13,7 @@ module.exports.PARTNER_PROMOTIONS = "partnerPromotions"
  */
 module.exports.Schema = new mongoose.Schema(
 	{
-		[this.GENERAL_INTERATIONS]: {
+		[this.GENERAL_INTERACTIONS]: {
 			type: Array,
 			default: ["email", "push"],
 		},
