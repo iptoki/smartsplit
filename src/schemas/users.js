@@ -83,7 +83,7 @@ module.exports.notifications = {
 	},
 }
 
-module.exports.professional_identity = {
+module.exports.professionalIdentity = {
 	type: "object",
 	properties: {
 		ids: {
@@ -142,7 +142,7 @@ module.exports.user = {
 			type: "string",
 		},
 		notifications: this.notifications,
-		professional_identity: this.professional_identity,
+		professionalIdentity: this.professionalIdentity,
 		collaborators: {
 			type: "array",
 			items: {
@@ -237,7 +237,7 @@ module.exports.userPublicProfile = {
 		},
 		// TODO: this one is tricky, can't find an elegant solution for the moment
 		// Disabling it for the moment, I prefer that rather than leaking some user's private info
-		// professional_identity: this.professional_identity,
+		// professionalIdentity: this.professionalIdentity,
 		isni: {
 			type: "string",
 		},
@@ -301,7 +301,7 @@ module.exports.userRequestBody = {
 			enum: ["en", "fr"],
 		},
 		notifications: this.notifications,
-		professional_identity: this.professional_identity,
+		professionalIdentity: this.professionalIdentity,
 		collaborators: {
 			type: "array",
 			items: {

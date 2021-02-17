@@ -180,12 +180,7 @@ async function getCollaboratorById(req, res) {
 	if (!user.collaborators.includes(req.params.collaborator_id))
 		throw Errors.CollaboratorNotFound
 
-	const collaborator = await User.findById(req.params.collaborator_id)
-
-	if (!collaborator.professional_identity.public)
-		collab.professional_identity = undefined
-
-	return collaborator
+	return await User.findById(req.params.collaborator_id)
 }
 
 async function createCollaborator(req, res) {
@@ -201,10 +196,9 @@ async function createCollaborator(req, res) {
 
 	const emailVerif = await collaborator.addPendingEmail(req.body.email)
 
-	await collaborator.save()
-	await emailVerif.save()
+	await Promise.all([collaborator.save(), emailVerif.save()])
 
-	await collaborator.sendNotification(UserTemplates.SPLIT_INVITED, {
+	collaborator.sendNotification(UserTemplates.SPLIT_INVITED, {
 		to: { name: collaborator.fullName, email: emailVerif._id },
 	})
 

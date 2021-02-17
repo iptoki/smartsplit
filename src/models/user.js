@@ -118,7 +118,7 @@ const UserSchema = new mongoose.Schema(
 			type: PermissionSchema,
 			default: {},
 		},
-		professional_identity: {
+		professionalIdentity: {
 			type: ProfessionalIdentitySchema,
 			default: {},
 		},
@@ -416,20 +416,20 @@ UserSchema.methods.setMobilePhone = async function (number, verified = false) {
 /**
  * Sets the user's profesional identity
  */
-UserSchema.methods.setProfessionalIdentity = function (professional_identity) {
-	if (Array.isArray(professional_identity.ids)) {
+UserSchema.methods.setProfessionalIdentity = function (professionalIdentity) {
+	if (Array.isArray(professionalIdentity.ids)) {
 		let map = {}
-		professional_identity.ids.forEach(function (id) {
+		professionalIdentity.ids.forEach(function (id) {
 			if (id.name.length && id.value.length)
 				map[id.name.toLowerCase().trim()] = id.value
 		})
-		this.professional_identity.ids = []
+		this.professionalIdentity.ids = []
 		for (const [name, value] of Object.entries(map))
-			this.professional_identity.ids.push({ name, value })
+			this.professionalIdentity.ids.push({ name, value })
 	}
 
-	if (typeof professional_identity.public === "boolean")
-		this.professional_identity.public = professional_identity.public
+	if (typeof professionalIdentity.public === "boolean")
+		this.professionalIdentity.public = professionalIdentity.public
 }
 
 UserSchema.methods.getCollaboratorsByDegree = async function (degree = 0) {
@@ -497,17 +497,19 @@ UserSchema.methods.getCollaborators = async function (
 	result.splice(0, skip)
 	return result
 }
+
 /**
  * Add collaborators to the user
  */
 UserSchema.methods.addCollaborators = async function (collaboratorIds) {
-	for (const id of collaboratorIds) {
+	let promises = []
+	for (const uid of collaboratorIds) {
 		if (!this.collaborators.includes(id)) {
-			if (!(await this.model("User").exists({ _id: id })))
-				throw Errors.CollaboratorNotFound
-			this.collaborators.push(id)
+			promises.push(this.model("User").ensureExist(uid))
+			this.collaborators.push(uid)
 		}
 	}
+	await Promise.all(promises)
 }
 
 /**
@@ -535,7 +537,7 @@ UserSchema.methods.deleteAccount = async function () {
 	this.avatar = undefined
 	this.mobilePhone = undefined
 	this.permissions = undefined
-	this.professional_identity = undefined
+	this.professionalIdentity = undefined
 	this.collaborators = undefined
 	await this.save()
 }

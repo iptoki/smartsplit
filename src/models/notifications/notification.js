@@ -1,12 +1,12 @@
 const mongoose = require("mongoose")
 const Config = require("../../config")
 
-module.exports.GENERAL_INTERATIONS = "general_interations"
-module.exports.ADMINISTRATIVE_MESSAGES = "administrative_messages"
-module.exports.ACCOUNT_LOGIN = "account_login"
-module.exports.SMARTSPLIT_BLOG = "smartsplit_blog"
-module.exports.SMARTSPLIT_PROMOTIONS = "smartsplit_promotions"
-module.exports.PARTNER_PROMOTIONS = "partner_promotions"
+module.exports.GENERAL_INTERACTIONS = "generalInterations"
+module.exports.ADMINISTRATIVE_MESSAGES = "administrativeMessages"
+module.exports.ACCOUNT_LOGIN = "accountLogin"
+module.exports.SMARTSPLIT_BLOG = "smartsplitBlog"
+module.exports.SMARTSPLIT_PROMOTIONS = "smartsplitPromotions"
+module.exports.PARTNER_PROMOTIONS = "partnerPromotions"
 
 /**
  * Represents a user's notification preferences in the system

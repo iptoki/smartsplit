@@ -189,39 +189,6 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "POST",
-		url: "/users/invite-new-user",
-		schema: {
-			tags: ["users_general"],
-			description:
-				"Deprecated, you should use POST /users/:user_id/collaborators/. Invite a new user",
-			body: {
-				type: "object",
-				required: ["email"],
-				properties: {
-					firstName: {
-						type: "string",
-					},
-					lastName: {
-						type: "string",
-					},
-					artistName: {
-						type: "string",
-					},
-					email: {
-						type: "string",
-					},
-				},
-				additionalProperties: false,
-			},
-			response: {
-				201: UserSchema.user,
-			},
-		},
-		handler: inviteNewUser,
-	})
-
-	fastify.route({
 		method: "DELETE",
 		url: "/users/:user_id",
 		schema: {
@@ -248,8 +215,6 @@ async function preSerializeUser(req, res, user) {
 	if (res.userPublicSchema) {
 		const fastJson = require("fast-json-stringify")
 		const stringify = fastJson(UserSchema.userPublicProfile)
-		if (user.professional_identity && !user.professional_identity.public)
-			user.professional_identity = undefined
 		return JSON.parse(stringify(user))
 	}
 	return user
@@ -306,17 +271,16 @@ async function createUser(req, res) {
 
 		if (req.body.phoneNumber) await user.setMobilePhone(req.body.phoneNumber)
 
-		if (req.body.professional_identity)
-			user.setProfessionalIdentity(req.body.professional_identity)
+		if (req.body.professionalIdentity)
+			user.setProfessionalIdentity(req.body.professionalIdentity)
 
 		if (req.body.collaborators)
 			await user.addCollaborators(req.body.collaborators)
 
-		await user.save()
-		await emailVerif.save()
+		await Promise.all([user.save(), emailVerif.save()])
 	}
 
-	await user.sendNotification(UserTemplates.ACTIVATE_ACCOUNT, {
+	user.sendNotification(UserTemplates.ACTIVATE_ACCOUNT, {
 		to: { name: user.fullName, email: emailVerif._id },
 	})
 
@@ -332,14 +296,15 @@ async function activateUserAccount(req, res) {
 	const user = email.user
 
 	if (email && user.isActive) throw Errors.AccountAlreadyActivated
-
 	if (!email || !user.canActivate) throw Errors.InvalidActivationToken
 
 	user.accountStatus = AccountStatus.ACTIVE
 	user.emails.push(email._id)
 
-	await user.save()
-	await EmailVerification.deleteOne({ _id: email._id })
+	await Promise.all([
+		user.save(),
+		EmailVerification.deleteOne({ _id: email._id }),
+	])
 
 	return { accessToken: JWTAuth.createToken(user), user: user }
 }
@@ -353,7 +318,7 @@ async function updateUser(req, res) {
 	if (req.body.email) {
 		const emailVerif = await user.addPendingEmail(req.body.email)
 		await emailVerif.save()
-		await user.sendNotification(UserTemplates.ACTIVATE_EMAIL, {
+		user.sendNotification(UserTemplates.ACTIVATE_EMAIL, {
 			to: { name: user.fullName, email: emailVerif._id },
 		})
 	}
@@ -363,8 +328,8 @@ async function updateUser(req, res) {
 	if (req.body.password)
 		passwordChanged = await user.setPassword(req.body.password)
 
-	if (req.body.professional_identity)
-		user.setProfessionalIdentity(req.body.professional_identity)
+	if (req.body.professionalIdentity)
+		user.setProfessionalIdentity(req.body.professionalIdentity)
 
 	if (req.body.avatar) user.setAvatar(Buffer.from(req.body.avatar, "base64"))
 
@@ -410,7 +375,7 @@ async function requestPasswordReset(req, res) {
 		user = email.user
 	}
 
-	await user.sendNotification(UserTemplates.PASSWORD_RESET, {
+	user.sendNotification(UserTemplates.PASSWORD_RESET, {
 		to: { name: user.fullName, email: req.body.email },
 	})
 
@@ -445,7 +410,7 @@ async function changeUserPassword(req, res) {
 
 	await user.save()
 
-	await user.sendNotification(UserTemplates.PASSWORD_CHANGED)
+	user.sendNotification(UserTemplates.PASSWORD_CHANGED)
 
 	return { accessToken: JWTAuth.createToken(user), user }
 }
@@ -470,29 +435,6 @@ async function deleteUserAccount(req, res) {
 	await user.deleteAccount()
 
 	res.code(204).send()
-}
-
-// !! DEPRECATED !!
-async function inviteNewUser(req, res) {
-	if (await User.findOne().byEmail(req.body.email)) throw Errors.ConflictingUser
-
-	const user = new User({
-		firstName: req.body.firstName || req.body.email.split("@")[0],
-		lastName: req.body.lastName,
-		accountStatus: AccountStatus.SPLIT_INVITED,
-	})
-
-	const emailVerif = await user.addPendingEmail(req.body.email)
-
-	await user.save()
-	await emailVerif.save()
-
-	await user.sendNotification(UserTemplates.SPLIT_INVITED, {
-		to: { name: user.fullName, email: emailVerif._id },
-	})
-
-	res.code(201)
-	return user
 }
 
 module.exports = {
