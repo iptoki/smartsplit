@@ -1,52 +1,41 @@
-const DocumentationSchema = require("./documentation").documentation
-const RightSplitSchema = require("./rightSplits").rightSplit
+const DocumentationSchema = require("./documentation")
+const RightSplitSchema = require("./rightSplits")
 const UserSchema = require("../users")
 
-module.exports.workpiece = {
+const workpiece = {
 	type: "object",
 	properties: {
-		workpiece_id: {
-			type: "string",
-		},
-		title: {
-			type: "string",
-		},
-		owner: {
-			anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
-		},
+		workpiece_id: { type: "string" },
+		title: { type: "string" },
+		owner: UserSchema.serialization.collaborator,
 		rightHolders: {
 			type: "array",
-			items: {
-				anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
-			},
+			items: UserSchema.serialization.collaborator,
 		},
-		entityTags: {
-			type: "array",
-			items: {
-				type: "string",
-				format: "uuid",
-				example: "e87b56fe-1ce0-4ec7-8393-e18dc7415041",
-			},
-		},
-		version: {
-			type: "number",
-		},
-		rightSplit: RightSplitSchema,
+		version: { type: "number" },
+		rightSplit: RightSplitSchema.serialization.rightSplit,
 		archivedSplits: {
 			type: "array",
-			items: RightSplitSchema,
+			items: RightSplitSchema.serialization.rightSplit,
 		},
-		documentation: DocumentationSchema,
-	},
-}
-
-module.exports.workpieceRequestBody = {
-	type: "object",
-	properties: {
-		title: {
-			type: "string",
-			default: "ExampleTitle",
-		},
+		documentation: DocumentationSchema.serialization.documentation,
 	},
 	additionalProperties: false,
+}
+
+const createUpdateWorkpiece = {
+	type: "object",
+	properties: {
+		title: { type: "string" },
+	},
+	additionalProperties: false,
+}
+
+module.exports = {
+	serialization: {
+		workpiece,
+	},
+	validation: {
+		createUpdateWorkpiece,
+	},
 }

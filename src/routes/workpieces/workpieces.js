@@ -1,31 +1,11 @@
 const Workpiece = require("../../models/workpiece/workpiece")
-const WorkpieceSchemas = require("../../schemas/workpieces/workpieces")
+const WorkpieceSchema = require("../../schemas/workpieces/workpieces")
 const Errors = require("../errors")
 const JWTAuth = require("../../service/JWTAuth")
 
 /************************ Routes ************************/
 
 async function routes(fastify, options) {
-	fastify.route({
-		method: "GET",
-		url: "/workpieces/by-owner/:user_id/" /* TODO: remove that ugly `/` */,
-		schema: {
-			tags: ["workpieces_general"],
-			description: "*** DEPRECATED *** Get workpieces by owner",
-			params: {
-				user_id: {
-					type: "string",
-				},
-			},
-			response: {
-				200: { type: "array", items: WorkpieceSchemas.workpiece },
-			},
-			security: [{ bearerAuth: [] }],
-		},
-		preValidation: JWTAuth.requireAuthUser,
-		handler: getWorkpiecesByOwner,
-	})
-
 	fastify.route({
 		method: "GET",
 		url: "/workpieces/by-owner/:user_id",
@@ -38,7 +18,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: { type: "array", items: WorkpieceSchemas.workpiece },
+				200: { type: "array", items: WorkpieceSchema.serialization.workpiece },
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -58,7 +38,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: { type: "array", items: WorkpieceSchemas.workpiece },
+				200: { type: "array", items: WorkpieceSchema.serialization.workpiece },
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -78,7 +58,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: WorkpieceSchemas.workpiece,
+				200: WorkpieceSchema.serialization.workpiece,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -96,9 +76,12 @@ async function routes(fastify, options) {
 		schema: {
 			tags: ["workpieces_general"],
 			description: "Create a new workpiece in the system",
-			body: WorkpieceSchemas.workpieceRequestBody,
+			body: {
+				allOf: [WorkpieceSchema.validation.createUpdateWorkpiece],
+				required: ["title"],
+			},
 			response: {
-				201: WorkpieceSchemas.workpiece,
+				201: WorkpieceSchema.serialization.workpiece,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -117,9 +100,9 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: WorkpieceSchemas.workpieceRequestBody,
+			body: WorkpieceSchema.validation.createUpdateWorkpiece,
 			response: {
-				200: WorkpieceSchemas.workpiece,
+				200: WorkpieceSchema.serialization.workpiece,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -187,7 +170,7 @@ const createWorkpiece = async function (req, res) {
 const updateWorkpiece = async function (req, res) {
 	const workpiece = await getWorkpieceAsOwner(req, res)
 
-	for (let field of ["title", "entityTags"])
+	for (let field of ["title"])
 		if (req.body[field]) workpiece[field] = req.body[field]
 
 	if (req.body.documentation !== undefined)
@@ -210,14 +193,16 @@ const deleteWorkpiece = async function (req, res) {
 
 const getWorkpiecesByOwner = async function (req, res) {
 	const workpieces = await Workpiece.find().byOwner(req.params.user_id)
-	for (const workpiece of workpieces) await workpiece.populateAll()
-	return workpieces
+	let promises = []
+	for (const workpiece of workpieces) promises.push(workpiece.populateAll())
+	return await Promise.all(promises)
 }
 
 const getWorkpiecesByRightHolder = async function (req, res) {
 	const workpieces = await Workpiece.find().byRightHolders(req.params.user_id)
-	for (const workpiece of workpieces) await workpiece.populateAll()
-	return workpieces
+	let promises = []
+	for (const workpiece of workpieces) promises.push(workpiece.populateAll())
+	return await Promise.all(promises)
 }
 
 module.exports = {

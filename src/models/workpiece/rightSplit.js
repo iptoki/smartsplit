@@ -71,15 +71,39 @@ const RecordingSplitSchema = new mongoose.Schema(
 	{ _id: false }
 )
 
-const LabelSchema = new mongoose.Schema({
-	rightHolder: {
-		type: String,
-		ref: "User",
+const LabelSchema = new mongoose.Schema(
+	{
+		rightHolder: {
+			type: String,
+			ref: "User",
+		},
+		agreementDuration: String,
+		notifViaEmail: Boolean,
+		notifViaText: Boolean,
+		shares: Number,
+		vote: {
+			type: String,
+			enum: ["undecided", "accepted", "rejected"],
+		},
+		comment: String,
 	},
-	agreementDuration: String,
-	notifViaEmail: Boolean,
-	notifViaText: Boolean,
-})
+	{ _id: false }
+)
+
+const PrivacySchema = new mongoose.Schema(
+	{
+		rightHolder: {
+			type: String,
+			ref: "User",
+		},
+		vote: {
+			type: String,
+			enum: ["undecided", "accepted", "rejected"],
+		},
+		comment: String,
+	},
+	{ _id: false }
+)
 
 const RightSplitSchema = new mongoose.Schema(
 	{
@@ -92,10 +116,7 @@ const RightSplitSchema = new mongoose.Schema(
 			type: String,
 			ref: "User",
 		},
-		privacy: {
-			type: String,
-			enum: ["private", "public"],
-		},
+		isPublic: Boolean,
 		copyrightDividingMethod: {
 			type: String,
 			enum: ["manual", "role", "equal"],
@@ -104,6 +125,7 @@ const RightSplitSchema = new mongoose.Schema(
 		copyright: [CopyrightSplitSchema],
 		performance: [PerformanceSplitSchema],
 		recording: [RecordingSplitSchema],
+		privacy: [PrivacySchema],
 	},
 	{ _id: false }
 )
@@ -112,35 +134,42 @@ RightSplitSchema.methods.getOwnerId = function () {
 	return typeof this.owner === "string" ? this.owner : this.owner._id
 }
 
-RightSplitSchema.methods.getRightHolders = function () {
-	let rightHolders = []
+RightSplitSchema.methods.getRightHolderIds = function () {
+	let rightHolderIds = []
 	if (this.label && this.label.rightHolder)
-		rightHolders.push(this.label.rightHolder)
+		rightHolderIds.push(this.label.rightHolder)
 	for (let rightType of RightTypes.list) {
 		if (!Array.isArray(this[rightType])) continue
 		for (let item of this[rightType]) {
-			if (!rightHolders.includes(item.rightHolder))
-				rightHolders.push(item.rightHolder)
+			const id =
+				typeof item.rightHolder === "string"
+					? item.rightHolder
+					: item.rightHolder._id
+			if (!rightHolderIds.includes(id)) rightHolderIds.push(id)
 		}
 	}
-	return rightHolders
+	return rightHolderIds
 }
 
 RightSplitSchema.methods.update = async function (data) {
-	if (data.privacy !== undefined) this.privacy = data.privacy
-	if (data.copyrightDividingMethod !== undefined)
-		this.copyrightDividingMethod = data.copyrightDividingMethod
-	if (data.label !== undefined) {
-		if (!(await User.exists({ _id: data.label.rightHolder })))
-			throw UserNotFound
-		this.label = data.label
-	}
 	const owner_id = this.getOwnerId()
+	let promises = []
+
+	for (const field of ["isPublic", "copyrightDividingMethod", "label"]) {
+		if (data[field] !== undefined) this[field] = data[field]
+	}
+
+	if (data.label !== undefined) {
+		this.label.vote =
+			owner_id === data.label.rightHolder ? "accepted" : "undecided"
+		promises.push(User.ensureExist(data.label.rightHolder))
+	}
+
 	for (let rightType of RightTypes.list) {
 		if (!Array.isArray(data[rightType])) continue
 		this[rightType] = []
 		for (let item of data[rightType]) {
-			if (!(await User.exists({ _id: item.rightHolder }))) throw UserNotFound
+			promises.push(User.ensureExist(item.rightHolder))
 			this[rightType].push({
 				rightHolder: item.rightHolder,
 				roles: item.roles,
@@ -151,12 +180,27 @@ RightSplitSchema.methods.update = async function (data) {
 			})
 		}
 	}
+
+	this.updatePrivacy()
+	await Promise.all(promises)
+}
+
+RightSplitSchema.methods.updatePrivacy = function () {
+	const owner_id = this.getOwnerId()
+	this.privacy = []
+	for (const id of this.getRightHolderIds()) {
+		this.privacy.push({
+			rightHolder: id,
+			vote: owner_id === id ? "accepted" : "undecided",
+		})
+	}
 }
 
 RightSplitSchema.methods.setVote = function (rightHolderId, data) {
 	if (this._state !== "voting") throw ConflictingRightSplitState
 
 	for (let rightType of RightTypes.list) {
+		if (!Array.isArray(this[rightType])) continue
 		for (let item of this[rightType]) {
 			if (item.rightHolder === rightHolderId && data[rightType]) {
 				if (item.vote === "undecided") {
@@ -167,23 +211,50 @@ RightSplitSchema.methods.setVote = function (rightHolderId, data) {
 			}
 		}
 	}
+	if (
+		data.label &&
+		this.label &&
+		this.label.vote === "undecided" &&
+		this.label.rightHolder === rightHolderId
+	) {
+		this.label.vote = data.label.vote
+		this.label.comment = data.label.comment
+	}
 
 	this.updateState()
 }
 
 RightSplitSchema.methods.updateState = function () {
 	let accepted = true
-	loop1: for (let type of RightTypes.list) {
+	for (let type of RightTypes.list) {
+		if (!Array.isArray(this[type])) continue
 		for (let item of this[type]) {
 			if (item.vote !== "accepted") accepted = false
 			if (item.vote === "rejected") {
 				this._state = "rejected"
-				break loop1
+				return
 			}
 		}
 	}
-
+	if(this.label){
+		if (this.label.vote !== "accepted") accepted = false
+		if (this.label.vote === "rejected") {
+			this._state = "rejected"
+			return
+		}
+	}
 	if (accepted) this._state = "accepted"
+}
+
+RightSplitSchema.methods.getPathsToPopulate = function () {
+	let paths = ["rightSplit.owner", "rightSplit.label.rightHolder"]
+	for (let rightType of RightTypes.list) {
+		if (!Array.isArray(this[rightType])) continue
+		for (let i = 0; i < this[rightType].length; i++) {
+			paths.push(`rightSplit.${rightType}.${i}.rightHolder`)
+		}
+	}
+	return paths
 }
 
 module.exports = RightSplitSchema

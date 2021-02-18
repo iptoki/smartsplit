@@ -1,7 +1,8 @@
 const UserSchema = require("../users")
-const EntitiesSchema = require("../entities")
+const EntitySchema = require("../entities")
+const EntityTypes = require("../../constants/entityTypes")
 
-module.exports.file = {
+const file = {
 	type: "object",
 	properties: {
 		file_id: {
@@ -18,83 +19,53 @@ module.exports.file = {
 					enum: ["public", "hidden", "private"],
 				},
 			},
+			additionalProperties: false,
 		},
 		uploadDate: {
 			type: "string",
 			format: "date-time",
 		},
-		size: {
-			type: "number",
-		},
-		url: {
-			type: "string",
-		},
+		size: { type: "number" },
+		url: { type: "string" },
 	},
+	additionalProperties: false,
 }
 
-// module.exports.externalFile = {
-// 	type: "object",
-// 	properties: {
-// 		url: {
-// 			type: "string",
-// 		},
-// 		public: {
-// 			type: "boolean",
-// 		},
-// 	},
-// }
-
-module.exports.performerTool = {
+const performerTool = {
 	type: "object",
 	properties: {
-		instrument: EntitiesSchema.instrument,
-		role: {
-			type: "string",
-		},
-		notes: {
-			type: "string",
-		},
+		instrument: EntitySchema.serialization.instrument,
+		role: { type: "string" },
+		notes: { type: "string" },
 	},
+	additionalProperties: false,
 }
 
-module.exports.performer = {
+const performer = {
 	type: "object",
 	properties: {
-		user: {
-			anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
-		},
+		user: UserSchema.serialization.collaborator,
 		type: {
 			type: "string",
 			enum: ["mainArtist", "featured", "groupMember", "session"],
 		},
-		isSinger: {
-			type: "boolean",
-		},
-		isMusician: {
-			type: "boolean",
-		},
-		vocals: {
-			type: "array",
-			items: this.performerTool,
-		},
+		isSinger: { type: "boolean" },
+		isMusician: { type: "boolean" },
 		instruments: {
 			type: "array",
-			items: this.performerTool,
+			items: performerTool,
 		},
 	},
+	additionalProperties: false,
 }
 
-module.exports.record = {
+const record = {
 	type: "object",
 	properties: {
-		studio: {
-			type: "string",
-		},
+		studio: { type: "string" },
 		engineers: {
 			type: "array",
-			items: {
-				anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
-			},
+			items: UserSchema.serialization.collaborator,
 		},
 		date: {
 			type: "object",
@@ -108,178 +79,142 @@ module.exports.record = {
 					format: "date",
 				},
 			},
+			additionalProperties: false,
 		},
 		notes: {
 			type: "array",
-			items: {
-				type: "string",
-			},
+			items: { type: "string" },
 		},
 	},
+	additionalProperties: false,
 }
 
-module.exports.creation = {
+const creation = {
 	type: "object",
 	properties: {
-		date: {
-			type: "string",
-			format: "date",
-		},
+		date: { type: "string" },
 		authors: {
 			type: "array",
-			items: {
-				anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
-			},
+			items: UserSchema.serialization.collaborator,
 		},
 		composers: {
 			type: "array",
-			items: {
-				anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
-			},
+			items: UserSchema.serialization.collaborator,
 		},
 		publishers: {
 			type: "array",
-			items: {
-				anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
-			},
+			items: UserSchema.serialization.collaborator,
 		},
-		iswc: {
-			type: "string",
-		},
+		iswc: { type: "string" },
 	},
+	additionalProperties: false,
 }
 
-module.exports.performance = {
+const performance = {
 	type: "object",
 	properties: {
-		conductor: {
-			anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
-		},
+		conductor: UserSchema.serialization.collaborator,
 		performers: {
 			type: "array",
-			items: this.performer,
+			items: performer,
 		},
 	},
+	additionalProperties: false,
 }
 
-module.exports.recording = {
+const recording = {
 	type: "object",
 	properties: {
 		directors: {
 			type: "array",
-			items: {
-				anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
-			},
+			items: UserSchema.serialization.collaborator,
 		},
 		producers: {
 			type: "array",
-			items: {
-				anyOf: [{ type: "string" }, UserSchema.userPublicProfile],
-			},
+			items: UserSchema.serialization.collaborator,
 		},
-		isrc: {
-			type: "string",
-		},
+		isrc: { type: "string" },
 		recording: {
 			type: "array",
-			items: this.record,
+			items: record,
 		},
 		mixing: {
 			type: "array",
-			items: this.record,
+			items: record,
 		},
 		mastering: {
 			type: "array",
-			items: this.record,
+			items: record,
 		},
 	},
+	additionalProperties: false,
 }
 
-module.exports.release = {
+const release = {
 	type: "object",
 	properties: {
-		date: {
-			type: "string",
-			format: "date",
-		},
-		label: {
-			type: "string",
-		},
-		format: {
-			type: "string",
-		},
-		support: {
-			type: "string",
-		},
-		distributor: {
-			type: "string",
-		},
-		upc: {
-			type: "string",
-		},
+		date: { type: "string" },
+		label: { type: "string" },
+		format: { type: "string" },
+		support: { type: "string" },
+		distributor: { type: "string" },
+		upc: { type: "string" },
 	},
+	additionalProperties: false,
 }
 
-module.exports.files = {
+const files = {
 	type: "object",
 	properties: {
 		art: {
 			type: "array",
-			items: this.file,
+			items: file,
 		},
 		audio: {
 			type: "array",
-			items: this.file,
+			items: file,
 		},
 		scores: {
 			type: "array",
-			items: this.file,
+			items: file,
 		},
 		midi: {
 			type: "array",
-			items: this.file,
+			items: file,
 		},
 		lyrics: {
 			type: "array",
-			items: this.file,
+			items: file,
 		},
 	},
+	additionalProperties: false,
 }
 
-module.exports.info = {
+const info = {
 	type: "object",
 	properties: {
-		length: {
-			type: "string",
-		},
-		BPM: {
-			type: "number",
-		},
-		mainGenre: EntitiesSchema["musical-genre"],
+		length: { type: "string" },
+		BPM: { type: "number" },
+		mainGenre: EntitySchema.serialization[EntityTypes.MUSICAL_GENRE],
 		secondaryGenres: {
 			type: "array",
-			items: EntitiesSchema["musical-genre"],
+			items: EntitySchema.serialization[EntityTypes.MUSICAL_GENRE],
 		},
 		influences: {
 			type: "array",
-			items: {
-				type: "string",
-			},
+			items: { type: "string" },
 		},
 	},
+	additionalProperties: false,
 }
 
-module.exports.lyrics = {
+const lyrics = {
 	type: "object",
 	properties: {
-		text: {
-			type: "string",
-		},
+		text: { type: "string" },
 		languages: {
 			type: "array",
-			items: {
-				type: "string",
-			},
+			items: { type: "string" },
 		},
 		access: {
 			type: "string",
@@ -287,9 +222,10 @@ module.exports.lyrics = {
 			default: "private",
 		},
 	},
+	additionalProperties: false,
 }
 
-module.exports.streaming = {
+const streaming = {
 	type: "object",
 	properties: {
 		links: {
@@ -297,51 +233,160 @@ module.exports.streaming = {
 			items: {
 				type: "object",
 				properties: {
-					platform: {
-						type: "string",
-					},
-					url: {
-						type: "string",
-					},
+					platform: { type: "string" },
+					url: { type: "string" },
 				},
+				additionalProperties: false,
 			},
 		},
 	},
+	additionalProperties: false,
 }
 
-module.exports.documentation = {
+const documentation = {
 	type: "object",
 	properties: {
-		creation: this.creation,
-		performance: this.performance,
-		recording: this.recording,
-		release: this.release,
-		files: this.files,
-		info: this.info,
-		lyrics: this.lyrics,
-		streaming: this.streaming,
+		creation,
+		performance,
+		recording,
+		release,
+		files,
+		info,
+		lyrics,
+		streaming,
 	},
+	additionalProperties: false,
 }
 
-module.exports.documentationField = {
-	anyOf: [
-		this.creation,
-		this.performance,
-		this.recording,
-		this.release,
-		this.files,
-		this.info,
-		this.lyrics,
-		this.streaming,
-	],
-}
-
-module.exports.fileRequestBody = {
+const updateDocumentation = {
 	type: "object",
 	properties: {
-		filename: {
-			type: "string",
+		creation: {
+			type: "object",
+			properties: {
+				...creation.properties,
+				authors: {
+					type: "array",
+					items: { type: "string" },
+				},
+				composers: {
+					type: "array",
+					items: { type: "string" },
+				},
+				publishers: {
+					type: "array",
+					items: { type: "string" },
+				},
+			},
+			additionalProperties: false,
 		},
+		performance: {
+			type: "object",
+			properties: {
+				...performance.properties,
+				conductor: { type: "string" },
+				performers: {
+					type: "array",
+					items: {
+						type: "object",
+						properties: {
+							...performer.properties,
+							user: { type: "string" },
+							instruments: {
+								type: "object",
+								properties: {
+									...performerTool.properties,
+									instrument: { type: "string" },
+								},
+								additionalProperties: false,
+							},
+						},
+						additionalProperties: false,
+					},
+				},
+			},
+			additionalProperties: false,
+		},
+		recording: {
+			type: "object",
+			properties: {
+				...recording.properties,
+				directors: {
+					type: "array",
+					items: { type: "string" },
+				},
+				producers: {
+					type: "array",
+					items: { type: "string" },
+				},
+				recording: {
+					type: "array",
+					items: {
+						type: "object",
+						properties: {
+							...record.properties,
+							engineers: {
+								type: "array",
+								items: { type: "string" },
+							},
+						},
+						additionalProperties: false,
+					},
+				},
+				mixing: {
+					type: "array",
+					items: {
+						type: "object",
+						properties: {
+							...record.properties,
+							engineers: {
+								type: "array",
+								items: { type: "string" },
+							},
+						},
+						additionalProperties: false,
+					},
+				},
+				mastering: {
+					type: "array",
+					items: {
+						type: "object",
+						properties: {
+							...record.properties,
+							engineers: {
+								type: "array",
+								items: { type: "string" },
+							},
+						},
+						additionalProperties: false,
+					},
+				},
+			},
+			additionalProperties: false,
+		},
+		info: {
+			type: "object",
+			properties: {
+				...info.properties,
+				mainGenre: { type: "string" },
+				secondaryGenres: {
+					type: "array",
+					items: { type: "string" },
+				},
+			},
+			additionalProperties: false,
+		},
+		release,
+		lyrics,
+		streaming,
+	},
+	additionalProperties: false,
+}
+
+const updateFile = {
+	type: "object",
+	properties: {
+		filename: { type: "string" },
 		visibility: {
 			type: "string",
 			enum: ["public", "hidden", "private"],
@@ -352,4 +397,15 @@ module.exports.fileRequestBody = {
 		},
 	},
 	additionalProperties: false,
+}
+
+module.exports = {
+	serialization: {
+		documentation,
+		file,
+	},
+	validation: {
+		updateDocumentation,
+		updateFile,
+	},
 }

@@ -2,7 +2,7 @@ const mongoose = require("mongoose")
 const uuid = require("uuid").v4
 const User = require("../user")
 const Instrument = require("../entities/instrument")
-const MusicalGenre = require("../entities/musical-genre")
+const MusicalGenre = require("../entities/musicalGenre")
 const Config = require("../../config")
 const Errors = require("../../routes/errors")
 
@@ -35,6 +35,10 @@ const FileSchema = new mongoose.Schema(
 				visibility: {
 					type: String,
 					enum: ["public", "hidden", "private"],
+				},
+				version: {
+					type: String,
+					enum: ["idea", "demo", "rough-mix", "master"],
 				},
 			},
 			{ _id: false }
@@ -343,64 +347,78 @@ DocumentationSchema.methods.deleteFile = async function (file_id) {
 }
 
 DocumentationSchema.methods.update = async function (data) {
-	await this.updateCreation(data.creation || {})
-	await this.updatePerformance(data.performance || {})
-	await this.updateRecording(data.recording || {})
-	await this.updateRelease(data.release || {})
-	await this.updateInfo(data.info || {})
-	await this.updateLyrics(data.lyrics || {})
-	await this.updateStreaming(data.streaming || {})
+	await Promise.all([
+		this.updateCreation(data.creation || {}),
+		this.updatePerformance(data.performance || {}),
+		this.updateRecording(data.recording || {}),
+		this.updateRelease(data.release || {}),
+		this.updateInfo(data.info || {}),
+		this.updateLyrics(data.lyrics || {}),
+		this.updateStreaming(data.streaming || {}),
+	])
 }
 
 DocumentationSchema.methods.updateCreation = async function (data) {
-	for (let field of ["date", "iswc"])
+	for (const field of ["date", "iswc", "authors", "composers", "publishers"])
 		if (data[field] !== undefined) this.creation[field] = data[field]
+
+	let promises = []
 	for (field of ["authors", "composers", "publishers"]) {
 		if (!Array.isArray(data[field])) continue
-		for (const uid of data[field])
-			if (!(await User.exists({ _id: uid }))) throw Errors.UserNotFound
-		this.creation[field] = data[field]
+		for (const uid of data[field]) promises.push(User.ensureExist(uid))
 	}
+	return Promise.all(promises)
 }
 
-DocumentationSchema.methods.updatePerformance = async function (data) {
-	if (data.conductor !== undefined) this.performance.conductor = data.conductor
+DocumentationSchema.methods.updatePerformance = function (data) {
+	for (const field of ["conductor", "performers"])
+		if (data[field] !== undefined) this.performance[field] = data[field]
 
-	if (!Array.isArray(data.performers)) return
-
-	for (const performer of data.performers) {
-		if (!(await User.exists({ _id: performer.user }))) throw Errors.UserNotFound
-		for (field of ["instruments", "vocals"]) {
-			if (!Array.isArray(performer[field])) continue
-			for (const obj of performer[field]) {
-				if (!(await Instrument.exists({ _id: obj.instrument })))
-					throw Errors.EntityNotFound
+	let promises = []
+	if (Array.isArray(data.performers)) {
+		for (const performer of data.performers) {
+			promises.push(User.ensureExist(performer.user))
+			for (field of ["instruments", "vocals"]) {
+				if (!Array.isArray(performer[field])) continue
+				for (const obj of performer[field])
+					promises.push(Instrument.ensureExist(obj.instrument))
 			}
 		}
 	}
-	this.performance.performers = data.performers
+
+	return Promise.all(promises)
 }
 
-DocumentationSchema.methods.updateRecording = async function (data) {
+DocumentationSchema.methods.updateRecording = function (data) {
+	for (const field of [
+		"directors",
+		"producers",
+		"recording",
+		"mixing",
+		"mastering",
+		"isrc",
+	]) {
+		if (data[field] !== undefined) this.recording[field] = data[field]
+	}
+
+	let promises = []
 	for (const field of ["directors", "producers"]) {
 		if (!Array.isArray(data[field])) continue
-		for (const uid of data[field])
-			if (!(await User.exists({ _id: uid }))) throw Errors.UserNotFound
-		this.recording[field] = data[field]
+		for (const uid of data[field]) promises.push(User.ensureExist(uid))
 	}
-	if (data.isrc !== undefined) this.recording.isrc = data.isrc
 	for (const field of ["recording", "mixing", "mastering"]) {
 		if (!Array.isArray(data[field])) continue
 		for (const obj of data[field]) {
-			for (const uid of obj.engineers)
-				if (!(await User.exists({ _id: uid }))) throw Errors.UserNotFound
+			if (!Array.isArray(obj.engineers)) continue
+			for (const uid of obj.engineers) promises.push(User.ensureExist(uid))
 		}
-		this.recording[field] = data[field]
 	}
+
+	return Promise.all(promises)
 }
 
-DocumentationSchema.methods.updateRelease = async function (data) {
-	for (let field of [
+DocumentationSchema.methods.updateRelease = function (data) {
+	for (const field of [
 		"date",
 		"label",
 		"format",
@@ -411,31 +429,94 @@ DocumentationSchema.methods.updateRelease = async function (data) {
 		if (data[field] !== undefined) this.release[field] = data[field]
 }
 
-DocumentationSchema.methods.updateInfo = async function (data) {
-	for (let field of ["length", "BPM", "influences"])
+DocumentationSchema.methods.updateInfo = function (data) {
+	for (const field of [
+		"length",
+		"BPM",
+		"influences",
+		"mainGenre",
+		"secondaryGenres",
+	])
 		if (data[field] !== undefined) this.info[field] = data[field]
-	if (data.mainGenre !== undefined) {
-		if (!(await MusicalGenre.exists({ _id: data.mainGenre })))
-			throw Errors.EntityNotFound
-		this.info.mainGenre = data.mainGenre
+
+	let promises = []
+	if (data.mainGenre !== undefined)
+		promises.push(MusicalGenre.ensureExist(data.mainGenre))
+	if (Array.isArray(data.secondaryGenres)) {
+		for (const genre of data.secondaryGenres)
+			promises.push(MusicalGenre.ensureExist(genre))
 	}
 
-	if (!Array.isArray(data.secondaryGenres)) return
-
-	for (const genre of data.secondaryGenres) {
-		if (!(await MusicalGenre.exists({ _id: genre })))
-			throw Errors.EntityNotFound
-	}
-	this.info.secondaryGenres = data.secondaryGenres
+	return Promise.all(promises)
 }
 
-DocumentationSchema.methods.updateLyrics = async function (data) {
-	for (let field of ["text", "languages", "access"])
+DocumentationSchema.methods.updateLyrics = function (data) {
+	for (const field of ["text", "languages", "access"])
 		if (data[field] !== undefined) this.lyrics[field] = data[field]
 }
 
-DocumentationSchema.methods.updateStreaming = async function (data) {
+DocumentationSchema.methods.updateStreaming = function (data) {
 	if (Array.isArray(data.links)) this.streaming.links = data.links
+}
+
+DocumentationSchema.methods.getPathsToPopulate = function () {
+	return [
+		...this.getFilesPathsToPopulate(),
+		...this.getCreationPathsToPopulate(),
+		...this.getPerformancePathsToPopulate(),
+		...this.getRecordingPathsToPopulate(),
+		...this.getInfoPathsToPopulate(),
+	]
+}
+
+DocumentationSchema.methods.getFilesPathsToPopulate = function () {
+	return [
+		"documentation.files.art",
+		"documentation.files.audio",
+		"documentation.files.scores",
+		"documentation.files.midi",
+		"documentation.files.lyrics",
+	]
+}
+
+DocumentationSchema.methods.getCreationPathsToPopulate = function () {
+	return [
+		"documentation.creation.authors",
+		"documentation.creation.composers",
+		"documentation.creation.publishers",
+	]
+}
+
+DocumentationSchema.methods.getPerformancePathsToPopulate = function () {
+	let paths = ["documentation.performance.conductor"]
+	const doc = this.performance.performers
+	const path = "documentation.performance.performers"
+	for (let i = 0; i < doc.length; i++) {
+		this.populate(`${path}.${i}.user`).execPopulate()
+		for (let field of ["instruments", "vocals"]) {
+			for (let j = 0; j < doc[i][field].length; j++) {
+				paths.push(`${path}.${i}.${field}.${j}.instrument`)
+				// paths.push(`${path}.${i}.${field}.${j}.role`)
+			}
+		}
+	}
+	return paths
+}
+
+DocumentationSchema.methods.getRecordingPathsToPopulate = function () {
+	let paths = [
+		"documentation.recording.directors",
+		"documentation.recording.producers",
+	]
+	for (let field of ["recording", "mixing", "mastering"]) {
+		for (let i = 0; i < this.recording[field].length; i++)
+			paths.push(`documentation.recording.${field}.${i}.engineers`)
+	}
+	return paths
+}
+
+DocumentationSchema.methods.getInfoPathsToPopulate = function () {
+	return ["documentation.info.mainGenre", "documentation.info.secondaryGenres"]
 }
 
 module.exports = DocumentationSchema

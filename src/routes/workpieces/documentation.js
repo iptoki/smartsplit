@@ -1,6 +1,6 @@
 const Errors = require("../errors")
 const JWTAuth = require("../../service/JWTAuth")
-const DocumentationSchemas = require("../../schemas/workpieces/documentation")
+const DocumentationSchema = require("../../schemas/workpieces/documentation")
 
 /************************ Routes ************************/
 
@@ -17,46 +17,12 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: DocumentationSchemas.documentation,
+				200: DocumentationSchema.serialization.documentation,
 			},
 			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthUser,
 		handler: getDocumentation,
-	})
-
-	fastify.route({
-		method: "GET",
-		url: "/workpieces/:workpiece_id/documentation/:field",
-		schema: {
-			tags: ["workpiece_documentation"],
-			description: "Get a workpiece's documentation",
-			params: {
-				workpiece_id: {
-					type: "string",
-				},
-				field: {
-					type: "string",
-					enum: [
-						"creation",
-						"performance",
-						"recording",
-						"release",
-						"files",
-						"info",
-						"lyrics",
-						"streaming",
-					],
-				},
-			},
-			response: {
-				200: DocumentationSchemas.documentationField,
-			},
-			security: [{ bearerAuth: [] }],
-		},
-		preValidation: JWTAuth.requireAuthUser,
-		handler: getDocumentationField,
-		serializerCompiler: documentationFieldSerializer,
 	})
 
 	fastify.route({
@@ -70,49 +36,14 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: DocumentationSchemas.documentation,
+			body: DocumentationSchema.validation.updateDocumentation,
 			response: {
-				200: DocumentationSchemas.documentation,
+				200: DocumentationSchema.serialization.documentation,
 			},
 			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthUser,
 		handler: updateDocumentation,
-	})
-
-	fastify.route({
-		method: "PATCH",
-		url: "/workpieces/:workpiece_id/documentation/:field",
-		schema: {
-			tags: ["workpiece_documentation"],
-			description: "Patch a workpiece's documentation field",
-			params: {
-				workpiece_id: {
-					type: "string",
-				},
-				field: {
-					type: "string",
-					enum: [
-						"creation",
-						"performance",
-						"recording",
-						"release",
-						"files",
-						"info",
-						"lyrics",
-						"streaming",
-					],
-				},
-			},
-			body: DocumentationSchemas.documentationField,
-			response: {
-				200: DocumentationSchemas.documentationField,
-			},
-			security: [{ bearerAuth: [] }],
-		},
-		preValidation: JWTAuth.requireAuthUser,
-		handler: updateDocumentationField,
-		serializerCompiler: documentationFieldSerializer,
 	})
 
 	fastify.route({
@@ -155,7 +86,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				201: DocumentationSchemas.file,
+				201: DocumentationSchema.serialization.file,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -180,9 +111,9 @@ async function routes(fastify, options) {
 					},
 				},
 			},
-			body: DocumentationSchemas.fileRequestBody,
+			body: DocumentationSchema.validation.updateFile,
 			response: {
-				200: DocumentationSchemas.file,
+				200: DocumentationSchema.serialization.file,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -228,19 +159,25 @@ const getWorkpieceFileLocation = function (workpiece, file_id) {
 const getWorkpieceFile = async function (workpiece, file_id) {
 	const location = getWorkpieceFileLocation(workpiece, file_id)
 	if (location.index < 0) throw Errors.WorkpieceFileNotFound
-	await workpiece.populateFiles()
+	await workpiece
+		.populate(workpiece.documentation.getFilesPathsToPopulate())
+		.execPopulate()
 	return workpiece.documentation.files[location.type][location.index]
 }
 
 const getDocumentation = async function (req, res) {
 	const workpiece = await getWorkpiece(req, res)
-	await workpiece.populateDocumentation()
+	await workpiece
+		.populate(workpiece.documentation.getPathsToPopulate())
+		.execPopulate()
 	return workpiece.documentation
 }
 
 const getDocumentationField = async function (req, res) {
 	const workpiece = await getWorkpiece(req, res)
-	await workpiece.populateDocumentation()
+	await workpiece
+		.populate(workpiece.documentation.getPathsToPopulate())
+		.execPopulate()
 	return {
 		field: req.params.field,
 		data: workpiece.documentation[req.params.field],
@@ -249,9 +186,13 @@ const getDocumentationField = async function (req, res) {
 
 const updateDocumentation = async function (req, res) {
 	const workpiece = await getWorkpieceAsOwner(req, res)
+
 	await workpiece.documentation.update(req.body)
 	await workpiece.save()
-	await workpiece.populateDocumentation()
+	await workpiece
+		.populate(workpiece.documentation.getPathsToPopulate())
+		.execPopulate()
+
 	return workpiece.documentation
 }
 
@@ -313,7 +254,9 @@ const updateFile = async function (req, res) {
 	}
 	await file.save()
 	await workpiece.save()
-	await workpiece.populateFiles()
+	await workpiece
+		.populate(workpiece.documentation.getFilesPathsToPopulate())
+		.execPopulate()
 	return workpiece.documentation.files[location.type][location.index]
 }
 
@@ -338,7 +281,7 @@ const deleteFile = async function (req, res) {
 function documentationFieldSerializer({ schema, method, url, httpStatus }) {
 	const fastJson = require("fast-json-stringify")
 	return (response) => {
-		const stringify = fastJson(DocumentationSchemas[response.field])
+		const stringify = fastJson(DocumentationSchema[response.field])
 		return stringify(response.data)
 	}
 }

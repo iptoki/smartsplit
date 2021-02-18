@@ -1,6 +1,7 @@
 const JWTAuth = require("../service/JWTAuth")
 const Entity = require("../models/entities/entity")
-const EntitiesSchema = require("../schemas/entities")
+const EntitySchema = require("../schemas/entities")
+const EntityTypes = require("../constants/entityTypes")
 const Errors = require("./errors")
 
 /************************ Routes ************************/
@@ -15,6 +16,7 @@ async function routes(fastify, options) {
 			params: {
 				entity_type: {
 					type: "string",
+					enum: EntityTypes.list,
 				},
 			},
 			querystring: {
@@ -32,7 +34,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: EntitiesSchema.list,
+				200: { type: "array", items: EntitySchema.serialization.entity },
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -50,10 +52,11 @@ async function routes(fastify, options) {
 			params: {
 				entity_id: {
 					type: "string",
+					enum: EntityTypes.list,
 				},
 			},
 			response: {
-				200: EntitiesSchema.entity,
+				200: EntitySchema.serialization.entity,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -71,11 +74,12 @@ async function routes(fastify, options) {
 			params: {
 				entity_type: {
 					type: "string",
+					enum: EntityTypes.list,
 				},
 			},
-			body: EntitiesSchema.entityRequestBody,
+			body: EntitySchema.validation.createUpdateEntity,
 			response: {
-				201: EntitiesSchema.entity,
+				201: EntitySchema.serialization.entity,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -93,11 +97,12 @@ async function routes(fastify, options) {
 			params: {
 				entity_id: {
 					type: "string",
+					enum: EntityTypes.list,
 				},
 			},
-			body: EntitiesSchema.entityRequestBody,
+			body: EntitySchema.validation.createUpdateEntity,
 			response: {
-				200: EntitiesSchema.entity,
+				200: EntitySchema.serialization.entity,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -115,6 +120,7 @@ async function routes(fastify, options) {
 			params: {
 				entity_id: {
 					type: "string",
+					enum: EntityTypes.list,
 				},
 			},
 			response: {
@@ -151,11 +157,15 @@ async function createEntity(req, res) {
 	if (req.query.admin === true && !req.authUser.isAdmin)
 		throw Errors.UserForbidden
 
-	if (!req.authUser.isAdmin && req.params.entity_type === "digital-distributor")
+	if (
+		!req.authUser.isAdmin &&
+		req.params.entity_type === EntityTypes.DIGITAL_DISTRIBUTOR
+	)
 		throw Errors.UserForbidden
 
 	const base =
-		req.query.admin === true || req.params.entity_type === "digital-distributor"
+		req.query.admin === true ||
+		req.params.entity_type === EntityTypes.DIGITAL_DISTRIBUTOR
 			? { users: false }
 			: { users: [req.authUser._id] }
 
@@ -220,7 +230,10 @@ async function getEntities(req, res) {
 }
 
 async function updateEntity(req, res) {
-	if (!req.authUser.isAdmin && req.params.entity_type === "digital-distributor")
+	if (
+		!req.authUser.isAdmin &&
+		req.params.entity_type === EntityTypes.DIGITAL_DISTRIBUTOR
+	)
 		throw Errors.UserForbidden
 
 	const entity = await getEntityById(req, res)
@@ -237,7 +250,10 @@ async function updateEntity(req, res) {
 }
 
 async function deleteEntity(req, res) {
-	if (!req.authUser.isAdmin && req.params.entity_type === "digital-distributor")
+	if (
+		!req.authUser.isAdmin &&
+		req.params.entity_type === EntityTypes.DIGITAL_DISTRIBUTOR
+	)
 		throw Errors.UserForbidden
 
 	const entity = await getEntityById(req, res)
@@ -272,7 +288,7 @@ async function seedEntities(req, res) {
 function entitySerializer({ schema, method, url, httpStatus }) {
 	const fastJson = require("fast-json-stringify")
 	return (entity) => {
-		const stringify = fastJson(EntitiesSchema[entity.type])
+		const stringify = fastJson(EntitySchema.serialization[entity.type])
 		return stringify(entity)
 	}
 }
@@ -283,7 +299,7 @@ function listSerializer({ schema, method, url, httpStatus }) {
 		if (list.length === 0) return JSON.stringify(list)
 		const stringify = fastJson({
 			type: "array",
-			items: EntitiesSchema[list[0].type],
+			items: EntitySchema.serialization[list[0].type],
 		})
 		return stringify(list)
 	}

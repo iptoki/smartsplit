@@ -13,10 +13,6 @@ module.exports = {
 				type: "string",
 				example: "Biquette#1!",
 			},
-			expires: {
-				type: "string",
-				exemple: "5 days",
-			},
 		},
 		additionalProperties: false,
 	},
@@ -27,7 +23,7 @@ module.exports = {
 			accessToken: {
 				type: "string",
 			},
-			user: UserSchema.user,
+			user: UserSchema.serialization.user,
 		},
 	},
 }

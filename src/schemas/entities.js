@@ -1,45 +1,45 @@
-module.exports.locale = {
+const EntityTypes = require("../constants/entityTypes")
+
+const adminFields = {
+	users: {
+		oneOf: [
+			{
+				type: "boolean",
+				enum: [false],
+			},
+			{
+				type: "array",
+				items: { type: "string" },
+			},
+		],
+	},
+	adminReview: { type: "string" },
+}
+
+const locale = {
 	type: "object",
 	properties: {
 		fr: { type: "string" },
 		en: { type: "string" },
 	},
+	additionalProperties: false,
 }
 
-module.exports.genericEntityFields = {
-	entity_id: {
-		type: "string",
-	},
-	// tags: {
-	// 	type: "array",
-	// 	items: {
-	// 		type: "string",
-	// 	},
-	// },
-	// users: {
-	// 	oneOf: [
-	// 		{
-	// 			type: "boolean",
-	// 			enum: [false],
-	// 		},
-	// 		{
-	// 			type: "array",
-	// 			items: {
-	// 				type: "string",
-	// 			},
-	// 		},
-	// 	],
-	// },
-	// adminReview: {
-	// 	type: "string",
-	// },
-}
-
-module.exports["content-language"] = {
+const link = {
 	type: "object",
 	properties: {
-		...this.genericEntityFields,
-		name: this.locale,
+		name: { type: "string" },
+		id: { type: "string" },
+		uri: { type: "string" },
+	},
+	additionalProperties: false,
+}
+
+const contentLanguage = {
+	type: "object",
+	properties: {
+		entity_id: { type: "string" },
+		name: locale,
 		altNames: {
 			type: "array",
 			items: {
@@ -47,117 +47,127 @@ module.exports["content-language"] = {
 			},
 		},
 	},
+	additionalProperties: false,
 }
 
-module.exports["digital-distributor"] = {
+const digitalDistributor = {
 	type: "object",
 	properties: {
-		...this.genericEntityFields,
-		name: {
-			type: "string",
-		},
-		icon: {
-			type: "string",
-		},
-		localizedName: this.locale,
+		entity_id: { type: "string" },
+		name: { type: "string" },
+		icon: { type: "string" },
+		localizedName: locale,
 		domains: {
 			type: "array",
-			items: {
-				type: "string",
-			},
+			items: { type: "string" },
 		},
 		markets: {
 			type: "array",
-			items: {
-				type: "string",
-			},
+			items: { type: "string" },
 		},
-		streaming: {
-			type: "boolean",
-		},
-
-		download: {
-			type: "boolean",
-		},
-		other: {
-			type: "boolean",
-		},
-		blockchain: {
-			type: "boolean",
-		},
+		streaming: { type: "boolean" },
+		download: { type: "boolean" },
+		other: { type: "boolean" },
+		blockchain: { type: "boolean" },
 	},
+	additionalProperties: false,
 }
 
-module.exports.link = {
+const instrument = {
 	type: "object",
 	properties: {
-		name: {
-			type: "string",
-		},
-		id: {
-			type: "string",
-		},
-		uri: {
-			type: "string",
-		},
-	},
-}
-
-module.exports.instrument = {
-	type: "object",
-	properties: {
-		...this.genericEntityFields,
-		name: {
-			type: "string",
-		},
+		entity_id: { type: "string" },
+		name: { type: "string" },
 		links: {
 			type: "array",
-			items: this.link,
+			items: link,
 		},
-		langs: this.locale,
+		langs: locale,
 	},
+	additionalProperties: false,
 }
 
-module.exports["musical-genre"] = {
+const musicalGenre = {
 	type: "object",
 	properties: {
-		...this.genericEntityFields,
-		name: {
-			type: "string",
-		},
+		entity_id: { type: "string" },
+		name: { type: "string" },
 		links: {
 			type: "array",
-			items: this.link,
+			items: link,
 		},
-		langs: this.locale,
+		langs: locale,
 		parents: {
 			type: "array",
-			items: {
-				type: "string",
-			},
+			items: { type: "string" },
 		},
 	},
+	additionalProperties: false,
 }
 
-module.exports.list = {
-	type: "array",
-	items: this.entity,
+const createUpdateContentLanguage = {
+	type: "object",
+	properties: {
+		...contentLanguage.properties,
+		...adminFields,
+	},
+	additionalProperties: false,
 }
 
-module.exports.entity = {
-	anyOf: [
-		this["content-language"],
-		this["digital-distributor"],
-		this.instrument,
-		this["musical-genre"],
+const createUpdateDigitalDistributor = {
+	type: "object",
+	properties: {
+		...digitalDistributor.properties,
+		...adminFields,
+	},
+	additionalProperties: false,
+}
+
+const createUpdateInstrument = {
+	type: "object",
+	properties: {
+		...instrument.properties,
+		...adminFields,
+	},
+	additionalProperties: false,
+}
+
+const createUpdateMusicalGenre = {
+	type: "object",
+	properties: {
+		...musicalGenre.properties,
+		...adminFields,
+	},
+	additionalProperties: false,
+}
+
+delete createUpdateInstrument.properties.entity_id
+delete createUpdateMusicalGenre.properties.entity_id
+delete createUpdateContentLanguage.properties.entity_id
+delete createUpdateDigitalDistributor.properties.entity_id
+
+const createUpdateEntity = {
+	oneOf: [
+		createUpdateInstrument,
+		createUpdateMusicalGenre,
+		createUpdateContentLanguage,
+		createUpdateDigitalDistributor,
 	],
 }
 
-const entityRequestBody = JSON.parse(JSON.stringify(this.entity))
-
-for (schema of entityRequestBody.anyOf) {
-	delete schema.properties.entity_id
-	schema.additionalProperties = false
+const entity = {
+	anyOf: [instrument, musicalGenre, contentLanguage, digitalDistributor],
 }
 
-module.exports.entityRequestBody = entityRequestBody
+module.exports = {
+	serialization: {
+		entity,
+		[EntityTypes.INSTRUMENT]: instrument,
+		[EntityTypes.MUSICAL_GENRE]: musicalGenre,
+		[EntityTypes.CONTENT_LANGUAGE]: contentLanguage,
+		[EntityTypes.DIGITAL_DISTRIBUTOR]: digitalDistributor,
+	},
+	validation: {
+		createUpdateEntity,
+	},
+}

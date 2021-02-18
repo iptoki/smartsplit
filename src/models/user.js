@@ -118,7 +118,7 @@ const UserSchema = new mongoose.Schema(
 			type: PermissionSchema,
 			default: {},
 		},
-		professional_identity: {
+		professionalIdentity: {
 			type: ProfessionalIdentitySchema,
 			default: {},
 		},
@@ -410,39 +410,106 @@ UserSchema.methods.setMobilePhone = async function (number, verified = false) {
 		verificationCode: { code: generateRandomCode(), createdAt: new Date() },
 	}
 
-	await this.sendSMS(UserTemplates.VERIFY_MOBILE_PHONE, false, false)
+	this.sendSMS(UserTemplates.VERIFY_MOBILE_PHONE, false, false)
 }
 
 /**
  * Sets the user's profesional identity
  */
-UserSchema.methods.setProfessionalIdentity = function (professional_identity) {
-	if (Array.isArray(professional_identity.ids)) {
+UserSchema.methods.setProfessionalIdentity = function (professionalIdentity) {
+	if (Array.isArray(professionalIdentity.ids)) {
 		let map = {}
-		professional_identity.ids.forEach(function (id) {
+		professionalIdentity.ids.forEach(function (id) {
 			if (id.name.length && id.value.length)
 				map[id.name.toLowerCase().trim()] = id.value
 		})
-		this.professional_identity.ids = []
+		this.professionalIdentity.ids = []
 		for (const [name, value] of Object.entries(map))
-			this.professional_identity.ids.push({ name, value })
+			this.professionalIdentity.ids.push({ name, value })
 	}
 
-	if (typeof professional_identity.public === "boolean")
-		this.professional_identity.public = professional_identity.public
+	if (typeof professionalIdentity.public === "boolean")
+		this.professionalIdentity.public = professionalIdentity.public
+}
+
+UserSchema.methods.getCollaboratorsByDegree = async function (degree = 0) {
+	if (!this.populated("collaborators"))
+		await this.populate("collaborators").execPopulate()
+	let collaboratorMap = [this.collaborators]
+	for (let d = 1; d <= degree; d++) {
+		if (collaboratorMap[d - 1].length < 0) break
+		let promises = []
+		collaboratorMap[d] = []
+		for (let c of collaboratorMap[d - 1])
+			promises.push(c.populate("collaborators").execPopulate())
+		for (const c of await Promise.all(promises))
+			collaboratorMap[d] = collaboratorMap[d].concat(c.collaborators)
+	}
+	return collaboratorMap
+}
+
+UserSchema.methods.getCollaborators = async function (
+	degree = 0,
+	search_terms = "",
+	limit = 1,
+	skip = 0
+) {
+	const collaboratorMap = await this.getCollaboratorsByDegree(degree)
+
+	let regex = ""
+	if (search_terms) {
+		let s_t = [search_terms]
+		if (search_terms.includes(" ")) s_t = s_t.concat(search_terms.split(" "))
+		regex = new RegExp(s_t.join("|"))
+	}
+
+	let result = []
+	let _limit = limit + skip
+	let visitedIds = []
+
+	for (let collaborators of collaboratorMap) {
+		if (_limit < 1) break
+		let ids = []
+		for (let collab of collaborators) {
+			if (!visitedIds.includes(collab._id)) {
+				ids.push(collab._id)
+				visitedIds.push(collab._id)
+			}
+		}
+		const matches = await this.model("User")
+			.find({
+				$and: [
+					{ _id: { $in: ids } },
+					{
+						$or: [
+							{ firstName: { $regex: regex, $options: "i" } },
+							{ lastName: { $regex: regex, $options: "i" } },
+							{ artistName: { $regex: regex, $options: "i" } },
+						],
+					},
+				],
+			})
+			.limit(_limit)
+		_limit = _limit - matches.length
+		result = result.concat(matches)
+	}
+
+	result.splice(0, skip)
+	return result
 }
 
 /**
  * Add collaborators to the user
  */
 UserSchema.methods.addCollaborators = async function (collaboratorIds) {
-	for (const id of collaboratorIds) {
+	let promises = []
+	for (const uid of collaboratorIds) {
 		if (!this.collaborators.includes(id)) {
-			if (!(await this.model("User").exists({ _id: id })))
-				throw Errors.CollaboratorNotFound
-			this.collaborators.push(id)
+			promises.push(this.model("User").ensureExist(uid))
+			this.collaborators.push(uid)
 		}
 	}
+	await Promise.all(promises)
 }
 
 /**
@@ -470,7 +537,7 @@ UserSchema.methods.deleteAccount = async function () {
 	this.avatar = undefined
 	this.mobilePhone = undefined
 	this.permissions = undefined
-	this.professional_identity = undefined
+	this.professionalIdentity = undefined
 	this.collaborators = undefined
 	await this.save()
 }
@@ -488,7 +555,7 @@ UserSchema.methods.setAvatar = async function (avatar) {
 /*
  * Sets the user's primary email
  */
-UserSchema.methods.setPrimaryEmail = async function (email) {
+UserSchema.methods.setPrimaryEmail = function (email) {
 	email = normalizeEmailAddress(email)
 	const index = this.emails.indexOf(email)
 	if (index < 0) throw Errors.EmailNotFound
@@ -589,18 +656,16 @@ UserSchema.methods.createActivationToken = function (
 /*
  * Sends a notification to the user through the medium set in the user's preferences
  */
-UserSchema.methods.sendNotification = async function (
-	templateName,
-	options = {}
-) {
-	try {
-		await this.sendSMS(templateName)
-		await this.sendEmail(templateName, options)
-		await this.sendPush(templateName)
-	} catch (err) {
-		console.error("Failed to send notification")
-		console.error(err)
-	}
+UserSchema.methods.sendNotification = function (templateName, options = {}) {
+	this.sendSMS(templateName).catch((err) =>
+		console.log("Error while sending SMS notification: " + err)
+	)
+	this.sendEmail(templateName, options).catch((err) =>
+		console.log("Error while sending email notification: " + err)
+	)
+	this.sendPush(templateName).catch((err) =>
+		console.log("Error while sending push notification: " + err)
+	)
 }
 
 /**
@@ -651,6 +716,13 @@ UserSchema.methods.sendPush = async function (templateName) {
 		return null
 
 	return "push not implemented"
+}
+
+UserSchema.statics.ensureExist = function (id) {
+	return this.exists({ _id: id }).then((exist) => {
+		if (!exist) return Promise.reject(Errors.UserNotFound)
+		else return Promise.resolve()
+	})
 }
 
 module.exports = mongoose.model("User", UserSchema)

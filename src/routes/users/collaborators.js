@@ -20,10 +20,30 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
+			querystring: {
+				search_terms: { type: "string" },
+				degree: {
+					type: "integer",
+					minimum: 0,
+					maximum: 3,
+					default: 0,
+				},
+				limit: {
+					type: "integer",
+					minimum: 1,
+					maximum: 250,
+					default: 50,
+				},
+				skip: {
+					type: "integer",
+					minimum: 0,
+					default: 0,
+				},
+			},
 			response: {
 				200: {
 					type: "array",
-					items: UserSchema.userPublicProfile,
+					items: UserSchema.serialization.collaborator,
 				},
 			},
 			security: [{ bearerAuth: [] }],
@@ -47,7 +67,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: UserSchema.userPublicProfile,
+				200: UserSchema.serialization.collaborator,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -67,27 +87,9 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: {
-				type: "object",
-				required: ["email"],
-				properties: {
-					firstName: {
-						type: "string",
-					},
-					lastName: {
-						type: "string",
-					},
-					artistName: {
-						type: "string",
-					},
-					email: {
-						type: "string",
-					},
-				},
-				additionalProperties: false,
-			},
+			body: UserSchema.validation.createCollaborator,
 			response: {
-				201: UserSchema.user,
+				201: UserSchema.serialization.collaborator,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -111,7 +113,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: UserSchema.user,
+				200: UserSchema.serialization.collaborator,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -147,12 +149,12 @@ async function routes(fastify, options) {
 
 async function getCollaborators(req, res) {
 	const user = await getUser(req, res)
-	await user.populate("collaborators").execPopulate()
-	for (let collab of user.collaborators) {
-		if (!collab.professional_identity.public)
-			collab.professional_identity = undefined
-	}
-	return user.collaborators
+	return await user.getCollaborators(
+		parseInt(req.query.degree),
+		req.query.search_terms,
+		parseInt(req.query.limit),
+		parseInt(req.query.skip)
+	)
 }
 
 async function getCollaboratorById(req, res) {
@@ -160,12 +162,7 @@ async function getCollaboratorById(req, res) {
 	if (!user.collaborators.includes(req.params.collaborator_id))
 		throw Errors.CollaboratorNotFound
 
-	const collaborator = await User.findById(req.params.collaborator_id)
-
-	if (!collaborator.professional_identity.public)
-		collab.professional_identity = undefined
-
-	return collaborator
+	return await User.findById(req.params.collaborator_id)
 }
 
 async function createCollaborator(req, res) {
@@ -181,10 +178,9 @@ async function createCollaborator(req, res) {
 
 	const emailVerif = await collaborator.addPendingEmail(req.body.email)
 
-	await collaborator.save()
-	await emailVerif.save()
+	await Promise.all([collaborator.save(), emailVerif.save()])
 
-	await collaborator.sendNotification(UserTemplates.SPLIT_INVITED, {
+	collaborator.sendNotification(UserTemplates.SPLIT_INVITED, {
 		to: { name: collaborator.fullName, email: emailVerif._id },
 	})
 
@@ -210,7 +206,7 @@ async function deleteCollaboratorById(req, res) {
 
 	if (index < 0) throw Errors.CollaboratorNotFound
 
-	user.splice(index, 1)
+	user.collaborators.splice(index, 1)
 	await user.save()
 
 	res.code(204).send()

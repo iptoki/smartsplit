@@ -18,9 +18,9 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: RightSplitSchemas.rightSplitRequestBody,
+			body: RightSplitSchemas.validation.createUpdateRightSplit,
 			response: {
-				201: RightSplitSchemas.rightSplit,
+				201: RightSplitSchemas.serialization.rightSplit,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -39,9 +39,9 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: RightSplitSchemas.rightSplitRequestBody,
+			body: RightSplitSchemas.validation.createUpdateRightSplit,
 			response: {
-				200: RightSplitSchemas.rightSplit,
+				200: RightSplitSchemas.serialization.rightSplit,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -80,7 +80,7 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: RightSplitSchemas.rightSplitSubmitBody,
+			body: RightSplitSchemas.validation.submitRightSplit,
 			response: {
 				204: {},
 			},
@@ -101,7 +101,7 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: RightSplitSchemas.rightSplitVoteBody,
+			body: RightSplitSchemas.validation.voteRightSplit,
 			response: {
 				204: {},
 			},
@@ -174,7 +174,9 @@ const create = async function (req, res) {
 
 	await workpiece.setRightSplit(req.body)
 	await workpiece.save()
-	await workpiece.populateRightSplit()
+	await workpiece
+		.populate(workpiece.rightSplit.getPathsToPopulate())
+		.execPopulate()
 
 	res.code(201)
 	return workpiece.rightSplit
@@ -185,7 +187,9 @@ const update = async function (req, res) {
 
 	await workpiece.setRightSplit(req.body)
 	await workpiece.save()
-	await workpiece.populateRightSplit()
+	await workpiece
+		.populate(workpiece.rightSplit.getPathsToPopulate())
+		.execPopulate()
 
 	return workpiece.rightSplit
 }
@@ -207,7 +211,7 @@ const submit = async function (req, res) {
 
 	await workpiece.populate("rightHolders").execPopulate()
 
-	for (let rh of workpiece.rightHolders) {
+	for (const rh of workpiece.rightHolders) {
 		if (emails[rh._id] && !rh.emails.includes(emails[rh._id])) {
 			const pending = await rh.addPendingEmail(emails[rh._id])
 			await pending.save()
