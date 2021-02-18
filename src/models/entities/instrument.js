@@ -1,6 +1,7 @@
 const mongoose = require("mongoose")
 const Entity = require("./entity")
 const LocaleSchema = require("./locale")
+const EntityTypes = require("../../constants/entityTypes")
 const { EntityNotFound } = require("../../routes/errors")
 
 /**
@@ -37,4 +38,4 @@ InstrumentEntity.statics.ensureExist = function (id) {
 	})
 }
 
-module.exports = Entity.discriminator("instrument", InstrumentEntity)
+module.exports = Entity.discriminator(EntityTypes.INSTRUMENT, InstrumentEntity)

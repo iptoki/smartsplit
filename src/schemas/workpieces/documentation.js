@@ -34,7 +34,7 @@ const file = {
 const performerTool = {
 	type: "object",
 	properties: {
-		instrument: EntitySchema.instrument,
+		instrument: EntitySchema.serialization.instrument,
 		role: { type: "string" },
 		notes: { type: "string" },
 	},
@@ -195,10 +195,10 @@ const info = {
 	properties: {
 		length: { type: "string" },
 		BPM: { type: "number" },
-		mainGenre: EntitySchema[EntityTypes.MUSICAL_GENRE],
+		mainGenre: EntitySchema.serialization[EntityTypes.MUSICAL_GENRE],
 		secondaryGenres: {
 			type: "array",
-			items: EntitySchema[EntityTypes.MUSICAL_GENRE],
+			items: EntitySchema.serialization[EntityTypes.MUSICAL_GENRE],
 		},
 		influences: {
 			type: "array",

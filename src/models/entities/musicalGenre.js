@@ -1,6 +1,7 @@
 const mongoose = require("mongoose")
 const Entity = require("./entity")
 const LocaleSchema = require("./locale")
+const EntityTypes = require("../../constants/entityTypes")
 const { EntityNotFound } = require("../../routes/errors")
 
 /**
@@ -23,7 +24,7 @@ const MusicalGenreEntity = new mongoose.Schema(
 		parents: [
 			{
 				type: String,
-				ref: "musical-genre",
+				ref: EntityTypes.MUSICAL_GENRE,
 			},
 		],
 	},
@@ -43,4 +44,7 @@ MusicalGenreEntity.statics.ensureExist = function (id) {
 	})
 }
 
-module.exports = Entity.discriminator("musical-genre", MusicalGenreEntity)
+module.exports = Entity.discriminator(
+	EntityTypes.MUSICAL_GENRE,
+	MusicalGenreEntity
+)

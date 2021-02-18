@@ -1,6 +1,7 @@
 const mongoose = require("mongoose")
 const Entity = require("./entity")
 const LocaleSchema = require("./locale")
+const EntityTypes = require("../../constants/entityTypes")
 const { EntityNotFound } = require("../../routes/errors")
 
 /**
@@ -72,6 +73,6 @@ DigitalDistributorEntity.statics.ensureExist = function (id) {
 }
 
 module.exports = Entity.discriminator(
-	"digital-distributor",
+	EntityTypes.DIGITAL_DISTRIBUTOR,
 	DigitalDistributorEntity
 )

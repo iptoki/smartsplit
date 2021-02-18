@@ -61,7 +61,7 @@ EntitySchema.statics.ensureExist = function (id) {
 
 module.exports = mongoose.model("Entity", EntitySchema)
 
-require("./content-language")
-require("./digital-distributor")
-require("./musical-genre")
+require("./contentLanguage")
+require("./digitalDistributor")
+require("./musicalGenre")
 require("./instrument")

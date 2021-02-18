@@ -1,9 +1,9 @@
 const Constant = require("./constant")
 
 const INSTRUMENT = "instrument"
-const DIGITAL_DISTRIBUTOR = "digital-distributor"
-const MUSICAL_GENRE = "musical-genre"
-const CONTENT_LANGUAGE = "content-language"
+const DIGITAL_DISTRIBUTOR = "digitalDistributor"
+const MUSICAL_GENRE = "musicalGenre"
+const CONTENT_LANGUAGE = "contentLanguage"
 
 class EntityTypes extends Constant {
 	static get INSTRUMENT() {
