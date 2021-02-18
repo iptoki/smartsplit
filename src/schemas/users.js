@@ -4,9 +4,7 @@ const AccountStatus = require("../constants/accountStatus")
 const mobilePhone = {
 	type: "object",
 	properties: {
-		number: {
-			type: "string",
-		},
+		number: { type: "string" },
 		status: {
 			type: "string",
 			enum: ["verified", "unverified"],
@@ -18,14 +16,10 @@ const mobilePhone = {
 const permissions = {
 	type: "object",
 	properties: {
-		admin: {
-			type: "boolean",
-		},
+		admin: { type: "boolean" },
 		users: {
 			type: "array",
-			items: {
-				type: "string",
-			},
+			items: { type: "string" },
 		},
 	},
 	additionalProperties: false,
@@ -88,12 +82,8 @@ const professionalIdentity = {
 			items: {
 				type: "object",
 				properties: {
-					name: {
-						type: "string",
-					},
-					value: {
-						type: "string",
-					},
+					name: { type: "string" },
+					value: { type: "string" },
 				},
 			},
 		},
@@ -108,43 +98,25 @@ const professionalIdentity = {
 const publicUser = {
 	type: "object",
 	properties: {
-		user_id: {
-			type: "string",
-		},
-		artistName: {
-			type: "string",
-		},
-		firstName: {
-			type: "string",
-		},
-		lastName: {
-			type: "string",
-		},
-		avatarUrl: {
-			type: "string",
-		},
+		user_id: { type: "string" },
+		artistName: { type: "string" },
+		firstName: { type: "string" },
+		lastName: { type: "string" },
+		avatarUrl: { type: "string" },
 		locale: {
 			type: "string",
 			enum: ["en", "fr"],
 		},
-		isni: {
-			type: "string",
-		},
+		isni: { type: "string" },
 		organisations: {
 			type: "array",
-			items: {
-				type: "string",
-			},
+			items: { type: "string" },
 		},
 		projects: {
 			type: "array",
-			items: {
-				type: "string",
-			},
+			items: { type: "string" },
 		},
-		uri: {
-			type: "string",
-		},
+		uri: { type: "string" },
 	},
 	additionalProperties: false,
 }
@@ -155,9 +127,7 @@ const collaborator = {
 		...publicUser.properties,
 		emails: {
 			type: "array",
-			items: {
-				type: "string",
-			},
+			items: { type: "string" },
 		},
 	},
 	additionalProperties: false,
@@ -177,17 +147,10 @@ const user = {
 		professionalIdentity,
 		collaborators: {
 			type: "array",
-			items: {
-				type: "string",
-			},
+			items: { type: "string" },
 		},
-		birthDate: {
-			type: "string",
-			format: "date",
-		},
-		address: {
-			type: "string",
-		},
+		birthDate: { type: "string" },
+		address: { type: "string" },
 	},
 	additionalProperties: false,
 }
@@ -197,11 +160,7 @@ const emailStatusList = {
 	items: {
 		type: "object",
 		properties: {
-			email: {
-				type: "string",
-				format: "email",
-				example: "qa@smartsplit.org",
-			},
+			email: { type: "string" },
 			status: {
 				type: "string",
 				enum: ["primary", "active", "pending"],
@@ -214,18 +173,10 @@ const createCollaborator = {
 	type: "object",
 	required: ["email"],
 	properties: {
-		firstName: {
-			type: "string",
-		},
-		lastName: {
-			type: "string",
-		},
-		artistName: {
-			type: "string",
-		},
-		email: {
-			type: "string",
-		},
+		firstName: { type: "string" },
+		lastName: { type: "string" },
+		artistName: { type: "string" },
+		email: { type: "string" },
 	},
 	additionalProperties: false,
 }
@@ -234,52 +185,32 @@ const updateUser = {
 	type: "object",
 	properties: {
 		...createCollaborator.properties,
-		phoneNumber: {
-			type: "string",
-		},
-		avatar: {
-			type: "string",
-		},
+		phoneNumber: { type: "string" },
+		avatar: { type: "string" },
 		locale: {
 			type: "string",
 			enum: ["en", "fr"],
 		},
 		notifications,
 		professionalIdentity,
-		isni: {
-			type: "string",
-		},
+		isni: { type: "string" },
 		birthDate: {
 			oneOf: [
-				{
-					type: "string",
-					format: "date",
-				},
-				{
-					// yes it sucks...
-					type: "string",
-					enum: [""],
-				},
+				// yes it sucks...
+				{ type: "string", format: "date" },
+				{ type: "string", enum: [""] },
 			],
 		},
-		address: {
-			type: "string",
-		},
+		address: { type: "string" },
 		organisations: {
 			type: "array",
-			items: {
-				type: "string",
-			},
+			items: { type: "string" },
 		},
 		projects: {
 			type: "array",
-			items: {
-				type: "string",
-			},
+			items: { type: "string" },
 		},
-		uri: {
-			type: "string",
-		},
+		uri: { type: "string" },
 	},
 	additionalProperties: false,
 }
@@ -289,9 +220,7 @@ const createUser = {
 	required: ["email", "password"],
 	properties: {
 		...updateUser.properties,
-		password: {
-			type: "string",
-		},
+		password: { type: "string" },
 	},
 	additionalProperties: false,
 }

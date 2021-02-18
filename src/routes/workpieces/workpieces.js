@@ -1,5 +1,5 @@
 const Workpiece = require("../../models/workpiece/workpiece")
-const WorkpieceSchemas = require("../../schemas/workpieces/workpieces")
+const WorkpieceSchema = require("../../schemas/workpieces/workpieces")
 const Errors = require("../errors")
 const JWTAuth = require("../../service/JWTAuth")
 
@@ -18,7 +18,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: { type: "array", items: WorkpieceSchemas.workpiece },
+				200: { type: "array", items: WorkpieceSchema.serialization.workpiece },
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -38,7 +38,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: { type: "array", items: WorkpieceSchemas.workpiece },
+				200: { type: "array", items: WorkpieceSchema.serialization.workpiece },
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -58,7 +58,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: WorkpieceSchemas.workpiece,
+				200: WorkpieceSchema.serialization.workpiece,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -77,11 +77,11 @@ async function routes(fastify, options) {
 			tags: ["workpieces_general"],
 			description: "Create a new workpiece in the system",
 			body: {
-				allOf: [WorkpieceSchemas.workpieceRequestBody],
+				allOf: [WorkpieceSchema.validation.createUpdateWorkpiece],
 				required: ["title"],
 			},
 			response: {
-				201: WorkpieceSchemas.workpiece,
+				201: WorkpieceSchema.serialization.workpiece,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -100,9 +100,9 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: WorkpieceSchemas.workpieceRequestBody,
+			body: WorkpieceSchema.validation.createUpdateWorkpiece,
 			response: {
-				200: WorkpieceSchemas.workpiece,
+				200: WorkpieceSchema.serialization.workpiece,
 			},
 			security: [{ bearerAuth: [] }],
 		},

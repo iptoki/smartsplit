@@ -1,59 +1,39 @@
 const UserSchema = require("../users")
 
-module.exports.copyrightSplit = {
+const createUpdateCopyrightSplit = {
 	type: "object",
 	properties: {
-		rightHolder: UserSchema.serialization.collaborator,
+		rightHolder: { type: "string" },
 		roles: {
 			type: "array",
-			items: {
-				type: "string",
-			},
+			items: { type: "string" },
 		},
-		vote: {
-			type: "string",
-			enum: ["undecided", "accepted", "rejected"],
-		},
-		comment: {
-			type: "string",
-		},
-		shares: {
-			type: "number",
-		},
+		shares: { type: "number" },
 	},
+	additionalProperties: false,
 }
 
-module.exports.performanceSplit = {
+const createUpdatePerformanceSplit = {
 	type: "object",
 	properties: {
-		rightHolder: UserSchema.serialization.collaborator,
+		rightHolder: { type: "string" },
 		roles: {
 			type: "array",
-			items: {
-				type: "string",
-			},
+			items: { type: "string" },
 		},
 		status: {
 			type: "string",
 			enum: ["principal", "featured", "bandMember", "session"],
 		},
-		vote: {
-			type: "string",
-			enum: ["undecided", "accepted", "rejected"],
-		},
-		comment: {
-			type: "string",
-		},
-		shares: {
-			type: "number",
-		},
+		shares: { type: "number" },
 	},
+	additionalProperties: false,
 }
 
-module.exports.recordingSplit = {
+const createUpdateRecordingSplit = {
 	type: "object",
 	properties: {
-		rightHolder: UserSchema.serialization.collaborator,
+		rightHolder: { type: "string" },
 		function: {
 			type: "string",
 			enum: [
@@ -65,250 +45,195 @@ module.exports.recordingSplit = {
 				"illustratorDesigner",
 			],
 		},
+		shares: { type: "number" },
+	},
+	additionalProperties: false,
+}
+
+const createUpdateLabel = {
+	type: "object",
+	properties: {
+		rightHolder: { type: "string" },
+		agreementDuration: { type: "string" },
+		notifViaEmail: { type: "boolean" },
+		notifViaText: { type: "boolean" },
+		shares: { type: "number" },
+	},
+	additionalProperties: false,
+}
+
+const createUpdateRightSplit = {
+	type: "object",
+	properties: {
+		isPublic: { type: "boolean" },
+		copyrightDividingMethod: {
+			type: "string",
+			enum: ["manual", "role", "equal"],
+		},
+		label: createUpdateLabel,
+		copyright: {
+			type: "array",
+			items: createUpdateCopyrightSplit,
+		},
+		performance: {
+			type: "array",
+			items: createUpdatePerformanceSplit,
+		},
+		recording: {
+			type: "array",
+			items: createUpdateRecordingSplit,
+		},
+	},
+	additionalProperties: false,
+}
+
+const copyrightSplit = {
+	type: "object",
+	properties: {
+		...createUpdateCopyrightSplit.properties,
+		rightHolder: UserSchema.serialization.collaborator,
 		vote: {
 			type: "string",
 			enum: ["undecided", "accepted", "rejected"],
 		},
-		comment: {
-			type: "string",
-		},
-		shares: {
-			type: "number",
-		},
+		comment: { type: "string" },
 	},
+	additionalProperties: false,
 }
 
-module.exports.label = {
+const performanceSplit = {
+	type: "object",
+	properties: {
+		...createUpdatePerformanceSplit.properties,
+		rightHolder: UserSchema.serialization.collaborator,
+		vote: {
+			type: "string",
+			enum: ["undecided", "accepted", "rejected"],
+		},
+		comment: { type: "string" },
+	},
+	additionalProperties: false,
+}
+
+const recordingSplit = {
+	type: "object",
+	properties: {
+		...createUpdateRecordingSplit.properties,
+		rightHolder: UserSchema.serialization.collaborator,
+		vote: {
+			type: "string",
+			enum: ["undecided", "accepted", "rejected"],
+		},
+		comment: { type: "string" },
+	},
+	additionalProperties: false,
+}
+
+const label = {
+	type: "object",
+	properties: {
+		...createUpdateLabel.properties,
+		rightHolder: UserSchema.serialization.collaborator,
+		vote: {
+			type: "string",
+			enum: ["undecided", "accepted", "rejected"],
+		},
+		comment: { type: "string" },
+	},
+	additionalProperties: false,
+}
+
+const privacy = {
 	type: "object",
 	properties: {
 		rightHolder: UserSchema.serialization.collaborator,
-		agreementDuration: {
-			type: "string",
-		},
-		notifViaEmail: {
-			type: "boolean",
-		},
-		notifViaText: {
-			type: "boolean",
-		},
-		shares: {
-			type: "number",
-		},
 		vote: {
 			type: "string",
 			enum: ["undecided", "accepted", "rejected"],
 		},
-		comment: {
-			type: "string",
-		},
+		comment: { type: "string" },
 	},
+	additionalProperties: false,
 }
 
-module.exports.privacy = {
-	type: "object",
-	properties: {
-		rightHolder: UserSchema.serialization.collaborator,
-		vote: {
-			type: "string",
-			enum: ["undecided", "accepted", "rejected"],
-		},
-		comment: {
-			type: "string",
-		},
-	},
-}
-
-module.exports.rightSplit = {
+const rightSplit = {
 	type: "object",
 	properties: {
 		_state: {
 			type: "string",
 			enum: ["draft", "voting", "accepted", "rejected"],
 		},
-		version: {
-			type: "number",
-		},
+		version: { type: "number" },
 		owner: UserSchema.serialization.collaborator,
-		isPublic: {
-			type: "boolean",
-		},
+		isPublic: { type: "boolean" },
 		copyrightDividingMethod: {
 			type: "string",
 			enum: ["manual", "role", "equal"],
 		},
-		label: this.label,
+		label,
 		copyright: {
 			type: "array",
-			items: this.copyrightSplit,
+			items: copyrightSplit,
 		},
 		performance: {
 			type: "array",
-			items: this.performanceSplit,
+			items: performanceSplit,
 		},
 		recording: {
 			type: "array",
-			items: this.recordingSplit,
+			items: recordingSplit,
 		},
 		privacy: {
 			type: "array",
-			items: this.privacy,
-		},
-	},
-}
-
-module.exports.labelRequestBody = {
-	type: "object",
-	properties: {
-		rightHolder: {
-			type: "string",
-		},
-		agreementDuration: {
-			type: "string",
-		},
-		notifViaEmail: {
-			type: "boolean",
-		},
-		notifViaText: {
-			type: "boolean",
-		},
-		shares: {
-			type: "number",
+			items: privacy,
 		},
 	},
 	additionalProperties: false,
 }
 
-module.exports.copyrightSplitRequestBody = {
-	type: "object",
-	properties: {
-		rightHolder: {
-			type: "string",
-		},
-		roles: {
-			type: "array",
-			items: {
-				type: "string",
-			},
-		},
-		shares: {
-			type: "number",
-		},
-	},
-	additionalProperties: false,
-}
-
-module.exports.performanceSplitRequestBody = {
-	type: "object",
-	properties: {
-		rightHolder: {
-			type: "string",
-		},
-		roles: {
-			type: "array",
-			items: {
-				type: "string",
-			},
-		},
-		status: {
-			type: "string",
-			enum: ["principal", "featured", "bandMember", "session"],
-		},
-		shares: {
-			type: "number",
-		},
-	},
-	additionalProperties: false,
-}
-
-module.exports.recordingSplitRequestBody = {
-	type: "object",
-	properties: {
-		rightHolder: {
-			type: "string",
-		},
-		function: {
-			type: "string",
-			enum: [
-				"producer",
-				"autoProducer",
-				"directorProducer",
-				"techProducer",
-				"studio",
-				"illustratorDesigner",
-			],
-		},
-		shares: {
-			type: "number",
-		},
-	},
-	additionalProperties: false,
-}
-
-module.exports.rightSplitRequestBody = {
-	type: "object",
-	properties: {
-		isPublic: {
-			type: "boolean",
-		},
-		copyrightDividingMethod: {
-			type: "string",
-			enum: ["manual", "role", "equal"],
-		},
-		label: this.labelRequestBody,
-		copyright: {
-			type: "array",
-			items: this.copyrightSplitRequestBody,
-		},
-		performance: {
-			type: "array",
-			items: this.performanceSplitRequestBody,
-		},
-		recording: {
-			type: "array",
-			items: this.recordingSplitRequestBody,
-		},
-	},
-	additionalProperties: false,
-}
-
-module.exports.vote = {
+const vote = {
 	type: "object",
 	properties: {
 		vote: {
 			type: "string",
 			enum: ["accepted", "rejected"],
 		},
-		comment: {
-			type: "string",
-		},
+		comment: { type: "string" },
 	},
 	additionalProperties: false,
 }
 
-module.exports.rightSplitVoteBody = {
+const voteRightSplit = {
 	type: "object",
 	properties: {
-		copyright: this.vote,
-		performance: this.vote,
-		recording: this.vote,
-		label: this.vote,
-		privacy: this.vote,
+		copyright: vote,
+		performance: vote,
+		recording: vote,
+		label: vote,
+		privacy: vote,
 	},
 	additionalProperties: false,
 }
 
-module.exports.rightSplitSubmitBody = {
+const submitRightSplit = {
 	type: "array",
 	items: {
 		type: "object",
 		properties: {
-			user_id: {
-				type: "string",
-			},
-			email: {
-				type: "string",
-			},
+			user_id: { type: "string" },
+			email: { type: "string" },
 		},
 	},
 	additionalProperties: false,
+}
+
+module.exports = {
+	serialization: {
+		rightSplit,
+	},
+	validation: {
+		voteRightSplit,
+		submitRightSplit,
+		createUpdateRightSplit,
+	},
 }
