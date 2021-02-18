@@ -230,13 +230,10 @@ const createCollaborator = {
 	additionalProperties: false,
 }
 
-const createUpdateUser = {
+const updateUser = {
 	type: "object",
 	properties: {
 		...createCollaborator.properties,
-		password: {
-			type: "string",
-		},
 		phoneNumber: {
 			type: "string",
 		},
@@ -287,6 +284,18 @@ const createUpdateUser = {
 	additionalProperties: false,
 }
 
+const createUser = {
+	type: "object",
+	required: ["email", "password"],
+	properties: {
+		...updateUser.properties,
+		password: {
+			type: "string",
+		},
+	},
+	additionalProperties: false,
+}
+
 module.exports = {
 	serialization: {
 		user,
@@ -295,7 +304,8 @@ module.exports = {
 		emailStatusList,
 	},
 	validation: {
-		createUpdateUser,
+		createUser,
+		updateUser,
 		createCollaborator,
 	},
 }

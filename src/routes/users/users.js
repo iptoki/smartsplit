@@ -55,10 +55,7 @@ async function routes(fastify, options) {
 		schema: {
 			tags: ["users_general"],
 			description: "Create a new user in the system",
-			body: {
-				allOf: [UserSchema.validation.createUpdateUser],
-				required: ["email", "password"],
-			},
+			body: UserSchema.validation.createUser,
 			response: {
 				201: UserSchema.serialization.user,
 			},
@@ -100,7 +97,7 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: UserSchema.validation.createUpdateUser,
+			body: UserSchema.validation.updateUser,
 			response: {
 				200: UserSchema.serialization.user,
 			},
