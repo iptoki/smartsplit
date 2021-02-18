@@ -236,10 +236,12 @@ RightSplitSchema.methods.updateState = function () {
 			}
 		}
 	}
-	if (label.vote !== "accepted") accepted = false
-	if (label.vote === "rejected") {
-		this._state = "rejected"
-		return
+	if(this.label){
+		if (this.label.vote !== "accepted") accepted = false
+		if (this.label.vote === "rejected") {
+			this._state = "rejected"
+			return
+		}
 	}
 	if (accepted) this._state = "accepted"
 }
