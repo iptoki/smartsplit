@@ -3,7 +3,7 @@ const UserSchema = require("../users")
 module.exports.copyrightSplit = {
 	type: "object",
 	properties: {
-		rightHolder: UserSchema.collaboratorProfile,
+		rightHolder: UserSchema.serialization.collaborator,
 		roles: {
 			type: "array",
 			items: {
@@ -26,7 +26,7 @@ module.exports.copyrightSplit = {
 module.exports.performanceSplit = {
 	type: "object",
 	properties: {
-		rightHolder: UserSchema.collaboratorProfile,
+		rightHolder: UserSchema.serialization.collaborator,
 		roles: {
 			type: "array",
 			items: {
@@ -53,7 +53,7 @@ module.exports.performanceSplit = {
 module.exports.recordingSplit = {
 	type: "object",
 	properties: {
-		rightHolder: UserSchema.collaboratorProfile,
+		rightHolder: UserSchema.serialization.collaborator,
 		function: {
 			type: "string",
 			enum: [
@@ -81,7 +81,7 @@ module.exports.recordingSplit = {
 module.exports.label = {
 	type: "object",
 	properties: {
-		rightHolder: UserSchema.collaboratorProfile,
+		rightHolder: UserSchema.serialization.collaborator,
 		agreementDuration: {
 			type: "string",
 		},
@@ -107,7 +107,7 @@ module.exports.label = {
 module.exports.privacy = {
 	type: "object",
 	properties: {
-		rightHolder: UserSchema.collaboratorProfile,
+		rightHolder: UserSchema.serialization.collaborator,
 		vote: {
 			type: "string",
 			enum: ["undecided", "accepted", "rejected"],
@@ -128,7 +128,7 @@ module.exports.rightSplit = {
 		version: {
 			type: "number",
 		},
-		owner: UserSchema.collaboratorProfile,
+		owner: UserSchema.serialization.collaborator,
 		isPublic: {
 			type: "boolean",
 		},

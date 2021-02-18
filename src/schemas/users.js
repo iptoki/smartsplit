@@ -1,7 +1,7 @@
 const Notifications = require("../models/notifications/notification")
 const AccountStatus = require("../constants/accountStatus")
 
-module.exports.mobilePhone = {
+const mobilePhone = {
 	type: "object",
 	properties: {
 		number: {
@@ -12,9 +12,10 @@ module.exports.mobilePhone = {
 			enum: ["verified", "unverified"],
 		},
 	},
+	additionalProperties: false,
 }
 
-module.exports.permissions = {
+const permissions = {
 	type: "object",
 	properties: {
 		admin: {
@@ -27,9 +28,10 @@ module.exports.permissions = {
 			},
 		},
 	},
+	additionalProperties: false,
 }
 
-module.exports.notifications = {
+const notifications = {
 	type: "object",
 	properties: {
 		[Notifications.GENERAL_INTERACTIONS]: {
@@ -38,7 +40,6 @@ module.exports.notifications = {
 				type: "string",
 				enum: ["email", "push", "sms"],
 			},
-			default: ["email", "push"],
 		},
 		[Notifications.ADMINISTRATIVE_MESSAGES]: {
 			type: "array",
@@ -46,7 +47,6 @@ module.exports.notifications = {
 				type: "string",
 				enum: ["email", "push", "sms"],
 			},
-			default: ["email", "push"],
 		},
 		[Notifications.ACCOUNT_LOGIN]: {
 			type: "array",
@@ -54,7 +54,6 @@ module.exports.notifications = {
 				type: "string",
 				enum: ["email", "push", "sms"],
 			},
-			default: [],
 		},
 		[Notifications.SMARTSPLIT_BLOG]: {
 			type: "array",
@@ -62,7 +61,6 @@ module.exports.notifications = {
 				type: "string",
 				enum: ["email", "push", "sms"],
 			},
-			default: [],
 		},
 		[Notifications.SMARTSPLIT_PROMOTIONS]: {
 			type: "array",
@@ -70,7 +68,6 @@ module.exports.notifications = {
 				type: "string",
 				enum: ["email", "push", "sms"],
 			},
-			default: [],
 		},
 		[Notifications.PARTNER_PROMOTIONS]: {
 			type: "array",
@@ -78,12 +75,12 @@ module.exports.notifications = {
 				type: "string",
 				enum: ["email", "push", "sms"],
 			},
-			default: [],
 		},
 	},
+	additionalProperties: false,
 }
 
-module.exports.professionalIdentity = {
+const professionalIdentity = {
 	type: "object",
 	properties: {
 		ids: {
@@ -105,12 +102,16 @@ module.exports.professionalIdentity = {
 			default: false,
 		},
 	},
+	additionalProperties: false,
 }
 
-module.exports.user = {
+const publicUser = {
 	type: "object",
 	properties: {
 		user_id: {
+			type: "string",
+		},
+		artistName: {
 			type: "string",
 		},
 		firstName: {
@@ -119,38 +120,66 @@ module.exports.user = {
 		lastName: {
 			type: "string",
 		},
-		artistName: {
+		avatarUrl: {
 			type: "string",
 		},
+		locale: {
+			type: "string",
+			enum: ["en", "fr"],
+		},
+		isni: {
+			type: "string",
+		},
+		organisations: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
+		projects: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
+		uri: {
+			type: "string",
+		},
+	},
+	additionalProperties: false,
+}
+
+const collaborator = {
+	type: "object",
+	properties: {
+		...publicUser.properties,
 		emails: {
 			type: "array",
 			items: {
 				type: "string",
 			},
 		},
+	},
+	additionalProperties: false,
+}
+
+const user = {
+	type: "object",
+	properties: {
+		...collaborator.properties,
 		accountStatus: {
 			type: "string",
 			enum: AccountStatus.list,
 		},
-		mobilePhone: this.mobilePhone,
-		permissions: this.permissions,
-		locale: {
-			type: "string",
-			enum: ["en", "fr"],
-		},
-		avatarUrl: {
-			type: "string",
-		},
-		notifications: this.notifications,
-		professionalIdentity: this.professionalIdentity,
+		mobilePhone,
+		permissions,
+		notifications,
+		professionalIdentity,
 		collaborators: {
 			type: "array",
 			items: {
 				type: "string",
 			},
-		},
-		isni: {
-			type: "string",
 		},
 		birthDate: {
 			type: "string",
@@ -159,30 +188,32 @@ module.exports.user = {
 		address: {
 			type: "string",
 		},
-		organisations: {
-			type: "array",
-			items: {
+	},
+	additionalProperties: false,
+}
+
+const emailStatusList = {
+	type: "array",
+	items: {
+		type: "object",
+		properties: {
+			email: {
 				type: "string",
+				format: "email",
+				example: "qa@smartsplit.org",
 			},
-		},
-		projects: {
-			type: "array",
-			items: {
+			status: {
 				type: "string",
+				enum: ["primary", "active", "pending"],
 			},
-		},
-		uri: {
-			type: "string",
 		},
 	},
 }
 
-module.exports.contributor = {
+const createCollaborator = {
 	type: "object",
+	required: ["email"],
 	properties: {
-		user_id: {
-			type: "string",
-		},
 		firstName: {
 			type: "string",
 		},
@@ -192,102 +223,18 @@ module.exports.contributor = {
 		artistName: {
 			type: "string",
 		},
-	},
-}
-
-module.exports.rightHolder = {
-	type: "object",
-	properties: {
-		rightHolder_id: {
-			type: "string",
-		},
-		firstName: {
-			type: "string",
-		},
-		lastName: {
-			type: "string",
-		},
-		artistName: {
-			type: "string",
-		},
-	},
-}
-
-module.exports.userPublicProfile = {
-	type: "object",
-	properties: {
-		user_id: {
-			type: "string",
-		},
-		artistName: {
-			type: "string",
-		},
-		firstName: {
-			type: "string",
-		},
-		lastName: {
-			type: "string",
-		},
-		avatarUrl: {
-			type: "string",
-		},
-		locale: {
-			type: "string",
-			enum: ["en", "fr"],
-		},
-		// TODO: this one is tricky, can't find an elegant solution for the moment
-		// Disabling it for the moment, I prefer that rather than leaking some user's private info
-		// professionalIdentity: this.professionalIdentity,
-		isni: {
-			type: "string",
-		},
-		organisations: {
-			type: "array",
-			items: {
-				type: "string",
-			},
-		},
-		projects: {
-			type: "array",
-			items: {
-				type: "string",
-			},
-		},
-		uri: {
-			type: "string",
-		},
-	},
-}
-
-module.exports.collaboratorProfile = {
-	type: "object",
-	properties: {
-		...this.userPublicProfile.properties,
-		emails: {
-			type: "array",
-			items: {
-				type: "string",
-			},
-		},
-	},
-}
-
-module.exports.userRequestBody = {
-	type: "object",
-	properties: {
 		email: {
 			type: "string",
 		},
+	},
+	additionalProperties: false,
+}
+
+const createUpdateUser = {
+	type: "object",
+	properties: {
+		...createCollaborator.properties,
 		password: {
-			type: "string",
-		},
-		artistName: {
-			type: "string",
-		},
-		firstName: {
-			type: "string",
-		},
-		lastName: {
 			type: "string",
 		},
 		phoneNumber: {
@@ -300,20 +247,8 @@ module.exports.userRequestBody = {
 			type: "string",
 			enum: ["en", "fr"],
 		},
-		notifications: this.notifications,
-		professionalIdentity: this.professionalIdentity,
-		collaborators: {
-			type: "array",
-			items: {
-				type: "string",
-			},
-		},
-		contributors: {
-			type: "array",
-			items: {
-				type: "string",
-			},
-		},
+		notifications,
+		professionalIdentity,
 		isni: {
 			type: "string",
 		},
@@ -324,6 +259,7 @@ module.exports.userRequestBody = {
 					format: "date",
 				},
 				{
+					// yes it sucks...
 					type: "string",
 					enum: [""],
 				},
@@ -351,20 +287,15 @@ module.exports.userRequestBody = {
 	additionalProperties: false,
 }
 
-module.exports.emailStatusList = {
-	type: "array",
-	items: {
-		type: "object",
-		properties: {
-			email: {
-				type: "string",
-				format: "email",
-				example: "qa@smartsplit.org",
-			},
-			status: {
-				type: "string",
-				enum: ["primary", "active", "pending"],
-			},
-		},
+module.exports = {
+	serialization: {
+		user,
+		publicUser,
+		collaborator,
+		emailStatusList,
+	},
+	validation: {
+		createUpdateUser,
+		createCollaborator,
 	},
 }

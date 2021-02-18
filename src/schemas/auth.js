@@ -27,7 +27,7 @@ module.exports = {
 			accessToken: {
 				type: "string",
 			},
-			user: UserSchema.user,
+			user: UserSchema.serialization.user,
 		},
 	},
 }

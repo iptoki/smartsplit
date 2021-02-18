@@ -22,7 +22,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: UserSchema.user,
+				200: UserSchema.serialization.user,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -56,11 +56,11 @@ async function routes(fastify, options) {
 			tags: ["users_general"],
 			description: "Create a new user in the system",
 			body: {
-				allOf: [UserSchema.userRequestBody],
+				allOf: [UserSchema.validation.createUpdateUser],
 				required: ["email", "password"],
 			},
 			response: {
-				201: UserSchema.user,
+				201: UserSchema.serialization.user,
 			},
 		},
 		handler: createUser,
@@ -100,9 +100,9 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: UserSchema.userRequestBody,
+			body: UserSchema.validation.createUpdateUser,
 			response: {
-				200: UserSchema.user,
+				200: UserSchema.serialization.user,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -214,7 +214,7 @@ async function routes(fastify, options) {
 async function preSerializeUser(req, res, user) {
 	if (res.userPublicSchema) {
 		const fastJson = require("fast-json-stringify")
-		const stringify = fastJson(UserSchema.userPublicProfile)
+		const stringify = fastJson(UserSchema.serialization.publicUser)
 		return JSON.parse(stringify(user))
 	}
 	return user

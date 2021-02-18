@@ -43,7 +43,7 @@ async function routes(fastify, options) {
 			response: {
 				200: {
 					type: "array",
-					items: UserSchema.collaboratorProfile,
+					items: UserSchema.serialization.collaborator,
 				},
 			},
 			security: [{ bearerAuth: [] }],
@@ -67,7 +67,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: UserSchema.collaboratorProfile,
+				200: UserSchema.serialization.collaborator,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -87,27 +87,9 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: {
-				type: "object",
-				required: ["email"],
-				properties: {
-					firstName: {
-						type: "string",
-					},
-					lastName: {
-						type: "string",
-					},
-					artistName: {
-						type: "string",
-					},
-					email: {
-						type: "string",
-					},
-				},
-				additionalProperties: false,
-			},
+			body: UserSchema.validation.createCollaborator,
 			response: {
-				201: UserSchema.user,
+				201: UserSchema.serialization.collaborator,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -131,7 +113,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: UserSchema.user,
+				200: UserSchema.serialization.collaborator,
 			},
 			security: [{ bearerAuth: [] }],
 		},

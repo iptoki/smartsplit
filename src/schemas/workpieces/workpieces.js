@@ -11,10 +11,10 @@ module.exports.workpiece = {
 		title: {
 			type: "string",
 		},
-		owner: UserSchema.collaboratorProfile,
+		owner: UserSchema.serialization.collaborator,
 		rightHolders: {
 			type: "array",
-			items: UserSchema.collaboratorProfile,
+			items: UserSchema.serialization.collaborator,
 		},
 		version: {
 			type: "number",
