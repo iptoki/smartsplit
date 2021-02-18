@@ -2,7 +2,7 @@ const mongoose = require("mongoose")
 const uuid = require("uuid").v4
 const User = require("../user")
 const Instrument = require("../entities/instrument")
-const MusicalGenre = require("../entities/musical-genre")
+const MusicalGenre = require("../entities/musicalGenre")
 const Config = require("../../config")
 const Errors = require("../../routes/errors")
 

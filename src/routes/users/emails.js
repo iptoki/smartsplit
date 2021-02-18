@@ -20,7 +20,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: UserSchema.emailStatusList,
+				200: UserSchema.serialization.emailStatusList,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -50,7 +50,7 @@ async function routes(fastify, options) {
 				additionalProperties: false,
 			},
 			response: {
-				201: UserSchema.emailStatusList,
+				201: UserSchema.serialization.emailStatusList,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -83,7 +83,7 @@ async function routes(fastify, options) {
 				additionalProperties: false,
 			},
 			response: {
-				200: UserSchema.emailStatusList,
+				200: UserSchema.serialization.emailStatusList,
 			},
 		},
 		handler: activateUserEmail,
@@ -111,7 +111,7 @@ async function routes(fastify, options) {
 				additionalProperties: false,
 			},
 			response: {
-				200: UserSchema.emailStatusList,
+				200: UserSchema.serialization.emailStatusList,
 			},
 			security: [{ bearerAuth: [] }],
 		},

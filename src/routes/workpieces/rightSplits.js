@@ -18,9 +18,9 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: RightSplitSchemas.rightSplitRequestBody,
+			body: RightSplitSchemas.validation.createUpdateRightSplit,
 			response: {
-				201: RightSplitSchemas.rightSplit,
+				201: RightSplitSchemas.serialization.rightSplit,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -39,9 +39,9 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: RightSplitSchemas.rightSplitRequestBody,
+			body: RightSplitSchemas.validation.createUpdateRightSplit,
 			response: {
-				200: RightSplitSchemas.rightSplit,
+				200: RightSplitSchemas.serialization.rightSplit,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -80,7 +80,7 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: RightSplitSchemas.rightSplitSubmitBody,
+			body: RightSplitSchemas.validation.submitRightSplit,
 			response: {
 				204: {},
 			},
@@ -101,7 +101,7 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: RightSplitSchemas.rightSplitVoteBody,
+			body: RightSplitSchemas.validation.voteRightSplit,
 			response: {
 				204: {},
 			},
