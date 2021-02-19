@@ -4,7 +4,7 @@ const AccountStatus = require("../../constants/accountStatus")
 const UserSchema = require("../../schemas/users")
 const Errors = require("../errors")
 const { UserTemplates } = require("../../models/notifications/templates")
-const { getUser } = require("./users")
+const { getUserWithAuthorization } = require("./users")
 
 /************************ Routes ************************/
 
@@ -148,7 +148,7 @@ async function routes(fastify, options) {
 /************************ Handlers ************************/
 
 async function getCollaborators(req, res) {
-	const user = await getUser(req, res)
+	const user = await getUserWithAuthorization(req, res)
 	return await user.getCollaborators(
 		parseInt(req.query.degree),
 		req.query.search_terms,
@@ -158,7 +158,7 @@ async function getCollaborators(req, res) {
 }
 
 async function getCollaboratorById(req, res) {
-	const user = await getUser(req, res)
+	const user = await getUserWithAuthorization(req, res)
 	if (!user.collaborators.includes(req.params.collaborator_id))
 		throw Errors.CollaboratorNotFound
 
@@ -166,7 +166,7 @@ async function getCollaboratorById(req, res) {
 }
 
 async function createCollaborator(req, res) {
-	const user = await getUser(req, res)
+	const user = await getUserWithAuthorization(req, res)
 
 	if (await User.findOne().byEmail(req.body.email)) throw Errors.ConflictingUser
 
@@ -192,7 +192,7 @@ async function createCollaborator(req, res) {
 }
 
 async function addCollaboratorById(req, res) {
-	const user = await getUser(req, res)
+	const user = await getUserWithAuthorization(req, res)
 
 	await user.addCollaborators([req.params.collaborator_id])
 	await user.save()
@@ -201,7 +201,7 @@ async function addCollaboratorById(req, res) {
 }
 
 async function deleteCollaboratorById(req, res) {
-	const user = await getUser(req, res)
+	const user = await getUserWithAuthorization(req, res)
 	const index = user.collaborators.indexOf(req.params.collaborator_id)
 
 	if (index < 0) throw Errors.CollaboratorNotFound
