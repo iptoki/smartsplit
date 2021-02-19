@@ -46,6 +46,9 @@ fastify.register(require("fastify-multipart"), {
 // Register swagger for auto documentation with OAS 3.0
 fastify.register(require("fastify-oas"), require("./swagger-config"))
 
+// Register custom plugins
+fastify.register(require("./src/plugins/dynamicResponseSchema"))
+
 // Add Global Auth hook
 fastify.addHook("preValidation", function (req, res, next) {
 	JWTAuth.bearerTokenMiddleware(req, res)

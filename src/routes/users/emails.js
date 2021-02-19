@@ -3,7 +3,7 @@ const EmailVerification = require("../../models/emailVerification")
 const { UserTemplates } = require("../../models/notifications/templates")
 const UserSchema = require("../../schemas/users")
 const Errors = require("../errors")
-const { getUser } = require("./users")
+const { getUserWithAuthorization } = require("./users")
 
 /************************ Routes ************************/
 
@@ -168,7 +168,7 @@ async function routes(fastify, options) {
 /************************ Handlers ************************/
 
 async function getUserWithPendingEmails(req, res) {
-	const user = await getUser(req, res)
+	const user = await getUserWithAuthorization(req, res)
 	await user.populate("pendingEmails").execPopulate()
 	return user
 }
@@ -225,13 +225,13 @@ async function deleteUserEmail(req, res) {
 }
 
 async function getUserPrimaryEmail(req, res) {
-	const user = await getUser(req, res)
+	const user = await getUserWithAuthorization(req, res)
 	if (!user.email) throw Errors.EmailNotFound
 	return user.email
 }
 
 async function setUserPrimaryEmail(req, res) {
-	const user = await getUser(req, res)
+	const user = await getUserWithAuthorization(req, res)
 
 	user.setPrimaryEmail(req.body.email)
 	await user.save()

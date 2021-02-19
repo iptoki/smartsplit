@@ -236,7 +236,7 @@ RightSplitSchema.methods.updateState = function () {
 			}
 		}
 	}
-	if(this.label){
+	if (this.label) {
 		if (this.label.vote !== "accepted") accepted = false
 		if (this.label.vote === "rejected") {
 			this._state = "rejected"

@@ -209,11 +209,12 @@ async function routes(fastify, options) {
 /************************ Handlers ************************/
 
 async function preSerializeUser(req, res, user) {
-	if (res.userPublicSchema) {
-		const fastJson = require("fast-json-stringify")
-		const stringify = fastJson(UserSchema.serialization.publicUser)
-		return JSON.parse(stringify(user))
-	}
+	if (
+		!req.authUser ||
+		(req.authUser && !req.authUser.hasAccessToUser(user._id))
+	)
+		res.schema(UserSchema.serialization.publicUser)
+
 	return user
 }
 
@@ -225,11 +226,20 @@ const getUser = async function (req, res) {
 
 	if (!user) throw Errors.UserNotFound
 
+	return user
+}
+
+const getUserWithAuthorization = async function (req, res) {
+	if (req.authUser && req.authUser._id === req.params.user_id)
+		return req.authUser
+
+	const user = await getUser(req, res)
+
 	if (
 		!req.authUser ||
 		(req.authUser && !req.authUser.hasAccessToUser(user._id))
 	)
-		res.userPublicSchema = true
+		throw Errors.UserForbidden
 
 	return user
 }
@@ -307,7 +317,7 @@ async function activateUserAccount(req, res) {
 }
 
 async function updateUser(req, res) {
-	const user = await getUser(req, res)
+	const user = await getUserWithAuthorization(req, res)
 
 	let passwordChanged = false
 
@@ -425,7 +435,7 @@ async function verifyUserMobilePhone(req, res) {
 }
 
 async function deleteUserAccount(req, res) {
-	const user = await getUser(req, res)
+	const user = await getUserWithAuthorization(req, res)
 
 	if (user.isDeleted) throw Errors.AccountAlreadyDeleted
 
@@ -435,6 +445,6 @@ async function deleteUserAccount(req, res) {
 }
 
 module.exports = {
-	getUser,
 	routes,
+	getUserWithAuthorization,
 }
