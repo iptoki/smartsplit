@@ -34,7 +34,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: { type: "array", items: EntitySchema.serialization.entity },
+				200: { type: "array", items: { type: "object" } },
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -55,7 +55,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: EntitySchema.serialization.entity,
+				200: { type: "object" },
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -77,7 +77,7 @@ async function routes(fastify, options) {
 			},
 			body: EntitySchema.validation.createUpdateEntity,
 			response: {
-				201: EntitySchema.serialization.entity,
+				201: { type: "object" },
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -99,7 +99,7 @@ async function routes(fastify, options) {
 			},
 			body: EntitySchema.validation.createUpdateEntity,
 			response: {
-				200: EntitySchema.serialization.entity,
+				200: { type: "object" },
 			},
 			security: [{ bearerAuth: [] }],
 		},

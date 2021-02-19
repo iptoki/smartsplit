@@ -155,13 +155,8 @@ const createUpdateEntity = {
 	],
 }
 
-const entity = {
-	anyOf: [instrument, musicalGenre, contentLanguage, digitalDistributor],
-}
-
 module.exports = {
 	serialization: {
-		entity,
 		[EntityTypes.INSTRUMENT]: instrument,
 		[EntityTypes.MUSICAL_GENRE]: musicalGenre,
 		[EntityTypes.CONTENT_LANGUAGE]: contentLanguage,
