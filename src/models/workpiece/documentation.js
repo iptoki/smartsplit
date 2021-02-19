@@ -3,6 +3,7 @@ const uuid = require("uuid").v4
 const User = require("../user")
 const Instrument = require("../entities/instrument")
 const MusicalGenre = require("../entities/musicalGenre")
+const EntityTypes = require("../../constants/entityTypes")
 const Config = require("../../config")
 const Errors = require("../../routes/errors")
 
@@ -74,12 +75,9 @@ const PerformerToolSchema = new mongoose.Schema(
 	{
 		instrument: {
 			type: String,
-			ref: "instrument",
+			ref: EntityTypes.INSTRUMENT,
 		},
-		role: {
-			type: String,
-			ref: "",
-		},
+		role: String,
 		notes: String,
 	},
 	{ _id: false }
@@ -216,12 +214,12 @@ const InfoSchema = new mongoose.Schema(
 		BPM: Number,
 		mainGenre: {
 			type: String,
-			ref: "musical-genre",
+			ref: EntityTypes.MUSICAL_GENRE,
 		},
 		secondaryGenres: [
 			{
 				type: String,
-				ref: "musical-genre",
+				ref: EntityTypes.MUSICAL_GENRE,
 			},
 		],
 		influences: [String],
