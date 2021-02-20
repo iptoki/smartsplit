@@ -216,12 +216,13 @@ const voteRightSplit = {
 }
 
 const submitRightSplit = {
-	type: "array",
+	type: "object",
 	items: {
 		type: "object",
-		properties: {
-			user_id: { type: "string" },
-			email: { type: "string" },
+		patternProperties: {
+			"^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$": {
+				type: "string",
+			},
 		},
 	},
 	additionalProperties: false,

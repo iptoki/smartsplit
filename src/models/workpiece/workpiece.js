@@ -32,11 +32,29 @@ const WorkpieceSchema = new mongoose.Schema(
 			type: String,
 			ref: "User",
 		},
-		rightHolders: [
-			{
-				type: String,
-				ref: "User",
-			},
+		collaborators: [
+			new mongoose.Schema(
+				{
+					user: {
+						type: String,
+						ref: "User",
+					},
+					isRightHolder: {
+						type: Boolean,
+						default: false,
+					},
+					isInsideDoc: {
+						type: Boolean,
+						default: false,
+					},
+					permission: {
+						type: String,
+						enum: ["read", "write", "admin"],
+						default: "read",
+					},
+				},
+				{ _id: false }
+			),
 		],
 		rightSplit: {
 			type: RightSplitSchema,
@@ -56,9 +74,9 @@ WorkpieceSchema.query.byOwner = function (user_id) {
 	return this.where({ owner: user_id })
 }
 
-WorkpieceSchema.query.byRightHolders = function (user_id) {
+WorkpieceSchema.query.byCollaborator = function (user_id) {
 	return this.where({
-		rightHolders: { $in: [user_id] },
+		"collaborators.user": { $in: [user_id] },
 		owner: { $ne: user_id },
 	})
 }
@@ -68,14 +86,8 @@ WorkpieceSchema.methods.getOwnerId = function () {
 }
 
 WorkpieceSchema.methods.isOwnerPartOfRightHolders = function () {
-	if (!this.rightHolders) return false
-	const ownerId = this.getOwnerId()
-	if (!this.populated("rightHolders"))
-		return this.rightHolders.includes(ownerId)
-	for (let rh of this.rightHolders) {
-		if (rh._id === ownerId) return true
-	}
-	return false
+	if (!this.rightSplit) return false
+	return this.rightSplit.getRightHolderIds().includes(this.getOwnerId())
 }
 
 WorkpieceSchema.methods.createToken = function (
@@ -121,8 +133,30 @@ WorkpieceSchema.methods.setRightSplit = async function (data) {
 	}
 
 	await this.rightSplit.update(data)
-	this.rightHolders = this.rightSplit.getRightHolderIds()
-	this.rightSplit.updatePrivacy()
+
+	this.updateRightHolders()
+}
+
+WorkpieceSchema.methods.updateRightHolders = function () {
+	const rightHolderIds = this.rightSplit.getRightHolderIds()
+	this.collaborators = this.collaborators.filter(
+		(item) =>
+			item.isInsideDoc ||
+			!item.isRightHolder ||
+			rightHolderIds.includes(item.user)
+	)
+	let alreadyAdded = []
+	for (const collaborator of this.collaborators) {
+		if (!rightHolderIds.includes(collaborator.user))
+			collaborator.isRightHolder = false
+		else alreadyAdded.push(collaborator.user)
+	}
+	for (const uid of rightHolderIds.filter((uid) => !alreadyAdded.includes(uid)))
+		this.collaborators.push({
+			user: uid,
+			isRightHolder: true,
+			permission: uid === this.getOwnerId() ? "admin" : "read",
+		})
 }
 
 WorkpieceSchema.methods.setSplitVote = function (rightHolderId, data) {
@@ -147,15 +181,20 @@ WorkpieceSchema.methods.canVoteRightSplit = function () {
 WorkpieceSchema.methods.emailRightHolders = async function (
 	notificationType,
 	skipSplitOwner,
-	overwrite = {}
+	overwrites = {}
 ) {
-	if (!this.populated("rightHolders"))
-		await this.populate("rightHolders").execPopulate()
-	for (let rh of this.rightHolders) {
-		if (rh._id === this.rightSplit.getOwnerId() && skipSplitOwner) continue
+	if (!this.rightSplit) return
+
+	let promises = []
+	const rightHolderIds = this.rightSplit.getRightHolderIds()
+
+	for (const uid of rightHolderIds) promises.push(User.findById(uid))
+
+	for (const rh of await Promise.all(promises)) {
+		if (skipSplitOwner && rh._id === this.rightSplit.getOwnerId()) continue
 		rh.sendNotification(notificationType, {
 			workpiece: this,
-			to: { name: rh.fullName, email: overwrite[rh._id] || rh.email },
+			to: { name: rh.fullName, email: overwrites[rh._id] || rh.email },
 		})
 	}
 }
@@ -167,25 +206,18 @@ WorkpieceSchema.methods.emailOwner = async function (notificationType) {
 	})
 }
 
-WorkpieceSchema.methods.submitRightSplit = function (overwrite) {
+WorkpieceSchema.methods.submitRightSplit = function (overwrites) {
 	if (!this.rightSplit || this.rightSplit._state !== "draft")
 		throw ConflictingRightSplitState
 	this.rightSplit._state = "voting"
-	this.emailRightHolders(SplitTemplates.CREATED, true, overwrite)
+	this.emailRightHolders(SplitTemplates.CREATED, true, overwrites)
 }
 
 WorkpieceSchema.methods.swapRightHolder = function (originalId, swapId) {
-	const index = this.rightHolders.indexOf(originalId)
-	this.rightHolders[index] = swapId
-
-	for (let type of RightTypes.list) {
-		for (let item of this.rightSplit[type]) {
-			if (item.rightHolder === originalId) {
-				item.rightHolder = swapId
-				break
-			}
-		}
+	for (item of this.collaborators) {
+		if (item.user === originalId) item.user = swapId
 	}
+	this.rightSplit.swapRightHolder(originalId, swapId)
 }
 
 WorkpieceSchema.methods.emailSplitResult = function () {
@@ -207,7 +239,7 @@ WorkpieceSchema.methods.deleteRightSplit = function () {
 WorkpieceSchema.methods.getPathsToPopulate = function () {
 	return [
 		"owner",
-		"rightHolders",
+		...this.getCollaboratorsPathsToPopulate(),
 		...this.documentation.getPathsToPopulate(),
 		...(this.rightSplit ? this.rightSplit.getPathsToPopulate() : []),
 		...this.getArchivedRightSplitsPathsToPopulate(),
@@ -216,6 +248,13 @@ WorkpieceSchema.methods.getPathsToPopulate = function () {
 
 WorkpieceSchema.methods.populateAll = function () {
 	return this.populate(this.getPathsToPopulate()).execPopulate()
+}
+
+WorkpieceSchema.methods.getCollaboratorsPathsToPopulate = function () {
+	let paths = []
+	for (let i = 0; i < this.collaborators.length; i++)
+		paths.push(`collaborators.${i}.user`)
+	return paths
 }
 
 WorkpieceSchema.methods.getArchivedRightSplitsPathsToPopulate = function () {
@@ -230,6 +269,56 @@ WorkpieceSchema.methods.getArchivedRightSplitsPathsToPopulate = function () {
 		}
 	}
 	return paths
+}
+
+WorkpieceSchema.methods.getCollaboratorPermission = function (collaborator_id) {
+	for (const item of this.collaborators) {
+		if (item.user === collaborator_id) return item.permission
+	}
+	return null
+}
+
+WorkpieceSchema.methods.addCollaboratorById = async function (
+	collaborator_id,
+	permission
+) {
+	await User.ensureExist(collaborator_id)
+	for (const item of this.collaborators) {
+		if (item.user === collaborator_id) {
+			item.permission = permission
+			return
+		}
+	}
+	this.collaborators.push({
+		user: collaborator_id,
+		permission,
+	})
+}
+
+WorkpieceSchema.methods.updateCollaboratorById = async function (
+	collaborator_id,
+	permission
+) {
+	for (const item of this.collaborators) {
+		if (item.user === collaborator_id) {
+			item.permission = permission
+			return
+		}
+	}
+	throw UserNotFound
+}
+
+WorkpieceSchema.methods.deleteCollaboratorById = async function (
+	collaborator_id,
+	permission
+) {
+	for (let i; i < this.collaborators.length; i++) {
+		if (this.collaborators[i].user === collaborator_id) {
+			if (this.collaborators[i].isRightHolder) throw UserForbidden
+			this.collaborators.splice(i, 1)
+		}
+	}
+	throw UserNotFound
 }
 
 module.exports = mongoose.model("Workpiece", WorkpieceSchema)

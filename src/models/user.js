@@ -718,8 +718,8 @@ UserSchema.methods.sendPush = async function (templateName) {
 	return "push not implemented"
 }
 
-UserSchema.statics.ensureExist = function (id) {
-	return this.exists({ _id: id }).then((exist) => {
+UserSchema.statics.ensureExist = function (uid) {
+	return this.exists({ _id: uid }).then((exist) => {
 		if (!exist) return Promise.reject(Errors.UserNotFound)
 		else return Promise.resolve()
 	})
