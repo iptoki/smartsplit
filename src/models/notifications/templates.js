@@ -36,10 +36,7 @@ const TemplateMap = {
 				return {
 					id: this.template_id[user.locale],
 					data: {
-						split: {
-							workTitle: options.workpiece.title,
-							splitInitiator: options.workpiece.rightSplit.owner.fullName,
-						},
+						workTitle: options.workpiece.title,
 						callbackUrl,
 					},
 				}
@@ -58,11 +55,8 @@ const TemplateMap = {
 				return {
 					id: this.template_id[user.locale],
 					data: {
-						split: {
-							workTitle: options.workpiece.title,
-							splitInitiator: options.workpiece.owner.fullName,
-						},
-						voteResultUrl: "" /* TODO */,
+						workTitle: options.workpiece.title,
+						callbackUrl: "" /* TODO */,
 					},
 				}
 			},
@@ -79,7 +73,9 @@ const TemplateMap = {
 			generate: function (user, options) {
 				return {
 					id: this.template_id[user.locale],
-					data: {},
+					data: {
+						callbackUrl: "" /* TODO */,
+					},
 				}
 			},
 		},
@@ -100,7 +96,7 @@ const TemplateMap = {
 				return {
 					id: this.template_id[user.locale],
 					data: {
-						activateAccountUrl: Config.clientUrl + "/user/activate/" + token,
+						callbackUrl: Config.clientUrl + "/user/activate/" + token,
 					},
 				}
 			},
@@ -122,8 +118,7 @@ const TemplateMap = {
 				return {
 					id: this.template_id[user.locale],
 					data: {
-						resetPasswordUrl:
-							Config.clientUrl + "/user/change-password/" + token,
+						callbackUrl: Config.clientUrl + "/user/change-password/" + token,
 					},
 				}
 			},
@@ -134,8 +129,8 @@ const TemplateMap = {
 		notificationType: Notification.ADMINISTRATIVE_MESSAGES,
 		email: {
 			template_id: {
-				en: "d-97a4ef0dcaf94b41a10346d937d04312" /* TODO */,
-				fr: "d-4b743067d5a542e4b0ef3032fdc48164" /* TODO */,
+				en: "d-43d2116f70c847ff906b56ac665e890d",
+				fr: "d-aa140c8094dd44ebbfb6637db3e51ccc",
 			},
 			generate: function (user, options) {
 				const token = user.createPasswordResetToken(
@@ -145,6 +140,7 @@ const TemplateMap = {
 				return {
 					id: this.template_id[user.locale],
 					data: {
+						collaborator: options.collaborator,
 						callbackUrl: Config.clientUrl + "/activate-invited-user/" + token,
 					},
 				}
@@ -183,8 +179,9 @@ const TemplateMap = {
 				return {
 					id: this.template_id[user.locale],
 					data: {
-						newEmail: options.to.email,
-						linkEmailAccountUrl: Config.clientUrl + /* TODO */ token,
+						activateEmail: options.to.email,
+						callbackUrl:
+							Config.clientUrl + "/activate-additional-email/" + token,
 					},
 				}
 			},

@@ -1,5 +1,6 @@
 const JWTAuth = require("../../service/JWTAuth")
 const User = require("../../models/user")
+const EmailVerification = require("../../models/emailVerification")
 const AccountStatus = require("../../constants/accountStatus")
 const UserSchema = require("../../schemas/users")
 const Errors = require("../errors")
@@ -172,6 +173,7 @@ async function createCollaborator(req, res) {
 			await Promise.all([collaborator.save(), emailVerif.save()])
 
 			collaborator.sendNotification(UserTemplates.INVITED, {
+				collaborator: user,
 				to: { name: collaborator.fullName, email: emailVerif._id },
 			})
 		}
