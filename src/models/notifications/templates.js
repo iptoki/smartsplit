@@ -13,7 +13,7 @@ const UserTemplates = {
 	PASSWORD_CHANGED: "user:password-changed",
 	ACTIVATE_EMAIL: "user:activate-email",
 	VERIFY_MOBILE_PHONE: "user:verify-mobile-phone",
-	SPLIT_INVITED: "user:split-invited",
+	INVITED: "user:invited",
 }
 
 const TemplateMap = {
@@ -25,6 +25,14 @@ const TemplateMap = {
 				fr: "d-3609f460f0ab47bfbda87043388cfd03",
 			},
 			generate: function (user, options) {
+				let callbackUrl = Config.clientUrl + "" // TODO
+				if (!user.isActive) {
+					const token = user.createActivationToken(
+						options.to.email,
+						options.expires || "2 hours"
+					)
+					callbackUrl = Config.clientUrl + "/activate-invited-user/" + token
+				}
 				return {
 					id: this.template_id[user.locale],
 					data: {
@@ -32,7 +40,7 @@ const TemplateMap = {
 							workTitle: options.workpiece.title,
 							splitInitiator: options.workpiece.rightSplit.owner.fullName,
 						},
-						splitUrl: "" /* TODO */,
+						callbackUrl,
 					},
 				}
 			},
@@ -122,7 +130,7 @@ const TemplateMap = {
 		},
 	},
 
-	[UserTemplates.SPLIT_INVITED]: {
+	[UserTemplates.INVITED]: {
 		notificationType: Notification.ADMINISTRATIVE_MESSAGES,
 		email: {
 			template_id: {
@@ -137,7 +145,7 @@ const TemplateMap = {
 				return {
 					id: this.template_id[user.locale],
 					data: {
-						url: "" /* TODO */,
+						callbackUrl: Config.clientUrl + "/activate-invited-user/" + token,
 					},
 				}
 			},
