@@ -6,6 +6,7 @@ const JWT = require("../utils/jwt")
 const EmailVerification = require("../models/emailVerification")
 const Notification = require("../models/notifications/notification")
 const AccountStatus = require("../constants/accountStatus")
+const AddressSchema = require("./payments/address").Schema
 const { sendTemplateTo, normalizeEmailAddress } = require("../utils/email")
 const { generateRandomCode } = require("../utils/random")
 const Errors = require("../routes/errors")
@@ -70,7 +71,13 @@ const ProfessionalIdentitySchema = new mongoose.Schema(
 	},
 	{ _id: false }
 )
-
+const PaymentSchema = new mongoose.Schema(
+	{
+		stripe_id: String,
+		billingAddress: { type: AddressSchema, default: null },
+	},
+	{ _id: false }
+)
 /**
  * Represents a user / login in the system
  */
@@ -112,6 +119,10 @@ const UserSchema = new mongoose.Schema(
 		},
 		notifications: {
 			type: Notification.Schema,
+			default: {},
+		},
+		payments: {
+			type: PaymentSchema,
 			default: {},
 		},
 		permissions: {
