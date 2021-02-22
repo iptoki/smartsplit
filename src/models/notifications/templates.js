@@ -74,6 +74,7 @@ const TemplateMap = {
 				return {
 					id: this.template_id[user.locale],
 					data: {
+						workTitle: options.workpiece.title,
 						callbackUrl: `${Config.clientUrl}/workpiece/${options.workpiece._id}/right-split/summary`,
 					},
 				}
