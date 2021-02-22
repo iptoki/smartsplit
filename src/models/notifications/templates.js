@@ -25,7 +25,7 @@ const TemplateMap = {
 				fr: "d-3609f460f0ab47bfbda87043388cfd03",
 			},
 			generate: function (user, options) {
-				let callbackUrl = Config.clientUrl + "" // TODO
+				let callbackUrl = `${Config.clientUrl}/workpiece/${options.workpiece._id}/right-split/summary`
 				if (!user.isActive) {
 					const token = user.createActivationToken(
 						options.to.email,
@@ -56,7 +56,7 @@ const TemplateMap = {
 					id: this.template_id[user.locale],
 					data: {
 						workTitle: options.workpiece.title,
-						callbackUrl: "" /* TODO */,
+						callbackUrl: `${Config.clientUrl}/workpiece/${options.workpiece._id}/right-split/summary`,
 					},
 				}
 			},
@@ -67,14 +67,14 @@ const TemplateMap = {
 		notificationType: Notification.GENERAL_INTERACTIONS,
 		email: {
 			template_id: {
-				en: "????",
-				fr: "????",
+				en: "????" /* TODO */,
+				fr: "????" /* TODO */,
 			},
 			generate: function (user, options) {
 				return {
 					id: this.template_id[user.locale],
 					data: {
-						callbackUrl: "" /* TODO */,
+						callbackUrl: `${Config.clientUrl}/workpiece/${options.workpiece._id}/right-split/summary`,
 					},
 				}
 			},
