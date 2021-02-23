@@ -317,6 +317,7 @@ WorkpieceSchema.methods.deleteCollaboratorById = async function (
 		if (this.collaborators[i].user === collaborator_id) {
 			if (this.collaborators[i].isRightHolder) throw UserForbidden
 			this.collaborators.splice(i, 1)
+			return
 		}
 	}
 	throw UserNotFound
