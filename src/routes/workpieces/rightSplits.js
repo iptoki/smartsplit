@@ -2,7 +2,7 @@ const Errors = require("../errors")
 const User = require("../../models/user")
 const { UserTemplates } = require("../../models/notifications/templates")
 const JWTAuth = require("../../service/JWTAuth")
-const RightSplitSchemas = require("../../schemas/workpieces/rightSplits")
+const RightSplitSchema = require("../../schemas/workpieces/rightSplits")
 
 /************************ Routes ************************/
 
@@ -16,9 +16,9 @@ async function routes(fastify, options) {
 			params: {
 				workpiece_id: { type: "string" },
 			},
-			body: RightSplitSchemas.validation.createUpdateRightSplit,
+			body: RightSplitSchema.validation.createUpdateRightSplit,
 			response: {
-				201: RightSplitSchemas.serialization.rightSplit,
+				201: RightSplitSchema.serialization.rightSplit,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -35,9 +35,9 @@ async function routes(fastify, options) {
 			params: {
 				workpiece_id: { type: "string" },
 			},
-			body: RightSplitSchemas.validation.createUpdateRightSplit,
+			body: RightSplitSchema.validation.createUpdateRightSplit,
 			response: {
-				200: RightSplitSchemas.serialization.rightSplit,
+				200: RightSplitSchema.serialization.rightSplit,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -72,7 +72,7 @@ async function routes(fastify, options) {
 			params: {
 				workpiece_id: { type: "string" },
 			},
-			body: RightSplitSchemas.validation.submitRightSplit,
+			body: RightSplitSchema.validation.submitRightSplit,
 			response: {
 				204: {},
 			},
@@ -91,7 +91,7 @@ async function routes(fastify, options) {
 			params: {
 				workpiece_id: { type: "string" },
 			},
-			body: RightSplitSchemas.validation.voteRightSplit,
+			body: RightSplitSchema.validation.voteRightSplit,
 			response: {
 				204: {},
 			},
@@ -191,13 +191,10 @@ const remove = async function (req, res) {
 
 const submit = async function (req, res) {
 	const workpiece = await getWorkpieceAsSplitOwner(req, res)
+	const rightHolders = await workpiece.rightSplit.getRightHolders()
+	const emails = req.body
 
-	let emails = {}
-	for (item of req.body) emails[item.user_id] = item.email
-
-	await workpiece.populate("rightHolders").execPopulate()
-
-	for (const rh of workpiece.rightHolders) {
+	for (const rh of rightHolders) {
 		if (emails[rh._id] && !rh.emails.includes(emails[rh._id])) {
 			const pending = await rh.addPendingEmail(emails[rh._id])
 			await pending.save()
