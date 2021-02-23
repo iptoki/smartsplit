@@ -144,3 +144,5 @@ const deleteAddress = async function (req, res) {
 	return addressToModify
 	// if address is currently set in user.payment.billingAddress, set billing address to empty
 }
+
+module.exports = routes

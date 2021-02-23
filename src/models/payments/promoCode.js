@@ -1,4 +1,5 @@
 const mongoose = require("mongoose")
+const uuid = require("uuid").v4
 const PromoCodeSchema = mongoose.Schema({
 	_id: {
 		type: String,

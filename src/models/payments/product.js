@@ -11,10 +11,6 @@ const ProductSchema = new mongoose.Schema({
 		type: String,
 		enum: ProductCode.list,
 	},
-	product_id: {
-		type: String,
-		default: uuid,
-	},
 	name_en: String,
 	name_fr: String,
 	description_en: String,
