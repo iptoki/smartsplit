@@ -14,10 +14,7 @@ async function routes(fastify, options) {
 			tags: ["entities"],
 			description: "Get a list of entities by type and optional search terms",
 			params: {
-				entity_type: {
-					type: "string",
-					enum: EntityTypes.list,
-				},
+				entity_type: { type: "string", enum: EntityTypes.list },
 			},
 			querystring: {
 				search_terms: { type: "string" },
@@ -49,10 +46,7 @@ async function routes(fastify, options) {
 			tags: ["entities"],
 			description: "Get an entity by ID",
 			params: {
-				entity_id: {
-					type: "string",
-					enum: EntityTypes.list,
-				},
+				entity_id: { type: "string" },
 			},
 			response: {
 				200: { type: "object" },
@@ -70,10 +64,7 @@ async function routes(fastify, options) {
 			tags: ["entities"],
 			description: "Create a new entity",
 			params: {
-				entity_type: {
-					type: "string",
-					enum: EntityTypes.list,
-				},
+				entity_type: { type: "string", enum: EntityTypes.list },
 			},
 			body: EntitySchema.validation.createUpdateEntity,
 			response: {
@@ -92,10 +83,7 @@ async function routes(fastify, options) {
 			tags: ["entities"],
 			description: "Update an entity by ID",
 			params: {
-				entity_id: {
-					type: "string",
-					enum: EntityTypes.list,
-				},
+				entity_id: { type: "string" },
 			},
 			body: EntitySchema.validation.createUpdateEntity,
 			response: {
@@ -114,10 +102,7 @@ async function routes(fastify, options) {
 			tags: ["entities"],
 			description: "Delete an entity by ID",
 			params: {
-				entity_id: {
-					type: "string",
-					enum: EntityTypes.list,
-				},
+				entity_id: { type: "string" },
 			},
 			response: {
 				204: {},
@@ -137,9 +122,7 @@ async function routes(fastify, options) {
 		schema: {
 			hide: true,
 			params: {
-				entity_type: {
-					type: "string",
-				},
+				entity_type: { type: "string", enum: EntityTypes.list },
 			},
 		},
 		preValidation: JWTAuth.requireAuthAdmin,

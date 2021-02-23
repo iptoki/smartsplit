@@ -17,9 +17,7 @@ async function routes(fastify, options) {
 			tags: ["users_general"],
 			description: "Get a user by ID",
 			params: {
-				user_id: {
-					type: "string",
-				},
+				user_id: { type: "string" },
 			},
 			response: {
 				200: UserSchema.serialization.user,
@@ -38,9 +36,7 @@ async function routes(fastify, options) {
 			tags: ["users_general"],
 			description: "Get a user's avatar by ID",
 			params: {
-				user_id: {
-					type: "string",
-				},
+				user_id: { type: "string" },
 			},
 		},
 		reponse: {
@@ -73,9 +69,7 @@ async function routes(fastify, options) {
 				type: "object",
 				required: ["token"],
 				properties: {
-					token: {
-						type: "string",
-					},
+					token: { type: "string" },
 				},
 				additionalProperties: false,
 			},
@@ -87,15 +81,39 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
+		method: "POST",
+		url: "/users/activate-invited",
+		schema: {
+			tags: ["users_general"],
+			description:
+				"Finish the registration of the user that have been invited to create an account",
+			body: {
+				type: "object",
+				required: ["token", "password"],
+				properties: {
+					token: { type: "string" },
+					password: { type: "string" },
+					firstName: { type: "string" },
+					lastName: { type: "string" },
+					artistName: { type: "string" },
+				},
+				additionalProperties: false,
+			},
+			response: {
+				200: AuthSchema.sessionInfo,
+			},
+		},
+		handler: activateInvitedUserAccount,
+	})
+
+	fastify.route({
 		method: "PATCH",
 		url: "/users/:user_id",
 		schema: {
 			tags: ["users_general"],
 			description: "Update a user by ID",
 			params: {
-				user_id: {
-					type: "string",
-				},
+				user_id: { type: "string" },
 			},
 			body: UserSchema.validation.updateUser,
 			response: {
@@ -117,9 +135,7 @@ async function routes(fastify, options) {
 				type: "object",
 				required: ["email"],
 				properties: {
-					email: {
-						type: "string",
-					},
+					email: { type: "string" },
 				},
 				additionalProperties: false,
 			},
@@ -140,15 +156,9 @@ async function routes(fastify, options) {
 				type: "object",
 				required: ["password"],
 				properties: {
-					token: {
-						type: "string",
-					},
-					currentPassword: {
-						type: "string",
-					},
-					password: {
-						type: "string",
-					},
+					token: { type: "string" },
+					currentPassword: { type: "string" },
+					password: { type: "string" },
 				},
 				additionalProperties: false,
 			},
@@ -170,9 +180,7 @@ async function routes(fastify, options) {
 				type: "object",
 				required: ["verificationCode"],
 				properties: {
-					verificationCode: {
-						type: "number",
-					},
+					verificationCode: { type: "number" },
 				},
 				additionalProperties: false,
 			},
@@ -192,9 +200,7 @@ async function routes(fastify, options) {
 			tags: ["users_general"],
 			description: "Delete a user's account by ID",
 			params: {
-				user_id: {
-					type: "string",
-				},
+				user_id: { type: "string" },
 			},
 			response: {
 				204: {},
@@ -307,6 +313,30 @@ async function activateUserAccount(req, res) {
 
 	user.accountStatus = AccountStatus.ACTIVE
 	user.emails.push(email._id)
+
+	await Promise.all([
+		user.save(),
+		EmailVerification.deleteOne({ _id: email._id }),
+	])
+
+	return { accessToken: JWTAuth.createToken(user), user: user }
+}
+
+async function activateInvitedUserAccount(req, res) {
+	const email = await EmailVerification.findOne().byActivationToken(
+		req.body.token,
+		false
+	)
+
+	if (!email || !email.user) throw Errors.InvalidActivationToken
+
+	const user = email.user
+	if (user.isActive) throw Errors.AccountAlreadyActivated
+
+	user.accountStatus = AccountStatus.ACTIVE
+	user.emails.push(email._id)
+	for (let field of ["firstName", "lastName", "artistName"])
+		if (req.body[field] !== undefined) user[field] = req.body[field]
 
 	await Promise.all([
 		user.save(),

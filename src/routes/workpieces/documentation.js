@@ -12,9 +12,7 @@ async function routes(fastify, options) {
 			tags: ["workpiece_documentation"],
 			description: "Get a workpiece's documentation",
 			params: {
-				workpiece_id: {
-					type: "string",
-				},
+				workpiece_id: { type: "string" },
 			},
 			response: {
 				200: DocumentationSchema.serialization.documentation,
@@ -32,9 +30,7 @@ async function routes(fastify, options) {
 			tags: ["workpiece_documentation"],
 			description: "Update a workpiece's documentation",
 			params: {
-				workpiece_id: {
-					type: "string",
-				},
+				workpiece_id: { type: "string" },
 			},
 			body: DocumentationSchema.validation.updateDocumentation,
 			response: {
@@ -53,12 +49,8 @@ async function routes(fastify, options) {
 			tags: ["workpieces_documentation_files"],
 			description: "Get a workpiece's file by ID",
 			params: {
-				workpiece_id: {
-					type: "string",
-				},
-				file_id: {
-					type: "string",
-				},
+				workpiece_id: { type: "string" },
+				file_id: { type: "string" },
 			},
 			response: {
 				200: {},
@@ -76,9 +68,7 @@ async function routes(fastify, options) {
 			params: {
 				type: "object",
 				properties: {
-					workpiece_id: {
-						type: "string",
-					},
+					workpiece_id: { type: "string" },
 					type: {
 						type: "string",
 						enum: ["art", "audio", "scores", "midi", "lyrics"],
@@ -103,12 +93,8 @@ async function routes(fastify, options) {
 			params: {
 				type: "object",
 				properties: {
-					workpiece_id: {
-						type: "string",
-					},
-					file_id: {
-						type: "string",
-					},
+					workpiece_id: { type: "string" },
+					file_id: { type: "string" },
 				},
 			},
 			body: DocumentationSchema.validation.updateFile,
@@ -128,12 +114,8 @@ async function routes(fastify, options) {
 			tags: ["workpieces_documentation_files"],
 			description: "Delete a workpiece's file by ID",
 			params: {
-				workpiece_id: {
-					type: "string",
-				},
-				file_id: {
-					type: "string",
-				},
+				workpiece_id: { type: "string" },
+				file_id: { type: "string" },
 			},
 			security: [{ bearerAuth: [] }],
 		},

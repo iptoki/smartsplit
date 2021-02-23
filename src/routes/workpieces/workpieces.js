@@ -13,9 +13,7 @@ async function routes(fastify, options) {
 			tags: ["workpieces_general"],
 			description: "Get workpieces by owner",
 			params: {
-				user_id: {
-					type: "string",
-				},
+				user_id: { type: "string" },
 			},
 			response: {
 				200: { type: "array", items: WorkpieceSchema.serialization.workpiece },
@@ -33,9 +31,7 @@ async function routes(fastify, options) {
 			tags: ["workpieces_general"],
 			description: "Get workpieces by collaborator",
 			params: {
-				user_id: {
-					type: "string",
-				},
+				user_id: { type: "string" },
 			},
 			response: {
 				200: { type: "array", items: WorkpieceSchema.serialization.workpiece },
@@ -53,9 +49,7 @@ async function routes(fastify, options) {
 			tags: ["workpieces_general"],
 			description: "Get workpiece by ID",
 			params: {
-				workpiece_id: {
-					type: "string",
-				},
+				workpiece_id: { type: "string" },
 			},
 			response: {
 				200: WorkpieceSchema.serialization.workpiece,
@@ -96,9 +90,7 @@ async function routes(fastify, options) {
 			tags: ["workpieces_general"],
 			description: "Update a workpiece by ID",
 			params: {
-				workpiece_id: {
-					type: "string",
-				},
+				workpiece_id: { type: "string" },
 			},
 			body: WorkpieceSchema.validation.createUpdateWorkpiece,
 			response: {
@@ -117,9 +109,7 @@ async function routes(fastify, options) {
 			tags: ["workpieces_general"],
 			description: "Delete a workpiece by ID",
 			params: {
-				workpiece_id: {
-					type: "string",
-				},
+				workpiece_id: { type: "string" },
 			},
 			response: {
 				204: {},
