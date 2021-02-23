@@ -86,8 +86,7 @@ WorkpieceSchema.methods.getOwnerId = function () {
 }
 
 WorkpieceSchema.methods.isOwnerPartOfRightHolders = function () {
-	if (!this.rightSplit) return false
-	return this.rightSplit.getRightHolderIds().includes(this.getOwnerId())
+	return this.getRightHolderIds().includes(this.getOwnerId())
 }
 
 WorkpieceSchema.methods.createToken = function (
@@ -138,7 +137,7 @@ WorkpieceSchema.methods.setRightSplit = async function (data) {
 }
 
 WorkpieceSchema.methods.updateRightHolders = function () {
-	const rightHolderIds = this.rightSplit.getRightHolderIds()
+	const rightHolderIds = this.getRightHolderIds()
 	this.collaborators = this.collaborators.filter(
 		(item) =>
 			item.isInsideDoc ||
@@ -186,7 +185,7 @@ WorkpieceSchema.methods.emailRightHolders = async function (
 	if (!this.rightSplit) return
 
 	let promises = []
-	const rightHolderIds = this.rightSplit.getRightHolderIds()
+	const rightHolderIds = this.getRightHolderIds()
 
 	for (const uid of rightHolderIds) promises.push(User.findById(uid))
 
@@ -211,6 +210,8 @@ WorkpieceSchema.methods.submitRightSplit = function (overwrites) {
 		throw ConflictingRightSplitState
 	this.rightSplit._state = "voting"
 	this.emailRightHolders(SplitTemplates.CREATED, true, overwrites)
+	this.rightSplit.updateState()
+	this.emailSplitResult()
 }
 
 WorkpieceSchema.methods.swapRightHolder = function (originalId, swapId) {
@@ -322,7 +323,7 @@ WorkpieceSchema.methods.deleteCollaboratorById = async function (
 }
 
 WorkpieceSchema.methods.getRightHolderIds = function () {
-	if(!this.rightSplit) return []
+	if (!this.rightSplit) return []
 	return this.rightSplit.getRightHolderIds()
 }
 
