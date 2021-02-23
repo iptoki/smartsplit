@@ -321,4 +321,9 @@ WorkpieceSchema.methods.deleteCollaboratorById = async function (
 	throw UserNotFound
 }
 
+WorkpieceSchema.methods.getRightHolderIds = function () {
+	if(!this.rightSplit) return []
+	return this.rightSplit.getRightHolderIds()
+}
+
 module.exports = mongoose.model("Workpiece", WorkpieceSchema)

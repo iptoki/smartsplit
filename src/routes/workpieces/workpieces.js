@@ -211,7 +211,7 @@ const getWorkpieceAsOwner = async function (req, res) {
 const getWorkpieceAsRightHolder = async function (req, res) {
 	const workpiece = await getWorkpiece(req, res)
 
-	if (!workpiece.rightHolders.includes(req.authUser._id))
+	if (!workpiece.getRightHolderIds().includes(req.authUser._id))
 		throw Errors.UserForbidden
 
 	return workpiece
