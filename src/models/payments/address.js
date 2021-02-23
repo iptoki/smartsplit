@@ -15,9 +15,13 @@ const AddressSchema = new mongoose.Schema({
 	city: String,
 	province: String,
 	country: String,
+	active: {
+		type: Boolean,
+		default: true,
+	},
 })
 AddressSchema.query.byOwner = function (user_id) {
-	return this.where({ user_id: user_id })
+	return this.where({ user_id: user_id, active: true })
 }
 module.exports.Address = mongoose.model("Address", AddressSchema)
 module.exports.Schema = AddressSchema

@@ -33,5 +33,4 @@ const PurchaseSchema = mongoose.Schema({
 	},
 	purchaseDate: Date,
 })
-module.exports.Purchase = mongoose.model("Purchase", PurchaseSchema)
-module.exports.Schema = PurchaseSchema
+module.exports = mongoose.model("Purchase", PurchaseSchema)

@@ -100,3 +100,9 @@ module.exports.VoteAlreadySubmited = new HTTPErrors.PreconditionFailed(
 module.exports.FileTooLarge = new HTTPErrors.PayloadTooLarge(
 	"File is to large too be uploaded"
 )
+
+/* Address related errors */
+module.exports.AddressNotFound = new HTTPErrors.NotFound("Address not found")
+module.exports.AddressNotModifiable = new HTTPErrors.Conflict(
+	"Address used in purchase -- cannot be modified"
+)
