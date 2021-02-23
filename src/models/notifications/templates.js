@@ -31,8 +31,7 @@ const TemplateMap = {
 						options.to.email,
 						options.expires || "2 hours"
 					)
-					callbackUrl =
-						Config.clientUrl + "/user/activate-invited-user/" + token
+					callbackUrl = `${Config.clientUrl}/user/activate-invited-user/${token}/${user.firstName}/${user.lastName}`
 				}
 				return {
 					id: this.template_id[user.locale],
@@ -143,8 +142,7 @@ const TemplateMap = {
 					id: this.template_id[user.locale],
 					data: {
 						collaborator: options.collaborator,
-						callbackUrl:
-							Config.clientUrl + "/user/activate-invited-user/" + token,
+						callbackUrl: `${Config.clientUrl}/user/activate-invited-user/${token}/${user.firstName}/${user.lastName}`,
 					},
 				}
 			},
