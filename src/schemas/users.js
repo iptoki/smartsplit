@@ -25,6 +25,14 @@ const permissions = {
 	additionalProperties: false,
 }
 
+const payments = {
+	type: "object",
+	properties: {
+		stripe_id: { type: "string" },
+		billingAddress: { type: "string" },
+	},
+}
+
 const notifications = {
 	type: "object",
 	properties: {
@@ -145,6 +153,7 @@ const user = {
 		permissions,
 		notifications,
 		professionalIdentity,
+		payments,
 		collaborators: {
 			type: "array",
 			items: { type: "string" },

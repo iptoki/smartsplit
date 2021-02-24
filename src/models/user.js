@@ -74,7 +74,7 @@ const ProfessionalIdentitySchema = new mongoose.Schema(
 const PaymentSchema = new mongoose.Schema(
 	{
 		stripe_id: String,
-		billingAddress: { type: AddressSchema, default: null },
+		billingAddress: { type: String, ref: "Address" },
 	},
 	{ _id: false }
 )
