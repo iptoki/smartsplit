@@ -179,11 +179,10 @@ async function createCollaborator(req, res) {
 		}
 	}
 
-	if(collaborator._id !== user._id){
+	if (collaborator._id !== user._id) {
 		user.collaborators.push(collaborator._id)
 		await user.save()
 	}
-
 
 	res.code(201)
 	return collaborator

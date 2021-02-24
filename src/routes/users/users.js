@@ -335,6 +335,7 @@ async function activateInvitedUserAccount(req, res) {
 
 	user.accountStatus = AccountStatus.ACTIVE
 	user.emails.push(email._id)
+	await user.setPassword(req.body.password, true)
 	for (let field of ["firstName", "lastName", "artistName"])
 		if (req.body[field] !== undefined) user[field] = req.body[field]
 
