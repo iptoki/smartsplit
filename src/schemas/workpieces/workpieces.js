@@ -8,9 +8,20 @@ const workpiece = {
 		workpiece_id: { type: "string" },
 		title: { type: "string" },
 		owner: UserSchema.serialization.collaborator,
-		rightHolders: {
+		collaborators: {
 			type: "array",
-			items: UserSchema.serialization.collaborator,
+			items: {
+				type: "object",
+				properties: {
+					user: UserSchema.serialization.collaborator,
+					isRightHolder: { type: "boolean" },
+					isInsideDoc: { type: "boolean" },
+					permission: {
+						type: "string",
+						enum: ["admin", "read", "write"],
+					},
+				},
+			},
 		},
 		version: { type: "number" },
 		rightSplit: RightSplitSchema.serialization.rightSplit,

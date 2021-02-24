@@ -3,7 +3,7 @@ const EmailVerification = require("../../models/emailVerification")
 const { UserTemplates } = require("../../models/notifications/templates")
 const UserSchema = require("../../schemas/users")
 const Errors = require("../errors")
-const { getUser } = require("./users")
+const { getUserWithAuthorization } = require("./users")
 
 /************************ Routes ************************/
 
@@ -15,9 +15,7 @@ async function routes(fastify, options) {
 			tags: ["users_emails"],
 			description: "Get a user's email list",
 			params: {
-				user_id: {
-					type: "string",
-				},
+				user_id: { type: "string" },
 			},
 			response: {
 				200: UserSchema.serialization.emailStatusList,
@@ -35,17 +33,13 @@ async function routes(fastify, options) {
 			tags: ["users_emails"],
 			description: "Create a new email in a user's account",
 			params: {
-				user_id: {
-					type: "string",
-				},
+				user_id: { type: "string" },
 			},
 			body: {
 				type: "object",
 				required: ["email"],
 				properties: {
-					email: {
-						type: "string",
-					},
+					email: { type: "string" },
 				},
 				additionalProperties: false,
 			},
@@ -65,20 +59,14 @@ async function routes(fastify, options) {
 			tags: ["users_emails"],
 			description: "Activate a user's email",
 			params: {
-				user_id: {
-					type: "string",
-				},
-				email: {
-					type: "string",
-				},
+				user_id: { type: "string" },
+				email: { type: "string" },
 			},
 			body: {
 				type: "object",
 				required: ["token"],
 				properties: {
-					token: {
-						type: "string",
-					},
+					token: { type: "string" },
 				},
 				additionalProperties: false,
 			},
@@ -96,17 +84,13 @@ async function routes(fastify, options) {
 			tags: ["users_emails"],
 			description: "Set a user email to the primary one",
 			params: {
-				user_id: {
-					type: "string",
-				},
+				user_id: { type: "string" },
 			},
 			body: {
 				type: "object",
 				required: ["email"],
 				properties: {
-					email: {
-						type: "string",
-					},
+					email: { type: "string" },
 				},
 				additionalProperties: false,
 			},
@@ -126,14 +110,10 @@ async function routes(fastify, options) {
 			tags: ["users_emails"],
 			description: "Get the user primary email",
 			params: {
-				user_id: {
-					type: "string",
-				},
+				user_id: { type: "string" },
 			},
 			response: {
-				200: {
-					type: "string",
-				},
+				200: { type: "string" },
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -148,12 +128,8 @@ async function routes(fastify, options) {
 			tags: ["users_emails"],
 			description: "Delete a user's email",
 			params: {
-				user_id: {
-					type: "string",
-				},
-				email: {
-					type: "string",
-				},
+				user_id: { type: "string" },
+				email: { type: "string" },
 			},
 			response: {
 				204: {},
@@ -168,7 +144,7 @@ async function routes(fastify, options) {
 /************************ Handlers ************************/
 
 async function getUserWithPendingEmails(req, res) {
-	const user = await getUser(req, res)
+	const user = await getUserWithAuthorization(req, res)
 	await user.populate("pendingEmails").execPopulate()
 	return user
 }
@@ -225,13 +201,13 @@ async function deleteUserEmail(req, res) {
 }
 
 async function getUserPrimaryEmail(req, res) {
-	const user = await getUser(req, res)
+	const user = await getUserWithAuthorization(req, res)
 	if (!user.email) throw Errors.EmailNotFound
 	return user.email
 }
 
 async function setUserPrimaryEmail(req, res) {
-	const user = await getUser(req, res)
+	const user = await getUserWithAuthorization(req, res)
 
 	user.setPrimaryEmail(req.body.email)
 	await user.save()

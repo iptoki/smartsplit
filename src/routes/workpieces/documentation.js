@@ -12,9 +12,7 @@ async function routes(fastify, options) {
 			tags: ["workpiece_documentation"],
 			description: "Get a workpiece's documentation",
 			params: {
-				workpiece_id: {
-					type: "string",
-				},
+				workpiece_id: { type: "string" },
 			},
 			response: {
 				200: DocumentationSchema.serialization.documentation,
@@ -32,9 +30,7 @@ async function routes(fastify, options) {
 			tags: ["workpiece_documentation"],
 			description: "Update a workpiece's documentation",
 			params: {
-				workpiece_id: {
-					type: "string",
-				},
+				workpiece_id: { type: "string" },
 			},
 			body: DocumentationSchema.validation.updateDocumentation,
 			response: {
@@ -53,12 +49,8 @@ async function routes(fastify, options) {
 			tags: ["workpieces_documentation_files"],
 			description: "Get a workpiece's file by ID",
 			params: {
-				workpiece_id: {
-					type: "string",
-				},
-				file_id: {
-					type: "string",
-				},
+				workpiece_id: { type: "string" },
+				file_id: { type: "string" },
 			},
 			response: {
 				200: {},
@@ -76,9 +68,7 @@ async function routes(fastify, options) {
 			params: {
 				type: "object",
 				properties: {
-					workpiece_id: {
-						type: "string",
-					},
+					workpiece_id: { type: "string" },
 					type: {
 						type: "string",
 						enum: ["art", "audio", "scores", "midi", "lyrics"],
@@ -103,12 +93,8 @@ async function routes(fastify, options) {
 			params: {
 				type: "object",
 				properties: {
-					workpiece_id: {
-						type: "string",
-					},
-					file_id: {
-						type: "string",
-					},
+					workpiece_id: { type: "string" },
+					file_id: { type: "string" },
 				},
 			},
 			body: DocumentationSchema.validation.updateFile,
@@ -128,12 +114,8 @@ async function routes(fastify, options) {
 			tags: ["workpieces_documentation_files"],
 			description: "Delete a workpiece's file by ID",
 			params: {
-				workpiece_id: {
-					type: "string",
-				},
-				file_id: {
-					type: "string",
-				},
+				workpiece_id: { type: "string" },
+				file_id: { type: "string" },
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -173,17 +155,6 @@ const getDocumentation = async function (req, res) {
 	return workpiece.documentation
 }
 
-const getDocumentationField = async function (req, res) {
-	const workpiece = await getWorkpiece(req, res)
-	await workpiece
-		.populate(workpiece.documentation.getPathsToPopulate())
-		.execPopulate()
-	return {
-		field: req.params.field,
-		data: workpiece.documentation[req.params.field],
-	}
-}
-
 const updateDocumentation = async function (req, res) {
 	const workpiece = await getWorkpieceAsOwner(req, res)
 
@@ -194,15 +165,6 @@ const updateDocumentation = async function (req, res) {
 		.execPopulate()
 
 	return workpiece.documentation
-}
-
-const updateDocumentationField = async function (req, res) {
-	req.body = { [req.params.field]: req.body }
-	const doc = await updateDocumentation(req, res)
-	return {
-		field: req.params.field,
-		data: doc[req.params.field],
-	}
 }
 
 const getFile = async function (req, res) {
@@ -267,23 +229,6 @@ const deleteFile = async function (req, res) {
 	await workpiece.documentation.deleteFile(req.params.file_id)
 	await workpiece.save()
 	res.code(204).send()
-}
-
-/************************ Custom serializer ************************/
-
-/*
-	fast-json-stringify does not support schema with `oneOf` being at the root.
-	As a workaround, we mimic the `oneOf` mechanism  by defining a custom serializer 
-	where we dinamicaly determine which schema should be serialized.
-	See /src/schemas/workpieces/documentation.js for more information
-*/
-
-function documentationFieldSerializer({ schema, method, url, httpStatus }) {
-	const fastJson = require("fast-json-stringify")
-	return (response) => {
-		const stringify = fastJson(DocumentationSchema[response.field])
-		return stringify(response.data)
-	}
 }
 
 module.exports = routes

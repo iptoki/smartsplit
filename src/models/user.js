@@ -473,7 +473,13 @@ UserSchema.methods.getCollaborators = async function (
 		if (search_terms.includes(" ")) s_t = s_t.concat(search_terms.split(" "))
 		regex = new RegExp(s_t.join("|"))
 	}
-
+	const regexMatchCondition = {
+		$or: [
+			{ firstName: { $regex: regex, $options: "i" } },
+			{ lastName: { $regex: regex, $options: "i" } },
+			{ artistName: { $regex: regex, $options: "i" } },
+		],
+	}
 	let result = []
 	let _limit = limit + skip
 	let visitedIds = []
@@ -489,19 +495,21 @@ UserSchema.methods.getCollaborators = async function (
 		}
 		const matches = await this.model("User")
 			.find({
-				$and: [
-					{ _id: { $in: ids } },
-					{
-						$or: [
-							{ firstName: { $regex: regex, $options: "i" } },
-							{ lastName: { $regex: regex, $options: "i" } },
-							{ artistName: { $regex: regex, $options: "i" } },
-						],
-					},
-				],
+				$and: [{ _id: { $in: ids } }, regexMatchCondition],
 			})
 			.limit(_limit)
+
 		_limit = _limit - matches.length
+		result = result.concat(matches)
+	}
+
+	if (_limit > 1) {
+		visitedIds.push(this._id)
+		const matches = await this.model("User")
+			.find({
+				$and: [{ _id: { $nin: visitedIds } }, regexMatchCondition],
+			})
+			.limit(_limit)
 		result = result.concat(matches)
 	}
 
@@ -729,8 +737,8 @@ UserSchema.methods.sendPush = async function (templateName) {
 	return "push not implemented"
 }
 
-UserSchema.statics.ensureExist = function (id) {
-	return this.exists({ _id: id }).then((exist) => {
+UserSchema.statics.ensureExist = function (uid) {
+	return this.exists({ _id: uid }).then((exist) => {
 		if (!exist) return Promise.reject(Errors.UserNotFound)
 		else return Promise.resolve()
 	})

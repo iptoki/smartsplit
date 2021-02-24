@@ -13,9 +13,7 @@ async function routes(fastify, options) {
 			tags: ["workpieces_general"],
 			description: "Get workpieces by owner",
 			params: {
-				user_id: {
-					type: "string",
-				},
+				user_id: { type: "string" },
 			},
 			response: {
 				200: { type: "array", items: WorkpieceSchema.serialization.workpiece },
@@ -33,9 +31,7 @@ async function routes(fastify, options) {
 			tags: ["workpieces_general"],
 			description: "Get workpieces by collaborator",
 			params: {
-				user_id: {
-					type: "string",
-				},
+				user_id: { type: "string" },
 			},
 			response: {
 				200: { type: "array", items: WorkpieceSchema.serialization.workpiece },
@@ -53,9 +49,7 @@ async function routes(fastify, options) {
 			tags: ["workpieces_general"],
 			description: "Get workpiece by ID",
 			params: {
-				workpiece_id: {
-					type: "string",
-				},
+				workpiece_id: { type: "string" },
 			},
 			response: {
 				200: WorkpieceSchema.serialization.workpiece,
@@ -96,9 +90,7 @@ async function routes(fastify, options) {
 			tags: ["workpieces_general"],
 			description: "Update a workpiece by ID",
 			params: {
-				workpiece_id: {
-					type: "string",
-				},
+				workpiece_id: { type: "string" },
 			},
 			body: WorkpieceSchema.validation.createUpdateWorkpiece,
 			response: {
@@ -117,7 +109,28 @@ async function routes(fastify, options) {
 			tags: ["workpieces_general"],
 			description: "Delete a workpiece by ID",
 			params: {
+				workpiece_id: { type: "string" },
+			},
+			response: {
+				204: {},
+			},
+			security: [{ bearerAuth: [] }],
+		},
+		preValidation: JWTAuth.requireAuthUser,
+		handler: deleteWorkpiece,
+	})
+
+	fastify.route({
+		method: "POST",
+		url: "/workpieces/:workpiece_id/collaborators/:collaborator_id",
+		schema: {
+			tags: ["workpieces_general"],
+			description: "Add a collaborator by ID",
+			params: {
 				workpiece_id: {
+					type: "string",
+				},
+				collaborator_id: {
 					type: "string",
 				},
 			},
@@ -127,7 +140,53 @@ async function routes(fastify, options) {
 			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthUser,
-		handler: deleteWorkpiece,
+		handler: addCollaboratorById,
+	})
+
+	fastify.route({
+		method: "PATCH",
+		url: "/workpieces/:workpiece_id/collaborators/:collaborator_id",
+		schema: {
+			tags: ["workpieces_general"],
+			description: "Update a collaborator by ID",
+			params: {
+				workpiece_id: {
+					type: "string",
+				},
+				collaborator_id: {
+					type: "string",
+				},
+			},
+			response: {
+				204: {},
+			},
+			security: [{ bearerAuth: [] }],
+		},
+		preValidation: JWTAuth.requireAuthUser,
+		handler: updateCollaboratorById,
+	})
+
+	fastify.route({
+		method: "DELETE",
+		url: "/workpieces/:workpiece_id/collaborators/:collaborator_id",
+		schema: {
+			tags: ["workpieces_general"],
+			description: "Delete a collaborator by ID",
+			params: {
+				workpiece_id: {
+					type: "string",
+				},
+				collaborator_id: {
+					type: "string",
+				},
+			},
+			response: {
+				204: {},
+			},
+			security: [{ bearerAuth: [] }],
+		},
+		preValidation: JWTAuth.requireAuthUser,
+		handler: deleteCollaboratorById,
 	})
 }
 
@@ -152,9 +211,20 @@ const getWorkpieceAsOwner = async function (req, res) {
 const getWorkpieceAsRightHolder = async function (req, res) {
 	const workpiece = await getWorkpiece(req, res)
 
-	if (!workpiece.rightHolders.includes(req.authUser._id))
+	if (!workpiece.getRightHolderIds().includes(req.authUser._id))
 		throw Errors.UserForbidden
 
+	return workpiece
+}
+
+const getWorkpieceWithWritePermission = async function (req, res) {
+	const workpiece = await getWorkpiece(req, res)
+	if (
+		!["write", "admin"].includes(
+			workpiece.getCollaboratorPermission(req.authUser._id)
+		)
+	)
+		throw Errors.UserForbidden
 	return workpiece
 }
 
@@ -199,10 +269,34 @@ const getWorkpiecesByOwner = async function (req, res) {
 }
 
 const getWorkpiecesByRightHolder = async function (req, res) {
-	const workpieces = await Workpiece.find().byRightHolders(req.params.user_id)
+	const workpieces = await Workpiece.find().byCollaborator(req.params.user_id)
 	let promises = []
 	for (const workpiece of workpieces) promises.push(workpiece.populateAll())
 	return await Promise.all(promises)
+}
+
+const addCollaboratorById = async function (req, res) {
+	const workpiece = await getWorkpieceWithWritePermission(req, res)
+	workpiece.addCollaboratorById(req.body.collaborator_id, req.body.permission)
+	await workpeice.save()
+	return
+}
+
+const updateCollaboratorById = async function (req, res) {
+	const workpiece = await getWorkpieceWithWritePermission(req, res)
+	workpiece.updateCollaboratorById(
+		req.body.collaborator_id,
+		req.body.permission
+	)
+	await workpeice.save()
+	return
+}
+
+const deleteCollaboratorById = async function (req, res) {
+	const workpiece = await getWorkpieceWithWritePermission(req, res)
+	workpiece.deleteCollaboratorById(req.body.collaborator_id)
+	await workpiece.save()
+	return
 }
 
 module.exports = {

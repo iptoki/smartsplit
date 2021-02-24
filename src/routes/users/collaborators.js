@@ -1,10 +1,11 @@
 const JWTAuth = require("../../service/JWTAuth")
 const User = require("../../models/user")
+const EmailVerification = require("../../models/emailVerification")
 const AccountStatus = require("../../constants/accountStatus")
 const UserSchema = require("../../schemas/users")
 const Errors = require("../errors")
 const { UserTemplates } = require("../../models/notifications/templates")
-const { getUser } = require("./users")
+const { getUserWithAuthorization } = require("./users")
 
 /************************ Routes ************************/
 
@@ -16,9 +17,7 @@ async function routes(fastify, options) {
 			tags: ["collaborators"],
 			description: "Get a user's collaborators",
 			params: {
-				user_id: {
-					type: "string",
-				},
+				user_id: { type: "string" },
 			},
 			querystring: {
 				search_terms: { type: "string" },
@@ -59,12 +58,8 @@ async function routes(fastify, options) {
 			tags: ["collaborators"],
 			description: "Get a user's collaborator by ID",
 			params: {
-				user_id: {
-					type: "string",
-				},
-				collaborator_id: {
-					type: "string",
-				},
+				user_id: { type: "string" },
+				collaborator_id: { type: "string" },
 			},
 			response: {
 				200: UserSchema.serialization.collaborator,
@@ -83,9 +78,7 @@ async function routes(fastify, options) {
 			description:
 				"Create a new collaborator and add it to the authenticated user's collaborators",
 			params: {
-				user_id: {
-					type: "string",
-				},
+				user_id: { type: "string" },
 			},
 			body: UserSchema.validation.createCollaborator,
 			response: {
@@ -105,12 +98,8 @@ async function routes(fastify, options) {
 			description:
 				"Add an existing user to the authenticated user's collaborators",
 			params: {
-				user_id: {
-					type: "string",
-				},
-				collaborator_id: {
-					type: "string",
-				},
+				user_id: { type: "string" },
+				collaborator_id: { type: "string" },
 			},
 			response: {
 				200: UserSchema.serialization.collaborator,
@@ -128,12 +117,8 @@ async function routes(fastify, options) {
 			tags: ["collaborators"],
 			description: "Delete a user's collaborator by ID",
 			params: {
-				user_id: {
-					type: "string",
-				},
-				collaborator_id: {
-					type: "string",
-				},
+				user_id: { type: "string" },
+				collaborator_id: { type: "string" },
 			},
 			response: {
 				204: {},
@@ -148,7 +133,7 @@ async function routes(fastify, options) {
 /************************ Handlers ************************/
 
 async function getCollaborators(req, res) {
-	const user = await getUser(req, res)
+	const user = await getUserWithAuthorization(req, res)
 	return await user.getCollaborators(
 		parseInt(req.query.degree),
 		req.query.search_terms,
@@ -158,7 +143,7 @@ async function getCollaborators(req, res) {
 }
 
 async function getCollaboratorById(req, res) {
-	const user = await getUser(req, res)
+	const user = await getUserWithAuthorization(req, res)
 	if (!user.collaborators.includes(req.params.collaborator_id))
 		throw Errors.CollaboratorNotFound
 
@@ -166,23 +151,33 @@ async function getCollaboratorById(req, res) {
 }
 
 async function createCollaborator(req, res) {
-	const user = await getUser(req, res)
+	const user = await getUserWithAuthorization(req, res)
 
-	if (await User.findOne().byEmail(req.body.email)) throw Errors.ConflictingUser
+	let collaborator = await User.findOne().byEmail(req.body.email)
 
-	const collaborator = new User({
-		firstName: req.body.email.split("@")[0],
-		...req.body,
-		accountStatus: AccountStatus.SPLIT_INVITED,
-	})
+	if (!collaborator) {
+		let emailVerif = await EmailVerification.findOne()
+			.byEmail(req.body.email)
+			.populate("user")
 
-	const emailVerif = await collaborator.addPendingEmail(req.body.email)
+		if (emailVerif && emailVerif.user) collaborator = emailVerif.user
+		else {
+			collaborator = new User({
+				firstName: req.body.email.split("@")[0],
+				...req.body,
+				accountStatus: AccountStatus.EMAIL_VERIFICATION_PENDING,
+			})
 
-	await Promise.all([collaborator.save(), emailVerif.save()])
+			emailVerif = await collaborator.addPendingEmail(req.body.email)
 
-	collaborator.sendNotification(UserTemplates.SPLIT_INVITED, {
-		to: { name: collaborator.fullName, email: emailVerif._id },
-	})
+			await Promise.all([collaborator.save(), emailVerif.save()])
+
+			collaborator.sendNotification(UserTemplates.INVITED, {
+				collaborator: user,
+				to: { name: collaborator.fullName, email: emailVerif._id },
+			})
+		}
+	}
 
 	user.collaborators.push(collaborator._id)
 	await user.save()
@@ -192,7 +187,7 @@ async function createCollaborator(req, res) {
 }
 
 async function addCollaboratorById(req, res) {
-	const user = await getUser(req, res)
+	const user = await getUserWithAuthorization(req, res)
 
 	await user.addCollaborators([req.params.collaborator_id])
 	await user.save()
@@ -201,7 +196,7 @@ async function addCollaboratorById(req, res) {
 }
 
 async function deleteCollaboratorById(req, res) {
-	const user = await getUser(req, res)
+	const user = await getUserWithAuthorization(req, res)
 	const index = user.collaborators.indexOf(req.params.collaborator_id)
 
 	if (index < 0) throw Errors.CollaboratorNotFound

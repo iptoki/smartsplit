@@ -151,6 +151,28 @@ RightSplitSchema.methods.getRightHolderIds = function () {
 	return rightHolderIds
 }
 
+RightSplitSchema.methods.getRightHolders = async function () {
+	let promises = []
+	for (const uid of this.getRightHolderIds()) promises.push(User.findById(uid))
+	return await Promise.all(promises)
+}
+
+RightSplitSchema.methods.swapRightHolder = function (originalId, swapId) {
+	for (let type of RightTypes.list) {
+		if (!Array.isArray(this.rightSplit[type])) {
+			if (this.rightSplit[type].rightHolder === originalId)
+				this.rightSplit[type].rightHolder = swapId
+			continue
+		}
+		for (let item of this.rightSplit[type]) {
+			if (item.rightHolder === originalId) {
+				item.rightHolder = swapId
+				break
+			}
+		}
+	}
+}
+
 RightSplitSchema.methods.update = async function (data) {
 	const owner_id = this.getOwnerId()
 	let promises = []
@@ -225,25 +247,22 @@ RightSplitSchema.methods.setVote = function (rightHolderId, data) {
 }
 
 RightSplitSchema.methods.updateState = function () {
+	let count = 0
 	let accepted = true
 	for (let type of RightTypes.list) {
 		if (!Array.isArray(this[type])) continue
 		for (let item of this[type]) {
-			if (item.vote !== "accepted") accepted = false
-			if (item.vote === "rejected") {
-				this._state = "rejected"
-				return
-			}
+			if (item.vote === "undecided") return
+			if (item.vote === "rejected") accepted = false
+			count++
 		}
 	}
-	if(this.label){
-		if (this.label.vote !== "accepted") accepted = false
-		if (this.label.vote === "rejected") {
-			this._state = "rejected"
-			return
-		}
+	if (this.label) {
+		count++
+		if (this.label.vote === "undecided") return
+		if (this.label.vote === "rejected") accepted = false
 	}
-	if (accepted) this._state = "accepted"
+	if (count > 0) this._state = accepted ? "accepted" : "rejected"
 }
 
 RightSplitSchema.methods.getPathsToPopulate = function () {

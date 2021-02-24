@@ -2,7 +2,7 @@ const Errors = require("../errors")
 const User = require("../../models/user")
 const { UserTemplates } = require("../../models/notifications/templates")
 const JWTAuth = require("../../service/JWTAuth")
-const RightSplitSchemas = require("../../schemas/workpieces/rightSplits")
+const RightSplitSchema = require("../../schemas/workpieces/rightSplits")
 
 /************************ Routes ************************/
 
@@ -14,13 +14,11 @@ async function routes(fastify, options) {
 			tags: ["right_splits"],
 			description: "Create a new right splits in a workpiece",
 			params: {
-				workpiece_id: {
-					type: "string",
-				},
+				workpiece_id: { type: "string" },
 			},
-			body: RightSplitSchemas.validation.createUpdateRightSplit,
+			body: RightSplitSchema.validation.createUpdateRightSplit,
 			response: {
-				201: RightSplitSchemas.serialization.rightSplit,
+				201: RightSplitSchema.serialization.rightSplit,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -35,13 +33,11 @@ async function routes(fastify, options) {
 			tags: ["right_splits"],
 			description: "Update a workpiece's right splits",
 			params: {
-				workpiece_id: {
-					type: "string",
-				},
+				workpiece_id: { type: "string" },
 			},
-			body: RightSplitSchemas.validation.createUpdateRightSplit,
+			body: RightSplitSchema.validation.createUpdateRightSplit,
 			response: {
-				200: RightSplitSchemas.serialization.rightSplit,
+				200: RightSplitSchema.serialization.rightSplit,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -56,9 +52,7 @@ async function routes(fastify, options) {
 			tags: ["right_splits"],
 			description: "Delete a workpiece's right splits",
 			params: {
-				workpiece_id: {
-					type: "string",
-				},
+				workpiece_id: { type: "string" },
 			},
 			response: {
 				204: {},
@@ -76,11 +70,9 @@ async function routes(fastify, options) {
 			tags: ["right_splits"],
 			description: "Submit a workpiece's right splits to the right holders",
 			params: {
-				workpiece_id: {
-					type: "string",
-				},
+				workpiece_id: { type: "string" },
 			},
-			body: RightSplitSchemas.validation.submitRightSplit,
+			body: RightSplitSchema.validation.submitRightSplit,
 			response: {
 				204: {},
 			},
@@ -97,11 +89,9 @@ async function routes(fastify, options) {
 			tags: ["right_splits"],
 			description: "Vote for accepting or refusing a right split",
 			params: {
-				workpiece_id: {
-					type: "string",
-				},
+				workpiece_id: { type: "string" },
 			},
-			body: RightSplitSchemas.validation.voteRightSplit,
+			body: RightSplitSchema.validation.voteRightSplit,
 			response: {
 				204: {},
 			},
@@ -119,17 +109,13 @@ async function routes(fastify, options) {
 			description:
 				"Substitute a right holders in a split by replacing it by an other one",
 			params: {
-				workpiece_id: {
-					type: "string",
-				},
+				workpiece_id: { type: "string" },
 			},
 			body: {
 				type: "object",
 				required: ["token"],
 				properties: {
-					token: {
-						type: "string",
-					},
+					token: { type: "string" },
 				},
 				additionalProperties: false,
 			},
@@ -205,13 +191,10 @@ const remove = async function (req, res) {
 
 const submit = async function (req, res) {
 	const workpiece = await getWorkpieceAsSplitOwner(req, res)
+	const rightHolders = await workpiece.rightSplit.getRightHolders()
+	const emails = req.body
 
-	let emails = {}
-	for (item of req.body) emails[item.user_id] = item.email
-
-	await workpiece.populate("rightHolders").execPopulate()
-
-	for (const rh of workpiece.rightHolders) {
+	for (const rh of rightHolders) {
 		if (emails[rh._id] && !rh.emails.includes(emails[rh._id])) {
 			const pending = await rh.addPendingEmail(emails[rh._id])
 			await pending.save()

@@ -13,7 +13,7 @@ const UserTemplates = {
 	PASSWORD_CHANGED: "user:password-changed",
 	ACTIVATE_EMAIL: "user:activate-email",
 	VERIFY_MOBILE_PHONE: "user:verify-mobile-phone",
-	SPLIT_INVITED: "user:split-invited",
+	INVITED: "user:invited",
 }
 
 const TemplateMap = {
@@ -25,14 +25,19 @@ const TemplateMap = {
 				fr: "d-3609f460f0ab47bfbda87043388cfd03",
 			},
 			generate: function (user, options) {
+				let callbackUrl = `${Config.clientUrl}/workpiece/${options.workpiece._id}/right-split/summary`
+				if (!user.isActive) {
+					const token = user.createActivationToken(
+						options.to.email,
+						options.expires || "2 hours"
+					)
+					callbackUrl = `${Config.clientUrl}/user/activate-invited-user/${token}/${user.firstName}/${user.lastName}`
+				}
 				return {
 					id: this.template_id[user.locale],
 					data: {
-						split: {
-							workTitle: options.workpiece.title,
-							splitInitiator: options.workpiece.rightSplit.owner.fullName,
-						},
-						splitUrl: "" /* TODO */,
+						workTitle: options.workpiece.title,
+						callbackUrl,
 					},
 				}
 			},
@@ -50,11 +55,8 @@ const TemplateMap = {
 				return {
 					id: this.template_id[user.locale],
 					data: {
-						split: {
-							workTitle: options.workpiece.title,
-							splitInitiator: options.workpiece.owner.fullName,
-						},
-						voteResultUrl: "" /* TODO */,
+						workTitle: options.workpiece.title,
+						callbackUrl: `${Config.clientUrl}/workpiece/${options.workpiece._id}/right-split/summary`,
 					},
 				}
 			},
@@ -65,13 +67,16 @@ const TemplateMap = {
 		notificationType: Notification.GENERAL_INTERACTIONS,
 		email: {
 			template_id: {
-				en: "????",
-				fr: "????",
+				en: "????" /* TODO */,
+				fr: "????" /* TODO */,
 			},
 			generate: function (user, options) {
 				return {
 					id: this.template_id[user.locale],
-					data: {},
+					data: {
+						workTitle: options.workpiece.title,
+						callbackUrl: `${Config.clientUrl}/workpiece/${options.workpiece._id}/right-split/summary`,
+					},
 				}
 			},
 		},
@@ -92,7 +97,7 @@ const TemplateMap = {
 				return {
 					id: this.template_id[user.locale],
 					data: {
-						activateAccountUrl: Config.clientUrl + "/user/activate/" + token,
+						callbackUrl: Config.clientUrl + "/user/activate/" + token,
 					},
 				}
 			},
@@ -114,20 +119,19 @@ const TemplateMap = {
 				return {
 					id: this.template_id[user.locale],
 					data: {
-						resetPasswordUrl:
-							Config.clientUrl + "/user/change-password/" + token,
+						callbackUrl: Config.clientUrl + "/user/change-password/" + token,
 					},
 				}
 			},
 		},
 	},
 
-	[UserTemplates.SPLIT_INVITED]: {
+	[UserTemplates.INVITED]: {
 		notificationType: Notification.ADMINISTRATIVE_MESSAGES,
 		email: {
 			template_id: {
-				en: "d-97a4ef0dcaf94b41a10346d937d04312" /* TODO */,
-				fr: "d-4b743067d5a542e4b0ef3032fdc48164" /* TODO */,
+				en: "d-43d2116f70c847ff906b56ac665e890d",
+				fr: "d-aa140c8094dd44ebbfb6637db3e51ccc",
 			},
 			generate: function (user, options) {
 				const token = user.createPasswordResetToken(
@@ -137,7 +141,8 @@ const TemplateMap = {
 				return {
 					id: this.template_id[user.locale],
 					data: {
-						url: "" /* TODO */,
+						collaborator: options.collaborator,
+						callbackUrl: `${Config.clientUrl}/user/activate-invited-user/${token}/${user.firstName}/${user.lastName}`,
 					},
 				}
 			},
@@ -175,8 +180,9 @@ const TemplateMap = {
 				return {
 					id: this.template_id[user.locale],
 					data: {
-						newEmail: options.to.email,
-						linkEmailAccountUrl: Config.clientUrl + /* TODO */ token,
+						activateEmail: options.to.email,
+						callbackUrl:
+							Config.clientUrl + "/activate-additional-email/" + token,
 					},
 				}
 			},
