@@ -28,8 +28,8 @@ const permissions = {
 const payments = {
 	type: "object",
 	properties: {
-		stripe_id: { type: "string" },
-		billingAddress: { type: "string" },
+		stripe_id: { type: "string", default: "" },
+		billingAddress: { type: "string", default: "" },
 	},
 }
 

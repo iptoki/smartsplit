@@ -18,7 +18,7 @@ async function routes(fastify, options) {
 			},
 			security: [{ bearerAuth: [] }],
 		},
-		querystring: {
+		queryString: {
 			filter: { type: "string" },
 			limit: {
 				type: "integer",
@@ -60,11 +60,6 @@ async function routes(fastify, options) {
 		schema: {
 			tags: ["promoCodes"],
 			description: "Create new PromoCode",
-			params: {
-				promoCode_id: {
-					type: "string",
-				},
-			},
 			body: {
 				allOf: [PromoCodeSchema.validation.createUpdatePromoCode],
 				required: PromoCodeSchema.validation.createUpdatePromoCode.required,

@@ -73,8 +73,8 @@ const ProfessionalIdentitySchema = new mongoose.Schema(
 )
 const PaymentSchema = new mongoose.Schema(
 	{
-		stripe_id: String,
-		billingAddress: { type: String, ref: "Address" },
+		stripe_id: { type: String, default: "" },
+		billingAddress: { type: String, ref: "Address", default: "" },
 	},
 	{ _id: false }
 )
@@ -123,7 +123,7 @@ const UserSchema = new mongoose.Schema(
 		},
 		payments: {
 			type: PaymentSchema,
-			default: {},
+			default: { stripe_id: "", billingAddress: null },
 		},
 		permissions: {
 			type: PermissionSchema,

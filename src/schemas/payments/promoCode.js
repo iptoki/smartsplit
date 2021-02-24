@@ -13,6 +13,7 @@ const PromoCode = {
 
 const createUpdatePromoCode = {
 	type: "object",
+	required: ["organisation", "description", "value", "expires"],
 	properties: {
 		organisation: localeSchema,
 		description: localeSchema,
