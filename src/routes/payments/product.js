@@ -152,10 +152,10 @@ const getProduct = async function (req, res) {
 
 const createProduct = async function (req, res) {
 	req.body.user_id = req.authUser._id
-	const Product = new Product(req.body)
-	await Product.save()
+	const product = new Product(req.body)
+	await product.save()
 	res.code(201)
-	return Product
+	return product
 }
 
 const updateProduct = async function (req, res) {

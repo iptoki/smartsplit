@@ -152,10 +152,10 @@ const getPromoCode = async function (req, res) {
 
 const createPromoCode = async function (req, res) {
 	req.body.user_id = req.authUser._id
-	const PromoCode = new PromoCode(req.body)
-	await PromoCode.save()
+	const promoCode = new PromoCode(req.body)
+	await promoCode.save()
 	res.code(201)
-	return PromoCode
+	return promoCode
 }
 
 const updatePromoCode = async function (req, res) {
