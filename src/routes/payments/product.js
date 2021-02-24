@@ -60,14 +60,9 @@ async function routes(fastify, options) {
 		schema: {
 			tags: ["products"],
 			description: "Create new Product",
-			params: {
-				product_id: {
-					type: "string",
-				},
-			},
 			body: {
-				allOf: [ProductSchema.validation.createUpdateProduct],
-				required: ProductSchema.validation.createUpdateProduct.required,
+				allOf: [ProductSchema.validation.createProduct],
+				required: ProductSchema.validation.createProduct.required,
 			},
 			response: {
 				201: ProductSchema.serialization.Product,
@@ -89,8 +84,7 @@ async function routes(fastify, options) {
 				},
 			},
 			body: {
-				anyOf: [ProductSchema.validation.createUpdateProduct],
-				required: ProductSchema.validation.createUpdateProduct.required,
+				anyOf: [ProductSchema.validation.updateProduct],
 			},
 			response: {
 				201: ProductSchema.serialization.Product,

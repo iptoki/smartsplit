@@ -1,19 +1,22 @@
 const mongoose = require("mongoose")
 const localeSchema = require("../entities/locale")
 const uuid = require("uuid").v4
-const PromoCodeSchema = mongoose.Schema({
-	_id: {
-		type: String,
-		alias: "promo_id",
-		default: uuid,
+const PromoCodeSchema = mongoose.Schema(
+	{
+		_id: {
+			type: String,
+			alias: "promo_id",
+			default: uuid,
+		},
+		code: String,
+		organisation: localeSchema,
+		description: localeSchema,
+		value: Number,
+		expires: Date,
+		purchase_id: String,
 	},
-	code: String,
-	organisation: localeSchema,
-	description: localeSchema,
-	value: Number,
-	expires: Date,
-	purchase_id: String,
-})
+	{ toJSON: { virtuals: true } }
+)
 PromoCodeSchema.query.getActive = function () {
 	const now = new Date()
 

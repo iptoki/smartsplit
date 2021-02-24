@@ -14,10 +14,22 @@ const Product = {
 		active: { type: "boolean" },
 	},
 }
-const createUpdateProduct = {
+const createProduct = {
+	type: "object",
+	required: ["productCode", "name", "description", "price"],
+	properties: {
+		productCode: {
+			type: "string",
+			enum: ProductCode.list,
+		},
+		name: localeSchema,
+		description: localeSchema,
+		price: { type: "number" },
+	},
+}
+const updateProduct = {
 	type: "object",
 	properties: {
-		product_id: { type: "string" },
 		productCode: {
 			type: "string",
 			enum: ProductCode.list,
@@ -33,6 +45,7 @@ module.exports = {
 		Product,
 	},
 	validation: {
-		createUpdateProduct,
+		createProduct,
+		updateProduct,
 	},
 }
