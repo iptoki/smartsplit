@@ -161,6 +161,7 @@ const entity = {
 
 module.exports = {
 	serialization: {
+		locale,
 		entity,
 		[EntityTypes.INSTRUMENT]: instrument,
 		[EntityTypes.MUSICAL_GENRE]: musicalGenre,

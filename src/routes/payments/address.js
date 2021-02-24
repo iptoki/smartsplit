@@ -27,6 +27,11 @@ async function routes(fastify, options) {
 		schema: {
 			tags: ["addresses"],
 			description: "Get address by id",
+			params: {
+				address_id: {
+					type: "string",
+				},
+			},
 			response: {
 				200: AddressSchema.serialization.Address,
 			},
@@ -59,6 +64,11 @@ async function routes(fastify, options) {
 		schema: {
 			tags: ["addresses"],
 			description: "Edit Address",
+			params: {
+				address_id: {
+					type: "string",
+				},
+			},
 			body: {
 				anyOf: [AddressSchema.validation.updateAddress],
 				required: AddressSchema.validation.updateAddress.required,
@@ -78,7 +88,7 @@ async function routes(fastify, options) {
 			tags: ["addresses"],
 			description: "delete (inactivate) a user's address",
 			params: {
-				workpiece_id: {
+				address_id: {
 					type: "string",
 				},
 			},

@@ -1,4 +1,5 @@
 const mongoose = require("mongoose")
+const localeSchema = require("../entities/locale")
 const uuid = require("uuid").v4
 const ProductCode = require("../../constants/ProductCode")
 const ProductSchema = new mongoose.Schema({
@@ -11,10 +12,8 @@ const ProductSchema = new mongoose.Schema({
 		type: String,
 		enum: ProductCode.list,
 	},
-	name_en: String,
-	name_fr: String,
-	description_en: String,
-	description_fr: String,
+	name: localeSchema,
+	description: localeSchema,
 	price: Number,
 	active: Boolean,
 })

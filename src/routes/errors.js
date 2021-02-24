@@ -103,6 +103,13 @@ module.exports.FileTooLarge = new HTTPErrors.PayloadTooLarge(
 
 /* Address related errors */
 module.exports.AddressNotFound = new HTTPErrors.NotFound("Address not found")
-module.exports.AddressNotModifiable = new HTTPErrors.Conflict(
-	"Address used in purchase -- cannot be modified"
+module.exports.AddressImmutable = new HTTPErrors.Conflict(
+	"Address used in purchase -- cannot be modified or deleted"
+)
+/* PromoCode errors */
+module.exports.PromoCodeNotFound = new HTTPErrors.NotFound(
+	"PromoCode not found"
+)
+module.exports.PromoCodeImmutable = new HTTPErrors.Conflict(
+	"PromoCode used in purchase -- cannot be modified or deleted"
 )
