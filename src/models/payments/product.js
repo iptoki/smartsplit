@@ -17,5 +17,15 @@ const ProductSchema = new mongoose.Schema({
 	price: Number,
 	active: Boolean,
 })
+ProductSchema.query.getActive = function () {
+	const now = new Date()
+
+	return this.where({ active: true })
+}
+ProductSchema.query.getInactive = function () {
+	const now = new Date()
+
+	return this.where({ active: false })
+}
 module.exports.Product = mongoose.model("Product", ProductSchema)
 module.exports.Schema = ProductSchema

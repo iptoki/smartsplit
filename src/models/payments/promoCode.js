@@ -21,7 +21,7 @@ PromoCodeSchema.query.getActive = function () {
 		expires: { $gte: now.toISOString() },
 	})
 }
-PromoCodeSchema.query.getInActive = function () {
+PromoCodeSchema.query.getInactive = function () {
 	const now = new Date()
 
 	return this.or(

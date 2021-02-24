@@ -113,3 +113,9 @@ module.exports.PromoCodeNotFound = new HTTPErrors.NotFound(
 module.exports.PromoCodeImmutable = new HTTPErrors.Conflict(
 	"PromoCode used in purchase -- cannot be modified or deleted"
 )
+
+/* Product errors */
+module.exports.ProductNotFound = new HTTPErrors.NotFound("Product not found")
+module.exports.ProductImmutable = new HTTPErrors.Conflict(
+	"Product used in purchase -- cannot be modified or deleted"
+)

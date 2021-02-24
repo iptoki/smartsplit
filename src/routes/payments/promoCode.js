@@ -1,7 +1,6 @@
-const PromoCode = require("../../models/payments/")
-const PromoCode = require("../../models/payments/PromoCode").PromoCode
+const PromoCode = require("../../models/payments/promoCode").PromoCode
 const Purchase = require("../../models/payments/purchase")
-const PromoCodeSchema = require("../../schemas/payments/PromoCode")
+const PromoCodeSchema = require("../../schemas/payments/promoCode")
 const Errors = require("../errors")
 const JWTAuth = require("../../service/JWTAuth")
 
@@ -10,9 +9,9 @@ const JWTAuth = require("../../service/JWTAuth")
 async function routes(fastify, options) {
 	fastify.route({
 		method: "GET",
-		url: "/PromoCodes/",
+		url: "/promoCodes/",
 		schema: {
-			tags: ["PromoCodes"],
+			tags: ["promoCodes"],
 			description: "Get PromoCodes by logged in user",
 			response: {
 				200: { type: "array", items: PromoCodeSchema.serialization.PromoCode },
@@ -38,9 +37,9 @@ async function routes(fastify, options) {
 	})
 	fastify.route({
 		method: "GET",
-		url: "/PromoCodes/:promoCode_id",
+		url: "/promoCodes/:promoCode_id",
 		schema: {
-			tags: ["PromoCodes"],
+			tags: ["promoCodes"],
 			description: "Get PromoCode by id",
 			params: {
 				promoCode_id: {
@@ -57,9 +56,9 @@ async function routes(fastify, options) {
 	})
 	fastify.route({
 		method: "POST",
-		url: "/PromoCodes/",
+		url: "/promoCodes/",
 		schema: {
-			tags: ["PromoCodes"],
+			tags: ["promoCodes"],
 			description: "Create new PromoCode",
 			params: {
 				promoCode_id: {
@@ -80,9 +79,9 @@ async function routes(fastify, options) {
 	})
 	fastify.route({
 		method: "PATCH",
-		url: "/PromoCodes/:promoCode_id",
+		url: "/promoCodes/:promoCode_id",
 		schema: {
-			tags: ["PromoCodes"],
+			tags: ["promoCodes"],
 			description: "Edit PromoCode",
 			params: {
 				promoCode_id: {
@@ -103,9 +102,9 @@ async function routes(fastify, options) {
 	})
 	fastify.route({
 		method: "DELETE",
-		url: "/PromoCodes/:promoCode_id",
+		url: "/promoCodes/:promoCode_id",
 		schema: {
-			tags: ["PromoCodes"],
+			tags: ["promoCodes"],
 			description: "delete (inactivate) a user's PromoCode",
 			params: {
 				promoCode_id: {
@@ -132,7 +131,7 @@ const getPromoCodes = async function (req, res) {
 			.limit(parseInt(req.query.limit))
 	} else if (req.query.filter === "inactive") {
 		PromoCodes = await PromoCode.find()
-			.getInActive()
+			.getInactive()
 			.skip(parseInt(req.query.skip))
 			.limit(parseInt(req.query.limit))
 	} else {
