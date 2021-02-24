@@ -179,8 +179,11 @@ async function createCollaborator(req, res) {
 		}
 	}
 
-	user.collaborators.push(collaborator._id)
-	await user.save()
+	if(collaborator._id !== user._id){
+		user.collaborators.push(collaborator._id)
+		await user.save()
+	}
+
 
 	res.code(201)
 	return collaborator

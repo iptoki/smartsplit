@@ -134,7 +134,7 @@ const TemplateMap = {
 				fr: "d-aa140c8094dd44ebbfb6637db3e51ccc",
 			},
 			generate: function (user, options) {
-				const token = user.createPasswordResetToken(
+				const token = user.createActivationToken(
 					options.to.email,
 					options.expires || "2 hours"
 				)
