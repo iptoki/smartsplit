@@ -25,10 +25,7 @@ const JWT_SPLIT_TYPE = "right-split"
 const MobilePhoneSchema = new mongoose.Schema(
 	{
 		number: String,
-		status: {
-			type: String,
-			enum: ["verified", "unverified"],
-		},
+		isVerified: Boolean,
 		verificationCode: {
 			code: Number,
 			createdAt: Date,
@@ -109,6 +106,7 @@ const UserSchema = new mongoose.Schema(
 		},
 		mobilePhone: {
 			type: MobilePhoneSchema,
+			default: {},
 		},
 		notifications: {
 			type: Notification.Schema,
@@ -123,10 +121,6 @@ const UserSchema = new mongoose.Schema(
 			default: {},
 		},
 		collaborators: {
-			type: [String],
-			ref: "User",
-		},
-		contributors: {
 			type: [String],
 			ref: "User",
 		},
@@ -155,10 +149,6 @@ UserSchema.virtual("fullName").get(function () {
 	if (this.lastName) return this.lastName
 
 	return "Guest"
-})
-
-UserSchema.virtual("rightHolder_id").get(function () {
-	return this._id
 })
 
 /**
@@ -192,7 +182,7 @@ UserSchema.virtual("avatarUrl").get(function () {
  */
 UserSchema.virtual("isAdmin").get(function () {
 	if (!this.permissions) return false
-	return this.permissions.admin === true
+	return this.permissions.isAdmin
 })
 
 /**
@@ -217,27 +207,6 @@ UserSchema.virtual("canActivate").get(function () {
 })
 
 /**
- * Looks up the database for an existing user with either the ID or email address
- */
-UserSchema.query.byBody = function (body) {
-	if (!body.email)
-		throw new Error("Can't query by body without an email address")
-
-	return this.where({
-		$or: [{ _id: body.user_id }, { emails: normalizeEmailAddress(body.email) }],
-	})
-}
-
-/**
- * Looks up the database for an existing usser by contributorID
- */
-UserSchema.query.byContributorId = function (contributor_id) {
-	return this.where({
-		contributors: contributor_id,
-	})
-}
-
-/**
  * Filters account that are considered active
  */
 UserSchema.query.byActive = function () {
@@ -256,8 +225,11 @@ UserSchema.query.byEmail = function (email) {
 /**
  * Looks up the database for a user by mobile phone
  */
-UserSchema.query.byMobilePhone = function (number) {
-	return this.where({ "mobilePhone.number": number })
+UserSchema.query.byMobilePhone = function (number, isVerified) {
+	const query = this.where({ "mobilePhone.number": number })
+	if (typeof isVerified === "boolean")
+		return query.where({ "mobilePhone.isVerified": isVerified })
+	return query
 }
 
 /**
@@ -290,149 +262,7 @@ UserSchema.query.byActivationToken = function (token) {
 		})
 }
 
-/**
- * Adds an email address of a user as pending
- */
-UserSchema.methods.hasAccessToUser = function (user_id) {
-	if (this._id === user_id) return true
-	if (
-		Array.isArray(this.permissions.users) &&
-		this.permissions.users.includes(user_id)
-	)
-		return true
-	return false
-}
-
-/**
- * Adds an email address of the user as pending and returns the email object if successfully created, null otherwise
- */
-UserSchema.methods.addPendingEmail = async function (email) {
-	email = normalizeEmailAddress(email)
-
-	if (await this.model("User").findOne().byEmail(email))
-		throw Errors.ConflictingEmail
-
-	let date = new Date(Date.now() - 60 * 60 * 1000)
-
-	// Seach for an entry created less than an hour ago with the specified email address
-	let emailVerif = await EmailVerification.findOne({
-		_id: email,
-		createdAt: { $gte: date },
-	}).populate("user")
-
-	// An entry exist, check if it belongs to the current user
-	if (emailVerif && emailVerif.user && emailVerif.user._id !== this._id)
-		throw Errors.ConflictingEmail
-	// Delete it otherwise
-	else await EmailVerification.deleteOne({ _id: email })
-
-	emailVerif = new EmailVerification({
-		_id: email,
-		user: this._id,
-	})
-
-	if (
-		Array.isArray(this.pendingEmails) &&
-		!this.pendingEmails.find((item) => item.email === emailVerif._id)
-	)
-		this.pendingEmails.push(emailVerif)
-
-	return emailVerif
-}
-
-/**
- * Remove a pending email address of the user
- */
-UserSchema.methods.removePendingEmail = async function (email) {
-	email = normalizeEmailAddress(email)
-
-	if (!this.populated("pendingEmails"))
-		await this.populate("pendingEmails").execPopulate()
-
-	if (!this.pendingEmails.find((e) => e.email === email)) return false
-
-	await EmailVerification.deleteOne().byEmailUserId(email, this._id)
-
-	this.pendingEmails.filter((e) => e.email === email)
-
-	return true
-}
-
-/**
- * Remove an email address of the user
- */
-UserSchema.methods.removeEmail = async function (email) {
-	email = normalizeEmailAddress(email)
-
-	if (!this.emails.includes(email)) return false
-
-	if (this.emails.length === 1) throw Errors.DeleteNotAllowed
-
-	this.emails.splice(this.emails.indexOf(email), 1)
-	await this.save()
-
-	return true
-}
-
-/**
- * Sets the user's password
- */
-UserSchema.methods.setPassword = async function (password, force = false) {
-	if (!force && (await this.verifyPassword(password))) return false
-
-	this.password = await PasswordUtil.hash(password)
-	return true
-}
-
-/**
- * Sets the user's mobile phone
- */
-UserSchema.methods.setMobilePhone = async function (number, verified = false) {
-	const user = await this.model("User").findOne().byMobilePhone(number)
-
-	const expireDate = new Date(Date.now() - 24 * 60 * 60 * 1000)
-
-	if (
-		user &&
-		user._id !== this._id &&
-		(user.mobilePhone.status === "verified" ||
-			(user.mobilePhone.status === "unverified" &&
-				user.mobilePhone.verificationCode.createdAt > expireDate))
-	)
-		throw Errors.ConflictingUserPhoneNumber
-
-	if (user && user._id === this._id && user.mobilePhone.status === "verified")
-		return
-
-	this.mobilePhone = {
-		number: number,
-		status: "unverified",
-		verificationCode: { code: generateRandomCode(), createdAt: new Date() },
-	}
-
-	this.sendSMS(UserTemplates.VERIFY_MOBILE_PHONE, false, false)
-}
-
-/**
- * Sets the user's profesional identity
- */
-UserSchema.methods.setProfessionalIdentity = function (professionalIdentity) {
-	if (Array.isArray(professionalIdentity.ids)) {
-		let map = {}
-		professionalIdentity.ids.forEach(function (id) {
-			if (id.name.length && id.value.length)
-				map[id.name.toLowerCase().trim()] = id.value
-		})
-		this.professionalIdentity.ids = []
-		for (const [name, value] of Object.entries(map))
-			this.professionalIdentity.ids.push({ name, value })
-	}
-
-	if (typeof professionalIdentity.public === "boolean")
-		this.professionalIdentity.public = professionalIdentity.public
-}
-
-UserSchema.methods.getCollaboratorsByDegree = async function (degree = 0) {
+UserSchema.methods.getCollaboratorsByDegrees = async function (degree = 0) {
 	if (!this.populated("collaborators"))
 		await this.populate("collaborators").execPopulate()
 	let collaboratorMap = [this.collaborators]
@@ -454,7 +284,7 @@ UserSchema.methods.getCollaborators = async function (
 	limit = 1,
 	skip = 0
 ) {
-	const collaboratorMap = await this.getCollaboratorsByDegree(degree)
+	const collaboratorMap = await this.getCollaboratorsByDegrees(degree)
 
 	let regex = ""
 	if (search_terms) {
@@ -482,7 +312,7 @@ UserSchema.methods.getCollaborators = async function (
 				visitedIds.push(collab._id)
 			}
 		}
-		const matches = await this.model("User")
+		const matches = await User
 			.find({
 				$and: [{ _id: { $in: ids } }, regexMatchCondition],
 			})
@@ -494,7 +324,7 @@ UserSchema.methods.getCollaborators = async function (
 
 	if (_limit > 1) {
 		visitedIds.push(this._id)
-		const matches = await this.model("User")
+		const matches = await User
 			.find({
 				$and: [{ _id: { $nin: visitedIds } }, regexMatchCondition],
 			})
@@ -507,13 +337,112 @@ UserSchema.methods.getCollaborators = async function (
 }
 
 /**
+ * Adds an email address of a user as pending
+ */
+UserSchema.methods.hasAccessToUser = function (user_id) {
+	if (this._id === user_id) return true
+	return (
+		Array.isArray(this.permissions.users) &&
+		this.permissions.users.includes(user_id)
+	)
+}
+
+/**
+ * Sets the user's password
+ */
+UserSchema.methods.setPassword = async function (password, force = false) {
+	if (!force && (await this.verifyPassword(password))) return false
+
+	this.password = await PasswordUtil.hash(password)
+	return true
+}
+
+/**
+ * Sets the user's mobile phone
+ */
+UserSchema.methods.setMobilePhone = async function (number) {
+	if (number === "") {
+		this.mobilePhone = undefined
+		return
+	}
+	if (
+		this.mobilePhone &&
+		this.mobilePhone.number === number &&
+		this.mobilePhone.isVerified
+	)
+		return
+
+	if (await User.findOne().byMobilePhone(number, true))
+		throw Errors.ConflictingUserPhoneNumber
+
+	this.mobilePhone = {
+		number: number,
+		isVerified: false,
+		verificationCode: { code: generateRandomCode(), createdAt: new Date() },
+	}
+
+	this.sendSMS(UserTemplates.VERIFY_MOBILE_PHONE, false, false)
+}
+
+/**
+ * Sets the user's profesional identity
+ */
+UserSchema.methods.setProfessionalIdentity = function (professionalIdentity) {
+	if (Array.isArray(professionalIdentity.ids)) {
+		let map = {}
+		professionalIdentity.ids.forEach(function (id) {
+			if (id.name.length && id.value.length)
+				map[id.name.toLowerCase().trim()] = id.value
+		})
+		this.professionalIdentity.ids = []
+		for (const [name, value] of Object.entries(map))
+			this.professionalIdentity.ids.push({ name, value })
+	}
+
+	if (typeof professionalIdentity.public === "boolean")
+		this.professionalIdentity.public = professionalIdentity.public
+}
+
+UserSchema.methods.setNotifications = function (notifications) {
+	for (const type of NotificationTypes.list) {
+		if (!Array.isArray(notifications[type])) continue
+		if (NotificationTypes.mandatoryTypes.includes(type))
+			this.notifications[type] = Array.from(
+				new Set([...notifications[type], "email", "push"])
+			)
+		else this.notifications[type] = notifications[type]
+	}
+}
+
+/*
+ * Sets the user's avatar
+ */
+UserSchema.methods.setAvatar = function (avatar) {
+	if (avatar.length > 1024 * 1024 * 4 /* 4 MB */)
+		throw new Error("Maximum file size is 4 MB")
+
+	this.avatar = avatar
+}
+
+/*
+ * Sets the user's primary email
+ */
+UserSchema.methods.setPrimaryEmail = function (email) {
+	email = normalizeEmailAddress(email)
+	const index = this.emails.indexOf(email)
+	if (index < 0) throw Errors.EmailNotFound
+	this.emails.splice(index, 1)
+	this.emails = [email, ...this.emails]
+}
+
+/**
  * Add collaborators to the user
  */
 UserSchema.methods.addCollaborators = async function (collaboratorIds) {
 	let promises = []
 	for (const uid of collaboratorIds) {
-		if (!this.collaborators.includes(id)) {
-			promises.push(this.model("User").ensureExist(uid))
+		if (!this.collaborators.includes(uid) && uid !== this._id) {
+			promises.push(User.ensureExist(uid))
 			this.collaborators.push(uid)
 		}
 	}
@@ -521,13 +450,142 @@ UserSchema.methods.addCollaborators = async function (collaboratorIds) {
 }
 
 /**
+ * Adds an email address of the user as pending and returns the email object if successfully created, null otherwise
+ */
+UserSchema.methods.addPendingEmail = async function (
+	email,
+	template = UserTemplates.ACTIVATE_EMAIL,
+	options = {}
+) {
+	let [duplicate, emailVerif] = await Promise.all([
+		User.findOne().byEmail(email),
+		EmailVerification.findOne().byEmail(email).populate("user"),
+	])
+
+	if (duplicate) throw Errors.ConflictingEmail
+
+	let expireDate = new Date(Date.now() - 60 * 60 * 1000)
+
+	if (emailVerif) {
+		// If email exists, belongs to an other user and was created less than an hour ago, then throw
+		if (
+			emailVerif.user &&
+			emailVerif.user._id !== this._id &&
+			emailVerif.createdAt > expireDate
+		)
+			throw Errors.ConflictingEmail
+		// Delete it otherwise
+		else await EmailVerification.deleteOne().byEmail(email)
+	}
+
+	emailVerif = new EmailVerification({
+		_id: email,
+		user: this._id,
+	})
+
+	if (
+		Array.isArray(this.pendingEmails) &&
+		!this.pendingEmails.find((item) => item._id === emailVerif._id)
+	)
+		this.pendingEmails.push(emailVerif)
+
+	await emailVerif.save()
+
+	this.sendNotification(template, {
+		...options,
+		to: { name: this.fullName, email: emailVerif._id },
+	})
+
+	return emailVerif
+}
+
+UserSchema.methods.update = async function (data) {
+	let promises = []
+
+	if (data.password)
+		// password cannot be empty string
+		promises[0] = this.setPassword(data.password)
+	if (data.phoneNumber !== undefined)
+		promises[1] = this.setMobilePhone(data.phoneNumber)
+	if (data.email)
+		// email cannot be empty string
+		promises[2] = this.addPendingEmail(
+			data.email,
+			this.emails.length > 0
+				? UserTemplates.ACTIVATE_EMAIL
+				: UserTemplates.ACTIVATE_ACCOUNT
+		)
+
+	const [hasPasswordChanged] = await Promise.all(promises)
+
+	if (hasPasswordChanged) this.sendNotification(UserTemplates.PASSWORD_CHANGED)
+
+	if (data.professionalIdentity !== undefined)
+		this.setProfessionalIdentity(data.professionalIdentity)
+	if (data.avatar !== undefined)
+		this.setAvatar(Buffer.from(data.avatar, "base64"))
+	if (data.notifications !== undefined)
+		this.setNotifications(data.notifications)
+
+	for (let field of [
+		"firstName",
+		"lastName",
+		"artistName",
+		"locale",
+		"isni",
+		"birthDate",
+		"address",
+		"organisations",
+		"projects",
+		"uri",
+	])
+		if (data[field] !== undefined) this[field] = data[field]
+}
+
+/**
+ * Remove a pending email address of the user
+ */
+UserSchema.methods.deletePendingEmail = async function (email) {
+	email = normalizeEmailAddress(email)
+
+	const result = await EmailVerification.deleteOne().byEmailUserId(
+		email,
+		this._id
+	)
+
+	if (result.deletedCount < 1) return false
+
+	if (this.populated("pendingEmails"))
+		this.pendingEmails.filter((e) => e.email === email)
+
+	return true
+}
+
+/**
+ * Remove an email address of the user
+ */
+UserSchema.methods.deleteEmail = async function (email) {
+	email = normalizeEmailAddress(email)
+
+	if (!this.emails.includes(email)) return await this.deletePendingEmail(email)
+
+	if (this.emails.length === 1) throw Errors.DeleteNotAllowed
+
+	this.emails.splice(this.emails.indexOf(email), 1)
+
+	return true
+}
+
+/**
  * Delete a collaborator by ID
  */
-UserSchema.methods.deleteCollaborator = function (id) {
+UserSchema.methods.deleteCollaboratorById = function (id) {
+	const n = this.collaborators.length
 	this.collaborators = this.collaborators.filter(function (item) {
 		if (typeof item === "string") return item !== id
 		return item._id !== id
 	})
+	return n > this.collaborators.length
 }
 
 /**
@@ -550,27 +608,6 @@ UserSchema.methods.deleteAccount = async function () {
 	await this.save()
 }
 
-/*
- * Sets the user's avatar
- */
-UserSchema.methods.setAvatar = async function (avatar) {
-	if (avatar.length > 1024 * 1024 * 4 /* 4 MB */)
-		throw new Error("Maximum file size is 4 MB")
-
-	this.avatar = avatar
-}
-
-/*
- * Sets the user's primary email
- */
-UserSchema.methods.setPrimaryEmail = function (email) {
-	email = normalizeEmailAddress(email)
-	const index = this.emails.indexOf(email)
-	if (index < 0) throw Errors.EmailNotFound
-	this.emails.splice(index, 1)
-	this.emails = [email, ...this.emails]
-}
-
 /**
  * Verifies the password of the current user
  */
@@ -582,13 +619,13 @@ UserSchema.methods.verifyPassword = async function (password) {
  * Verifies the verification code of the user's mobile phone
  */
 UserSchema.methods.verifyMobilePhone = async function (code) {
-	if (!this.mobilePhone.verificationCode) return false
-
+	if (!this.mobilePhone) throw Errors.UserMobilePhoneNotFound
+	if (!this.mobilePhone.verificationCode) throw Errors.InvalidVerificationCode
+	if (this.mobilePhone.isVerified) throw Errors.MobilePhoneAlreadyActivated
 	if (
-		await this.model("User").findOne({
-			"mobilePhone.number": this.mobilePhone.number,
-			"mobilePhone.status": "verified",
-		})
+		await User
+			.findOne({ _id: { $ne: this._id } })
+			.byMobilePhone(this.mobilePhone.number, true)
 	)
 		throw Errors.ConflictingUserPhoneNumber
 
@@ -598,13 +635,18 @@ UserSchema.methods.verifyMobilePhone = async function (code) {
 	)
 
 	if (expireDate < new Date() || this.mobilePhone.verificationCode.code != code)
-		return false
+		throw Errors.InvalidVerificationCode
 
-	this.mobilePhone.status = "verified"
-	this.mobilePhone.verificationCode = null
-	await this.save()
+	this.mobilePhone.isVerified = true
+	this.mobilePhone.verificationCode = undefined
+}
 
-	return true
+/**
+ * Verifies a password reset token for the user
+ */
+UserSchema.methods.verifyPasswordResetToken = function (token) {
+	const data = JWT.decode(JWT_RESET_TYPE, token)
+	return data && data.user_id == this._id
 }
 
 /**
@@ -626,23 +668,6 @@ UserSchema.methods.createPasswordResetToken = function (
 }
 
 /**
- * Decode a password reset token for the user
- */
-UserSchema.methods.decodePasswordResetToken = function (token) {
-	const data = JWT.decode(JWT_RESET_TYPE, token)
-	if (!data || data.user_id !== this._id) return null
-	return data
-}
-
-/**
- * Verifies a password reset token for the user
- */
-UserSchema.methods.verifyPasswordResetToken = function (token) {
-	const data = JWT.decode(JWT_RESET_TYPE, token)
-	return data && data.user_id == this._id
-}
-
-/**
  * Creates an activation token to verify the user's email address
  */
 UserSchema.methods.createActivationToken = function (
@@ -661,6 +686,41 @@ UserSchema.methods.createActivationToken = function (
 	return token
 }
 
+UserSchema.methods.createCollaborator = async function (data) {
+	let collaborator = await User.findOne().byEmail(data.email)
+
+	if (!collaborator) {
+		let emailVerif = await EmailVerification.findOne()
+			.byEmail(data.email)
+			.populate("user")
+
+		if (emailVerif && emailVerif.user) collaborator = emailVerif.user
+		else {
+			collaborator = new User({
+				firstName: data.email.split("@")[0],
+				...data,
+			})
+			await collaborator.addPendingEmail(data.email, UserTemplates.INVITED, {
+				collaborator: this,
+			})
+			await collaborator.save()
+		}
+	}
+
+	if (collaborator._id !== this._id) this.collaborators.push(collaborator._id)
+
+	return collaborator
+}
+
+/**
+ * Decode a password reset token for the user
+ */
+UserSchema.methods.decodePasswordResetToken = function (token) {
+	const data = JWT.decode(JWT_RESET_TYPE, token)
+	if (!data || data.user_id !== this._id) return null
+	return data
+}
+
 /*
  * Sends a notification to the user through the medium set in the user's preferences
  */
@@ -669,11 +729,11 @@ UserSchema.methods.sendNotification = function (templateName, options = {}) {
 		console.log("Error while sending SMS notification: " + err)
 	)
 	this.sendEmail(templateName, options).catch((err) =>
-		console.log("Error while sending email notification: " + err)
+		console.log("Error while sending email notification: " + err + err.stack)
 	)
-	this.sendPush(templateName).catch((err) =>
+	/*this.sendPush(templateName).catch((err) =>
 		console.log("Error while sending push notification: " + err)
-	)
+	)*/
 }
 
 /**
@@ -714,23 +774,63 @@ UserSchema.methods.sendEmail = async function (templateName, options = {}) {
 /**
  * Sends a Push notification to the user
  */
-UserSchema.methods.sendPush = async function (templateName) {
-	const template = generateTemplate(templateName, "push", this)
-
-	if (
-		!template ||
-		!this.notifications[template.notificationType].includes("push")
-	)
-		return null
-
+UserSchema.methods.sendPush = function (templateName) {
 	return "push not implemented"
 }
 
 UserSchema.statics.ensureExist = function (uid) {
 	return this.exists({ _id: uid }).then((exist) => {
 		if (!exist) return Promise.reject(Errors.UserNotFound)
-		else return Promise.resolve()
+		else return Promise.resolve(uid)
 	})
 }
 
-module.exports = mongoose.model("User", UserSchema)
+UserSchema.statics.activate = async function (token, checkPassword = true) {
+	const email = await EmailVerification.findOne().byActivationToken(
+		token,
+		checkPassword
+	)
+	const user = email.user
+
+	if (!email) throw Errors.InvalidActivationToken
+	if (await User.findOne().byEmail(email._id)) throw Errors.EmailAlreadyActivated
+
+	user.accountStatus = AccountStatus.ACTIVE
+	user.emails.push(email._id)
+
+	await email.remove()
+
+	return user
+}
+
+UserSchema.statics.create = async function (data) {
+	data = {
+		firstName: data.email.split("@")[0],
+		...data,
+	}
+
+	let user
+	let emailVerif = await EmailVerification.findOne()
+		.byEmail(data.email)
+		.populate("user")
+
+	if (emailVerif) {
+		if (!emailVerif.user) await emailVerif.remove()
+		else if (await emailVerif.user.verifyPassword(data.password))
+			user = emailVerif.user
+	}
+
+	if (!user) {
+		user = new User()
+		await user.setPassword(data.password, true)
+		data.password = undefined
+		await user.update(data)
+	}
+
+	await user.save()
+	return user
+}
+
+const User = mongoose.model("User", UserSchema)
+
+module.exports = User

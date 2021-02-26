@@ -1,42 +1,24 @@
 const mongoose = require("mongoose")
 const Config = require("../../config")
-
-module.exports.GENERAL_INTERACTIONS = "generalInteractions"
-module.exports.ADMINISTRATIVE_MESSAGES = "administrativeMessages"
-module.exports.ACCOUNT_LOGIN = "accountLogin"
-module.exports.SMARTSPLIT_BLOG = "smartsplitBlog"
-module.exports.SMARTSPLIT_PROMOTIONS = "smartsplitPromotions"
-module.exports.PARTNER_PROMOTIONS = "partnerPromotions"
+const Notification = require("../../constants/notificationTypes")
 
 /**
  * Represents a user's notification preferences in the system
  */
 module.exports.Schema = new mongoose.Schema(
 	{
-		[this.GENERAL_INTERACTIONS]: {
+		[Notification.GENERAL_INTERACTIONS]: {
 			type: Array,
 			default: ["email", "push"],
 		},
-		[this.ADMINISTRATIVE_MESSAGES]: {
+		[Notification.ADMINISTRATIVE_MESSAGES]: {
 			type: Array,
 			default: ["email", "push"],
 		},
-		[this.ACCOUNT_LOGIN]: {
-			type: Array,
-			default: [],
-		},
-		[this.SMARTSPLIT_BLOG]: {
-			type: Array,
-			default: [],
-		},
-		[this.SMARTSPLIT_PROMOTIONS]: {
-			type: Array,
-			default: [],
-		},
-		[this.PARTNER_PROMOTIONS]: {
-			type: Array,
-			default: [],
-		},
+		[Notification.ACCOUNT_LOGIN]: Array,
+		[Notification.SMARTSPLIT_BLOG]: Array,
+		[Notification.SMARTSPLIT_PROMOTIONS]: Array,
+		[Notification.PARTNER_PROMOTIONS]: Array,
 	},
 	{ _id: false }
 )
