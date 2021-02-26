@@ -27,7 +27,6 @@ const createAddress = {
 }
 const updateAddress = {
 	type: "object",
-	required: [],
 	properties: {
 		street1: { type: "string" },
 		street2: { type: "string" },

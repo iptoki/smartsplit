@@ -1,4 +1,5 @@
 const localeSchema = require("../entities").serialization.locale
+
 const PromoCode = {
 	type: "object",
 	properties: {

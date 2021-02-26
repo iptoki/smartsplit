@@ -1,4 +1,5 @@
 const localeSchema = require("../entities").serialization.locale
+
 const Purchase = {
 	type: "object",
 	properties: {
@@ -16,11 +17,12 @@ const Purchase = {
 		payment_id: { type: "string" },
 		status: {
 			type: "string",
-			enum: ["pending" | "succeeded" | "failed"],
+			enum: ["pending", "succeeded", "failed"],
 		},
 		purchaseDate: { type: "string" },
 	},
 }
+
 const createUpdatePurchase = {
 	type: "object",
 	properties: {
@@ -38,7 +40,7 @@ const createUpdatePurchase = {
 		payment_id: { type: "string" },
 		status: {
 			type: "string",
-			enum: ["pending" | "succeeded" | "failed"],
+			enum: ["pending", "succeeded", "failed"],
 		},
 		purchaseDate: { type: "string" },
 	},

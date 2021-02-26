@@ -21,6 +21,7 @@ async function routes(fastify, options) {
 		preValidation: JWTAuth.requireAuthUser,
 		handler: getUserAddresses,
 	})
+
 	fastify.route({
 		method: "GET",
 		url: "/addresses/:address_id",
@@ -40,6 +41,7 @@ async function routes(fastify, options) {
 		preValidation: JWTAuth.requireAuthUser,
 		handler: getAddress,
 	})
+
 	fastify.route({
 		method: "POST",
 		url: "/addresses/",
@@ -58,6 +60,7 @@ async function routes(fastify, options) {
 		preValidation: JWTAuth.requireAuthUser,
 		handler: createAddress,
 	})
+
 	fastify.route({
 		method: "PATCH",
 		url: "/addresses/:address_id",
@@ -81,6 +84,7 @@ async function routes(fastify, options) {
 		preValidation: JWTAuth.requireAuthUser,
 		handler: updateAddress,
 	})
+	
 	fastify.route({
 		method: "DELETE",
 		url: "/addresses/:address_id",

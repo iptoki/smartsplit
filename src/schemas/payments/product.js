@@ -1,5 +1,6 @@
 const localeSchema = require("../entities").serialization.locale
 const ProductCode = require("../../constants/ProductCode")
+
 const Product = {
 	type: "object",
 	properties: {
@@ -14,6 +15,7 @@ const Product = {
 		active: { type: "boolean" },
 	},
 }
+
 const createProduct = {
 	type: "object",
 	required: ["productCode", "name", "description", "price"],
@@ -27,6 +29,7 @@ const createProduct = {
 		price: { type: "number" },
 	},
 }
+
 const updateProduct = {
 	type: "object",
 	properties: {
@@ -40,6 +43,7 @@ const updateProduct = {
 		active: { type: "boolean" },
 	},
 }
+
 module.exports = {
 	serialization: {
 		Product,
