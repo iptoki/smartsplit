@@ -22,7 +22,13 @@ const Purchase = {
 		purchaseDate: { type: "string" },
 	},
 }
-
+const PurchaseIntent = {
+	type: "object",
+	properties: {
+		purchase: Purchase,
+		clientSecret: { type: "string" },
+	},
+}
 const createUpdatePurchase = {
 	type: "object",
 	properties: {
@@ -48,6 +54,7 @@ const createUpdatePurchase = {
 module.exports = {
 	serialization: {
 		Purchase,
+		PurchaseIntent,
 	},
 	validation: {
 		createUpdatePurchase,

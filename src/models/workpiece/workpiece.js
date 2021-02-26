@@ -66,6 +66,10 @@ const WorkpieceSchema = new mongoose.Schema(
 			type: DocumentationSchema,
 			default: {},
 		},
+		purchases: {
+			type: Map,
+			of: String,
+		},
 	},
 	{ timestamps: true, toJSON: { virtuals: true } }
 )

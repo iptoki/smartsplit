@@ -1,8 +1,5 @@
 const mongoose = require("mongoose")
 const uuid = require("uuid").v4
-const Products = require("./product").Product
-const Addresses = require("./address").Address
-const PromoCodes = require("./promoCode").PromoCode
 const PurchaseSchema = mongoose.Schema(
 	{
 		_id: {
@@ -36,9 +33,5 @@ const PurchaseSchema = mongoose.Schema(
 	},
 	{ toJSON: { virtuals: true } }
 )
-PurchaseSchema.methods.validate(workpiece_id, promoCode_id, product_id)
-{
-	Products.findById()
-}
 
 module.exports = mongoose.model("Purchase", PurchaseSchema)

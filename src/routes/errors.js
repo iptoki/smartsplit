@@ -124,3 +124,12 @@ module.exports.PurchaseImmutable = new HTTPErrors.Conflict(
 module.exports.BillingAddressRequired = new HTTPErrors.PreconditionFailed(
 	"User must have a current billing Address"
 )
+module.exports.ProductAlreadyPurchasedForWorkpiece = new HTTPErrors.PreconditionFailed(
+	"The productCode of the product you provided has already been purchased for this workpiece"
+)
+module.exports.StripeCustomerCreateError = new HTTPErrors.PreconditionFailed(
+	"Error creating a stripe customer id"
+)
+module.exports.StripePaymentIntentFailed = new HTTPErrors.PreconditionFailed(
+	"Error creating a payment Intent"
+)
