@@ -116,8 +116,11 @@ module.exports.ProductNotFound = new HTTPErrors.NotFound("Product not found")
 module.exports.ProductImmutable = new HTTPErrors.Conflict(
 	"Product used in purchase -- cannot be modified or deleted"
 )
-/* Product errors */
+/* Purchase errors */
 module.exports.PurchaseNotFound = new HTTPErrors.NotFound("Purchase not found")
 module.exports.PurchaseImmutable = new HTTPErrors.Conflict(
 	"Completed Purchases cannot be modified or deleted"
+)
+module.exports.BillingAddressRequired = new HTTPErrors.PreconditionFailed(
+	"User must have a current billing Address"
 )

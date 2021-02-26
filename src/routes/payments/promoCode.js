@@ -18,7 +18,8 @@ async function routes(fastify, options) {
 			},
 			security: [{ bearerAuth: [] }],
 		},
-		queryString: {
+		params: {},
+		querystring: {
 			filter: { type: "string" },
 			limit: {
 				type: "integer",

@@ -121,7 +121,10 @@ const getPurchase = async function (req, res) {
 }
 
 const createPurchase = async function (req, res) {
+	if (!req.authUser.payments.billingAddress) throw Errors.BillingAddressRequired
+
 	req.body.user_id = req.authUser._id
+
 	const purchase = new Purchase(req.body)
 	await purchase.save()
 	res.code(201)
