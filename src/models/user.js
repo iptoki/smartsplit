@@ -39,7 +39,7 @@ const MobilePhoneSchema = new mongoose.Schema(
  */
 const PermissionSchema = new mongoose.Schema(
 	{
-		admin: Boolean,
+		isAdmin: Boolean,
 		users: [String],
 	},
 	{ _id: false }
