@@ -84,7 +84,7 @@ async function routes(fastify, options) {
 		preValidation: JWTAuth.requireAuthUser,
 		handler: updateAddress,
 	})
-	
+
 	fastify.route({
 		method: "DELETE",
 		url: "/addresses/:address_id",

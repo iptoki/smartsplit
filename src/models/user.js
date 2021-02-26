@@ -323,11 +323,9 @@ UserSchema.methods.getCollaborators = async function (
 				visitedIds.push(collab._id)
 			}
 		}
-		const matches = await User
-			.find({
-				$and: [{ _id: { $in: ids } }, regexMatchCondition],
-			})
-			.limit(_limit)
+		const matches = await User.find({
+			$and: [{ _id: { $in: ids } }, regexMatchCondition],
+		}).limit(_limit)
 
 		_limit = _limit - matches.length
 		result = result.concat(matches)
@@ -335,11 +333,9 @@ UserSchema.methods.getCollaborators = async function (
 
 	if (_limit > 1) {
 		visitedIds.push(this._id)
-		const matches = await User
-			.find({
-				$and: [{ _id: { $nin: visitedIds } }, regexMatchCondition],
-			})
-			.limit(_limit)
+		const matches = await User.find({
+			$and: [{ _id: { $nin: visitedIds } }, regexMatchCondition],
+		}).limit(_limit)
 		result = result.concat(matches)
 	}
 
@@ -634,9 +630,10 @@ UserSchema.methods.verifyMobilePhone = async function (code) {
 	if (!this.mobilePhone.verificationCode) throw Errors.InvalidVerificationCode
 	if (this.mobilePhone.isVerified) throw Errors.MobilePhoneAlreadyActivated
 	if (
-		await User
-			.findOne({ _id: { $ne: this._id } })
-			.byMobilePhone(this.mobilePhone.number, true)
+		await User.findOne({ _id: { $ne: this._id } }).byMobilePhone(
+			this.mobilePhone.number,
+			true
+		)
 	)
 		throw Errors.ConflictingUserPhoneNumber
 
@@ -804,7 +801,8 @@ UserSchema.statics.activate = async function (token, checkPassword = true) {
 	const user = email.user
 
 	if (!email) throw Errors.InvalidActivationToken
-	if (await User.findOne().byEmail(email._id)) throw Errors.EmailAlreadyActivated
+	if (await User.findOne().byEmail(email._id))
+		throw Errors.EmailAlreadyActivated
 
 	user.accountStatus = AccountStatus.ACTIVE
 	user.emails.push(email._id)
