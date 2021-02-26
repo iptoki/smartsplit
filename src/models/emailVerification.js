@@ -76,21 +76,4 @@ EmailVerificationSchema.query.byActivationToken = async function (
 	return email
 }
 
-/**
- * Verify that an activation token is valid against the current instance of EmailVerification
- */
-EmailVerificationSchema.methods.verifyActivationToken = async function (token) {
-	const data = JWT.decode("user:activate", token)
-
-	if (!data) return false
-
-	if (!this.populated("user")) await this.populate("user").execPopulate()
-
-	return (
-		data.user_email === this.email &&
-		data.user_id === this.user._id &&
-		data.user_password === this.user.password
-	)
-}
-
 module.exports = mongoose.model("EmailVerification", EmailVerificationSchema)

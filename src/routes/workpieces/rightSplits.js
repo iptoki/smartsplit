@@ -197,7 +197,6 @@ const submit = async function (req, res) {
 	for (const rh of rightHolders) {
 		if (emails[rh._id] && !rh.emails.includes(emails[rh._id])) {
 			const pending = await rh.addPendingEmail(emails[rh._id])
-			await pending.save()
 			rh.sendNotification(UserTemplates.ACTIVATE_EMAIL, {
 				to: { name: rh.fullName, email: emails[rh._id] },
 			})

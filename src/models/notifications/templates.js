@@ -1,5 +1,5 @@
 const Config = require("../../config")
-const Notification = require("./notification")
+const Notification = require("../../constants/notificationTypes")
 
 const SplitTemplates = {
 	CREATED: "split:created",
