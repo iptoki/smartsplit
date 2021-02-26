@@ -5,10 +5,7 @@ const mobilePhone = {
 	type: "object",
 	properties: {
 		number: { type: "string" },
-		status: {
-			type: "string",
-			enum: ["verified", "unverified"],
-		},
+		isVerified: { type: "boolean" },
 	},
 	additionalProperties: false,
 }
@@ -16,7 +13,7 @@ const mobilePhone = {
 const permissions = {
 	type: "object",
 	properties: {
-		admin: { type: "boolean" },
+		isAdmin: { type: "boolean" },
 		users: {
 			type: "array",
 			items: { type: "string" },

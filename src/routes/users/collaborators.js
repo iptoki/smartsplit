@@ -102,7 +102,7 @@ async function routes(fastify, options) {
 				collaborator_id: { type: "string" },
 			},
 			response: {
-				200: UserSchema.serialization.collaborator,
+				200: UserSchema.serialization.user,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -152,35 +152,7 @@ async function getCollaboratorById(req, res) {
 
 async function createCollaborator(req, res) {
 	const user = await getUserWithAuthorization(req, res)
-
-	let collaborator = await User.findOne().byEmail(req.body.email)
-
-	if (!collaborator) {
-		let emailVerif = await EmailVerification.findOne()
-			.byEmail(req.body.email)
-			.populate("user")
-
-		if (emailVerif && emailVerif.user) collaborator = emailVerif.user
-		else {
-			collaborator = new User({
-				firstName: req.body.email.split("@")[0],
-				...req.body,
-				accountStatus: AccountStatus.EMAIL_VERIFICATION_PENDING,
-			})
-
-			emailVerif = await collaborator.addPendingEmail(req.body.email)
-
-			await Promise.all([collaborator.save(), emailVerif.save()])
-
-			collaborator.sendNotification(UserTemplates.INVITED, {
-				collaborator: user,
-				to: { name: collaborator.fullName, email: emailVerif._id },
-			})
-		}
-	}
-
-	user.collaborators.push(collaborator._id)
-	await user.save()
+	const collaborator = await user.createCollaborator(req.body)
 
 	res.code(201)
 	return collaborator
@@ -197,13 +169,11 @@ async function addCollaboratorById(req, res) {
 
 async function deleteCollaboratorById(req, res) {
 	const user = await getUserWithAuthorization(req, res)
-	const index = user.collaborators.indexOf(req.params.collaborator_id)
 
-	if (index < 0) throw Errors.CollaboratorNotFound
+	if (!user.deleteCollaboratorById(req.params.collaborator_id))
+		throw Errors.CollaboratorNotFound
 
-	user.collaborators.splice(index, 1)
 	await user.save()
-
 	res.code(204).send()
 }
 

@@ -70,7 +70,7 @@ const bearerTokenMiddleware = function (req, res) {
 			else
 				return User.findOne({
 					_id: req.auth.data.user_id,
-					"permissions.admin": true,
+					"permissions.isAdmin": true,
 				})
 		},
 	})

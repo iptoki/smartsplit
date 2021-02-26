@@ -43,9 +43,6 @@ module.exports.UserNotFound = new HTTPErrors.NotFound("User not found")
 module.exports.CollaboratorNotFound = new HTTPErrors.NotFound(
 	"Collaborator not found"
 )
-module.exports.ContributorNotFound = new HTTPErrors.NotFound(
-	"Contributor not found"
-)
 module.exports.UserMobilePhoneNotFound = new HTTPErrors.NotFound(
 	"User mobile phone not found"
 )
@@ -68,7 +65,7 @@ module.exports.ConflictingUser = new HTTPErrors.Conflict(
 	"A user already exists with this ID or email address"
 )
 module.exports.ConflictingUserPhoneNumber = new HTTPErrors.Conflict(
-	"A user already exists with this phone number"
+	"This phone number has already been activated by another user"
 )
 module.exports.AccountAlreadyActivated = new HTTPErrors.PreconditionFailed(
 	"This account is already active and cannot be activated again"

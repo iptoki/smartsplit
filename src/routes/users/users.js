@@ -25,8 +25,7 @@ async function routes(fastify, options) {
 			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.getAuthUser,
-		handler: getUser,
-		preSerialization: preSerializeUser,
+		handler: getUserById,
 	})
 
 	fastify.route({
@@ -214,15 +213,6 @@ async function routes(fastify, options) {
 
 /************************ Handlers ************************/
 
-async function preSerializeUser(req, res, user) {
-	if (
-		!req.authUser ||
-		(req.authUser && !req.authUser.hasAccessToUser(user._id))
-	)
-		res.schema(UserSchema.serialization.publicUser)
-
-	return user
-}
 
 const getUser = async function (req, res) {
 	if (req.authUser && req.authUser._id === req.params.user_id)
@@ -231,6 +221,17 @@ const getUser = async function (req, res) {
 	const user = await User.findById(req.params.user_id)
 
 	if (!user) throw Errors.UserNotFound
+
+	return user
+}
+
+const getUserById = async function (req, res) {
+	const user = await getUser(req, res)
+	if (
+		!req.authUser ||
+		(req.authUser && !req.authUser.hasAccessToUser(user._id))
+	)
+		res.schema(UserSchema.serialization.publicUser)
 
 	return user
 }
@@ -257,91 +258,25 @@ async function getUserAvatar(req, res) {
 }
 
 async function createUser(req, res) {
-	if (await User.findOne().byEmail(req.body.email)) throw Errors.ConflictingUser
-
-	let user
-	let emailVerif = await EmailVerification.findOne()
-		.byEmail(req.body.email)
-		.populate("user")
-
-	if (emailVerif) {
-		if (!emailVerif.user) await emailVerif.remove()
-		else if (await emailVerif.user.verifyPassword(req.body.password))
-			user = emailVerif.user
-	}
-
-	if (!user) {
-		user = new User({
-			firstName: req.body.email.split("@")[0],
-			...req.body,
-		})
-
-		emailVerif = await user.addPendingEmail(req.body.email)
-
-		await user.setPassword(req.body.password)
-
-		if (req.body.avatar) user.setAvatar(Buffer.from(req.body.avatar, "base64"))
-
-		if (req.body.phoneNumber) await user.setMobilePhone(req.body.phoneNumber)
-
-		if (req.body.professionalIdentity)
-			user.setProfessionalIdentity(req.body.professionalIdentity)
-
-		if (req.body.collaborators)
-			await user.addCollaborators(req.body.collaborators)
-
-		await Promise.all([user.save(), emailVerif.save()])
-	}
-
-	user.sendNotification(UserTemplates.ACTIVATE_ACCOUNT, {
-		to: { name: user.fullName, email: emailVerif._id },
-	})
-
+	const user = await User.create(req.body)
 	res.code(201)
 	return user
 }
 
 async function activateUserAccount(req, res) {
-	const email = await EmailVerification.findOne().byActivationToken(
-		req.body.token
-	)
-
-	const user = email.user
-
-	if (email && user.isActive) throw Errors.AccountAlreadyActivated
-	if (!email || !user.canActivate) throw Errors.InvalidActivationToken
-
-	user.accountStatus = AccountStatus.ACTIVE
-	user.emails.push(email._id)
-
-	await Promise.all([
-		user.save(),
-		EmailVerification.deleteOne({ _id: email._id }),
-	])
-
+	const user = await User.activate(req.body.token)
+	await user.save()
 	return { accessToken: JWTAuth.createToken(user), user: user }
 }
 
 async function activateInvitedUserAccount(req, res) {
-	const email = await EmailVerification.findOne().byActivationToken(
-		req.body.token,
-		false
-	)
+	const user = await User.activate(req.body.token)
+	const password = req.body.password
+	req.body.password = undefined
 
-	if (!email || !email.user) throw Errors.InvalidActivationToken
+	await Promise.all([user.update(req.body), user.setPassword(password, true)])
 
-	const user = email.user
-	if (user.isActive) throw Errors.AccountAlreadyActivated
-
-	user.accountStatus = AccountStatus.ACTIVE
-	user.emails.push(email._id)
-	for (let field of ["firstName", "lastName", "artistName"])
-		if (req.body[field] !== undefined) user[field] = req.body[field]
-
-	await Promise.all([
-		user.save(),
-		EmailVerification.deleteOne({ _id: email._id }),
-	])
+	await user.save()
 
 	return { accessToken: JWTAuth.createToken(user), user: user }
 }
@@ -349,52 +284,8 @@ async function activateInvitedUserAccount(req, res) {
 async function updateUser(req, res) {
 	const user = await getUserWithAuthorization(req, res)
 
-	let passwordChanged = false
-
-	// Update user data
-	if (req.body.email) {
-		const emailVerif = await user.addPendingEmail(req.body.email)
-		await emailVerif.save()
-		user.sendNotification(UserTemplates.ACTIVATE_EMAIL, {
-			to: { name: user.fullName, email: emailVerif._id },
-		})
-	}
-
-	if (req.body.phoneNumber) await user.setMobilePhone(req.body.phoneNumber)
-
-	if (req.body.password)
-		passwordChanged = await user.setPassword(req.body.password)
-
-	if (req.body.professionalIdentity)
-		user.setProfessionalIdentity(req.body.professionalIdentity)
-
-	if (req.body.avatar) user.setAvatar(Buffer.from(req.body.avatar, "base64"))
-
-	if (req.body.collaborators)
-		await user.addCollaborators(req.body.collaborators)
-
-	for (let field of [
-		"firstName",
-		"lastName",
-		"artistName",
-		"locale",
-		"notifications",
-		"isni",
-		"birthDate",
-		"address",
-		"organisations",
-		"projects",
-		"uri",
-	])
-		if (field in req.body) {
-			if (req.body[field]) user[field] = req.body[field]
-			else user[field] = undefined
-		}
-
+	await user.update(req.body)
 	await user.save()
-
-	// Send notification if password changed and saved successfully
-	if (passwordChanged) user.sendNotification(UserTemplates.PASSWORD_CHANGED)
 
 	return user
 }
@@ -407,7 +298,7 @@ async function requestPasswordReset(req, res) {
 			.byEmail(req.body.email)
 			.populate("user")
 
-		if (!email) throw Errors.UserNotFound
+		if (!email) throw Errors.EmailNotFound
 
 		user = email.user
 	}
@@ -424,11 +315,9 @@ async function changeUserPassword(req, res) {
 
 	if (req.body.token) {
 		user = await User.findOne().byPasswordResetToken(req.body.token)
-
 		if (!user) throw Errors.InvalidResetToken
 	} else {
 		user = await JWTAuth.requireAuthUser(req, res)
-
 		if (
 			!req.body.currentPassword ||
 			!(await user.verifyPassword(req.body.currentPassword))
@@ -436,31 +325,23 @@ async function changeUserPassword(req, res) {
 			throw Errors.InvalidCurrentPassword
 	}
 
-	await user.setPassword(req.body.password, true)
+	if (await user.setPassword(req.body.password))
+		user.sendNotification(UserTemplates.PASSWORD_CHANGED)
 
 	if (user.accountStatus === AccountStatus.EMAIL_VERIFICATION_PENDING) {
 		user.accountStatus = AccountStatus.ACTIVE
 		const data = user.decodePasswordResetToken(req.body.token)
-		if (await user.removePendingEmail(data.user_email))
+		if (await user.deletePendingEmail(data.user_email))
 			user.emails.push(data.user_email)
 	}
 
 	await user.save()
 
-	user.sendNotification(UserTemplates.PASSWORD_CHANGED)
-
 	return { accessToken: JWTAuth.createToken(user), user }
 }
 
 async function verifyUserMobilePhone(req, res) {
-	if (!req.authUser.mobilePhone) throw Errors.UserMobilePhoneNotFound
-
-	if (req.authUser.mobilePhone.code === "verified")
-		throw Errors.MobilePhoneAlreadyActivated
-
-	if (!(await req.authUser.verifyMobilePhone(req.body.verificationCode)))
-		throw Errors.InvalidVerificationCode
-
+	await req.authUser.verifyMobilePhone(req.body.verificationCode)
 	res.code(204).send()
 }
 

@@ -54,14 +54,10 @@ async function routes(fastify, options) {
 
 	fastify.route({
 		method: "POST",
-		url: "/users/:user_id/emails/:email",
+		url: "/users/activate-email",
 		schema: {
 			tags: ["users_emails"],
 			description: "Activate a user's email",
-			params: {
-				user_id: { type: "string" },
-				email: { type: "string" },
-			},
 			body: {
 				type: "object",
 				required: ["token"],
@@ -155,47 +151,25 @@ async function getUserEmails(req, res) {
 
 async function createUserEmail(req, res) {
 	const user = await getUserWithPendingEmails(req, res)
-	const emailVerif = await user.addPendingEmail(req.body.email)
-
-	await emailVerif.save()
-	user.sendNotification(UserTemplates.ACTIVATE_EMAIL, {
-		to: { name: user.fullName, email: emailVerif._id },
-	})
-
+	const emailVerif = await user.addPendingEmail(
+		req.body.email,
+		UserTemplates.ACTIVATE_EMAIL
+	)
 	return formatEmailList(user)
 }
 
 async function activateUserEmail(req, res) {
-	const user = await getUserWithPendingEmails(req, res)
-
-	if (user.emails.includes(normalizeEmailAddress(req.params.email)))
-		throw Errors.EmailAlreadyActivated
-
-	const email = user.pendingEmails.find(
-		(item) => item.email === normalizeEmailAddress(req.params.email)
-	)
-
-	if (!email) throw Errors.EmailNotFound
-
-	if (!(await email.verifyActivationToken(req.body.token)))
-		throw Errors.InvalidActivationToken
-
-	await EmailVerification.deleteOne({ _id: email._id })
-
-	user.emails.push(email._id)
+	const user = await User.activate(req.body.token)
 	await user.save()
-
 	return formatEmailList(user)
 }
 
 async function deleteUserEmail(req, res) {
 	const user = await getUserWithPendingEmails(req, res)
 
-	if (!(await user.removeEmail(req.params.email))) {
-		if (!(await user.removePendingEmail(req.params.email))) {
-			throw Errors.EmailNotFound
-		}
-	}
+	if (!(await user.deleteEmail(req.params.email))) throw Errors.EmailNotFound
+
+	await user.save()
 
 	res.code(204).send()
 }
