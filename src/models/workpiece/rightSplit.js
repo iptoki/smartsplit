@@ -181,7 +181,7 @@ RightSplitSchema.methods.update = async function (data) {
 		if (data[field] !== undefined) this[field] = data[field]
 	}
 
-	if (data.label !== undefined) {
+	if (data.label !== undefined && Object.keys(data.label) > 0) {
 		this.label.vote =
 			owner_id === data.label.rightHolder ? "accepted" : "undecided"
 		promises.push(User.ensureExist(data.label.rightHolder))
