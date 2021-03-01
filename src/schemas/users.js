@@ -1,4 +1,4 @@
-const Notifications = require("../models/notifications/notification")
+const Notifications = require("../constants/notificationTypes")
 const AccountStatus = require("../constants/accountStatus")
 
 const mobilePhone = {
