@@ -213,7 +213,6 @@ async function routes(fastify, options) {
 
 /************************ Handlers ************************/
 
-
 const getUser = async function (req, res) {
 	if (req.authUser && req.authUser._id === req.params.user_id)
 		return req.authUser

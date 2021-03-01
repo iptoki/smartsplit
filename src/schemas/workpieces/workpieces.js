@@ -37,7 +37,7 @@ const workpiece = {
 const createUpdateWorkpiece = {
 	type: "object",
 	properties: {
-		title: { type: "string" },
+		title: { type: "string", minLength: 1 },
 	},
 	additionalProperties: false,
 }
