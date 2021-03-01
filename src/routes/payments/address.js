@@ -3,16 +3,21 @@ const Purchase = require("../../models/payments/purchase")
 const AddressSchema = require("../../schemas/payments/address")
 const Errors = require("../errors")
 const JWTAuth = require("../../service/JWTAuth")
-
+const { getUserWithAuthorization } = require("../users/users")
 /**** routes ***/
 
 async function routes(fastify, options) {
 	fastify.route({
 		method: "GET",
-		url: "/addresses/",
+		url: "users/:user_id/addresses/",
 		schema: {
 			tags: ["addresses"],
-			description: "Get addresses by logged in user",
+			description: "Get addresses by user",
+			params: {
+				user_id: {
+					type: "string",
+				},
+			},
 			response: {
 				200: { type: "array", items: AddressSchema.serialization.Address },
 			},
@@ -24,11 +29,14 @@ async function routes(fastify, options) {
 
 	fastify.route({
 		method: "GET",
-		url: "/addresses/:address_id",
+		url: "users/:user_id/addresses/:address_id",
 		schema: {
 			tags: ["addresses"],
 			description: "Get address by id",
 			params: {
+				user_id: {
+					type: "string",
+				},
 				address_id: {
 					type: "string",
 				},
@@ -44,10 +52,15 @@ async function routes(fastify, options) {
 
 	fastify.route({
 		method: "POST",
-		url: "/addresses/",
+		url: "users/:user_id/addresses/",
 		schema: {
 			tags: ["addresses"],
 			description: "Create new Address",
+			params: {
+				user_id: {
+					type: "string",
+				},
+			},
 			body: {
 				allOf: [AddressSchema.validation.createAddress],
 				required: AddressSchema.validation.createAddress.required,
@@ -63,11 +76,14 @@ async function routes(fastify, options) {
 
 	fastify.route({
 		method: "PATCH",
-		url: "/addresses/:address_id",
+		url: "users/:user_id/addresses/:address_id",
 		schema: {
 			tags: ["addresses"],
 			description: "Edit Address",
 			params: {
+				user_id: {
+					type: "string",
+				},
 				address_id: {
 					type: "string",
 				},
@@ -87,11 +103,14 @@ async function routes(fastify, options) {
 
 	fastify.route({
 		method: "DELETE",
-		url: "/addresses/:address_id",
+		url: "users/:user_id/addresses/:address_id",
 		schema: {
 			tags: ["addresses"],
 			description: "delete (inactivate) a user's address",
 			params: {
+				user_id: {
+					type: "string",
+				},
 				address_id: {
 					type: "string",
 				},
@@ -109,21 +128,22 @@ async function routes(fastify, options) {
 const getUserAddresses = async function (req, res) {
 	// if user is admin -- return ALL addresses in the collection (with paging)
 	// else just return user's addresses
-	const addresses = await Address.find().byOwner(req.authUser.user_id)
-	return addresses
+	const user = await getUserWithAuthorization(req, res)
+	await user.populate("addresses").execPopulate()
+	return Object.values(user.addresses) // addresses
 }
 
 const getAddress = async function (req, res) {
-	const address = await Address.findById(req.params.address_id)
-	if (address.user_id !== req.authUser._id /*|| !req.authUser.isAdmin*/)
-		throw Errors.UserForbidden
+	const user = await getUserWithAuthorization(req, res)
+	await user.populate("addresses").execPopulate()
+	const address = user.addresses[req.params.address_id]
 	if (!address) throw Errors.AddressNotFound
-
 	return address
 }
 
 const createAddress = async function (req, res) {
-	req.body.user_id = req.authUser._id
+	const user = await getUserWithAuthorization(req, res)
+	req.body.user_id = user._id
 	const address = new Address(req.body)
 	await address.save()
 	res.code(201)

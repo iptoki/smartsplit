@@ -148,6 +148,12 @@ UserSchema.virtual("pendingEmails", {
 	foreignField: "user",
 })
 
+UserSchema.virtual("addresses", {
+	ref: "Address",
+	localField: "_id",
+	foreignField: "user_id",
+})
+
 /**
  * Returns the full name of the user (Firstname + Lastname)
  */
