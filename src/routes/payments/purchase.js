@@ -135,9 +135,12 @@ const validatePurchase = async function (req, res) {
 	const product = await Product.findById(req.body.product_id)
 	if (!product) throw Errors.ProductNotFound
 
-	// does promo code exist ?
-	const promoCode = await PromoCode.find({ code: req.body.promoCode })
-	if (!promoCode) throw Errors.PromoCodeNotFound
+	// promoCode is not required
+	if (req.body.promoCode) {
+		// does promo code exist ?
+		const promoCode = await PromoCode.find({ code: req.body.promoCode })
+		if (!promoCode) throw Errors.PromoCodeNotFound
+	}
 
 	// does workpiece exist
 	const workpiece = await Workpiece.findById(req.body.workpiece_id)
