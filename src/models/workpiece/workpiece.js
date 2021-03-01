@@ -1,7 +1,7 @@
 const mongoose = require("mongoose")
 const uuid = require("uuid").v4
 const User = require("../user")
-const { SplitTemplates } = require("../notifications/templates")
+const { SplitTemplates } = require("../notificationTemplates")
 const JWT = require("../../utils/jwt")
 const RightSplitSchema = require("./rightSplit")
 const DocumentationSchema = require("./documentation")

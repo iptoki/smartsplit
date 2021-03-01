@@ -4,7 +4,7 @@ const EmailVerification = require("../../models/emailVerification")
 const AccountStatus = require("../../constants/accountStatus")
 const UserSchema = require("../../schemas/users")
 const Errors = require("../errors")
-const { UserTemplates } = require("../../models/notifications/templates")
+const { UserTemplates } = require("../../models/notificationTemplates")
 const { getUserWithAuthorization } = require("./users")
 
 /************************ Routes ************************/

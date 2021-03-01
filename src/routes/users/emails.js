@@ -1,6 +1,6 @@
 const JWTAuth = require("../../service/JWTAuth")
 const EmailVerification = require("../../models/emailVerification")
-const { UserTemplates } = require("../../models/notifications/templates")
+const { UserTemplates } = require("../../models/notificationTemplates")
 const UserSchema = require("../../schemas/users")
 const Errors = require("../errors")
 const { getUserWithAuthorization } = require("./users")

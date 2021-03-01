@@ -4,7 +4,7 @@ const Config = require("../config")
 const PasswordUtil = require("../utils/password")
 const JWT = require("../utils/jwt")
 const EmailVerification = require("../models/emailVerification")
-const Notification = require("../models/notifications/notification")
+const NotificationTypes = require("../constants/notificationTypes")
 const AccountStatus = require("../constants/accountStatus")
 const { sendTemplateTo, normalizeEmailAddress } = require("../utils/email")
 const { generateRandomCode } = require("../utils/random")
@@ -13,12 +13,29 @@ const { sendSMSTo } = require("../service/twilio")
 const {
 	UserTemplates,
 	generateTemplate,
-} = require("../models/notifications/templates")
+} = require("../models/notificationTemplates")
 
 const JWT_RESET_TYPE = "user:password-reset"
 const JWT_ACTIVATE_TYPE = "user:activate"
 const JWT_SPLIT_TYPE = "right-split"
 
+const NotificationSchema = new mongoose.Schema(
+	{
+		[NotificationTypes.GENERAL_INTERACTIONS]: {
+			type: Array,
+			default: ["email", "push"],
+		},
+		[NotificationTypes.ADMINISTRATIVE_MESSAGES]: {
+			type: Array,
+			default: ["email", "push"],
+		},
+		[NotificationTypes.ACCOUNT_LOGIN]: Array,
+		[NotificationTypes.SMARTSPLIT_BLOG]: Array,
+		[NotificationTypes.SMARTSPLIT_PROMOTIONS]: Array,
+		[NotificationTypes.PARTNER_PROMOTIONS]: Array,
+	},
+	{ _id: false }
+)
 /**
  * Represents a user's mobile phone in the system
  */
@@ -109,7 +126,7 @@ const UserSchema = new mongoose.Schema(
 			default: {},
 		},
 		notifications: {
-			type: Notification.Schema,
+			type: NotificationSchema,
 			default: {},
 		},
 		permissions: {

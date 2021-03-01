@@ -1,6 +1,6 @@
 const Errors = require("../errors")
 const User = require("../../models/user")
-const { UserTemplates } = require("../../models/notifications/templates")
+const { UserTemplates } = require("../../models/notificationTemplates")
 const JWTAuth = require("../../service/JWTAuth")
 const RightSplitSchema = require("../../schemas/workpieces/rightSplits")
 

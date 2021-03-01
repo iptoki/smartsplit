@@ -1,5 +1,5 @@
 const User = require("../../models/user")
-const { UserTemplates } = require("../../models/notifications/templates")
+const { UserTemplates } = require("../../models/notificationTemplates")
 const EmailVerification = require("../../models/emailVerification")
 const UserSchema = require("../../schemas/users")
 const AuthSchema = require("../../schemas/auth")
