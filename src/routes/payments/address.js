@@ -89,7 +89,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				201: AddressSchema.serialization.Address,
+				200: AddressSchema.serialization.Address,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -116,7 +116,7 @@ async function routes(fastify, options) {
 				required: AddressSchema.validation.updateAddress.required,
 			},
 			response: {
-				201: AddressSchema.serialization.Address,
+				200: AddressSchema.serialization.Address,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -170,7 +170,7 @@ const createAddress = async function (req, res) {
 	const address = new Address(req.body)
 	await address.save()
 	res.code(201)
-	user.payments.billingAddress = address._id
+	user.paymentInfo.billingAddress = address._id
 	await user.save()
 	return address
 }
@@ -179,7 +179,7 @@ const setBillingAddress = async function (req, res) {
 	await user.populate("addresses").execPopulate()
 	const address = user.addresses.find((a) => a._id === req.params.address_id)
 	if (!address) throw Errors.AddressNotFound
-	user.payments.billingAddress = address._id
+	user.paymentInfo.billingAddress = address._id
 	await user.save()
 	return address
 }

@@ -119,9 +119,9 @@ const UserSchema = new mongoose.Schema(
 			type: Notification.Schema,
 			default: {},
 		},
-		payments: {
+		paymentInfo: {
 			type: PaymentSchema,
-			default: { stripe_id: "", billingAddress: null },
+			default: { stripe_id: "", billingAddress: "" },
 		},
 		permissions: {
 			type: PermissionSchema,
