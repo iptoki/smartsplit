@@ -56,6 +56,25 @@ async function routes(fastify, options) {
 		handler: getPromoCode,
 	})
 	fastify.route({
+		method: "GET",
+		url: "/promoCodes/byCode/:code",
+		schema: {
+			tags: ["promoCodes"],
+			description: "Get PromoCode by id",
+			params: {
+				code: {
+					type: "string",
+				},
+			},
+			response: {
+				200: PromoCodeSchema.serialization.PromoCode,
+			},
+			security: [{ bearerAuth: [] }],
+		},
+		preValidation: JWTAuth.requireAuthUser,
+		handler: getPromoByCode,
+	})
+	fastify.route({
 		method: "POST",
 		url: "/promoCodes/",
 		schema: {
@@ -143,6 +162,15 @@ const getPromoCode = async function (req, res) {
 
 	if (!promoCode) throw Errors.PromoCodeNotFound
 
+	return promoCode
+}
+
+const getPromoByCode = async function (req, res) {
+	console.log(req.params.code)
+	const promoCode = await PromoCode.where({ code: req.params.code }).findOne()
+	console.log(promoCode)
+	if (!promoCode) throw Errors.PromoCodeNotFound
+	console.log(promoCode)
 	return promoCode
 }
 

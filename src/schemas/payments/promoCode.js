@@ -3,10 +3,11 @@ const localeSchema = require("../entities").serialization.locale
 const PromoCode = {
 	type: "object",
 	properties: {
+		code: { type: "string" },
 		promo_id: { type: "string" },
 		organisation: localeSchema,
 		description: localeSchema,
-		value: { type: "string" },
+		value: { type: "number" },
 		expires: { type: "string" },
 		purchase_id: { type: "string" },
 	},
@@ -14,11 +15,12 @@ const PromoCode = {
 
 const createUpdatePromoCode = {
 	type: "object",
-	required: ["organisation", "description", "value", "expires"],
+	required: ["code", "organisation", "description", "value", "expires"],
 	properties: {
+		code: { type: "string" },
 		organisation: localeSchema,
 		description: localeSchema,
-		value: { type: "string" },
+		value: { type: "number" },
 		expires: { type: "string" },
 		purchase_id: { type: "string" },
 	},
