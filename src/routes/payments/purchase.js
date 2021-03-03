@@ -198,7 +198,10 @@ const calculateSubtotalAndTaxes = function ({
 	user,
 }) {
 	console.log(purchase)
-	let subtotal = product.price - promoCode.value - creditsValue
+	let subtotal =
+		product.price -
+		(promoCode ? promoCode.value : 0) -
+		(creditsValue ? creditsValue : 0)
 	if (subtotal < 0) subtotal = 0
 	purchase.subtotal = subtotal
 	if (subtotal > 0) {
@@ -233,7 +236,7 @@ const createPurchase = async function (req, res) {
 		creditsValue: req.body.creditsValue,
 		user,
 	})
-
+	console.log(purchase)
 	// now we call stripe to get a payment intent object
 	const stripe = new Stripe(Config.stripe.apiKey)
 	const paymentIntent = await stripe.paymentIntents.create({
