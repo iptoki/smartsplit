@@ -200,7 +200,7 @@ const updateAddress = async function (req, res) {
 	])
 		if (req.body[field]) addressToModify[field] = req.body[field]
 	await addressToModify.save()
-	// if address marked as active:false remove address from user.payments.billingAddress
+	// if address marked as active:false remove address from user.paymentInfo.billingAddress
 	return addressToModify
 }
 
@@ -209,7 +209,7 @@ const deleteAddress = async function (req, res) {
 	addressToModify["active"] = false
 	await addressToModify.save()
 	return addressToModify
-	// if address is currently set in user.payment.billingAddress, set billing address to empty
+	// if address is currently set in user.paymentInfo.billingAddress, set billing address to empty
 }
 
 module.exports = routes

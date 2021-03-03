@@ -66,14 +66,14 @@ const WorkpieceSchema = new mongoose.Schema(
 			type: DocumentationSchema,
 			default: {},
 		},
-		purchases: {
-			type: Map,
-			of: String,
-		},
 	},
 	{ timestamps: true, toJSON: { virtuals: true } }
 )
-
+WorkpieceSchema.virtual("purchases", {
+	ref: "Purchase",
+	localField: "productCode",
+	foreignField: "workpiece_id",
+})
 WorkpieceSchema.query.byOwner = function (user_id) {
 	return this.where({ owner: user_id })
 }
@@ -244,6 +244,7 @@ WorkpieceSchema.methods.deleteRightSplit = function () {
 WorkpieceSchema.methods.getPathsToPopulate = function () {
 	return [
 		"owner",
+		"purchases",
 		...this.getCollaboratorsPathsToPopulate(),
 		...this.documentation.getPathsToPopulate(),
 		...(this.rightSplit ? this.rightSplit.getPathsToPopulate() : []),

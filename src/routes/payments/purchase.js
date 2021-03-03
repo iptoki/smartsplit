@@ -10,15 +10,19 @@ const JWTAuth = require("../../service/JWTAuth")
 const Stripe = require("stripe")
 const Config = require("../../../config")
 const TaxRates = require("../../constants/TaxRates")
+const { getUserWithAuthorization } = require("../users/users")
 /**** routes ***/
 
 async function routes(fastify, options) {
 	fastify.route({
 		method: "GET",
-		url: "/purchases/",
+		url: "/users/:user_id/purchases/",
 		schema: {
 			tags: ["purchases"],
 			description: "Get Purchases by logged in user",
+			params: {
+				user_id: { type: "string" },
+			},
 			response: {
 				200: { type: "array", items: PurchaseSchema.serialization.Purchase },
 			},
@@ -29,11 +33,12 @@ async function routes(fastify, options) {
 	})
 	fastify.route({
 		method: "GET",
-		url: "/purchases/:purchase_id",
+		url: "/users/:user_id/purchases/:purchase_id",
 		schema: {
 			tags: ["purchases"],
 			description: "Get Purchase by id",
 			params: {
+				user_id: { type: "string" },
 				purchase_id: {
 					type: "string",
 				},
@@ -48,19 +53,14 @@ async function routes(fastify, options) {
 	})
 	fastify.route({
 		method: "POST",
-		url: "/purchases/",
+		url: "/users/:user_id/purchases/",
 		schema: {
 			tags: ["purchases"],
 			description: "Create new Purchase",
 			params: {
-				purchase_id: {
-					type: "string",
-				},
+				user_id: { type: "string" },
 			},
-			body: {
-				allOf: [PurchaseSchema.validation.createUpdatePurchase],
-				required: PurchaseSchema.validation.createUpdatePurchase.required,
-			},
+			body: PurchaseSchema.validation.createUpdatePurchase,
 			response: {
 				201: PurchaseSchema.serialization.PurchaseIntent,
 			},
@@ -71,11 +71,14 @@ async function routes(fastify, options) {
 	})
 	fastify.route({
 		method: "PATCH",
-		url: "/purchases/:purchase_id",
+		url: "/users/:user_id/purchases/:purchase_id",
 		schema: {
 			tags: ["purchases"],
 			description: "Edit Purchase",
 			params: {
+				user_id: {
+					type: "string",
+				},
 				purchase_id: {
 					type: "string",
 				},
@@ -94,11 +97,12 @@ async function routes(fastify, options) {
 	})
 	fastify.route({
 		method: "DELETE",
-		url: "/purchases/:purchase_id",
+		url: "/users/:user_id/purchases/:purchase_id",
 		schema: {
 			tags: ["purchases"],
 			description: "delete (inactivate) a user's Purchase",
 			params: {
+				user_id: { type: "string" },
 				purchase_id: {
 					type: "string",
 				},
@@ -114,31 +118,43 @@ async function routes(fastify, options) {
 }
 
 const getPurchases = async function (req, res) {
-	const purchases = await Purchase.find().where({ user_id: req.authUser._id })
+	const user = await getUserWithAuthorization(req, res)
+	const purchases = await Purchase.find().where({ user_id: user._id })
+	let promises = purchases.map((purchase) =>
+		purchase.populate(["product", "promoCode", "billingAddress"]).execPopulate()
+	)
+	await Promise.all(promises)
 	return purchases
 }
 
 const getPurchase = async function (req, res) {
+	const user = await getUserWithAuthorization(req, res)
 	const purchase = await Purchase.findById(req.params.purchase_id)
 
 	if (!purchase) throw Errors.PurchaseNotFound
-	if (purchase.user_id !== req.authUser._id) throw Errors.UnauthorizedUserAccess
-
+	if (purchase.user_id !== user._id) throw Errors.UnauthorizedUserAccess
+	await purchase
+		.populate(["product", "promoCode", "billingAddress"])
+		.execPopulate()
 	return purchase
 }
 
 const validatePurchase = async function (req, res) {
 	// does the user have a billing address ?
-	if (!req.authUser.payments.billingAddress) throw Errors.BillingAddressRequired
+	const user = await getUserWithAuthorization(req, res)
+	await user.populate("paymentInfo.billingAddress").execPopulate()
+	if (!user.paymentInfo.billingAddress) throw Errors.BillingAddressRequired
 
 	// does product exist ?
-	const product = await Product.findById(req.body.product_id)
+	const product = await Product.findById(req.body.product)
 	if (!product) throw Errors.ProductNotFound
 
 	// promoCode is not required
+	let promoCode = false
 	if (req.body.promoCode) {
 		// does promo code exist ?
-		const promoCode = await PromoCode.find({ code: req.body.promoCode })
+		promoCode = await PromoCode.findById(req.body.promoCode)
+		console.log(promoCode)
 		if (!promoCode) throw Errors.PromoCodeNotFound
 	}
 
@@ -147,13 +163,14 @@ const validatePurchase = async function (req, res) {
 	if (!workpiece) throw Errors.WorkpieceNotFound
 	// check to make sure product's product_code has not already been purchased
 	else if (workpiece.purchases) {
-		if (workpiece.pruchases[product.productCode]) {
+		if (workpiece.purchases[product.productCode]) {
 			throw Errors.ProductAlreadyPurchasedForWorkpiece
 		}
 	}
 
 	//return our objects for processing
 	return {
+		user,
 		product,
 		promoCode,
 	}
@@ -163,7 +180,8 @@ const createStripeCustomerForUser = async function (user) {
 	const stripe = new Stripe(Config.stripe.apiKey)
 	try {
 		const customer = await stripe.customers.create()
-		user.payments.stripe_id = customer.id
+		console.log(customer)
+		user.paymentInfo.stripe_id = customer.id
 		await user.save()
 		return user
 	} catch (e) {
@@ -179,13 +197,14 @@ const calculateSubtotalAndTaxes = function ({
 	creditsValue,
 	user,
 }) {
+	console.log(purchase)
 	let subtotal = product.price - promoCode.value - creditsValue
 	if (subtotal < 0) subtotal = 0
 	purchase.subtotal = subtotal
 	if (subtotal > 0) {
-		if (user.payments.billingAddress.country.toLowerCase() === "ca")
+		if (user.paymentInfo.billingAddress.country.toUpperCase() === "CA")
 			purchase.gst = Math.round(purchase.subtotal * TaxRates.GST)
-		if (user.payments.billingAddress.province.toLowerCase() === "qc")
+		if (user.paymentInfo.billingAddress.province.toUpperCase() === "PQ")
 			purchase.pst = Math.round(purchase.subtotal * TaxRates.QST)
 	}
 	purchase.total = purchase.subtotal + purchase.gst + purchase.pst
@@ -194,38 +213,41 @@ const calculateSubtotalAndTaxes = function ({
 
 const createPurchase = async function (req, res) {
 	// check if request is valid (will throw exceptions)
-	const { promoCode, product } = await validatePurchase(req, res)
+	let { user, promoCode, product } = await validatePurchase(req, res)
 
 	// does user have a stripe customer id ? if not create one and save user
-	let user
-	if (!req.authUser.payments.stripe_id)
-		user = await createStripeCustomerForUser(req.authUser)
-	else user = req.authUser
+
+	if (!user.paymentInfo.stripe_id)
+		user = await createStripeCustomerForUser(user)
 	//ok we are all good let's calculate the subtotal
 
-	req.body.user_id = user.id
+	req.body.user_id = user._id
 
 	let purchase = new Purchase(req.body)
 
 	// calculate subtotal, gst, pst, and total
-	purchase = calculateSubtotalAndTaxes(
+	purchase = calculateSubtotalAndTaxes({
 		purchase,
 		product,
 		promoCode,
-		req.body.creditsValue,
-		req.authUser
-	)
+		creditsValue: req.body.creditsValue,
+		user,
+	})
 
 	// now we call stripe to get a payment intent object
 	const stripe = new Stripe(Config.stripe.apiKey)
 	const paymentIntent = await stripe.paymentIntents.create({
 		amount: purchase.total,
 		currency: "cad",
-		customer: user.payments.stripe_id,
+		customer: user.paymentInfo.stripe_id,
 	})
 	purchase.payment_id = paymentIntent.id
 	await purchase.save()
-
+	await purchase
+		.populate(["product", "promoCode", "billingAddress"])
+		.execPopulate()
+	//	await purchase.populate("promoCode").execPopulate()
+	//	await purchase.populate("billingAddress").execPopulate()
 	res.code(201)
 
 	/*
@@ -243,7 +265,7 @@ const updatePurchase = async function (req, res) {
 	for (let field of ["name", "description", "price", "active", "purchaseCode"])
 		if (req.body[field]) purchaseToModify[field] = req.body[field]
 	await purchaseToModify.save()
-	// if Purchase marked as active:false remove Purchase from user.payments.billingPurchase
+
 	return purchaseToModify
 }
 
@@ -253,7 +275,6 @@ const deletePurchase = async function (req, res) {
 	purchaseToModify["active"] = false
 	await purchaseToModify.save()
 	return purchaseToModify
-	// if Purchase is currently set in user.payment.billingPurchase, set billing Purchase to empty
 }
 
 module.exports = routes

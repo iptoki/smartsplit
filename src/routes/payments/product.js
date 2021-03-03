@@ -161,7 +161,7 @@ const updateProduct = async function (req, res) {
 	for (let field of ["name", "description", "price", "active", "productCode"])
 		if (req.body[field]) productToModify[field] = req.body[field]
 	await productToModify.save()
-	// if Product marked as active:false remove Product from user.payments.billingProduct
+
 	return productToModify
 }
 
@@ -171,7 +171,6 @@ const deleteProduct = async function (req, res) {
 	productToModify["active"] = false
 	await productToModify.save()
 	return productToModify
-	// if Product is currently set in user.payment.billingProduct, set billing Product to empty
 }
 
 module.exports = routes

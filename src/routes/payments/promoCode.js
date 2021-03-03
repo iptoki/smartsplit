@@ -198,7 +198,7 @@ const updatePromoCode = async function (req, res) {
 	])
 		if (req.body[field]) promoCodeToModify[field] = req.body[field]
 	await promoCodeToModify.save()
-	// if PromoCode marked as active:false remove PromoCode from user.payments.billingPromoCode
+
 	return promoCodeToModify
 }
 
@@ -207,7 +207,6 @@ const deletePromoCode = async function (req, res) {
 	if (promoCode.purchase_id) throw Errors.PromoCodeImmutable
 	await promoCode.remove()
 	res.code(204).send()
-	// if PromoCode is currently set in user.payment.billingPromoCode, set billing PromoCode to empty
 }
 
 module.exports = routes
