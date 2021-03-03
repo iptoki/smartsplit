@@ -75,6 +75,7 @@ async function routes(fastify, options) {
 			response: {
 				200: AuthSchema.sessionInfo,
 			},
+			dbOperation: "update",
 		},
 		handler: activateUserAccount,
 	})
@@ -101,6 +102,7 @@ async function routes(fastify, options) {
 			response: {
 				200: AuthSchema.sessionInfo,
 			},
+			dbOperation: "update",
 		},
 		handler: activateInvitedUserAccount,
 	})
@@ -141,6 +143,7 @@ async function routes(fastify, options) {
 			response: {
 				204: {},
 			},
+			dbOperation: "noop",
 		},
 		handler: requestPasswordReset,
 	})
@@ -165,6 +168,7 @@ async function routes(fastify, options) {
 				200: AuthSchema.sessionInfo,
 			},
 			security: [{ bearerAuth: [] }],
+			dbOperation: "update",
 		},
 		handler: changeUserPassword,
 	})
@@ -187,6 +191,7 @@ async function routes(fastify, options) {
 				204: {},
 			},
 			security: [{ bearerAuth: [] }],
+			dbOperation: "update",
 		},
 		preValidation: JWTAuth.requireAuthUser,
 		handler: verifyUserMobilePhone,
@@ -258,12 +263,14 @@ async function getUserAvatar(req, res) {
 
 async function createUser(req, res) {
 	const user = await User.create(req.body)
+	req.setTransactionResource(user)
 	res.code(201)
 	return user
 }
 
 async function activateUserAccount(req, res) {
 	const user = await User.activate(req.body.token)
+	req.setTransactionResource(user)
 	await user.save()
 	return { accessToken: JWTAuth.createToken(user), user: user }
 }
@@ -272,6 +279,7 @@ async function activateInvitedUserAccount(req, res) {
 	const user = await User.activate(req.body.token)
 	const password = req.body.password
 	req.body.password = undefined
+	req.setTransactionResource(user)
 
 	await Promise.all([user.update(req.body), user.setPassword(password, true)])
 
@@ -282,6 +290,7 @@ async function activateInvitedUserAccount(req, res) {
 
 async function updateUser(req, res) {
 	const user = await getUserWithAuthorization(req, res)
+	req.setTransactionResource(user)
 
 	await user.update(req.body)
 	await user.save()
@@ -311,7 +320,6 @@ async function requestPasswordReset(req, res) {
 
 async function changeUserPassword(req, res) {
 	let user
-
 	if (req.body.token) {
 		user = await User.findOne().byPasswordResetToken(req.body.token)
 		if (!user) throw Errors.InvalidResetToken
@@ -323,6 +331,8 @@ async function changeUserPassword(req, res) {
 		)
 			throw Errors.InvalidCurrentPassword
 	}
+	
+	req.setTransactionResource(user)
 
 	if (await user.setPassword(req.body.password))
 		user.sendNotification(UserTemplates.PASSWORD_CHANGED)
@@ -340,13 +350,15 @@ async function changeUserPassword(req, res) {
 }
 
 async function verifyUserMobilePhone(req, res) {
+	req.setTransactionResource(req).authUser
 	await req.authUser.verifyMobilePhone(req.body.verificationCode)
 	res.code(204).send()
 }
 
 async function deleteUserAccount(req, res) {
 	const user = await getUserWithAuthorization(req, res)
-
+	req.setTransactionResource(user)
+	
 	if (user.isDeleted) throw Errors.AccountAlreadyDeleted
 
 	await user.deleteAccount()

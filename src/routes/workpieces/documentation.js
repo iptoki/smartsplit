@@ -157,7 +157,8 @@ const getDocumentation = async function (req, res) {
 
 const updateDocumentation = async function (req, res) {
 	const workpiece = await getWorkpieceAsOwner(req, res)
-
+	req.setTransactionResource(workpiece)
+	
 	await workpiece.documentation.update(req.body)
 	await workpiece.save()
 	await workpiece

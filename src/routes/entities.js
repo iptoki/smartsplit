@@ -155,6 +155,7 @@ async function createEntity(req, res) {
 
 	await entity.save()
 
+	req.setTransactionResource(entity)
 	res.code(201).schema(EntitySchema.serialization[entity.type])
 	return entity
 }
@@ -216,6 +217,7 @@ async function updateEntity(req, res) {
 		throw Errors.UserForbidden
 
 	const entity = await getEntityById(req, res)
+	req.setTransactionResource(entity)
 
 	if (!req.authUser.isAdmin) {
 		delete req.body.adminReview
@@ -237,6 +239,7 @@ async function deleteEntity(req, res) {
 		throw Errors.UserForbidden
 
 	const entity = await getEntityById(req, res)
+	req.setTransactionResource(entity)
 
 	await entity.remove()
 	res.code(204).send()
@@ -248,11 +251,13 @@ async function seedEntities(req, res) {
 	const data = fs.readFileSync(`./data/${req.params.entity_type}s.json`, "utf8")
 	const entities = JSON.parse(data)
 	const entityModel = Entity.getEntityModel(req.params.entity_type)
+	let promises = []
 	for (obj of entities) {
 		const base = { _id: uuid(), users: false }
 		const entity = new entityModel({ ...base, ...obj })
-		await entity.save()
+		promises.push(entity.save())
 	}
+	await Promise.all(promises)
 	return "success"
 }
 
