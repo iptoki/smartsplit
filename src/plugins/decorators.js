@@ -15,7 +15,7 @@ function plugin(fastify, opts, next) {
 	}
 
 	function setTransactionResource(resource) {
-		if(!resource) return
+		if (!resource) return
 		this.transaction.resource = resource
 		this.transaction.resourceCollection = resource.constructor.modelName
 	}

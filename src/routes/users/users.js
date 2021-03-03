@@ -331,7 +331,7 @@ async function changeUserPassword(req, res) {
 		)
 			throw Errors.InvalidCurrentPassword
 	}
-	
+
 	req.setTransactionResource(user)
 
 	if (await user.setPassword(req.body.password))
@@ -350,7 +350,7 @@ async function changeUserPassword(req, res) {
 }
 
 async function verifyUserMobilePhone(req, res) {
-	req.setTransactionResource(req).authUser
+	req.setTransactionResource(req.authUser)
 	await req.authUser.verifyMobilePhone(req.body.verificationCode)
 	res.code(204).send()
 }
@@ -358,7 +358,7 @@ async function verifyUserMobilePhone(req, res) {
 async function deleteUserAccount(req, res) {
 	const user = await getUserWithAuthorization(req, res)
 	req.setTransactionResource(user)
-	
+
 	if (user.isDeleted) throw Errors.AccountAlreadyDeleted
 
 	await user.deleteAccount()

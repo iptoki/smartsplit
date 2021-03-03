@@ -95,7 +95,7 @@ async function routes(fastify, options) {
 				200: UserSchema.serialization.emailStatusList,
 			},
 			security: [{ bearerAuth: [] }],
-			dbOperation: "update"
+			dbOperation: "update",
 		},
 		preValidation: JWTAuth.authorizeUserAccess,
 		handler: setUserPrimaryEmail,

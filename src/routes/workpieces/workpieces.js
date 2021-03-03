@@ -303,7 +303,7 @@ const updateCollaboratorById = async function (req, res) {
 const deleteCollaboratorById = async function (req, res) {
 	const workpiece = await getWorkpieceWithWritePermission(req, res)
 	req.setTransactionResource(workpiece)
-	
+
 	workpiece.deleteCollaboratorById(req.body.collaborator_id)
 	await workpiece.save()
 	return

@@ -19,25 +19,24 @@ function preHandler(req, res, next) {
 	next()
 }
 
-function onError(req, res, error, next){
+function onError(req, res, error, next) {
 	req.transaction.response.errorMessage = error.message
 	next()
 }
 
-function onResponse(req, res, next){
+function onResponse(req, res, next) {
 	req.transaction.response.statusCode = res.statusCode
 	req.transaction.save()
 	next()
 }
 
-function getOp(req){
+function getOp(req) {
 	const op = req.context.schema.dbOperation
-	if(op) return op
-	if(req.method === "POST") return "insert"
-	if(req.method === "DELETE") return "delete"
-	if(["PATCH", "PUT"].includes(req.method)) return "update"
+	if (op) return op
+	if (req.method === "POST") return "insert"
+	if (req.method === "DELETE") return "delete"
+	if (["PATCH", "PUT"].includes(req.method)) return "update"
 	return "noop"
-	
 }
 
 module.exports = {
