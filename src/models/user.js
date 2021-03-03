@@ -513,6 +513,27 @@ UserSchema.methods.addPendingEmail = async function (
 }
 
 UserSchema.methods.update = async function (data) {
+	for (let field of [
+		"firstName",
+		"lastName",
+		"artistName",
+		"locale",
+		"isni",
+		"birthDate",
+		"address",
+		"organisations",
+		"projects",
+		"uri",
+	])
+		if (data[field] !== undefined) this[field] = data[field]
+
+	if (data.professionalIdentity !== undefined)
+		this.setProfessionalIdentity(data.professionalIdentity)
+	if (data.avatar !== undefined)
+		this.setAvatar(Buffer.from(data.avatar, "base64"))
+	if (data.notifications !== undefined)
+		this.setNotifications(data.notifications)
+
 	let promises = []
 
 	if (data.password)
@@ -532,27 +553,6 @@ UserSchema.methods.update = async function (data) {
 	const [hasPasswordChanged] = await Promise.all(promises)
 
 	if (hasPasswordChanged) this.sendNotification(UserTemplates.PASSWORD_CHANGED)
-
-	if (data.professionalIdentity !== undefined)
-		this.setProfessionalIdentity(data.professionalIdentity)
-	if (data.avatar !== undefined)
-		this.setAvatar(Buffer.from(data.avatar, "base64"))
-	if (data.notifications !== undefined)
-		this.setNotifications(data.notifications)
-
-	for (let field of [
-		"firstName",
-		"lastName",
-		"artistName",
-		"locale",
-		"isni",
-		"birthDate",
-		"address",
-		"organisations",
-		"projects",
-		"uri",
-	])
-		if (data[field] !== undefined) this[field] = data[field]
 }
 
 /**
@@ -838,11 +838,12 @@ UserSchema.statics.create = async function (data) {
 	if (!user) {
 		user = new User()
 		await user.setPassword(data.password, true)
-		data.password = undefined
-		await user.update(data)
 	}
 
+	data.password = undefined
+	await user.update(data)
 	await user.save()
+
 	return user
 }
 
