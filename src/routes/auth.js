@@ -44,6 +44,7 @@ async function routes(fastify, options) {
 			response: {
 				200: AuthSchema.sessionInfo,
 			},
+			dbOperation: "noop",
 		},
 		handler: login,
 	})

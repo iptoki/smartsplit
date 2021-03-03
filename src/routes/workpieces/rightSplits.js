@@ -1,6 +1,6 @@
 const Errors = require("../errors")
 const User = require("../../models/user")
-const { UserTemplates } = require("../../models/notifications/templates")
+const { UserTemplates } = require("../../models/notificationTemplates")
 const JWTAuth = require("../../service/JWTAuth")
 const RightSplitSchema = require("../../schemas/workpieces/rightSplits")
 
@@ -21,6 +21,7 @@ async function routes(fastify, options) {
 				201: RightSplitSchema.serialization.rightSplit,
 			},
 			security: [{ bearerAuth: [] }],
+			dbOperation: "update",
 		},
 		preValidation: JWTAuth.requireAuthUser,
 		handler: create,
@@ -77,6 +78,7 @@ async function routes(fastify, options) {
 				204: {},
 			},
 			security: [{ bearerAuth: [] }],
+			dbOperation: "update",
 		},
 		preValidation: JWTAuth.requireAuthUser,
 		handler: submit,
@@ -96,6 +98,7 @@ async function routes(fastify, options) {
 				204: {},
 			},
 			security: [{ bearerAuth: [] }],
+			dbOperation: "update",
 		},
 		preValidation: JWTAuth.requireAuthUser,
 		handler: vote,
@@ -123,6 +126,7 @@ async function routes(fastify, options) {
 				204: {},
 			},
 			security: [{ bearerAuth: [] }],
+			dbOperation: "update",
 		},
 		preValidation: JWTAuth.requireAuthUser,
 		handler: swapUser,
@@ -157,6 +161,7 @@ const getWorkpieceAsSplitOwner = async function (req, res) {
 const create = async function (req, res) {
 	const workpiece = await getWorkpieceAsAuthorizedUser(req, res)
 	req.body.owner = req.authUser._id
+	req.setTransactionResource(workpiece)
 
 	await workpiece.setRightSplit(req.body)
 	await workpiece.save()
@@ -170,6 +175,7 @@ const create = async function (req, res) {
 
 const update = async function (req, res) {
 	const workpiece = await getWorkpieceAsSplitOwner(req, res)
+	req.setTransactionResource(workpiece)
 
 	await workpiece.setRightSplit(req.body)
 	await workpiece.save()
@@ -182,6 +188,7 @@ const update = async function (req, res) {
 
 const remove = async function (req, res) {
 	const workpiece = await getWorkpieceAsSplitOwner(req, res)
+	req.setTransactionResource(workpiece)
 
 	workpiece.deleteRightSplit()
 	await workpiece.save()
@@ -193,6 +200,8 @@ const submit = async function (req, res) {
 	const workpiece = await getWorkpieceAsSplitOwner(req, res)
 	const rightHolders = await workpiece.rightSplit.getRightHolders()
 	const emails = req.body
+
+	req.setTransactionResource(workpiece)
 
 	for (const rh of rightHolders) {
 		if (emails[rh._id] && !rh.emails.includes(emails[rh._id])) {
@@ -211,6 +220,7 @@ const submit = async function (req, res) {
 
 const vote = async function (req, res) {
 	const workpiece = await getWorkpieceAsRightHolder(req, res)
+	req.setTransactionResource(workpiece)
 
 	workpiece.setSplitVote(req.authUser._id, req.body)
 	await workpiece.save()
@@ -220,6 +230,7 @@ const vote = async function (req, res) {
 
 const swapUser = async function (req, res) {
 	const workpiece = await getWorkpiece(req, res)
+	req.setTransactionResource(workpiece)
 
 	if (!workpiece.canVoteRightSplit()) throw Errors.ConflictingRightSplitState
 

@@ -138,6 +138,7 @@ async function routes(fastify, options) {
 				204: {},
 			},
 			security: [{ bearerAuth: [] }],
+			dbOperation: "update",
 		},
 		preValidation: JWTAuth.requireAuthUser,
 		handler: addCollaboratorById,
@@ -148,7 +149,7 @@ async function routes(fastify, options) {
 		url: "/workpieces/:workpiece_id/collaborators/:collaborator_id",
 		schema: {
 			tags: ["workpieces_general"],
-			description: "Update a collaborator by ID",
+			description: "Update a collaborator's permission by ID",
 			params: {
 				workpiece_id: {
 					type: "string",
@@ -232,6 +233,7 @@ const createWorkpiece = async function (req, res) {
 	req.body.owner = req.authUser._id
 	const workpiece = new Workpiece(req.body)
 	await workpiece.save()
+	req.setTransactionResource(workpiece)
 	await workpiece.populateAll()
 	res.code(201)
 	return workpiece
@@ -239,6 +241,7 @@ const createWorkpiece = async function (req, res) {
 
 const updateWorkpiece = async function (req, res) {
 	const workpiece = await getWorkpieceAsOwner(req, res)
+	req.setTransactionResource(workpiece)
 
 	for (let field of ["title"])
 		if (req.body[field]) workpiece[field] = req.body[field]
@@ -254,6 +257,7 @@ const updateWorkpiece = async function (req, res) {
 
 const deleteWorkpiece = async function (req, res) {
 	const workpiece = await getWorkpieceAsOwner(req, res)
+	req.setTransactionResource(workpiece)
 
 	if (!workpiece.isRemovable()) throw Errors.ConflictingRightSplitState
 
@@ -277,6 +281,8 @@ const getWorkpiecesByRightHolder = async function (req, res) {
 
 const addCollaboratorById = async function (req, res) {
 	const workpiece = await getWorkpieceWithWritePermission(req, res)
+	req.setTransactionResource(workpiece)
+
 	workpiece.addCollaboratorById(req.body.collaborator_id, req.body.permission)
 	await workpeice.save()
 	return
@@ -284,6 +290,8 @@ const addCollaboratorById = async function (req, res) {
 
 const updateCollaboratorById = async function (req, res) {
 	const workpiece = await getWorkpieceWithWritePermission(req, res)
+	req.setTransactionResource(workpiece)
+
 	workpiece.updateCollaboratorById(
 		req.body.collaborator_id,
 		req.body.permission
@@ -294,6 +302,8 @@ const updateCollaboratorById = async function (req, res) {
 
 const deleteCollaboratorById = async function (req, res) {
 	const workpiece = await getWorkpieceWithWritePermission(req, res)
+	req.setTransactionResource(workpiece)
+
 	workpiece.deleteCollaboratorById(req.body.collaborator_id)
 	await workpiece.save()
 	return

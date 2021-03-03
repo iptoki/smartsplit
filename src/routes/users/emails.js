@@ -1,6 +1,6 @@
 const JWTAuth = require("../../service/JWTAuth")
 const EmailVerification = require("../../models/emailVerification")
-const { UserTemplates } = require("../../models/notifications/templates")
+const { UserTemplates } = require("../../models/notificationTemplates")
 const UserSchema = require("../../schemas/users")
 const Errors = require("../errors")
 const { getUserWithAuthorization } = require("./users")
@@ -69,6 +69,7 @@ async function routes(fastify, options) {
 			response: {
 				200: UserSchema.serialization.emailStatusList,
 			},
+			dbOperation: "update",
 		},
 		handler: activateUserEmail,
 	})
@@ -94,6 +95,7 @@ async function routes(fastify, options) {
 				200: UserSchema.serialization.emailStatusList,
 			},
 			security: [{ bearerAuth: [] }],
+			dbOperation: "update",
 		},
 		preValidation: JWTAuth.authorizeUserAccess,
 		handler: setUserPrimaryEmail,
@@ -155,18 +157,20 @@ async function createUserEmail(req, res) {
 		req.body.email,
 		UserTemplates.ACTIVATE_EMAIL
 	)
+	req.setTransactionResource(emailVerif)
 	return formatEmailList(user)
 }
 
 async function activateUserEmail(req, res) {
 	const user = await User.activate(req.body.token)
+	req.setTransactionResource(user)
 	await user.save()
 	return formatEmailList(user)
 }
 
 async function deleteUserEmail(req, res) {
 	const user = await getUserWithPendingEmails(req, res)
-
+	req.setTransactionResource(user)
 	if (!(await user.deleteEmail(req.params.email))) throw Errors.EmailNotFound
 
 	await user.save()
@@ -182,7 +186,7 @@ async function getUserPrimaryEmail(req, res) {
 
 async function setUserPrimaryEmail(req, res) {
 	const user = await getUserWithAuthorization(req, res)
-
+	req.setTransactionResource(user)
 	user.setPrimaryEmail(req.body.email)
 	await user.save()
 

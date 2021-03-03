@@ -4,7 +4,7 @@ const Config = require("../config")
 const PasswordUtil = require("../utils/password")
 const JWT = require("../utils/jwt")
 const EmailVerification = require("../models/emailVerification")
-const Notification = require("../models/notifications/notification")
+const NotificationTypes = require("../constants/notificationTypes")
 const AccountStatus = require("../constants/accountStatus")
 const AddressSchema = require("./payments/address").Schema
 const { sendTemplateTo, normalizeEmailAddress } = require("../utils/email")
@@ -14,12 +14,29 @@ const { sendSMSTo } = require("../service/twilio")
 const {
 	UserTemplates,
 	generateTemplate,
-} = require("../models/notifications/templates")
+} = require("../models/notificationTemplates")
 
 const JWT_RESET_TYPE = "user:password-reset"
 const JWT_ACTIVATE_TYPE = "user:activate"
 const JWT_SPLIT_TYPE = "right-split"
 
+const NotificationSchema = new mongoose.Schema(
+	{
+		[NotificationTypes.GENERAL_INTERACTIONS]: {
+			type: Array,
+			default: ["email", "push"],
+		},
+		[NotificationTypes.ADMINISTRATIVE_MESSAGES]: {
+			type: Array,
+			default: ["email", "push"],
+		},
+		[NotificationTypes.ACCOUNT_LOGIN]: Array,
+		[NotificationTypes.SMARTSPLIT_BLOG]: Array,
+		[NotificationTypes.SMARTSPLIT_PROMOTIONS]: Array,
+		[NotificationTypes.PARTNER_PROMOTIONS]: Array,
+	},
+	{ _id: false }
+)
 /**
  * Represents a user's mobile phone in the system
  */
@@ -116,7 +133,7 @@ const UserSchema = new mongoose.Schema(
 			default: {},
 		},
 		notifications: {
-			type: Notification.Schema,
+			type: NotificationSchema,
 			default: {},
 		},
 		paymentInfo: {
@@ -513,6 +530,27 @@ UserSchema.methods.addPendingEmail = async function (
 }
 
 UserSchema.methods.update = async function (data) {
+	for (let field of [
+		"firstName",
+		"lastName",
+		"artistName",
+		"locale",
+		"isni",
+		"birthDate",
+		"address",
+		"organisations",
+		"projects",
+		"uri",
+	])
+		if (data[field] !== undefined) this[field] = data[field]
+
+	if (data.professionalIdentity !== undefined)
+		this.setProfessionalIdentity(data.professionalIdentity)
+	if (data.avatar !== undefined)
+		this.setAvatar(Buffer.from(data.avatar, "base64"))
+	if (data.notifications !== undefined)
+		this.setNotifications(data.notifications)
+
 	let promises = []
 
 	if (data.password)
@@ -532,27 +570,6 @@ UserSchema.methods.update = async function (data) {
 	const [hasPasswordChanged] = await Promise.all(promises)
 
 	if (hasPasswordChanged) this.sendNotification(UserTemplates.PASSWORD_CHANGED)
-
-	if (data.professionalIdentity !== undefined)
-		this.setProfessionalIdentity(data.professionalIdentity)
-	if (data.avatar !== undefined)
-		this.setAvatar(Buffer.from(data.avatar, "base64"))
-	if (data.notifications !== undefined)
-		this.setNotifications(data.notifications)
-
-	for (let field of [
-		"firstName",
-		"lastName",
-		"artistName",
-		"locale",
-		"isni",
-		"birthDate",
-		"address",
-		"organisations",
-		"projects",
-		"uri",
-	])
-		if (data[field] !== undefined) this[field] = data[field]
 }
 
 /**
@@ -838,11 +855,12 @@ UserSchema.statics.create = async function (data) {
 	if (!user) {
 		user = new User()
 		await user.setPassword(data.password, true)
-		data.password = undefined
-		await user.update(data)
 	}
 
+	data.password = undefined
+	await user.update(data)
 	await user.save()
+
 	return user
 }
 

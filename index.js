@@ -47,13 +47,20 @@ fastify.register(require("fastify-multipart"), {
 fastify.register(require("fastify-oas"), require("./swagger-config"))
 
 // Register custom plugins
-fastify.register(require("./src/plugins/dynamicResponseSchema"))
+fastify.register(require("./src/plugins/decorators"))
 
 // Add Global Auth hook
 fastify.addHook("preValidation", function (req, res, next) {
 	JWTAuth.bearerTokenMiddleware(req, res)
 	next()
 })
+
+const TransactionHook = require("./src/service/dbTransactionHook")
+
+// Add Global transaction recorder hook
+fastify.addHook("preHandler", TransactionHook.preHandler)
+fastify.addHook("onResponse", TransactionHook.onResponse)
+fastify.addHook("onError", TransactionHook.onError)
 
 // Register routes
 fastify.register(require("./src/routes/index"), { prefix: "/v1" })

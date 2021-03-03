@@ -4,7 +4,7 @@ const EmailVerification = require("../../models/emailVerification")
 const AccountStatus = require("../../constants/accountStatus")
 const UserSchema = require("../../schemas/users")
 const Errors = require("../errors")
-const { UserTemplates } = require("../../models/notifications/templates")
+const { UserTemplates } = require("../../models/notificationTemplates")
 const { getUserWithAuthorization } = require("./users")
 
 /************************ Routes ************************/
@@ -105,6 +105,7 @@ async function routes(fastify, options) {
 				200: UserSchema.serialization.user,
 			},
 			security: [{ bearerAuth: [] }],
+			dbOperation: "update",
 		},
 		preValidation: JWTAuth.authorizeUserAccess,
 		handler: addCollaboratorById,
@@ -155,11 +156,13 @@ async function createCollaborator(req, res) {
 	const collaborator = await user.createCollaborator(req.body)
 
 	res.code(201)
+	req.setTransactionResource(collaborator)
 	return collaborator
 }
 
 async function addCollaboratorById(req, res) {
 	const user = await getUserWithAuthorization(req, res)
+	req.setTransactionResource(user)
 
 	await user.addCollaborators([req.params.collaborator_id])
 	await user.save()
@@ -169,6 +172,7 @@ async function addCollaboratorById(req, res) {
 
 async function deleteCollaboratorById(req, res) {
 	const user = await getUserWithAuthorization(req, res)
+	req.setTransactionResource(user)
 
 	if (!user.deleteCollaboratorById(req.params.collaborator_id))
 		throw Errors.CollaboratorNotFound
