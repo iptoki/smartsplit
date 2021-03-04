@@ -1,32 +1,40 @@
 const Transaction = require("../models/transaction")
 
-function preHandler(req, res, next) {
+function onRequest(req, res, next) {
 	const transaction = new Transaction({
 		request: {
 			id: req.id,
 			url: req.url,
 			method: req.method,
-			authorisation: req.headers.authorisation,
+			authorisation: req.headers.authorization,
 			userAgent: req.headers["user-agent"],
 			params: req.params,
 			querystring: req.querystring,
 		},
-		authUserId: req.authUser ? req.authUser._id : undefined,
-		operation: getOp(req),
+		dbOperation: getOp(req),
 	})
-	transaction.save()
 	req.transaction = transaction
 	next()
 }
 
+function preHandler(req, res, next) {
+	if (req.transaction) {
+		req.transaction.authUserId = req.authUser ? req.authUser._id : undefined
+		req.transaction.request.body = req.body
+	}
+	next()
+}
+
 function onError(req, res, error, next) {
-	req.transaction.response.errorMessage = error.message
+	if (req.transaction) req.transaction.response.errorMessage = error.message
 	next()
 }
 
 function onResponse(req, res, next) {
-	req.transaction.response.statusCode = res.statusCode
-	req.transaction.save()
+	if (req.transaction) {
+		req.transaction.response.statusCode = res.statusCode
+		req.transaction.save()
+	}
 	next()
 }
 
@@ -40,6 +48,7 @@ function getOp(req) {
 }
 
 module.exports = {
+	onRequest,
 	preHandler,
 	onResponse,
 	onError,

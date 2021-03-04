@@ -21,11 +21,15 @@ const TransactionSchema = new mongoose.Schema({
 				type: Map,
 				of: String,
 			},
+			body: {
+				type: Map,
+				of: mongoose.Mixed,
+			},
 		},
 		{ _id: false }
 	),
 	authUserId: String,
-	operation: {
+	dbOperation: {
 		type: String,
 		enum: ["delete", "insert", "update", "noop"],
 	},

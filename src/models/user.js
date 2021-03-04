@@ -756,12 +756,8 @@ UserSchema.methods.decodePasswordResetToken = function (token) {
  * Sends a notification to the user through the medium set in the user's preferences
  */
 UserSchema.methods.sendNotification = function (templateName, options = {}) {
-	this.sendSMS(templateName).catch((err) =>
-		console.log("Error while sending SMS notification: " + err)
-	)
-	this.sendEmail(templateName, options).catch((err) =>
-		console.log("Error while sending email notification: " + err + err.stack)
-	)
+	this.sendSMS(templateName)
+	this.sendEmail(templateName, options)
 	/*this.sendPush(templateName).catch((err) =>
 		console.log("Error while sending push notification: " + err)
 	)*/
@@ -775,31 +771,39 @@ UserSchema.methods.sendSMS = async function (
 	verifiedOnly = true,
 	checkNotif = true
 ) {
-	const template = generateTemplate(templateName, "sms", this)
+	try {
+		const template = generateTemplate(templateName, "sms", this)
 
-	if (
-		!template ||
-		(checkNotif &&
-			!this.notifications[template.notificationType].includes("sms"))
-	)
-		return null
+		if (
+			!template ||
+			(checkNotif &&
+				!this.notifications[template.notificationType].includes("sms"))
+		)
+			return null
 
-	return await sendSMSTo(this, template.message, verifiedOnly)
+		await sendSMSTo(this, template.message, verifiedOnly)
+	} catch (err) {
+		console.log("Error while sending SMS notification: " + err)
+	}
 }
 
 /**
  * Sends an Email to the user
  */
 UserSchema.methods.sendEmail = async function (templateName, options = {}) {
-	const template = generateTemplate(templateName, "email", this, options)
+	try {
+		const template = generateTemplate(templateName, "email", this, options)
 
-	if (
-		!template ||
-		!this.notifications[template.notificationType].includes("email")
-	)
-		return null
+		if (
+			!template ||
+			!this.notifications[template.notificationType].includes("email")
+		)
+			return null
 
-	return await sendTemplateTo(template.id, this, options, template.data)
+		await sendTemplateTo(template.id, this, options, template.data)
+	} catch (err) {
+		console.log("Error while sending email notification: " + err + err.stack)
+	}
 }
 
 /**

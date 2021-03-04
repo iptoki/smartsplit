@@ -116,7 +116,10 @@ const RightSplitSchema = new mongoose.Schema(
 			type: String,
 			ref: "User",
 		},
-		isPublic: Boolean,
+		isPublic: {
+			type: Boolean,
+			default: false,
+		},
 		copyrightDividingMethod: {
 			type: String,
 			enum: ["manual", "role", "equal"],

@@ -58,6 +58,7 @@ fastify.addHook("preValidation", function (req, res, next) {
 const TransactionHook = require("./src/service/dbTransactionHook")
 
 // Add Global transaction recorder hook
+fastify.addHook("onRequest", TransactionHook.onRequest)
 fastify.addHook("preHandler", TransactionHook.preHandler)
 fastify.addHook("onResponse", TransactionHook.onResponse)
 fastify.addHook("onError", TransactionHook.onError)
