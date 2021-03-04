@@ -14,7 +14,6 @@ function preHandler(req, res, next) {
 		authUserId: req.authUser ? req.authUser._id : undefined,
 		operation: getOp(req),
 	})
-	transaction.save()
 	req.transaction = transaction
 	next()
 }
