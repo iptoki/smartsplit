@@ -6,7 +6,7 @@ function preHandler(req, res, next) {
 			id: req.id,
 			url: req.url,
 			method: req.method,
-			authorisation: req.headers.authorisation,
+			authorisation: req.headers.authorization,
 			userAgent: req.headers["user-agent"],
 			params: req.params,
 			querystring: req.querystring,
