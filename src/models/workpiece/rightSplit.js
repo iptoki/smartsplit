@@ -118,7 +118,6 @@ const RightSplitSchema = new mongoose.Schema(
 		},
 		isPublic: {
 			type: Boolean,
-			default: false,
 		},
 		copyrightDividingMethod: {
 			type: String,

@@ -122,7 +122,12 @@ WorkpieceSchema.methods.setRightSplit = async function (data) {
 		const nArchived = this.archivedSplits.length
 		const version =
 			nArchived > 0 ? this.archivedSplits[nArchived - 1].version + 1 : 1
-		this.rightSplit = { owner: data.owner, _state: "draft", version }
+		this.rightSplit = {
+			owner: data.owner,
+			_state: "draft",
+			version,
+			isPublic: false,
+		}
 	}
 	if (this.rightSplit && this.rightSplit._state === "rejected") {
 		if (!data.owner || !(await User.exists({ _id: data.owner })))
@@ -131,6 +136,7 @@ WorkpieceSchema.methods.setRightSplit = async function (data) {
 		this.rightSplit = {
 			owner: data.owner,
 			_state: "draft",
+			isPublic: false,
 			version: this.rightSplit.version + 1,
 		}
 	}
