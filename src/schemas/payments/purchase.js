@@ -20,7 +20,7 @@ const Purchase = {
 		payment_id: { type: "string" },
 		status: {
 			type: "string",
-			enum: ["pending", "succeeded", "failed"],
+			default: "pending",
 		},
 		purchaseDate: { type: "string" },
 	},

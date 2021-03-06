@@ -83,10 +83,7 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: {
-				anyOf: [PurchaseSchema.validation.createUpdatePurchase],
-				required: PurchaseSchema.validation.createUpdatePurchase.required,
-			},
+			body: PurchaseSchema.validation.createUpdatePurchase,
 			response: {
 				201: PurchaseSchema.serialization.Purchase,
 			},
@@ -100,7 +97,7 @@ async function routes(fastify, options) {
 		url: "/users/:user_id/purchases/:purchase_id",
 		schema: {
 			tags: ["purchases"],
-			description: "delete (inactivate) a user's Purchase",
+			description: "delete a user's Purchase",
 			params: {
 				user_id: { type: "string" },
 				purchase_id: {
@@ -108,7 +105,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				202: PurchaseSchema.serialization.Purchase,
+				204: {},
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -246,11 +243,17 @@ const createPurchase = async function (req, res) {
 	})
 	purchase.payment_id = paymentIntent.id
 	await purchase.save()
+	if (promoCode) {
+		promoCode.purchase_id = purchase.purchase_id
+		await promoCode.save()
+	}
+
 	await purchase
 		.populate(["product", "promoCode", "billingAddress"])
 		.execPopulate()
 	//	await purchase.populate("promoCode").execPopulate()
 	//	await purchase.populate("billingAddress").execPopulate()
+
 	res.code(201)
 
 	/*
@@ -265,8 +268,10 @@ const createPurchase = async function (req, res) {
 
 const updatePurchase = async function (req, res) {
 	let purchaseToModify = await getPurchase(req, res)
-	for (let field of ["name", "description", "price", "active", "purchaseCode"])
+	for (let field of ["status"])
 		if (req.body[field]) purchaseToModify[field] = req.body[field]
+	if (req.body["status"] === "succeeded")
+		purchaseToModify["datePurchased"] = new Date().toISOString()
 	await purchaseToModify.save()
 
 	return purchaseToModify
@@ -274,10 +279,16 @@ const updatePurchase = async function (req, res) {
 
 const deletePurchase = async function (req, res) {
 	/* delete only sets the active prop to inactive */
-	let purchaseToModify = await getPurchase(req, res)
-	purchaseToModify["active"] = false
-	await purchaseToModify.save()
-	return purchaseToModify
+	let purchaseToDelete = await getPurchase(req, res)
+	if (purchaseToDelete.promoCode && purchaseToDelete.promoCode.promo_id) {
+		const promoCode = await PromoCode.findById(
+			purchaseToDelete.promoCode.promo_id
+		)
+		promoCode.purchase_id = ""
+		promoCode.save()
+	}
+	await Purchase.deleteOne({ promo_id: purchaseToDelete.promo_id })
+	return { deleted: true }
 }
 
 module.exports = routes
