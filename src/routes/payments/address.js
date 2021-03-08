@@ -192,7 +192,7 @@ const updateAddress = async function (req, res) {
 		"country",
 		"active",
 	])
-		if (req.body[field]) addressToModify[field] = req.body[field]
+		if (req.body[field] !== undefined) addressToModify[field] = req.body[field]
 	await addressToModify.save()
 	// if address marked as active:false remove address from user.paymentInfo.billingAddress
 	return addressToModify
