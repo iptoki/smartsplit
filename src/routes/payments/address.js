@@ -153,7 +153,7 @@ const getUserAddresses = async function (req, res) {
 const getAddress = async function (req, res) {
 	const user = await getUserWithAuthorization(req, res)
 	await user.populate("addresses").execPopulate()
-	const address = user.addresses[req.params.address_id]
+	const address = user.addresses.find(x => x._id === req.params.address_id)
 	if (!address) throw Errors.AddressNotFound
 	return address
 }
