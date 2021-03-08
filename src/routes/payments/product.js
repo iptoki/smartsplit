@@ -55,6 +55,25 @@ async function routes(fastify, options) {
 		handler: getProduct,
 	})
 	fastify.route({
+		method: "GET",
+		url: "/products/byCode/:product_code",
+		schema: {
+			tags: ["products"],
+			description: "Get Product by id",
+			params: {
+				product_code: {
+					type: "string",
+				},
+			},
+			response: {
+				200: ProductSchema.serialization.Product,
+			},
+			security: [{ bearerAuth: [] }],
+		},
+		preValidation: JWTAuth.requireAuthUser,
+		handler: getProductByCode,
+	})
+	fastify.route({
 		method: "POST",
 		url: "/products/",
 		schema: {
@@ -144,10 +163,36 @@ const getProduct = async function (req, res) {
 	return product
 }
 
+const getProductByCode = async function (req, res) {
+	const products = await Product.find({
+		active: true,
+		productCode: req.params.product_code,
+	})
+	console.log(products)
+	if (!products) throw Errors.ProductNotFound
+
+	return products[0]
+}
+
 const createProduct = async function (req, res) {
 	req.body.user_id = req.authUser._id
+	const code = req.body.productCode
+	const currentWithSameCode = await Product.find({
+		productCode: code,
+		active: true,
+	})
+	console.log(currentWithSameCode)
+	if (currentWithSameCode.forEach) {
+		const promises = currentWithSameCode.map((product) => {
+			product.active = false
+			return product.save()
+		})
+		console.log(promises)
+		await Promise.all(promises)
+	}
 	const product = new Product(req.body)
 	await product.save()
+
 	res.code(201)
 	return product
 }
