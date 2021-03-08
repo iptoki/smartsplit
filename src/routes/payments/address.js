@@ -133,7 +133,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				202: AddressSchema.serialization.Address,
+				204: {},
 			},
 			security: [{ bearerAuth: [] }],
 		},
