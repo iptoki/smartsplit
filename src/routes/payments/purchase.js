@@ -85,7 +85,7 @@ async function routes(fastify, options) {
 			},
 			body: PurchaseSchema.validation.createUpdatePurchase,
 			response: {
-				201: PurchaseSchema.serialization.Purchase,
+				200: PurchaseSchema.serialization.Purchase,
 			},
 			security: [{ bearerAuth: [] }],
 		},
