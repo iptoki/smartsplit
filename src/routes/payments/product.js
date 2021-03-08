@@ -19,7 +19,7 @@ async function routes(fastify, options) {
 			security: [{ bearerAuth: [] }],
 		},
 		querystring: {
-			active: { type: "string" },
+			active: { type: "boolean" },
 			limit: {
 				type: "integer",
 				default: 50,
@@ -79,10 +79,7 @@ async function routes(fastify, options) {
 		schema: {
 			tags: ["products"],
 			description: "Create new Product",
-			body: {
-				allOf: [ProductSchema.validation.createProduct],
-				required: ProductSchema.validation.createProduct.required,
-			},
+			body: ProductSchema.validation.createProduct,
 			response: {
 				201: ProductSchema.serialization.Product,
 			},
@@ -102,11 +99,9 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: {
-				anyOf: [ProductSchema.validation.updateProduct],
-			},
+			body: ProductSchema.validation.updateProduct,
 			response: {
-				201: ProductSchema.serialization.Product,
+				200: ProductSchema.serialization.Product,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -125,7 +120,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				202: ProductSchema.serialization.Product,
+				204: {},
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -137,12 +132,12 @@ async function routes(fastify, options) {
 const getProducts = async function (req, res) {
 	let products
 
-	if (req.query.active === "true") {
+	if (req.query.active === true) {
 		products = await Product.find()
 			.getActive()
 			.skip(parseInt(req.query.skip))
 			.limit(parseInt(req.query.limit))
-	} else if (req.query.active === "false") {
+	} else if (req.query.active === false) {
 		products = await Product.find()
 			.getInactive()
 			.skip(parseInt(req.query.skip))
@@ -204,7 +199,7 @@ const updateProduct = async function (req, res) {
 	if (purchaseOfProduct) throw Errors.ProductImmutable
 	let productToModify = await getProduct(req, res)
 	for (let field of ["name", "description", "price", "active", "productCode"])
-		if (req.body[field]) productToModify[field] = req.body[field]
+		if (req.body[field] !== undefined) productToModify[field] = req.body[field]
 	await productToModify.save()
 
 	return productToModify

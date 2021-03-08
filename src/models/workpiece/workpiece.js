@@ -71,7 +71,7 @@ const WorkpieceSchema = new mongoose.Schema(
 )
 WorkpieceSchema.virtual("purchases", {
 	ref: "Purchase",
-	localField: "productCode",
+	localField: "_id",
 	foreignField: "workpiece_id",
 })
 WorkpieceSchema.query.byOwner = function (user_id) {

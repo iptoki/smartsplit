@@ -20,12 +20,12 @@ const ProductSchema = new mongoose.Schema(
 	},
 	{ toJSON: { virtuals: true } }
 )
-ProductSchema.query.getActive = function () {
+ProductSchema.query.byActive = function () {
 	const now = new Date()
 
 	return this.where({ active: true })
 }
-ProductSchema.query.getInactive = function () {
+ProductSchema.query.byInactive = function () {
 	const now = new Date()
 
 	return this.where({ active: false })

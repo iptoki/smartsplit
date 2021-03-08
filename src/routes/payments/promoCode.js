@@ -18,9 +18,8 @@ async function routes(fastify, options) {
 			},
 			security: [{ bearerAuth: [] }],
 		},
-		params: {},
 		querystring: {
-			filter: { type: "string" },
+			active: { type: "boolean" },
 			limit: {
 				type: "integer",
 				default: 50,
@@ -80,10 +79,7 @@ async function routes(fastify, options) {
 		schema: {
 			tags: ["promoCodes"],
 			description: "Create new PromoCode",
-			body: {
-				allOf: [PromoCodeSchema.validation.createUpdatePromoCode],
-				required: PromoCodeSchema.validation.createUpdatePromoCode.required,
-			},
+			body: PromoCodeSchema.validation.createUpdatePromoCode,
 			response: {
 				201: PromoCodeSchema.serialization.PromoCode,
 			},
@@ -103,10 +99,7 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: {
-				anyOf: [PromoCodeSchema.validation.createUpdatePromoCode],
-				required: PromoCodeSchema.validation.createUpdatePromoCode.required,
-			},
+			body: PromoCodeSchema.validation.createUpdatePromoCode,
 			response: {
 				201: PromoCodeSchema.serialization.PromoCode,
 			},
@@ -127,7 +120,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				202: PromoCodeSchema.serialization.PromoCode,
+				204: {},
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -139,12 +132,12 @@ async function routes(fastify, options) {
 const getPromoCodes = async function (req, res) {
 	let PromoCodes
 
-	if (req.query.filter === "active") {
+	if (req.query.active === true) {
 		PromoCodes = await PromoCode.find()
 			.getActive()
 			.skip(parseInt(req.query.skip))
 			.limit(parseInt(req.query.limit))
-	} else if (req.query.filter === "inactive") {
+	} else if (req.query.active === false) {
 		PromoCodes = await PromoCode.find()
 			.getInactive()
 			.skip(parseInt(req.query.skip))
@@ -167,7 +160,7 @@ const getPromoCode = async function (req, res) {
 
 const getPromoByCode = async function (req, res) {
 	console.log(req.params.code)
-	const promoCode = await PromoCode.where({ code: req.params.code }).findOne()
+	const promoCode = await PromoCode.findOne({ code: req.params.code })
 	console.log(promoCode)
 	if (!promoCode) throw Errors.PromoCodeNotFound
 	console.log(promoCode)
@@ -196,7 +189,7 @@ const updatePromoCode = async function (req, res) {
 		"expires",
 		"purchase_id",
 	])
-		if (req.body[field]) promoCodeToModify[field] = req.body[field]
+		if (req.body[field] !== undefined) promoCodeToModify[field] = req.body[field]
 	await promoCodeToModify.save()
 
 	return promoCodeToModify

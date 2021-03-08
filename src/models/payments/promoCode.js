@@ -17,14 +17,14 @@ const PromoCodeSchema = mongoose.Schema(
 	},
 	{ toJSON: { virtuals: true } }
 )
-PromoCodeSchema.query.getActive = function () {
+PromoCodeSchema.query.byActive = function () {
 	const now = new Date()
 
 	return this.where({ product_id: "" }).where({
 		expires: { $gte: now.toISOString() },
 	})
 }
-PromoCodeSchema.query.getInactive = function () {
+PromoCodeSchema.query.byInactive = function () {
 	const now = new Date()
 
 	return this.or(
