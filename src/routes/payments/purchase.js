@@ -116,7 +116,7 @@ async function routes(fastify, options) {
 
 const getPurchases = async function (req, res) {
 	const user = await getUserWithAuthorization(req, res)
-	const purchases = await Purchase.find().where({ user_id: user._id })
+	const purchases = await Purchase.find({ user_id: user._id })
 	let promises = purchases.map((purchase) =>
 		purchase.populate(["product", "promoCode", "billingAddress"]).execPopulate()
 	)
