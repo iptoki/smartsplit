@@ -130,9 +130,6 @@ const getPurchase = async function (req, res) {
 
 	if (!purchase) throw Errors.PurchaseNotFound
 	if (purchase.user_id !== user._id) throw Errors.UnauthorizedUserAccess
-	await purchase
-		.populate(["product", "promoCode", "billingAddress"])
-		.execPopulate()
 	return purchase
 }
 
