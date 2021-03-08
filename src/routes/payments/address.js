@@ -108,10 +108,7 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: {
-				anyOf: [AddressSchema.validation.updateAddress],
-				required: AddressSchema.validation.updateAddress.required,
-			},
+			body: AddressSchema.validation.updateAddress,
 			response: {
 				200: AddressSchema.serialization.Address,
 			},
