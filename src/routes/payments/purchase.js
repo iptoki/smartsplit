@@ -126,7 +126,7 @@ const getPurchases = async function (req, res) {
 
 const getPurchase = async function (req, res) {
 	const user = await getUserWithAuthorization(req, res)
-	const purchase = await Purchase.findById(req.params.purchase_id)
+	const purchase = await Purchase.findById(req.params.purchase_id).populate(["product", "promoCode", "billingAddress"])
 
 	if (!purchase) throw Errors.PurchaseNotFound
 	if (purchase.user_id !== user._id) throw Errors.UnauthorizedUserAccess
