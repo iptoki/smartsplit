@@ -61,10 +61,7 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: {
-				allOf: [AddressSchema.validation.createAddress],
-				required: AddressSchema.validation.createAddress.required,
-			},
+			body: AddressSchema.validation.createAddress,
 			response: {
 				201: AddressSchema.serialization.Address,
 			},
