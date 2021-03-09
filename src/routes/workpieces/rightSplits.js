@@ -131,6 +131,24 @@ async function routes(fastify, options) {
 		preValidation: JWTAuth.requireAuthUser,
 		handler: swapUser,
 	})
+
+	fastify.route({
+		method: "GET",
+		url: "/workpieces/:workpiece_id/rightSplit/contract",
+		schema: {
+			tags: ["right_splits"],
+			description: "Get the rightsplit's contract",
+			params: {
+				workpiece_id: { type: "string" },
+			},
+			response: {
+				200: {},
+			},
+			security: [{ bearerAuth: [] }],
+		},
+		preValidation: JWTAuth.requireAuthUser,
+		handler: getContract,
+	})
 }
 
 /************************ Handlers ************************/
@@ -248,6 +266,11 @@ const swapUser = async function (req, res) {
 	}
 
 	throw Errors.InvalidSplitToken
+}
+
+const getContract = async function (req, res) {
+	const workpiece = await getWorkpieceAsRightHolder(req, res)
+	return workpiece.generateRightSplitContract()
 }
 
 module.exports = routes

@@ -278,4 +278,9 @@ RightSplitSchema.methods.getPathsToPopulate = function () {
 	return paths
 }
 
+RightSplitSchema.methods.generateContract = function () {
+	if (this._state !== accepted) throw ConflictingRightSplitState
+	return "" // TODO
+}
+
 module.exports = RightSplitSchema

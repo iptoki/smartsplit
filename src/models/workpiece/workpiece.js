@@ -334,4 +334,9 @@ WorkpieceSchema.methods.getRightHolderIds = function () {
 	return this.rightSplit.getRightHolderIds()
 }
 
+WorkpieceSchema.methods.generateRightSplitContract = function () {
+	if (!this.rightSplit) throw Errors.RightSplitNotFound
+	return this.rightSplit.generateContract()
+}
+
 module.exports = mongoose.model("Workpiece", WorkpieceSchema)
