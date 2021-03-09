@@ -126,7 +126,11 @@ const getPurchases = async function (req, res) {
 
 const getPurchase = async function (req, res) {
 	const user = await getUserWithAuthorization(req, res)
-	const purchase = await Purchase.findById(req.params.purchase_id).populate(["product", "promoCode", "billingAddress"])
+	const purchase = await Purchase.findById(req.params.purchase_id).populate([
+		"product",
+		"promoCode",
+		"billingAddress",
+	])
 
 	if (!purchase) throw Errors.PurchaseNotFound
 	if (purchase.user_id !== user._id) throw Errors.UnauthorizedUserAccess
@@ -198,6 +202,8 @@ const calculateSubtotalAndTaxes = function ({
 		(creditsValue ? creditsValue : 0)
 	if (subtotal < 0) subtotal = 0
 	purchase.subtotal = subtotal
+	purchase.gst = 0
+	purchase.pst = 0
 	if (subtotal > 0) {
 		if (user.paymentInfo.billingAddress.country.toUpperCase() === "CA")
 			purchase.gst = Math.round(purchase.subtotal * TaxRates.GST)
