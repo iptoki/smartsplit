@@ -11,6 +11,8 @@ const Stripe = require("stripe")
 const Config = require("../../../config")
 const TaxRates = require("../../constants/TaxRates")
 const { getUserWithAuthorization } = require("../users/users")
+
+
 /**** routes ***/
 
 async function routes(fastify, options) {
