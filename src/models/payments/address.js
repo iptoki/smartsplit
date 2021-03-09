@@ -15,6 +15,7 @@ const AddressSchema = new mongoose.Schema(
 		street2: String,
 		city: String,
 		province: String,
+		postalCode: String,
 		country: String,
 		active: {
 			type: Boolean,
