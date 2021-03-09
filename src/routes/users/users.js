@@ -236,7 +236,9 @@ const getUserById = async function (req, res) {
 		(req.authUser && !req.authUser.hasAccessToUser(user._id))
 	)
 		res.schema(UserSchema.serialization.publicUser)
-	await user.populate("paymentInfo.billingAddress").execPopulate()
+	// IT DOES NOT WORK WITHOUT THIS LINE
+	if (user.paymentInfo.billingAddress)
+		await user.populate("paymentInfo.billingAddress").execPopulate()
 
 	return user
 }
