@@ -11,7 +11,7 @@ const Stripe = require("stripe")
 const Config = require("../../../config")
 const TaxRates = require("../../constants/TaxRates")
 const { getUserWithAuthorization } = require("../users/users")
-
+const { sendTemplateTo } = require("../../utils/email")
 
 /**** routes ***/
 
@@ -154,7 +154,7 @@ const validatePurchase = async function (req, res) {
 	if (req.body.promoCode) {
 		// does promo code exist ?
 		promoCode = await PromoCode.findById(req.body.promoCode)
-		console.log(promoCode)
+
 		if (!promoCode) throw Errors.PromoCodeNotFound
 	}
 
@@ -180,7 +180,7 @@ const createStripeCustomerForUser = async function (user) {
 	const stripe = new Stripe(Config.stripe.apiKey)
 	try {
 		const customer = await stripe.customers.create()
-		console.log(customer)
+
 		user.paymentInfo.stripe_id = customer.id
 		await user.save()
 		return user
@@ -197,7 +197,6 @@ const calculateSubtotalAndTaxes = function ({
 	creditsValue,
 	user,
 }) {
-	console.log(purchase)
 	let subtotal =
 		product.price -
 		(promoCode ? promoCode.value : 0) -
@@ -238,7 +237,7 @@ const createPurchase = async function (req, res) {
 		creditsValue: req.body.creditsValue,
 		user,
 	})
-	console.log(purchase)
+
 	// now we call stripe to get a payment intent object
 	const stripe = new Stripe(Config.stripe.apiKey)
 	const paymentIntent = await stripe.paymentIntents.create({
@@ -272,14 +271,58 @@ const createPurchase = async function (req, res) {
 }
 
 const updatePurchase = async function (req, res) {
+	const user = await getUserWithAuthorization(req, res)
 	let purchaseToModify = await getPurchase(req, res)
+	let success = req.body["status"] === "succeeded"
 	for (let field of ["status"])
 		if (req.body[field]) purchaseToModify[field] = req.body[field]
-	if (req.body["status"] === "succeeded")
-		purchaseToModify["datePurchased"] = new Date().toISOString()
+	if (success) purchaseToModify["datePurchased"] = new Date().toISOString()
 	await purchaseToModify.save()
+	if (success) {
+		await sendInvoice(user, purchaseToModify)
+	}
 
 	return purchaseToModify
+}
+
+const sendInvoice = async function (user, purchaseModel) {
+	const purchase = purchaseModel.toObject()
+	// function to
+	const convertToMoney = function (intMoney) {
+		return (parseInt(intMoney) / 100).toFixed(2)
+	}
+	const templateId =
+		user.locale === "fr"
+			? "d-e69abd3436c2420aa3270f27150a3b8f"
+			: "d-1ed3ad6394ca44cb9c42152f8bc29fa0"
+	const workpiece = await Workpiece.findById(purchase.workpiece_id)
+	let data = {
+		purchase: {
+			purchase_id: purchase._id,
+			subtotal: convertToMoney(purchase.subtotal),
+			total: convertToMoney(purchase.total),
+			gst: convertToMoney(purchase.gst),
+			pst: convertToMoney(purchase.pst),
+			creditsUsed: purchase.creditsUsed,
+			creditsValue: convertToMoney(purchase.creditsValue),
+		},
+		workpiece: {
+			title: workpiece.title,
+		},
+		product: {
+			...purchase.product,
+			price: convertToMoney(purchase.product.price),
+		},
+		promoCode: purchase.promoCode
+			? {
+					...purchase.promoCode,
+					value: convertToMoney(purchase.promoCode.value),
+			  }
+			: null,
+		billingAddress: { ...purchase.billingAddress },
+		subscriptionUrl: "{{{subscribtion_preferences}}}",
+	}
+	await sendTemplateTo(templateId, user, {}, data)
 }
 
 const deletePurchase = async function (req, res) {

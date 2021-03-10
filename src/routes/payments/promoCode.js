@@ -159,11 +159,10 @@ const getPromoCode = async function (req, res) {
 }
 
 const getPromoByCode = async function (req, res) {
-	console.log(req.params.code)
 	const promoCode = await PromoCode.findOne({ code: req.params.code })
-	console.log(promoCode)
+
 	if (!promoCode) throw Errors.PromoCodeNotFound
-	console.log(promoCode)
+
 	return promoCode
 }
 
@@ -188,7 +187,8 @@ const updatePromoCode = async function (req, res) {
 		"expires",
 		"purchase_id",
 	])
-		if (req.body[field] !== undefined) promoCodeToModify[field] = req.body[field]
+		if (req.body[field] !== undefined)
+			promoCodeToModify[field] = req.body[field]
 	await promoCodeToModify.save()
 
 	return promoCodeToModify

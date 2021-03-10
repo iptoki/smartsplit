@@ -163,7 +163,7 @@ const getProductByCode = async function (req, res) {
 		active: true,
 		productCode: req.params.product_code,
 	})
-	console.log(products)
+
 	if (!products) throw Errors.ProductNotFound
 
 	return products[0]
@@ -176,13 +176,13 @@ const createProduct = async function (req, res) {
 		productCode: code,
 		active: true,
 	})
-	console.log(currentWithSameCode)
+
 	if (currentWithSameCode.forEach) {
 		const promises = currentWithSameCode.map((product) => {
 			product.active = false
 			return product.save()
 		})
-		console.log(promises)
+
 		await Promise.all(promises)
 	}
 	const product = new Product(req.body)
