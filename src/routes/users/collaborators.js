@@ -23,9 +23,9 @@ async function routes(fastify, options) {
 				search_terms: { type: "string" },
 				degree: {
 					type: "integer",
-					minimum: 0,
-					maximum: 3,
-					default: 0,
+					minimum: 1,
+					maximum: 4,
+					default: 1,
 				},
 				limit: {
 					type: "integer",
@@ -148,13 +148,15 @@ async function getCollaboratorById(req, res) {
 	if (!user.collaborators.includes(req.params.collaborator_id))
 		throw Errors.CollaboratorNotFound
 
-	return await User.findById(req.params.collaborator_id)
+	return await User.findById(req.params.collaborator_id).populate(
+		"_pendingEmails"
+	)
 }
 
 async function createCollaborator(req, res) {
 	const user = await getUserWithAuthorization(req, res)
 	const collaborator = await user.createCollaborator(req.body)
-
+	await collaborator.populate("_pendingEmails").execPopulate()
 	res.code(201)
 	req.setTransactionResource(collaborator)
 	return collaborator

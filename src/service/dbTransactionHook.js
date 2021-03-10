@@ -11,7 +11,6 @@ function onRequest(req, res, next) {
 			params: req.params,
 			querystring: req.querystring,
 		},
-		dbOperation: getOp(req),
 	})
 	req.transaction = transaction
 	next()
@@ -19,6 +18,7 @@ function onRequest(req, res, next) {
 
 function preHandler(req, res, next) {
 	if (req.transaction) {
+		req.transaction.dbOperation = getOp(req)
 		req.transaction.authUserId = req.authUser ? req.authUser._id : undefined
 		req.transaction.request.body = req.body
 	}
@@ -39,8 +39,8 @@ function onResponse(req, res, next) {
 }
 
 function getOp(req) {
-	const op = req.context.schema.dbOperation
-	if (op) return op
+	if (!req.context.schema) return undefined
+	if (req.context.schema.dbOperation) return req.context.schema.dbOperation
 	if (req.method === "POST") return "insert"
 	if (req.method === "DELETE") return "delete"
 	if (["PATCH", "PUT"].includes(req.method)) return "update"

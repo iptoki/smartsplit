@@ -237,6 +237,7 @@ const getUserById = async function (req, res) {
 	)
 		res.schema(UserSchema.serialization.publicUser)
 
+	await user.populate("_pendingEmails").execPopulate()
 	return user
 }
 

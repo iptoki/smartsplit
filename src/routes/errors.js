@@ -91,6 +91,9 @@ module.exports.InvalidSplitToken = new HTTPErrors.Forbidden(
 module.exports.ConflictingRightSplitState = new HTTPErrors.Conflict(
 	"The current state of the right split does not allow this kind of operation"
 )
+module.exports.RightSplitVoteNotFound = new HTTPErrors.NotFound(
+	"At least one of the user's vote is missing"
+)
 module.exports.VoteAlreadySubmited = new HTTPErrors.PreconditionFailed(
 	"This right holder's vote has already been submited and cannot be submited again"
 )

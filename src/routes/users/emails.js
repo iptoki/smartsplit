@@ -143,7 +143,7 @@ async function routes(fastify, options) {
 
 async function getUserWithPendingEmails(req, res) {
 	const user = await getUserWithAuthorization(req, res)
-	await user.populate("pendingEmails").execPopulate()
+	await user.populate("_pendingEmails").execPopulate()
 	return user
 }
 
@@ -198,7 +198,7 @@ function formatEmailList(user) {
 	if (user.email) list.push({ email: user.emails[0], status: "primary" })
 	list.push(
 		...user.emails.slice(1).map((e) => ({ email: e, status: "active" })),
-		...user.pendingEmails.map((e) => ({ email: e.email, status: "pending" }))
+		...user.pendingEmails.map((e) => ({ email: e, status: "pending" }))
 	)
 	return list
 }

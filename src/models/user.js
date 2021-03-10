@@ -148,10 +148,15 @@ const UserSchema = new mongoose.Schema(
 /**
  * Define a virtual property that makes a reference to EmailVerification documents
  */
-UserSchema.virtual("pendingEmails", {
+UserSchema.virtual("_pendingEmails", {
 	ref: "EmailVerification",
 	localField: "_id",
 	foreignField: "user",
+})
+
+UserSchema.virtual("pendingEmails").get(function () {
+	if (!Array.isArray(this._pendingEmails)) return []
+	return this._pendingEmails.map((x) => x._id)
 })
 
 /**
@@ -279,60 +284,50 @@ UserSchema.query.byActivationToken = function (token) {
 		})
 }
 
-UserSchema.methods.getCollaboratorsByDegrees = async function (degree = 0) {
-	if (!this.populated("collaborators"))
-		await this.populate("collaborators").execPopulate()
+UserSchema.methods.getCollaboratorsByDegrees = async function (degree = 1) {
+	let path = { path: "collaborators" }
+	let curPath = path
+	for (let d = 2; d <= degree + 1; d++) {
+		curPath.populate = [{ path: "collaborators" }, { path: "_pendingEmails" }]
+		curPath = curPath.populate[0]
+	}
+	await this.populate(path).execPopulate()
 	let collaboratorMap = [this.collaborators]
-	for (let d = 1; d <= degree; d++) {
-		if (collaboratorMap[d - 1].length < 0) break
-		let promises = []
+	for (let d = 1; d < degree; d++) {
+		if (collaboratorMap[d - 1].length === 0) break
 		collaboratorMap[d] = []
-		for (let c of collaboratorMap[d - 1])
-			promises.push(c.populate("collaborators").execPopulate())
-		for (const c of await Promise.all(promises))
-			collaboratorMap[d] = collaboratorMap[d].concat(c.collaborators)
+		for (collab of collaboratorMap[d - 1])
+			collaboratorMap[d] = collaboratorMap[d].concat(collab.collaborators)
 	}
 	return collaboratorMap
 }
 
 UserSchema.methods.getCollaborators = async function (
-	degree = 0,
+	degree = 1,
 	search_terms = "",
 	limit = 1,
 	skip = 0
 ) {
-	const collaboratorMap = await this.getCollaboratorsByDegrees(degree)
-
-	let regex = ""
+	let regex = new RegExp()
 	if (search_terms) {
 		let s_t = [search_terms]
 		if (search_terms.includes(" ")) s_t = s_t.concat(search_terms.split(" "))
-		regex = new RegExp(s_t.join("|"))
-	}
-	const regexMatchCondition = {
-		$or: [
-			{ firstName: { $regex: regex, $options: "i" } },
-			{ lastName: { $regex: regex, $options: "i" } },
-			{ artistName: { $regex: regex, $options: "i" } },
-		],
+		regex = new RegExp(s_t.join("|"), "i")
 	}
 	let result = []
 	let _limit = limit + skip
 	let visitedIds = []
 
-	for (let collaborators of collaboratorMap) {
-		if (_limit < 1) break
-		let ids = []
-		for (let collab of collaborators) {
-			if (!visitedIds.includes(collab._id)) {
-				ids.push(collab._id)
-				visitedIds.push(collab._id)
-			}
-		}
-		const matches = await User.find({
-			$and: [{ _id: { $in: ids } }, regexMatchCondition],
-		}).limit(_limit)
+	const collaboratorMap = await this.getCollaboratorsByDegrees(degree)
 
+	for (let i = 0; i < collaboratorMap.length; i++) {
+		if (_limit < 1) break
+		for (let collab of collaboratorMap[i]) {
+			if (!visitedIds.includes(collab._id)) visitedIds.push(collab._id)
+		}
+		const matches = collaboratorMap[i].filter(
+			(c) => regex.test(c.fullName) || regex.test(c.artistName)
+		)
 		_limit = _limit - matches.length
 		result = result.concat(matches)
 	}
@@ -340,8 +335,19 @@ UserSchema.methods.getCollaborators = async function (
 	if (_limit > 1) {
 		visitedIds.push(this._id)
 		const matches = await User.find({
-			$and: [{ _id: { $nin: visitedIds } }, regexMatchCondition],
-		}).limit(_limit)
+			$and: [
+				{ _id: { $nin: visitedIds } },
+				{
+					$or: [
+						{ firstName: { $regex: regex } },
+						{ lastName: { $regex: regex } },
+						{ artistName: { $regex: regex } },
+					],
+				},
+			],
+		})
+			.populate("_pendingEmails")
+			.limit(_limit)
 		result = result.concat(matches)
 	}
 
@@ -497,10 +503,10 @@ UserSchema.methods.addPendingEmail = async function (
 	})
 
 	if (
-		Array.isArray(this.pendingEmails) &&
-		!this.pendingEmails.find((item) => item._id === emailVerif._id)
+		Array.isArray(this._pendingEmails) &&
+		!this._pendingEmails.find((item) => item._id === emailVerif._id)
 	)
-		this.pendingEmails.push(emailVerif)
+		this._pendingEmails.push(emailVerif)
 
 	await emailVerif.save()
 
@@ -568,8 +574,8 @@ UserSchema.methods.deletePendingEmail = async function (email) {
 
 	if (result.deletedCount < 1) return false
 
-	if (this.populated("pendingEmails"))
-		this.pendingEmails.filter((e) => e.email === email)
+	if (Array.isArray(this._pendingEmails))
+		this._pendingEmails.filter((e) => e.email === email)
 
 	return true
 }
