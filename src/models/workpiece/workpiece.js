@@ -70,6 +70,10 @@ const WorkpieceSchema = new mongoose.Schema(
 	{ timestamps: true, toJSON: { virtuals: true } }
 )
 
+WorkpieceSchema.virtual("rightHolders").get(function () {
+	return this.collaborators.filter((c) => c.isRightHolder).map((c) => c.user)
+})
+
 WorkpieceSchema.query.byOwner = function (user_id) {
 	return this.where({ owner: user_id })
 }
