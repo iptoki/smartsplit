@@ -135,6 +135,10 @@ const collaborator = {
 			type: "array",
 			items: { type: "string" },
 		},
+		pendingEmails: {
+			type: "array",
+			items: { type: "string" },
+		},
 	},
 	additionalProperties: false,
 }

@@ -4,6 +4,7 @@ const RightTypes = require("../../constants/rightTypes")
 const {
 	UserNotFound,
 	ConflictingRightSplitState,
+	RightSplitVoteNotFound,
 } = require("../../routes/errors")
 
 const CopyrightSplitSchema = new mongoose.Schema(
@@ -226,7 +227,8 @@ RightSplitSchema.methods.setVote = function (rightHolderId, data) {
 	for (let rightType of RightTypes.list) {
 		if (!Array.isArray(this[rightType])) continue
 		for (let item of this[rightType]) {
-			if (item.rightHolder === rightHolderId && data[rightType]) {
+			if (item.rightHolder === rightHolderId) {
+				if (!data[rightType]) throw RightSplitVoteNotFound
 				if (item.vote === "undecided") {
 					item.vote = data[rightType].vote
 					item.comment = data[rightType].comment
@@ -236,11 +238,11 @@ RightSplitSchema.methods.setVote = function (rightHolderId, data) {
 		}
 	}
 	if (
-		data.label &&
 		this.label &&
 		this.label.vote === "undecided" &&
 		this.label.rightHolder === rightHolderId
 	) {
+		if (!data.label) throw RightSplitVoteNotFound
 		this.label.vote = data.label.vote
 		this.label.comment = data.label.comment
 	}
@@ -268,14 +270,28 @@ RightSplitSchema.methods.updateState = function () {
 }
 
 RightSplitSchema.methods.getPathsToPopulate = function () {
-	let paths = ["rightSplit.owner", "rightSplit.label.rightHolder"]
+	let paths = [
+		{ path: "rightSplit.owner", populate: { path: "_pendingEmails" } },
+		{
+			path: "rightSplit.label.rightHolder",
+			populate: { path: "_pendingEmails" },
+		},
+	]
 	for (let rightType of RightTypes.list) {
 		if (!Array.isArray(this[rightType])) continue
 		for (let i = 0; i < this[rightType].length; i++) {
-			paths.push(`rightSplit.${rightType}.${i}.rightHolder`)
+			paths.push({
+				path: `rightSplit.${rightType}.${i}.rightHolder`,
+				populate: { path: "_pendingEmails" },
+			})
 		}
 	}
 	return paths
+}
+
+RightSplitSchema.methods.generateContract = function () {
+	if (this._state !== accepted) throw ConflictingRightSplitState
+	return "" // TODO
 }
 
 module.exports = RightSplitSchema

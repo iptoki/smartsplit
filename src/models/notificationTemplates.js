@@ -25,7 +25,7 @@ const TemplateMap = {
 				fr: "d-3609f460f0ab47bfbda87043388cfd03",
 			},
 			generate: function (user, options) {
-				let callbackUrl = `${Config.clientUrl}/workpiece/${options.workpiece._id}/right-split/summary`
+				let callbackUrl = `${Config.clientUrl}/workpiece/${options.workpiece._id}/right-split/vote`
 				if (!user.isActive) {
 					const token = user.createActivationToken(
 						options.to.email,

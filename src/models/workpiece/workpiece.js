@@ -249,7 +249,7 @@ WorkpieceSchema.methods.deleteRightSplit = function () {
 
 WorkpieceSchema.methods.getPathsToPopulate = function () {
 	return [
-		"owner",
+		{ path: "owner", populate: { path: "_pendingEmails" } },
 		"purchases",
 		...this.getCollaboratorsPathsToPopulate(),
 		...this.documentation.getPathsToPopulate(),
@@ -265,19 +265,31 @@ WorkpieceSchema.methods.populateAll = function () {
 WorkpieceSchema.methods.getCollaboratorsPathsToPopulate = function () {
 	let paths = []
 	for (let i = 0; i < this.collaborators.length; i++)
-		paths.push(`collaborators.${i}.user`)
+		paths.push({
+			path: `collaborators.${i}.user`,
+			populate: { path: "_pendingEmails" },
+		})
 	return paths
 }
 
 WorkpieceSchema.methods.getArchivedRightSplitsPathsToPopulate = function () {
 	let paths = []
 	for (let i = 0; i < this.archivedSplits.length; i++) {
-		paths.push(`archivedSplits.${i}.owner`)
-		paths.push(`archivedSplits.${i}.label.rightHolder`)
+		paths.push({
+			path: `archivedSplits.${i}.owner`,
+			populate: "_pendingEmails",
+		})
+		paths.push({
+			path: `archivedSplits.${i}.label.rightHolder`,
+			populate: "_pendingEmails",
+		})
 		for (let rightType of RightTypes.list) {
 			if (!Array.isArray(this.archivedSplits[i][rightType])) continue
 			for (let j = 0; j < this.archivedSplits[i][rightType].length; j++)
-				paths.push(`archivedSplits.${i}.${rightType}.${j}.rightHolder`)
+				paths.push({
+					path: `archivedSplits.${i}.${rightType}.${j}.rightHolder`,
+					populate: "_pendingEmails",
+				})
 		}
 	}
 	return paths
@@ -337,6 +349,11 @@ WorkpieceSchema.methods.deleteCollaboratorById = async function (
 WorkpieceSchema.methods.getRightHolderIds = function () {
 	if (!this.rightSplit) return []
 	return this.rightSplit.getRightHolderIds()
+}
+
+WorkpieceSchema.methods.generateRightSplitContract = function () {
+	if (!this.rightSplit) throw Errors.RightSplitNotFound
+	return this.rightSplit.generateContract()
 }
 
 module.exports = mongoose.model("Workpiece", WorkpieceSchema)
