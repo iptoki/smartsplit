@@ -118,7 +118,7 @@ const UserSchema = new mongoose.Schema(
 		},
 		locale: {
 			type: String,
-			default: "en",
+			default: "fr",
 			enum: ["fr", "en"],
 		},
 		mobilePhone: {
