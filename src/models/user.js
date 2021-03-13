@@ -215,7 +215,7 @@ UserSchema.virtual("$email").get(function () {
  */
 UserSchema.virtual("avatarUrl").get(function () {
 	if (!this.avatar) return undefined
-	return Config.apiUrl + "/users/" + this._id + "/avatar"
+	return "/users/" + this._id + "/avatar"
 })
 
 /**

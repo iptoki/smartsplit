@@ -3,7 +3,7 @@ const DefaultConfig = {
 
 	clientUrl: process.env.CLIENT_URL || "http://www-dev.smartsplit.org",
 
-	apiUrl: process.env.API_BASE_URL || "http://localhost:3001/v1",
+	apiUrl: process.env.API_BASE_URL || "https://apiv2-dev.smartsplit.org/v1",
 
 	mongodb: {
 		uri: process.env.MONGODB_PATH || "mongodb://localhost/smartsplit",
