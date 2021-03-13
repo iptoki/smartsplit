@@ -293,13 +293,7 @@ const DocumentationSchema = new mongoose.Schema(
 )
 
 FileSchema.virtual("url").get(function () {
-	return (
-		Config.apiUrl +
-		"/workpieces/" +
-		this.parent().id +
-		"/documentation/files/" +
-		this._id
-	)
+	return "/workpieces/" + this.parent().id + "/documentation/files/" + this._id
 })
 
 DocumentationSchema.methods.getFileStream = function (file_id) {
