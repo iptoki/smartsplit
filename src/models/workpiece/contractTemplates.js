@@ -1,3 +1,6 @@
+const { ConflictingRightSplitState } = require("../../routes/errors")
+const RightTypes = require("../../constants/rightTypes")
+
 const Templates = {
 	rightHolder: {
 		fr:
@@ -25,6 +28,7 @@ const Templates = {
 					copyright: [],
 					performance: [],
 					recording: [],
+					label: {},
 				},
 				agreementConditions: {
 					description:
@@ -78,6 +82,7 @@ const Templates = {
 					copyright: [],
 					performance: [],
 					recording: [],
+					label: {},
 				},
 				agreementConditions: {
 					description:
@@ -118,26 +123,25 @@ const Templates = {
 // recursive
 const deepReplace = function (object, workpiece) {
 	for (const [k, v] of Object.entries(object)) {
-		console.log(k)
 		if (typeof v === "string")
 			object[k] = v
 				.replace(/{{workpiece_title}}/g, workpiece.title)
 				.replace(/{{contractSignDate}}/g, "{{contractSignDate}}" /* TODO */)
 		else if (typeof v === "object" && !Array.isArray(v))
-			object[k] = deepReplace(object[k], user, workpiece)
+			object[k] = deepReplace(object[k], workpiece)
 	}
 	return object
 }
 
 const generateTemplate = async function (lang, workpiece) {
-	await workpiece
-		.populate(workpiece.getCollaboratorsPathsToPopulate())
-		.execPopulate()
-	let contract = Templates[lang]
+	if (!workpiece.rightSplit || workpiece.rightSplit._state !== "accepted")
+		throw ConflictingRightSplitState
+	await workpiece.populateAll()
+	let contract = Templates.contract[lang]
 	contract = deepReplace(contract, workpiece)
 	let rank = 1
 	const rightHolders = workpiece.rightHolders.map((rh) => {
-		Templates.rightHolder[lang]
+		return Templates.rightHolder[lang]
 			.replace(/{{rank}}/g, rank++)
 			.replace(/{{contributor_fullName}}/g, rh.fullName)
 			.replace(/{{contributor_artistName}}/g, rh.artistName)
@@ -147,9 +151,35 @@ const generateTemplate = async function (lang, workpiece) {
 			.replace(/{{contributor_email}}/g, rh.email)
 	})
 	contract.sections.rightHolders.list.unshift(...rightHolders)
-	contract.signatures.signatories = workpiece.rightHolders.map(
+	contract.sections.signatures.signatories = workpiece.rightHolders.map(
 		(rh) => rh.fullName
 	)
+	for (const type of RightTypes.list) {
+		if (type === "privacy") continue
+		if (Array.isArray(workpiece.rightSplit[type])) {
+			const obj = workpiece.rightSplit[type].map((x) => {
+				return {
+					avatar: x.rightHolder.avatarUrl,
+					name: x.rightHolder.fullName,
+					roles: x.roles,
+					function: x.function,
+					status: x.status,
+					shares: x.shares,
+				}
+			})
+			Object.keys(obj).forEach(
+				(key) => obj[key] === undefined && delete obj[key]
+			)
+			contract.sections.rightSplits[type] = obj
+		} else {
+			contract.sections.rightSplits[type] = {
+				avatar: workpiece.rightSplit[type].rightHolder.avatarUrl,
+				name: workpiece.rightSplit[type].rightHolder.fullName,
+				agreementDuration: workpiece.rightSplit[type].agreementDuration,
+				shares: workpiece.rightSplit[type].shares,
+			}
+		}
+	}
 	return contract
 }
 
