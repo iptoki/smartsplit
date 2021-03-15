@@ -100,3 +100,39 @@ module.exports.VoteAlreadySubmited = new HTTPErrors.PreconditionFailed(
 module.exports.FileTooLarge = new HTTPErrors.PayloadTooLarge(
 	"File is to large too be uploaded"
 )
+
+/* Address related errors */
+module.exports.AddressNotFound = new HTTPErrors.NotFound("Address not found")
+module.exports.AddressImmutable = new HTTPErrors.Conflict(
+	"Address used in purchase -- cannot be modified or deleted"
+)
+/* PromoCode errors */
+module.exports.PromoCodeNotFound = new HTTPErrors.NotFound(
+	"PromoCode not found"
+)
+module.exports.PromoCodeImmutable = new HTTPErrors.Conflict(
+	"PromoCode used in purchase -- cannot be modified or deleted"
+)
+
+/* Product errors */
+module.exports.ProductNotFound = new HTTPErrors.NotFound("Product not found")
+module.exports.ProductImmutable = new HTTPErrors.Conflict(
+	"Product used in purchase -- cannot be modified or deleted"
+)
+/* Purchase errors */
+module.exports.PurchaseNotFound = new HTTPErrors.NotFound("Purchase not found")
+module.exports.PurchaseImmutable = new HTTPErrors.Conflict(
+	"Completed Purchases cannot be modified or deleted"
+)
+module.exports.BillingAddressRequired = new HTTPErrors.PreconditionFailed(
+	"User must have a current billing Address"
+)
+module.exports.ProductAlreadyPurchasedForWorkpiece = new HTTPErrors.PreconditionFailed(
+	"The productCode of the product you provided has already been purchased for this workpiece"
+)
+module.exports.StripeCustomerCreateError = new HTTPErrors.PreconditionFailed(
+	"Error creating a stripe customer id"
+)
+module.exports.StripePaymentIntentFailed = new HTTPErrors.PreconditionFailed(
+	"Error creating a payment Intent"
+)

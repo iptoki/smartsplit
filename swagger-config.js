@@ -37,6 +37,7 @@ module.exports = {
 				description: "Manage workpiece's files",
 			},
 			{ name: "entities", description: "Manage lists of the system" },
+			{ name: "addresses", description: "Manage user's adresses" },
 		],
 		servers: [
 			{

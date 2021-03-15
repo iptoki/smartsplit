@@ -6,6 +6,7 @@ const JWT = require("../utils/jwt")
 const EmailVerification = require("../models/emailVerification")
 const NotificationTypes = require("../constants/notificationTypes")
 const AccountStatus = require("../constants/accountStatus")
+const AddressSchema = require("./payments/address").Schema
 const { sendTemplateTo, normalizeEmailAddress } = require("../utils/email")
 const { generateRandomCode } = require("../utils/random")
 const Errors = require("../routes/errors")
@@ -85,6 +86,14 @@ const ProfessionalIdentitySchema = new mongoose.Schema(
 	{ _id: false }
 )
 
+const PaymentSchema = new mongoose.Schema(
+	{
+		stripe_id: { type: String },
+		billingAddress: { type: String, ref: "Address" },
+	},
+	{ _id: false }
+)
+
 /**
  * Represents a user / login in the system
  */
@@ -129,6 +138,10 @@ const UserSchema = new mongoose.Schema(
 			type: NotificationSchema,
 			default: {},
 		},
+		paymentInfo: {
+			type: PaymentSchema,
+			default: {},
+		},
 		permissions: {
 			type: PermissionSchema,
 			default: {},
@@ -152,6 +165,12 @@ UserSchema.virtual("_pendingEmails", {
 	ref: "EmailVerification",
 	localField: "_id",
 	foreignField: "user",
+})
+
+UserSchema.virtual("addresses", {
+	ref: "Address",
+	localField: "_id",
+	foreignField: "user_id",
 })
 
 UserSchema.virtual("pendingEmails").get(function () {

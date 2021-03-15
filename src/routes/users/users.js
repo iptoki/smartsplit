@@ -231,13 +231,17 @@ const getUser = async function (req, res) {
 
 const getUserById = async function (req, res) {
 	const user = await getUser(req, res)
+
 	if (
 		!req.authUser ||
 		(req.authUser && !req.authUser.hasAccessToUser(user._id))
 	)
 		res.schema(UserSchema.serialization.publicUser)
+	else
+		await user
+			.populate(["paymentInfo.billingAddress", "_pendingEmails"])
+			.execPopulate()
 
-	await user.populate("_pendingEmails").execPopulate()
 	return user
 }
 

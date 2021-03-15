@@ -1,5 +1,6 @@
 const Notifications = require("../constants/notificationTypes")
 const AccountStatus = require("../constants/accountStatus")
+const { Address } = require("./payments/address").serialization
 
 const mobilePhone = {
 	type: "object",
@@ -20,6 +21,14 @@ const permissions = {
 		},
 	},
 	additionalProperties: false,
+}
+
+const paymentInfo = {
+	type: "object",
+	properties: {
+		stripe_id: { type: "string" },
+		billingAddress: Address,
+	},
 }
 
 const notifications = {
@@ -146,6 +155,7 @@ const user = {
 		permissions,
 		notifications,
 		professionalIdentity,
+		paymentInfo,
 		collaborators: {
 			type: "array",
 			items: { type: "string" },

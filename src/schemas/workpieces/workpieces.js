@@ -30,6 +30,10 @@ const workpiece = {
 			items: RightSplitSchema.serialization.rightSplit,
 		},
 		documentation: DocumentationSchema.serialization.documentation,
+		purchases: {
+			type: "object",
+			additionalProperties: true,
+		},
 	},
 	additionalProperties: false,
 }

@@ -74,6 +74,12 @@ WorkpieceSchema.virtual("rightHolders").get(function () {
 	return this.collaborators.filter((c) => c.isRightHolder).map((c) => c.user)
 })
 
+WorkpieceSchema.virtual("purchases", {
+	ref: "Purchase",
+	localField: "_id",
+	foreignField: "workpiece_id",
+})
+
 WorkpieceSchema.query.byOwner = function (user_id) {
 	return this.where({ owner: user_id })
 }
@@ -250,6 +256,7 @@ WorkpieceSchema.methods.deleteRightSplit = function () {
 WorkpieceSchema.methods.getPathsToPopulate = function () {
 	return [
 		{ path: "owner", populate: { path: "_pendingEmails" } },
+		"purchases",
 		...this.getCollaboratorsPathsToPopulate(),
 		...this.documentation.getPathsToPopulate(),
 		...(this.rightSplit ? this.rightSplit.getPathsToPopulate() : []),
