@@ -196,7 +196,8 @@ UserSchema.virtual("fullName").get(function () {
  * Returns the primary email of this user
  */
 UserSchema.virtual("email").get(function () {
-	if (this.emails.length) return this.emails[0]
+	if (this.emails.length > 0) return this.emails[0]
+	if (this.pendingEmails.length > 0) return this.pendingEmails[0]
 	return null
 })
 

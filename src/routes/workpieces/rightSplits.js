@@ -3,6 +3,7 @@ const User = require("../../models/user")
 const { UserTemplates } = require("../../models/notificationTemplates")
 const JWTAuth = require("../../service/JWTAuth")
 const RightSplitSchema = require("../../schemas/workpieces/rightSplits")
+const Contract = require("../../models/workpiece/contractTemplates")
 
 /************************ Routes ************************/
 
@@ -142,7 +143,7 @@ async function routes(fastify, options) {
 				workpiece_id: { type: "string" },
 			},
 			response: {
-				200: {},
+				200: { type: "object", additionalProperties: true },
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -269,8 +270,10 @@ const swapUser = async function (req, res) {
 }
 
 const getContract = async function (req, res) {
-	const workpiece = await getWorkpieceAsRightHolder(req, res)
-	return workpiece.generateRightSplitContract()
+	return Contract.generateTemplate(
+		req.authUser.locale,
+		await getWorkpieceAsRightHolder(req, res)
+	)
 }
 
 module.exports = routes

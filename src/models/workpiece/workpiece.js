@@ -69,11 +69,17 @@ const WorkpieceSchema = new mongoose.Schema(
 	},
 	{ timestamps: true, toJSON: { virtuals: true } }
 )
+
+WorkpieceSchema.virtual("rightHolders").get(function () {
+	return this.collaborators.filter((c) => c.isRightHolder).map((c) => c.user)
+})
+
 WorkpieceSchema.virtual("purchases", {
 	ref: "Purchase",
 	localField: "_id",
 	foreignField: "workpiece_id",
 })
+
 WorkpieceSchema.query.byOwner = function (user_id) {
 	return this.where({ owner: user_id })
 }
@@ -349,11 +355,6 @@ WorkpieceSchema.methods.deleteCollaboratorById = async function (
 WorkpieceSchema.methods.getRightHolderIds = function () {
 	if (!this.rightSplit) return []
 	return this.rightSplit.getRightHolderIds()
-}
-
-WorkpieceSchema.methods.generateRightSplitContract = function () {
-	if (!this.rightSplit) throw Errors.RightSplitNotFound
-	return this.rightSplit.generateContract()
 }
 
 module.exports = mongoose.model("Workpiece", WorkpieceSchema)
