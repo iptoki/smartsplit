@@ -103,22 +103,18 @@ module.exports.FileTooLarge = new HTTPErrors.PayloadTooLarge(
 
 /* Address related errors */
 module.exports.AddressNotFound = new HTTPErrors.NotFound("Address not found")
-module.exports.AddressImmutable = new HTTPErrors.Conflict(
-	"Address used in purchase -- cannot be modified or deleted"
-)
+
 /* PromoCode errors */
 module.exports.PromoCodeNotFound = new HTTPErrors.NotFound(
 	"PromoCode not found"
 )
-module.exports.PromoCodeImmutable = new HTTPErrors.Conflict(
-	"PromoCode used in purchase -- cannot be modified or deleted"
-)
 
 /* Product errors */
 module.exports.ProductNotFound = new HTTPErrors.NotFound("Product not found")
-module.exports.ProductImmutable = new HTTPErrors.Conflict(
-	"Product used in purchase -- cannot be modified or deleted"
+module.exports.ConflictingProductCode = new HTTPErrors.Conflict(
+	"A product already exists with this code"
 )
+
 /* Purchase errors */
 module.exports.PurchaseNotFound = new HTTPErrors.NotFound("Purchase not found")
 module.exports.PurchaseImmutable = new HTTPErrors.Conflict(

@@ -1,19 +1,16 @@
 const Purchase = require("../../models/payments/purchase")
 const PurchaseSchema = require("../../schemas/payments/purchase")
-const Product = require("../../models/payments/product").Product
-const Address = require("../../models/payments/address").Address
-const PromoCode = require("../../models/payments/promoCode").PromoCode
+const Product = require("../../models/payments/product")
+const Address = require("../../models/payments/address")
+const PromoCode = require("../../models/payments/promoCode")
 const Workpiece = require("../../models/workpiece/workpiece")
-const User = require("../../models/user")
 const Errors = require("../errors")
 const JWTAuth = require("../../service/JWTAuth")
 const Stripe = require("stripe")
 const Config = require("../../../config")
-const TaxRates = require("../../constants/TaxRates")
+const TaxRates = require("../../constants/taxRates")
 const { getUserWithAuthorization } = require("../users/users")
 const { sendTemplateTo } = require("../../utils/email")
-
-/**** routes ***/
 
 async function routes(fastify, options) {
 	fastify.route({
@@ -21,7 +18,7 @@ async function routes(fastify, options) {
 		url: "/users/:user_id/purchases/",
 		schema: {
 			tags: ["purchases"],
-			description: "Get Purchases by logged in user",
+			description: "Get user purchases",
 			params: {
 				user_id: { type: "string" },
 			},
@@ -33,17 +30,16 @@ async function routes(fastify, options) {
 		preValidation: JWTAuth.requireAuthUser,
 		handler: getPurchases,
 	})
+
 	fastify.route({
 		method: "GET",
 		url: "/users/:user_id/purchases/:purchase_id",
 		schema: {
 			tags: ["purchases"],
-			description: "Get Purchase by id",
+			description: "Get a user purchase by id",
 			params: {
 				user_id: { type: "string" },
-				purchase_id: {
-					type: "string",
-				},
+				purchase_id: { type: "string" },
 			},
 			response: {
 				200: PurchaseSchema.serialization.Purchase,
@@ -53,12 +49,13 @@ async function routes(fastify, options) {
 		preValidation: JWTAuth.requireAuthUser,
 		handler: getPurchase,
 	})
+
 	fastify.route({
 		method: "POST",
 		url: "/users/:user_id/purchases/",
 		schema: {
 			tags: ["purchases"],
-			description: "Create new Purchase",
+			description: "Create a new Purchase",
 			params: {
 				user_id: { type: "string" },
 			},
@@ -71,6 +68,7 @@ async function routes(fastify, options) {
 		preValidation: JWTAuth.requireAuthUser,
 		handler: createPurchase,
 	})
+
 	fastify.route({
 		method: "PATCH",
 		url: "/users/:user_id/purchases/:purchase_id",
@@ -78,12 +76,8 @@ async function routes(fastify, options) {
 			tags: ["purchases"],
 			description: "Edit Purchase",
 			params: {
-				user_id: {
-					type: "string",
-				},
-				purchase_id: {
-					type: "string",
-				},
+				user_id: { type: "string" },
+				purchase_id: { type: "string" },
 			},
 			body: PurchaseSchema.validation.createUpdatePurchase,
 			response: {
@@ -94,17 +88,16 @@ async function routes(fastify, options) {
 		preValidation: JWTAuth.requireAuthUser,
 		handler: updatePurchase,
 	})
+
 	fastify.route({
 		method: "DELETE",
 		url: "/users/:user_id/purchases/:purchase_id",
 		schema: {
 			tags: ["purchases"],
-			description: "delete a user's Purchase",
+			description: "delete a user's purchase",
 			params: {
 				user_id: { type: "string" },
-				purchase_id: {
-					type: "string",
-				},
+				purchase_id: { type: "string" },
 			},
 			response: {
 				204: {},
@@ -118,24 +111,20 @@ async function routes(fastify, options) {
 
 const getPurchases = async function (req, res) {
 	const user = await getUserWithAuthorization(req)
-	const purchases = await Purchase.find({ user_id: user._id })
-	let promises = purchases.map((purchase) =>
-		purchase.populate(["product", "promoCode", "billingAddress"]).execPopulate()
-	)
-	await Promise.all(promises)
-	return purchases
-}
-
-const getPurchase = async function (req, res) {
-	const user = await getUserWithAuthorization(req)
-	const purchase = await Purchase.findById(req.params.purchase_id).populate([
+	return await Purchase.find({ user_id: user._id }).populate([
 		"product",
 		"promoCode",
 		"billingAddress",
 	])
+}
 
+const getPurchase = async function (req, res) {
+	const user = await getUserWithAuthorization(req)
+	const purchase = await Purchase.findOne({
+		_id: req.params.purchase_id,
+		user_id: user._id,
+	}).populate(["product", "promoCode", "billingAddress"])
 	if (!purchase) throw Errors.PurchaseNotFound
-	if (purchase.user_id !== user._id) throw Errors.UnauthorizedUserAccess
 	return purchase
 }
 
@@ -216,21 +205,40 @@ const calculateSubtotalAndTaxes = function ({
 }
 
 const createPurchase = async function (req, res) {
-	// check if request is valid (will throw exceptions)
-	let { user, promoCode, product } = await validatePurchase(req, res)
+	const [
+		user,
+		workpiece,
+		product,
+		billingAddress,
+		promoCode,
+	] = await Promise.all([
+		getUserWithAuthorization(req),
+		Workpiece.findById(req.body.workpiece_id),
+		Product.findById(req.body.productCode),
+		Address.findById(req.body.billingAddress_id),
+		PromoCode.findById(req.body.promoCode),
+	])
+
+	if (!workpiece || workpiece.owner !== user._id) throw Errors.WorkpieceNotFound
+	if (!product) throw Errors.ProductNotFound
+	if (req.body.promoCode && !promoCode) throw Errors.PromoCodeNotFound
+	if (!billingAddress || user.paymentInfo.billingAddress !== billingAddress._id)
+		throw Errors.BillingAddressRequired
+	if (
+		await Purchase.exists({
+			workpiece_id: req.body.workpiece_id,
+			product: req.body.productCode,
+		})
+	)
+		throw Errors.ProductAlreadyPurchasedForWorkpiece
 
 	// does user have a stripe customer id ? if not create one and save user
+	if (!user.paymentInfo.stripe_id) await createStripeCustomerForUser(user)
 
-	if (!user.paymentInfo.stripe_id)
-		user = await createStripeCustomerForUser(user)
-	//ok we are all good let's calculate the subtotal
-
-	req.body.user_id = user._id
-
-	let purchase = new Purchase(req.body)
+	const purchase = new Purchase({ ...req.body, user_id: user._id })
 
 	// calculate subtotal, gst, pst, and total
-	purchase = calculateSubtotalAndTaxes({
+	calculateSubtotalAndTaxes({
 		purchase,
 		product,
 		promoCode,
@@ -239,25 +247,19 @@ const createPurchase = async function (req, res) {
 	})
 
 	// now we call stripe to get a payment intent object
-	const stripe = new Stripe(Config.stripe.apiKey)
-	const paymentIntent = await stripe.paymentIntents.create({
+	const paymentIntent = await Stripe.paymentIntents.create({
 		amount: purchase.total,
 		currency: "cad",
 		customer: user.paymentInfo.stripe_id,
 	})
+
 	purchase.payment_id = paymentIntent.id
+
 	await purchase.save()
-	if (promoCode) {
-		promoCode.purchase_id = purchase.purchase_id
-		await promoCode.save()
-	}
 
-	await purchase
-		.populate(["product", "promoCode", "billingAddress"])
-		.execPopulate()
-	//	await purchase.populate("promoCode").execPopulate()
-	//	await purchase.populate("billingAddress").execPopulate()
-
+	purchase.product = product
+	purchase.promoCode = promoCode
+	purchase.billingAddress = billingAddress
 	res.code(201)
 
 	/*

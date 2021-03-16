@@ -37,9 +37,9 @@ const createUpdatePurchase = {
 	properties: {
 		workpiece_id: { type: "string" },
 		user_id: { type: "string" },
-		product: { type: "string" },
+		productCode: { type: "string" },
 		promoCode: { type: "string" },
-		billingAddress: { type: "string" },
+		billingAddress_id: { type: "string" },
 		creditsUsed: { type: "number" },
 		creditsValue: { type: "number" },
 		subtotal: { type: "number" },
