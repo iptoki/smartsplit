@@ -4,37 +4,22 @@ const PromoCodeSchema = require("../../schemas/payments/promoCode")
 const Errors = require("../errors")
 const JWTAuth = require("../../service/JWTAuth")
 
-/**** routes ***/
-
 async function routes(fastify, options) {
 	fastify.route({
 		method: "GET",
 		url: "/promoCodes/",
 		schema: {
 			tags: ["promoCodes"],
-			description: "Get PromoCodes by logged in user",
+			description: "Get PromoCodes",
 			response: {
 				200: { type: "array", items: PromoCodeSchema.serialization.PromoCode },
 			},
 			security: [{ bearerAuth: [] }],
 		},
-		querystring: {
-			active: { type: "boolean" },
-			limit: {
-				type: "integer",
-				default: 50,
-				minimum: 1,
-				maximum: 250,
-			},
-			skip: {
-				type: "integer",
-				default: 0,
-				minimum: 0,
-			},
-		},
-		preValidation: JWTAuth.requireAuthUser,
+		preValidation: JWTAuth.requireAuthAdmin,
 		handler: getPromoCodes,
 	})
+
 	fastify.route({
 		method: "GET",
 		url: "/promoCodes/:promoCode_id",
@@ -42,18 +27,17 @@ async function routes(fastify, options) {
 			tags: ["promoCodes"],
 			description: "Get PromoCode by id",
 			params: {
-				promoCode_id: {
-					type: "string",
-				},
+				promoCode_id: { type: "string" },
 			},
 			response: {
 				200: PromoCodeSchema.serialization.PromoCode,
 			},
 			security: [{ bearerAuth: [] }],
 		},
-		preValidation: JWTAuth.requireAuthUser,
+		preValidation: JWTAuth.requireAuthAdmin,
 		handler: getPromoCode,
 	})
+
 	fastify.route({
 		method: "GET",
 		url: "/promoCodes/byCode/:code",
@@ -61,18 +45,17 @@ async function routes(fastify, options) {
 			tags: ["promoCodes"],
 			description: "Get PromoCode by id",
 			params: {
-				code: {
-					type: "string",
-				},
+				code: { type: "string" },
 			},
 			response: {
 				200: PromoCodeSchema.serialization.PromoCode,
 			},
 			security: [{ bearerAuth: [] }],
 		},
-		preValidation: JWTAuth.requireAuthUser,
+		preValidation: JWTAuth.requireAuthAdmin,
 		handler: getPromoByCode,
 	})
+
 	fastify.route({
 		method: "POST",
 		url: "/promoCodes/",
@@ -85,9 +68,10 @@ async function routes(fastify, options) {
 			},
 			security: [{ bearerAuth: [] }],
 		},
-		preValidation: JWTAuth.requireAuthUser,
+		preValidation: JWTAuth.requireAuthAdmin,
 		handler: createPromoCode,
 	})
+
 	fastify.route({
 		method: "PATCH",
 		url: "/promoCodes/:promoCode_id",
@@ -95,9 +79,7 @@ async function routes(fastify, options) {
 			tags: ["promoCodes"],
 			description: "Edit PromoCode",
 			params: {
-				promoCode_id: {
-					type: "string",
-				},
+				promoCode_id: { type: "string" },
 			},
 			body: PromoCodeSchema.validation.createUpdatePromoCode,
 			response: {
@@ -105,9 +87,10 @@ async function routes(fastify, options) {
 			},
 			security: [{ bearerAuth: [] }],
 		},
-		preValidation: JWTAuth.requireAuthUser,
+		preValidation: JWTAuth.requireAuthAdmin,
 		handler: updatePromoCode,
 	})
+
 	fastify.route({
 		method: "DELETE",
 		url: "/promoCodes/:promoCode_id",
@@ -115,16 +98,14 @@ async function routes(fastify, options) {
 			tags: ["promoCodes"],
 			description: "delete (inactivate) a user's PromoCode",
 			params: {
-				promoCode_id: {
-					type: "string",
-				},
+				promoCode_id: { type: "string" },
 			},
 			response: {
 				204: {},
 			},
 			security: [{ bearerAuth: [] }],
 		},
-		preValidation: JWTAuth.requireAuthUser,
+		preValidation: JWTAuth.requireAuthAdmin,
 		handler: deletePromoCode,
 	})
 }

@@ -218,7 +218,7 @@ async function routes(fastify, options) {
 
 /************************ Handlers ************************/
 
-const getUser = async function (req, res) {
+const getUser = async function (req) {
 	if (req.authUser && req.authUser._id === req.params.user_id)
 		return req.authUser
 
@@ -230,7 +230,7 @@ const getUser = async function (req, res) {
 }
 
 const getUserById = async function (req, res) {
-	const user = await getUser(req, res)
+	const user = await getUser(req)
 
 	if (
 		!req.authUser ||
@@ -245,11 +245,11 @@ const getUserById = async function (req, res) {
 	return user
 }
 
-const getUserWithAuthorization = async function (req, res) {
+const getUserWithAuthorization = async function (req) {
 	if (req.authUser && req.authUser._id === req.params.user_id)
 		return req.authUser
 
-	const user = await getUser(req, res)
+	const user = await getUser(req)
 
 	if (
 		!req.authUser ||
@@ -261,7 +261,7 @@ const getUserWithAuthorization = async function (req, res) {
 }
 
 async function getUserAvatar(req, res) {
-	const user = await getUser(req, res)
+	const user = await getUser(req)
 	res.header("Content-Type", "image/jpeg") // hardcoded for the moment
 	return user.avatar
 }
@@ -294,7 +294,7 @@ async function activateInvitedUserAccount(req, res) {
 }
 
 async function updateUser(req, res) {
-	const user = await getUserWithAuthorization(req, res)
+	const user = await getUserWithAuthorization(req)
 	req.setTransactionResource(user)
 
 	await user.update(req.body)
@@ -361,7 +361,7 @@ async function verifyUserMobilePhone(req, res) {
 }
 
 async function deleteUserAccount(req, res) {
-	const user = await getUserWithAuthorization(req, res)
+	const user = await getUserWithAuthorization(req)
 	req.setTransactionResource(user)
 
 	if (user.isDeleted) throw Errors.AccountAlreadyDeleted

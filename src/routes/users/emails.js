@@ -142,7 +142,7 @@ async function routes(fastify, options) {
 /************************ Handlers ************************/
 
 async function getUserWithPendingEmails(req, res) {
-	const user = await getUserWithAuthorization(req, res)
+	const user = await getUserWithAuthorization(req)
 	await user.populate("_pendingEmails").execPopulate()
 	return user
 }
@@ -179,13 +179,13 @@ async function deleteUserEmail(req, res) {
 }
 
 async function getUserPrimaryEmail(req, res) {
-	const user = await getUserWithAuthorization(req, res)
+	const user = await getUserWithAuthorization(req)
 	if (!user.email) throw Errors.EmailNotFound
 	return user.email
 }
 
 async function setUserPrimaryEmail(req, res) {
-	const user = await getUserWithAuthorization(req, res)
+	const user = await getUserWithAuthorization(req)
 	req.setTransactionResource(user)
 	user.setPrimaryEmail(req.body.email)
 	await user.save()

@@ -117,7 +117,7 @@ async function routes(fastify, options) {
 }
 
 const getPurchases = async function (req, res) {
-	const user = await getUserWithAuthorization(req, res)
+	const user = await getUserWithAuthorization(req)
 	const purchases = await Purchase.find({ user_id: user._id })
 	let promises = purchases.map((purchase) =>
 		purchase.populate(["product", "promoCode", "billingAddress"]).execPopulate()
@@ -127,7 +127,7 @@ const getPurchases = async function (req, res) {
 }
 
 const getPurchase = async function (req, res) {
-	const user = await getUserWithAuthorization(req, res)
+	const user = await getUserWithAuthorization(req)
 	const purchase = await Purchase.findById(req.params.purchase_id).populate([
 		"product",
 		"promoCode",
@@ -141,7 +141,7 @@ const getPurchase = async function (req, res) {
 
 const validatePurchase = async function (req, res) {
 	// does the user have a billing address ?
-	const user = await getUserWithAuthorization(req, res)
+	const user = await getUserWithAuthorization(req)
 	await user.populate("paymentInfo.billingAddress").execPopulate()
 	if (!user.paymentInfo.billingAddress) throw Errors.BillingAddressRequired
 
@@ -271,7 +271,7 @@ const createPurchase = async function (req, res) {
 }
 
 const updatePurchase = async function (req, res) {
-	const user = await getUserWithAuthorization(req, res)
+	const user = await getUserWithAuthorization(req)
 	let purchaseToModify = await getPurchase(req, res)
 	let success = req.body["status"] === "succeeded"
 	for (let field of ["status"])

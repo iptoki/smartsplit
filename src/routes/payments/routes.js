@@ -1,8 +1,7 @@
 async function routes(fastify, options) {
-	fastify.register(require("./address"))
-	fastify.register(require("./promoCode"))
-	fastify.register(require("./product"))
-	fastify.register(require("./purchase"))
+	fastify.register(require("./promoCodes"))
+	fastify.register(require("./products"))
+	fastify.register(require("./purchases"))
 }
 
 module.exports = routes

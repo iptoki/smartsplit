@@ -1,6 +1,7 @@
 const mongoose = require("mongoose")
 const uuid = require("uuid").v4
-const PurchaseSchema = mongoose.Schema(
+
+const PurchaseSchema = new mongoose.Schema(
 	{
 		_id: {
 			type: String,

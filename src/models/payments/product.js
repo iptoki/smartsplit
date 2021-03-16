@@ -1,34 +1,24 @@
 const mongoose = require("mongoose")
-const localeSchema = require("../entities/locale")
-const uuid = require("uuid").v4
-const ProductCode = require("../../constants/ProductCode")
+const localeSchema = require("./../locale")
+const ProductCodes = require("../../constants/productCodes")
+
 const ProductSchema = new mongoose.Schema(
 	{
 		_id: {
 			type: String,
-			alias: "product_id",
-			default: uuid,
-		},
-		productCode: {
-			type: String,
-			enum: ProductCode.list,
+			alias: "code",
+			enum: ProductCodes.list,
 		},
 		name: localeSchema,
 		description: localeSchema,
 		price: Number,
-		active: { type: Boolean, default: true },
+		isActive: { type: Boolean, default: true },
 	},
 	{ toJSON: { virtuals: true } }
 )
-ProductSchema.query.byActive = function () {
-	const now = new Date()
 
-	return this.where({ active: true })
+ProductSchema.query.byActivity = function (isActive) {
+	return this.where({ isActive })
 }
-ProductSchema.query.byInactive = function () {
-	const now = new Date()
 
-	return this.where({ active: false })
-}
-module.exports.Product = mongoose.model("Product", ProductSchema)
-module.exports.Schema = ProductSchema
+module.exports = mongoose.model("Product", ProductSchema)

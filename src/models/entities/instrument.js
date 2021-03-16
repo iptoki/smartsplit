@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 const Entity = require("./entity")
-const LocaleSchema = require("./locale")
+const LocaleSchema = require("../locale")
 const EntityTypes = require("../../constants/entityTypes")
 const { EntityNotFound } = require("../../routes/errors")
 

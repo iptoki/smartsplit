@@ -134,7 +134,7 @@ async function routes(fastify, options) {
 /************************ Handlers ************************/
 
 async function getCollaborators(req, res) {
-	const user = await getUserWithAuthorization(req, res)
+	const user = await getUserWithAuthorization(req)
 	return await user.getCollaborators(
 		parseInt(req.query.degree),
 		req.query.search_terms,
@@ -144,7 +144,7 @@ async function getCollaborators(req, res) {
 }
 
 async function getCollaboratorById(req, res) {
-	const user = await getUserWithAuthorization(req, res)
+	const user = await getUserWithAuthorization(req)
 	if (!user.collaborators.includes(req.params.collaborator_id))
 		throw Errors.CollaboratorNotFound
 
@@ -154,7 +154,7 @@ async function getCollaboratorById(req, res) {
 }
 
 async function createCollaborator(req, res) {
-	const user = await getUserWithAuthorization(req, res)
+	const user = await getUserWithAuthorization(req)
 	const collaborator = await user.createCollaborator(req.body)
 	await collaborator.populate("_pendingEmails").execPopulate()
 	res.code(201)
@@ -163,7 +163,7 @@ async function createCollaborator(req, res) {
 }
 
 async function addCollaboratorById(req, res) {
-	const user = await getUserWithAuthorization(req, res)
+	const user = await getUserWithAuthorization(req)
 	req.setTransactionResource(user)
 
 	await user.addCollaborators([req.params.collaborator_id])
@@ -173,7 +173,7 @@ async function addCollaboratorById(req, res) {
 }
 
 async function deleteCollaboratorById(req, res) {
-	const user = await getUserWithAuthorization(req, res)
+	const user = await getUserWithAuthorization(req)
 	req.setTransactionResource(user)
 
 	if (!user.deleteCollaboratorById(req.params.collaborator_id))
