@@ -2,6 +2,7 @@ const localeSchema = require("../entities").serialization.locale
 const ProductSchema = require("./product").serialization.Product
 const PromoCodeSchema = require("./promoCode").serialization.PromoCode
 const AddressSchema = require("./address").serialization.Address
+
 const Purchase = {
 	type: "object",
 	properties: {
@@ -11,8 +12,6 @@ const Purchase = {
 		product: ProductSchema,
 		promoCode: PromoCodeSchema,
 		billingAddress: AddressSchema,
-		creditsUsed: { type: "number" },
-		creditsValue: { type: "number" },
 		subtotal: { type: "number" },
 		gst: { type: "number" },
 		pst: { type: "number" },
@@ -20,7 +19,7 @@ const Purchase = {
 		payment_id: { type: "string" },
 		status: {
 			type: "string",
-			default: "pending",
+			enum: ["pending", "succeeded", "failed"],
 		},
 		purchaseDate: { type: "string" },
 	},
@@ -36,21 +35,9 @@ const createUpdatePurchase = {
 	type: "object",
 	properties: {
 		workpiece_id: { type: "string" },
-		user_id: { type: "string" },
 		productCode: { type: "string" },
 		promoCode: { type: "string" },
 		billingAddress_id: { type: "string" },
-		creditsUsed: { type: "number" },
-		creditsValue: { type: "number" },
-		subtotal: { type: "number" },
-		gst: { type: "number" },
-		pst: { type: "number" },
-		total: { type: "number" },
-		payment_id: { type: "string" },
-		status: {
-			type: "string",
-			enum: ["pending", "succeeded", "failed"],
-		},
 		purchaseDate: { type: "string" },
 	},
 }

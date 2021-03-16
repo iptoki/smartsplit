@@ -5,8 +5,6 @@ const Errors = require("../errors")
 const JWTAuth = require("../../service/JWTAuth")
 const { getUserWithAuthorization } = require("../users/users")
 
-/**** routes ***/
-
 async function routes(fastify, options) {
 	fastify.route({
 		method: "GET",

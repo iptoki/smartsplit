@@ -120,8 +120,8 @@ module.exports.PurchaseNotFound = new HTTPErrors.NotFound("Purchase not found")
 module.exports.PurchaseImmutable = new HTTPErrors.Conflict(
 	"Completed Purchases cannot be modified or deleted"
 )
-module.exports.BillingAddressRequired = new HTTPErrors.PreconditionFailed(
-	"User must have a current billing Address"
+module.exports.BillingAddressNotFound = new HTTPErrors.NotFound(
+	"Billing address not found"
 )
 module.exports.ProductAlreadyPurchasedForWorkpiece = new HTTPErrors.PreconditionFailed(
 	"The productCode of the product you provided has already been purchased for this workpiece"
