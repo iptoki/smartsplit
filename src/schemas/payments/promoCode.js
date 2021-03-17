@@ -1,6 +1,6 @@
 const localeSchema = require("../entities").serialization.locale
 
-const PromoCode = {
+const promoCode = {
 	type: "object",
 	properties: {
 		code: { type: "string" },
@@ -9,7 +9,6 @@ const PromoCode = {
 		description: localeSchema,
 		value: { type: "number" },
 		expires: { type: "string" },
-		purchase_id: { type: "string" },
 	},
 }
 
@@ -22,13 +21,12 @@ const createUpdatePromoCode = {
 		description: localeSchema,
 		value: { type: "number" },
 		expires: { type: "string" },
-		purchase_id: { type: "string" },
 	},
 }
 
 module.exports = {
 	serialization: {
-		PromoCode,
+		promoCode,
 	},
 	validation: {
 		createUpdatePromoCode,

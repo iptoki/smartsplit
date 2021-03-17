@@ -10,6 +10,7 @@ const AddressSchema = new mongoose.Schema(
 		},
 		user: {
 			type: String,
+			alias: "user_id",
 			ref: "User",
 		},
 		street1: String,

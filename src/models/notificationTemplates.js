@@ -1,5 +1,8 @@
 const Config = require("../config")
 const Notification = require("../constants/notificationTypes")
+const AddressSchema = require("../schemas/addresses").serialization.address
+const ProductSchema = require("../schemas/addresses").serialization.product
+const PromoCodeSchema = require("../schemas/addresses").serialization.promoCode
 
 const SplitTemplates = {
 	CREATED: "split:created",
@@ -14,6 +17,10 @@ const UserTemplates = {
 	ACTIVATE_EMAIL: "user:activate-email",
 	VERIFY_MOBILE_PHONE: "user:verify-mobile-phone",
 	INVITED: "user:invited",
+}
+
+const PaymentTemplates = {
+	PRODUCT_PURCHASE_INVOICE: "payment:product-purchase-invoice",
 }
 
 const TemplateMap = {
@@ -204,6 +211,41 @@ const TemplateMap = {
 			},
 		},
 	},
+
+	[PaymentTemplates.PRODUCT_PURCHASE_INVOICE]: {
+		notificationType: Notification.ADMINISTRATIVE_MESSAGES,
+		email: {
+			template_id: {
+				en: "d-1ed3ad6394ca44cb9c42152f8bc29fa0",
+				fr: "d-e69abd3436c2420aa3270f27150a3b8f",
+			},
+			generate: function (user, options) {
+				const fastJson = require("fast-json-stringify")
+				const product = fastJson(ProductSchema)(purchase.product)
+				const promoCode = fastJson(PromoCodeSchema)(purchase.promoCode)
+				const billingAddress = fastJson(AddressSchema)(purchase.billingAddress)
+				return {
+					id: this.template_id[user.locale],
+					data: {
+						purchase: {
+							purchase_id: purchase._id,
+							subtotal: purchase.subtotal,
+							total: purchase.total,
+							gst: purchase.gst,
+							pst: purchase.pst,
+							creditsUsed: purchase.creditsUsed,
+							product,
+							promoCode,
+							billingAddress,
+							workpiece: {
+								title: workpiece.title,
+							},
+						},
+					},
+				}
+			},
+		},
+	},
 }
 
 const generateTemplate = function (templateName, medium, user, options = {}) {
@@ -221,6 +263,7 @@ const generateTemplate = function (templateName, medium, user, options = {}) {
 module.exports = {
 	SplitTemplates,
 	UserTemplates,
+	PaymentTemplates,
 	TemplateMap,
 	generateTemplate,
 }

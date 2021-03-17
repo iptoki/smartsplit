@@ -1,18 +1,16 @@
 const localeSchema = require("../entities").serialization.locale
 const ProductCode = require("../../constants/ProductCode")
 
-const Product = {
+const product = {
 	type: "object",
 	properties: {
-		product_id: { type: "string" },
-		productCode: {
+		code: {
 			type: "string",
 			enum: ProductCode.list,
 		},
 		name: localeSchema,
 		description: localeSchema,
 		price: { type: "number" },
-		active: { type: "boolean" },
 	},
 }
 
@@ -28,6 +26,7 @@ const createProduct = {
 		description: localeSchema,
 		price: { type: "number" },
 	},
+	additionalProperties: false,
 }
 
 const updateProduct = {
@@ -40,13 +39,13 @@ const updateProduct = {
 		name: localeSchema,
 		description: localeSchema,
 		price: { type: "number" },
-		active: { type: "boolean" },
 	},
+	additionalProperties: false,
 }
 
 module.exports = {
 	serialization: {
-		Product,
+		product,
 	},
 	validation: {
 		createProduct,

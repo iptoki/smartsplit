@@ -116,6 +116,9 @@ module.exports.ConflictingProductCode = new HTTPErrors.Conflict(
 )
 
 /* Purchase errors */
+module.exports.WebhookSignatureVerificationFailed = new HTTPErrors.BadRequest(
+	"Webhook signature verification failed"
+)
 module.exports.PurchaseNotFound = new HTTPErrors.NotFound("Purchase not found")
 module.exports.PurchaseImmutable = new HTTPErrors.Conflict(
 	"Completed Purchases cannot be modified or deleted"

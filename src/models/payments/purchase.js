@@ -13,8 +13,8 @@ const PurchaseSchema = new mongoose.Schema(
 			alias: "purchase_id",
 			default: uuid,
 		},
-		workpiece_id: { type: String, alias: workpiece, ref: "Workpiece" },
-		user_id: { type: String, ref: "User" },
+		workpiece: { type: String, alias: "workpiece_id", ref: "Workpiece" },
+		user: { type: String, alias: "user_id", ref: "User" },
 		product: { type: String, ref: "Product" },
 		promoCode: { type: String, ref: "PromoCode" },
 		billingAddress: { type: String, ref: "Address" },
@@ -25,7 +25,7 @@ const PurchaseSchema = new mongoose.Schema(
 		payment_id: String,
 		status: {
 			type: String,
-			enum: ["pending", "succeeded", "failed"],
+			enum: ["pending", "succeeded", "failed", "canceled"],
 			default: "pending",
 		},
 		purchaseDate: Date,
@@ -37,15 +37,25 @@ PurchaseSchema.virtual("total").get(function () {
 	return subtotal + subtotal * (this.gst + this.pst)
 })
 
-PurchaseSchema.methods.populateAll = async function () {
-	await this.populate(["product", "promoCode", "billingAddress"]).execPopulate()
+PurchaseSchema.query.populateAll = function () {
+	return this.populate([
+		"product",
+		"promoCode",
+		"billingAddress",
+		"user",
+		"workpiece",
+	])
+}
+
+PurchaseSchema.methods.populatePaths = async function (paths) {
+	await this.populate(paths).execPopulate()
 }
 
 PurchaseSchema.methods.calculateSubtotal = async function () {
 	if (
 		[typeof product, typeof promoCode, typeof billingAddress].includes("string")
 	)
-		await this.populateAll()
+		await this.populatePaths(["product", "promoCode", "billingAddress"])
 
 	this.subtotal = Math.max(
 		0,

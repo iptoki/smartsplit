@@ -3,10 +3,9 @@ const PurchaseSchema = require("../../schemas/payments/purchase")
 const Errors = require("../errors")
 const JWTAuth = require("../../service/JWTAuth")
 const Stripe = require("../../service/stripe")
-const Config = require("../../config")
 const TaxRates = require("../../constants/taxRates")
+const { PaymentTemplates } = require("../models/notificationTemplates")
 const { getUserWithAuthorization } = require("../users/users")
-const { sendTemplateTo } = require("../../utils/email")
 
 async function routes(fastify, options) {
 	fastify.route({
@@ -55,7 +54,10 @@ async function routes(fastify, options) {
 			params: {
 				user_id: { type: "string" },
 			},
-			body: PurchaseSchema.validation.createUpdatePurchase,
+			body: {
+				allOf: [PurchaseSchema.validation.createUpdatePurchase],
+				required: ["workpiece_id", "productCode", "billingAddress_id"],
+			},
 			response: {
 				201: PurchaseSchema.serialization.PurchaseIntent,
 			},
@@ -103,6 +105,19 @@ async function routes(fastify, options) {
 		preValidation: JWTAuth.requireAuthUser,
 		handler: deletePurchase,
 	})
+
+	fastify.route({
+		method: "POST",
+		url: "/purchases/stripe/event",
+		schema: {
+			tags: ["purchases"],
+			description: "Stripe's webhook to receive event such as payment success",
+			response: {
+				200: {},
+			},
+		},
+		handler: stripeEventHandler,
+	})
 }
 
 const getPurchases = async function (req, res) {
@@ -130,7 +145,7 @@ const createPurchase = async function (req, res) {
 
 	// does user have a stripe customer id ? if not create one
 	if (!user.paymentInfo.stripe_id)
-		user.paymentInfo.stripe_id = await Stripe.getNewStripeCustomerId()
+		user.paymentInfo.stripe_id = await Stripe.createCustomer(user._id)
 
 	// now we call stripe to get a payment intent object
 	const paymentIntent = await Stripe.createPaymentIntent(
@@ -155,72 +170,41 @@ const createPurchase = async function (req, res) {
 }
 
 const updatePurchase = async function (req, res) {
-	const user = await getUserWithAuthorization(req)
-	let purchaseToModify = await getPurchase(req, res)
-	let success = req.body["status"] === "succeeded"
-	for (let field of ["status"])
-		if (req.body[field]) purchaseToModify[field] = req.body[field]
-	if (success) purchaseToModify["datePurchased"] = new Date().toISOString()
-	await purchaseToModify.save()
-	if (success) {
-		await sendInvoice(user, purchaseToModify)
-	}
-
-	return purchaseToModify
-}
-
-const sendInvoice = async function (user, purchaseModel) {
-	const purchase = purchaseModel.toObject()
-	// function to
-	const convertToMoney = function (intMoney) {
-		return (parseInt(intMoney) / 100).toFixed(2)
-	}
-	const templateId =
-		user.locale === "fr"
-			? "d-e69abd3436c2420aa3270f27150a3b8f"
-			: "d-1ed3ad6394ca44cb9c42152f8bc29fa0"
-	const workpiece = await Workpiece.findById(purchase.workpiece_id)
-	let data = {
-		purchase: {
-			purchase_id: purchase._id,
-			subtotal: convertToMoney(purchase.subtotal),
-			total: convertToMoney(purchase.total),
-			gst: convertToMoney(purchase.gst),
-			pst: convertToMoney(purchase.pst),
-			creditsUsed: purchase.creditsUsed,
-			creditsValue: convertToMoney(purchase.creditsValue),
-		},
-		workpiece: {
-			title: workpiece.title,
-		},
-		product: {
-			...purchase.product,
-			price: convertToMoney(purchase.product.price),
-		},
-		promoCode: purchase.promoCode
-			? {
-					...purchase.promoCode,
-					value: convertToMoney(purchase.promoCode.value),
-			  }
-			: null,
-		billingAddress: { ...purchase.billingAddress },
-		subscriptionUrl: "{{{subscribtion_preferences}}}",
-	}
-	await sendTemplateTo(templateId, user, {}, data)
+	const HTTPErrors = require("http-errors")
+	throw new HTTPErrors.NotImplemented("Endpoint not implemented")
 }
 
 const deletePurchase = async function (req, res) {
-	/* delete only sets the active prop to inactive */
-	let purchaseToDelete = await getPurchase(req, res)
-	if (purchaseToDelete.promoCode && purchaseToDelete.promoCode.promo_id) {
-		const promoCode = await PromoCode.findById(
-			purchaseToDelete.promoCode.promo_id
-		)
-		promoCode.purchase_id = ""
-		promoCode.save()
-	}
-	await Purchase.deleteOne({ promo_id: purchaseToDelete.promo_id })
-	return { deleted: true }
+	const HTTPErrors = require("http-errors")
+	throw new HTTPErrors.NotImplemented("Endpoint not implemented")
+}
+
+const stripeEventHandler = async function (req, res) {
+	Stripe.verifyEventSignature(
+		req.body,
+		req.headers["stripe-signature"],
+		"whsec_txRlWnytXeWKViCRZnFLTJH7I5wMxtN1"
+	)
+
+	const event = req.body
+	const paymentIntent = event.data.object
+	const purchase = await Purchase.findOne({
+		payment_id: paymentIntent.id,
+	}).populateAll()
+
+	if (event.type === "payment_intent.succeeded") {
+		purchase.status = "succeeded"
+		purchase.purchaseDate = Date.now()
+		purchase.user.sendNotification(PaymentTemplates.PRODUCT_PURCHASE_INVOICE, {
+			purchase,
+		})
+	} else if (event.type === "payment_intent.payment_failed")
+		purchase.status = "failed"
+	else if (event.type === "payment_intent.canceled")
+		purchase.status = "canceled"
+
+	await purchase.save()
+	res.code(200).send()
 }
 
 module.exports = routes

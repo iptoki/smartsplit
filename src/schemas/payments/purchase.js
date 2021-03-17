@@ -1,9 +1,8 @@
-const localeSchema = require("../entities").serialization.locale
 const ProductSchema = require("./product").serialization.Product
 const PromoCodeSchema = require("./promoCode").serialization.PromoCode
 const AddressSchema = require("./address").serialization.Address
 
-const Purchase = {
+const purchase = {
 	type: "object",
 	properties: {
 		purchase_id: { type: "string" },
@@ -23,28 +22,33 @@ const Purchase = {
 		},
 		purchaseDate: { type: "string" },
 	},
+	additionalProperties: false,
 }
-const PurchaseIntent = {
+
+const purchaseIntent = {
 	type: "object",
 	properties: {
-		purchase: Purchase,
+		purchase: purchase,
 		clientSecret: { type: "string" },
 	},
+	additionalProperties: false,
 }
+
 const createUpdatePurchase = {
 	type: "object",
 	properties: {
 		workpiece_id: { type: "string" },
 		productCode: { type: "string" },
-		promoCode: { type: "string" },
+		promoCode_id: { type: "string" },
 		billingAddress_id: { type: "string" },
-		purchaseDate: { type: "string" },
 	},
+	additionalProperties: false,
 }
+
 module.exports = {
 	serialization: {
-		Purchase,
-		PurchaseIntent,
+		purchase,
+		purchaseIntent,
 	},
 	validation: {
 		createUpdatePurchase,

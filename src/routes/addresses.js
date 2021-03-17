@@ -18,7 +18,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: { type: "array", items: AddressSchema.serialization.Address },
+				200: { type: "array", items: AddressSchema.serialization.address },
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -41,7 +41,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: AddressSchema.serialization.Address,
+				200: AddressSchema.serialization.address,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -60,9 +60,12 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: AddressSchema.validation.createAddress,
+			body: {
+				allOf: [AddressSchema.validation.createUpdateAddress],
+				required: ["street1", "city", "province", "postalCode", "country"],
+			},
 			response: {
-				201: AddressSchema.serialization.Address,
+				201: AddressSchema.serialization.address,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -105,9 +108,9 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: AddressSchema.validation.updateAddress,
+			body: AddressSchema.validation.createUpdateAddress,
 			response: {
-				200: AddressSchema.serialization.Address,
+				200: AddressSchema.serialization.address,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -130,7 +133,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: AddressSchema.serialization.Address,
+				200: AddressSchema.serialization.address,
 			},
 			security: [{ bearerAuth: [] }],
 		},
