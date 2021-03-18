@@ -60,20 +60,6 @@ const bearerTokenMiddleware = function (req, res) {
 			else return User.findById(req.auth.data.user_id)
 		},
 	})
-
-	/**
-	 * Returns the User model instance of an admin, if applicable)
-	 */
-	Object.defineProperty(req.auth, "admin", {
-		get: function () {
-			if (!req.auth.data || !req.auth.data.user_id) return Promise.resolve(null)
-			else
-				return User.findOne({
-					_id: req.auth.data.user_id,
-					"permissions.isAdmin": true,
-				})
-		},
-	})
 }
 
 /**
@@ -97,15 +83,9 @@ const requireAuthUser = async function (req, res) {
  * @throws AuthError if there is no authenticated admin
  */
 const requireAuthAdmin = async function (req, res) {
-	const admin = await req.auth.admin
-
-	if (!admin || admin.password !== req.auth.data.user_password)
-		throw Errors.InvalidAuthToken
-
-	req.authUser = admin
-	if (req.params.user_id === "session") req.params.user_id = user._id
-
-	return admin
+	const user = await requireAuthUser(req, res)
+	if(!user.permissions.isAdmin) throw Errors.UserForbidden
+	return user
 }
 
 const authorizeUserAccess = async function (req, res) {

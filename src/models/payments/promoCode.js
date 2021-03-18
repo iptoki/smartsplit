@@ -17,20 +17,5 @@ const PromoCodeSchema = new mongoose.Schema(
 	},
 	{ toJSON: { virtuals: true } }
 )
-PromoCodeSchema.query.byActive = function () {
-	const now = new Date()
-
-	return this.where({ product_id: "" }).where({
-		expires: { $gte: now.toISOString() },
-	})
-}
-PromoCodeSchema.query.byInactive = function () {
-	const now = new Date()
-
-	return this.or(
-		{ expires: { $lte: now.toISOString() } },
-		{ purchase_id: { $nin: ["", null, undefined] } }
-	)
-}
 
 module.exports = mongoose.model("PromoCode", PromoCodeSchema)

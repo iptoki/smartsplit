@@ -31,8 +31,8 @@ const workpiece = {
 		},
 		documentation: DocumentationSchema.serialization.documentation,
 		purchases: {
-			type: "object",
-			additionalProperties: true,
+			type: "array",
+			items: { type: "string" },
 		},
 	},
 	additionalProperties: false,

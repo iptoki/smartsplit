@@ -1,6 +1,6 @@
 const PromoCode = require("../../models/payments/promoCode")
 const PromoCodeSchema = require("../../schemas/payments/promoCodes")
-const Errors = require("../errors")
+const { PromoCodeNotFound } = require("../errors")
 const JWTAuth = require("../../service/JWTAuth")
 
 async function routes(fastify, options) {
@@ -9,7 +9,7 @@ async function routes(fastify, options) {
 		url: "/promoCodes/",
 		schema: {
 			tags: ["promoCodes"],
-			description: "Get PromoCodes",
+			description: "Get all PromoCodes",
 			response: {
 				200: { type: "array", items: PromoCodeSchema.serialization.promoCode },
 			},
@@ -24,7 +24,7 @@ async function routes(fastify, options) {
 		url: "/promoCodes/:promoCode_id",
 		schema: {
 			tags: ["promoCodes"],
-			description: "Get PromoCode by id",
+			description: "Get PromoCode by ID",
 			params: {
 				promoCode_id: { type: "string" },
 			},
@@ -39,10 +39,10 @@ async function routes(fastify, options) {
 
 	fastify.route({
 		method: "GET",
-		url: "/promoCodes/byCode/:code",
+		url: "/promoCodes/code/:code",
 		schema: {
 			tags: ["promoCodes"],
-			description: "Get PromoCode by id",
+			description: "Get PromoCode by code",
 			params: {
 				code: { type: "string" },
 			},
@@ -76,13 +76,13 @@ async function routes(fastify, options) {
 		url: "/promoCodes/:promoCode_id",
 		schema: {
 			tags: ["promoCodes"],
-			description: "Edit PromoCode",
+			description: "Update a PromoCode by ID",
 			params: {
 				promoCode_id: { type: "string" },
 			},
 			body: PromoCodeSchema.validation.createUpdatePromoCode,
 			response: {
-				201: PromoCodeSchema.serialization.promoCode,
+				200: PromoCodeSchema.serialization.promoCode,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -95,7 +95,7 @@ async function routes(fastify, options) {
 		url: "/promoCodes/:promoCode_id",
 		schema: {
 			tags: ["promoCodes"],
-			description: "delete (inactivate) a user's PromoCode",
+			description: "delete a PromoCode by ID",
 			params: {
 				promoCode_id: { type: "string" },
 			},
@@ -110,39 +110,18 @@ async function routes(fastify, options) {
 }
 
 const getPromoCodes = async function (req, res) {
-	let PromoCodes
-
-	if (req.query.active === true) {
-		PromoCodes = await PromoCode.find()
-			.getActive()
-			.skip(parseInt(req.query.skip))
-			.limit(parseInt(req.query.limit))
-	} else if (req.query.active === false) {
-		PromoCodes = await PromoCode.find()
-			.getInactive()
-			.skip(parseInt(req.query.skip))
-			.limit(parseInt(req.query.limit))
-	} else {
-		PromoCodes = await PromoCode.find()
-			.skip(parseInt(req.query.skip))
-			.limit(parseInt(req.query.limit))
-	}
-	return PromoCodes
+	return await PromoCode.find()
 }
 
 const getPromoCode = async function (req, res) {
 	const promoCode = await PromoCode.findById(req.params.promoCode_id)
-
-	if (!promoCode) throw Errors.PromoCodeNotFound
-
+	if (!promoCode) throw PromoCodeNotFound
 	return promoCode
 }
 
 const getPromoByCode = async function (req, res) {
 	const promoCode = await PromoCode.findOne({ code: req.params.code })
-
-	if (!promoCode) throw Errors.PromoCodeNotFound
-
+	if (!promoCode) throw PromoCodeNotFound
 	return promoCode
 }
 
@@ -154,30 +133,17 @@ const createPromoCode = async function (req, res) {
 }
 
 const updatePromoCode = async function (req, res) {
-	let promoCodeToModify = await getPromoCode(req, res)
-	if (promoCodeToModify.purchase_id) throw Errors.PromoCodeImmutable
-	// check and see if PromoCode occurs in any purchase
-	// if purchase with PromoCode exists
-	// throw Errors.PromoCodeNotModifiable
-	// else modify PromoCode
-	for (let field of [
-		"organization",
-		"description",
-		"value",
-		"expires",
-		"purchase_id",
-	])
-		if (req.body[field] !== undefined)
-			promoCodeToModify[field] = req.body[field]
-	await promoCodeToModify.save()
-
-	return promoCodeToModify
+	const promoCode = await getPromoCode(req, res)
+	if (!promoCode) throw PromoCodeNotFound
+	await promoCode.update(req.body)
+	return promoCode
 }
 
 const deletePromoCode = async function (req, res) {
-	let promoCode = await getPromoCode(req, res)
-	if (promoCode.purchase_id) throw Errors.PromoCodeImmutable
-	await promoCode.remove()
+	const { deletedCount } = await PromoCode.deleteOne({
+		_id: req.params.promoCode_id,
+	})
+	if (deletedCount !== 1) throw PromoCodeNotFound
 	res.code(204).send()
 }
 

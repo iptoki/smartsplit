@@ -70,16 +70,19 @@ PurchaseSchema.statics.create = async function (data) {
 	if (
 		await Purchase.exists({
 			workpiece_id: data.workpiece_id,
-			product: data.productCode,
+			product: data.code,
 		})
 	)
 		throw Errors.ProductAlreadyPurchasedForWorkpiece
 
 	const purchase = new Purchase(data)
 
-	await purchase
-		.populate(["product", "promoCode", "billingAddress", "workpiece"])
-		.execPopulate()
+	await purchase.populatePaths([
+		"product",
+		"promoCode",
+		"billingAddress",
+		"workpiece",
+	])
 
 	if (!purchase.product) throw Errors.ProductNotFound
 	if (data.promoCode && !purchase.promoCode) throw Errors.PromoCodeNotFound
