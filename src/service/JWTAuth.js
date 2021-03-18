@@ -84,7 +84,7 @@ const requireAuthUser = async function (req, res) {
  */
 const requireAuthAdmin = async function (req, res) {
 	const user = await requireAuthUser(req, res)
-	if(!user.permissions.isAdmin) throw Errors.UserForbidden
+	if (!user.permissions.isAdmin) throw Errors.UserForbidden
 	return user
 }
 

@@ -1,6 +1,6 @@
 const Address = require("../models/address")
 const AddressSchema = require("../schemas/addresses")
-const Errors = require("./errors")
+const { AddressNotFound } = require("./errors")
 const JWTAuth = require("../service/JWTAuth")
 const { getUserWithAuthorization } = require("./users/users")
 
@@ -149,18 +149,16 @@ const getUserAddresses = async function (req, res) {
 
 const getAddress = async function (req, res) {
 	const user = await getUserWithAuthorization(req)
-	const address = await Address.findOne({
+	return await Address.ensureExists({
 		_id: req.params.address_id,
-		user: user._id,
+		user_id: user._id,
 	})
-	if (!address) throw Errors.AddressNotFound
-	return address
 }
 
 const createAddress = async function (req, res) {
 	const user = await getUserWithAuthorization(req)
 	const address = new Address(req.body)
-	address.user = user._id
+	address.user_id = user._id
 	if (!user.paymentInfo.billingAddress)
 		user.paymentInfo.billingAddress = address._id
 	await Promise.all([address.save(), user.save()])
@@ -170,16 +168,19 @@ const createAddress = async function (req, res) {
 
 const setBillingAddress = async function (req, res) {
 	const user = await getUserWithAuthorization(req)
-	if (!Address.exists({ _id: req.params.address_id, user: user._id }))
-		throw Errors.AddressNotFound
+	await Address.ensureExists({ _id: req.params.address_id, user_id: user._id })
 	user.paymentInfo.billingAddress = req.params.address_id
 	await user.save()
 	res.code(204).send()
 }
 
 const updateAddress = async function (req, res) {
-	const address = await getAddress(req, res)
-	await address.update(req.body)
+	const address = await Address.findOneAndUpdate(
+		{ _id: req.params.address_id, user: req.params.user_id },
+		req.body,
+		{ new: true }
+	)
+	if (!address) throw AddressNotFound
 	return address
 }
 
@@ -197,7 +198,7 @@ const deleteAddress = async function (req, res) {
 		Address.deleteOne({ _id: req.params.address_id, user: user._id }),
 	])
 
-	if (result[1].deletedCount !== 1) throw Errors.AddressNotFound
+	if (result[1].deletedCount !== 1) throw AddressNotFound
 
 	res.code(204).send()
 }

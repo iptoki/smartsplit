@@ -114,15 +114,11 @@ const getPromoCodes = async function (req, res) {
 }
 
 const getPromoCode = async function (req, res) {
-	const promoCode = await PromoCode.findById(req.params.promoCode_id)
-	if (!promoCode) throw PromoCodeNotFound
-	return promoCode
+	return await PromoCode.ensureExists(req.params.promoCode_id)
 }
 
 const getPromoByCode = async function (req, res) {
-	const promoCode = await PromoCode.findOne({ code: req.params.code })
-	if (!promoCode) throw PromoCodeNotFound
-	return promoCode
+	return await PromoCode.ensureExists({ code: req.params.code })
 }
 
 const createPromoCode = async function (req, res) {
@@ -133,9 +129,12 @@ const createPromoCode = async function (req, res) {
 }
 
 const updatePromoCode = async function (req, res) {
-	const promoCode = await getPromoCode(req, res)
+	const promoCode = await findOneAndUpdate(
+		{ _id: req.params.promoCode_id },
+		req.body,
+		{ new: true }
+	)
 	if (!promoCode) throw PromoCodeNotFound
-	await promoCode.update(req.body)
 	return promoCode
 }
 

@@ -187,14 +187,14 @@ RightSplitSchema.methods.update = async function (data) {
 	if (data.label !== undefined && Object.keys(data.label).length > 0) {
 		this.label.vote =
 			owner_id === data.label.rightHolder ? "accepted" : "undecided"
-		promises.push(User.ensureExist(data.label.rightHolder))
+		promises.push(User.ensureExists(data.label.rightHolder))
 	}
 
 	for (let rightType of RightTypes.list) {
 		if (!Array.isArray(data[rightType])) continue
 		this[rightType] = []
 		for (let item of data[rightType]) {
-			promises.push(User.ensureExist(item.rightHolder))
+			promises.push(User.ensureExists(item.rightHolder))
 			this[rightType].push({
 				rightHolder: item.rightHolder,
 				roles: item.roles,

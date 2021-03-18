@@ -10,6 +10,7 @@ const purchase = {
 		user_id: { type: "string" },
 		product: ProductSchema,
 		promoCode: PromoCodeSchema,
+		creditsUsed: { type: "number" },
 		billingAddress: AddressSchema,
 		subtotal: { type: "number" },
 		gst: { type: "number" },

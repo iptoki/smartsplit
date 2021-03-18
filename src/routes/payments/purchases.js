@@ -122,21 +122,15 @@ async function routes(fastify, options) {
 
 const getPurchases = async function (req, res) {
 	const user = await getUserWithAuthorization(req)
-	return await Purchase.find({ user_id: user._id }).populate([
-		"product",
-		"promoCode",
-		"billingAddress",
-	])
+	return await Purchase.find({ user_id: user._id })
 }
 
 const getPurchase = async function (req, res) {
 	const user = await getUserWithAuthorization(req)
-	const purchase = await Purchase.findOne({
+	return await Purchase.ensureExists({
 		_id: req.params.purchase_id,
 		user_id: user._id,
-	}).populate(["product", "promoCode", "billingAddress"])
-	if (!purchase) throw Errors.PurchaseNotFound
-	return purchase
+	})
 }
 
 const createPurchase = async function (req, res) {
@@ -170,13 +164,11 @@ const createPurchase = async function (req, res) {
 }
 
 const updatePurchase = async function (req, res) {
-	const HTTPErrors = require("http-errors")
-	throw new HTTPErrors.NotImplemented("Endpoint not implemented")
+	throw Errors.NotImplemented
 }
 
 const deletePurchase = async function (req, res) {
-	const HTTPErrors = require("http-errors")
-	throw new HTTPErrors.NotImplemented("Endpoint not implemented")
+	throw Errors.NotImplemented
 }
 
 const stripeEventHandler = async function (req, res) {
@@ -188,9 +180,10 @@ const stripeEventHandler = async function (req, res) {
 
 	const event = req.body
 	const paymentIntent = event.data.object
-	const purchase = await Purchase.findOne({
-		payment_id: paymentIntent.id,
-	}).populateAll()
+	const purchase = await Purchase.ensureExists(
+		{ payment_id: paymentIntent.id },
+		["user", "workpiece"]
+	)
 
 	if (event.type === "payment_intent.succeeded") {
 		purchase.status = "succeeded"

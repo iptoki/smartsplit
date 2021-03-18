@@ -31,11 +31,4 @@ InstrumentEntity.methods.setFields = function (body) {
 	}
 }
 
-InstrumentEntity.statics.ensureExist = function (id) {
-	return this.exists({ _id: id }).then((exist) => {
-		if (!exist) return Promise.reject(Errors.EntityNotFound)
-		else return Promise.resolve()
-	})
-}
-
 module.exports = Entity.discriminator(EntityTypes.INSTRUMENT, InstrumentEntity)

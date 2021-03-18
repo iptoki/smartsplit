@@ -160,10 +160,8 @@ async function createEntity(req, res) {
 	return entity
 }
 
-async function getEntityById(req, res) {
-	const entity = await Entity.findById(req.params.entity_id)
-
-	if (!entity) throw Errors.EntityNotFound
+async function getEntity(req) {
+	const entity = await Entity.ensureExists(req.params.entity_id)
 
 	if (
 		!req.authUser ||
@@ -174,8 +172,12 @@ async function getEntityById(req, res) {
 	)
 		throw Errors.UserForbidden
 
-	res.schema(EntitySchema.serialization[entity.type])
 	return entity
+}
+
+async function getEntityById(req, res) {
+	res.schema(EntitySchema.serialization[entity.type])
+	return await getEntity(req)
 }
 
 async function getEntities(req, res) {
@@ -216,7 +218,7 @@ async function updateEntity(req, res) {
 	)
 		throw Errors.UserForbidden
 
-	const entity = await getEntityById(req, res)
+	const entity = await getEntity(req)
 	req.setTransactionResource(entity)
 
 	if (!req.authUser.isAdmin) {
@@ -238,7 +240,7 @@ async function deleteEntity(req, res) {
 	)
 		throw Errors.UserForbidden
 
-	const entity = await getEntityById(req, res)
+	const entity = await getEntity(req)
 	req.setTransactionResource(entity)
 
 	await entity.remove()

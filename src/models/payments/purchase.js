@@ -16,9 +16,9 @@ const PurchaseSchema = new mongoose.Schema(
 		},
 		workpiece: { type: String, alias: "workpiece_id", ref: "Workpiece" },
 		user: { type: String, alias: "user_id", ref: "User" },
-		product: { type: String, ref: "Product" },
-		promoCode: { type: String, ref: "PromoCode" },
-		billingAddress: { type: String, ref: "Address" },
+		//product: ProductSchema,
+		//promoCode: PromoCodeSchema,
+		//billingAddress: AddressSchema,
 		creditsUsed: { type: Number, default: 0 },
 		subtotal: { type: Number, default: 0 },
 		gst: { type: Number, default: TaxRates.GST },
@@ -38,26 +38,7 @@ PurchaseSchema.virtual("total").get(function () {
 	return subtotal + subtotal * (this.gst + this.pst)
 })
 
-PurchaseSchema.query.populateAll = function () {
-	return this.populate([
-		"product",
-		"promoCode",
-		"billingAddress",
-		"user",
-		"workpiece",
-	])
-}
-
-PurchaseSchema.methods.populatePaths = async function (paths) {
-	await this.populate(paths).execPopulate()
-}
-
 PurchaseSchema.methods.calculateSubtotal = async function () {
-	if (
-		[typeof product, typeof promoCode, typeof billingAddress].includes("string")
-	)
-		await this.populatePaths(["product", "promoCode", "billingAddress"])
-
 	this.subtotal = Math.max(
 		0,
 		this.product.price -
@@ -67,30 +48,30 @@ PurchaseSchema.methods.calculateSubtotal = async function () {
 }
 
 PurchaseSchema.statics.create = async function (data) {
-	if (
-		await Purchase.exists({
+	const [
+		isProductAlreadyPurchased,
+		product,
+		promoCode,
+		billingAddress,
+	] = await Promise.all([
+		Purchase.exists({
 			workpiece_id: data.workpiece_id,
-			product: data.code,
-		})
-	)
-		throw Errors.ProductAlreadyPurchasedForWorkpiece
-
-	const purchase = new Purchase(data)
-
-	await purchase.populatePaths([
-		"product",
-		"promoCode",
-		"billingAddress",
-		"workpiece",
+			"product.code": data.productCode,
+		}),
+		Product.findById(data.productCode),
+		PromoCode.findById(data.promoCode_id),
+		Address.findOne({ _id: data.billingAddress_id, user_id: user._id }),
+		User.ensureExists({ _id: data.user_id }),
+		Workpiece.ensureExists({ _id: data.workpiece_id, owner: data.user_id }),
 	])
 
-	if (!purchase.product) throw Errors.ProductNotFound
-	if (data.promoCode && !purchase.promoCode) throw Errors.PromoCodeNotFound
-	if (!purchase.workpiece || purchase.workpiece.owner !== data.user_id)
-		throw Errors.WorkpieceNotFound
-	if (!purchase.billingAddress || purchase.billingAddress.user !== data.user_id)
-		throw Errors.BillingAddressNotFound
+	if (isProductAlreadyPurchased)
+		throw Errors.ProductAlreadyPurchasedForWorkpiece
+	if (!billingAddress) throw Errors.AddressNotFound
+	if (!product) throw Errors.ProductNotFound
+	if (data.promoCode && !promoCode) throw Errors.PromoCodeNotFound
 
+	const purchase = new Purchase({ ...data, promoCode, product, billingAddress })
 	purchase.pst = TaxRates.PST(billingAddress.province)
 	purchase.calculateSubtotal()
 

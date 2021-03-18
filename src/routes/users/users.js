@@ -222,11 +222,7 @@ const getUser = async function (req) {
 	if (req.authUser && req.authUser._id === req.params.user_id)
 		return req.authUser
 
-	const user = await User.findById(req.params.user_id)
-
-	if (!user) throw Errors.UserNotFound
-
-	return user
+	return await User.ensureExists(req.params.user_id)
 }
 
 const getUserById = async function (req, res) {
@@ -239,7 +235,7 @@ const getUserById = async function (req, res) {
 		res.schema(UserSchema.serialization.publicUser)
 	else
 		await user
-			.populate(["paymentInfo.billingAddress", "_pendingEmails"])
+			.populate(["paymentInfo.billingAddress", "_pendingEmails", "addresses"])
 			.execPopulate()
 
 	return user

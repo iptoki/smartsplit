@@ -480,7 +480,7 @@ UserSchema.methods.addCollaborators = async function (collaboratorIds) {
 	let promises = []
 	for (const uid of collaboratorIds) {
 		if (!this.collaborators.includes(uid) && uid !== this._id) {
-			promises.push(User.ensureExist(uid))
+			promises.push(User.ensureExists(uid))
 			this.collaborators.push(uid)
 		}
 	}
@@ -829,13 +829,6 @@ UserSchema.methods.sendEmail = async function (templateName, options = {}) {
  */
 UserSchema.methods.sendPush = function (templateName) {
 	return "push not implemented"
-}
-
-UserSchema.statics.ensureExist = function (uid) {
-	return this.exists({ _id: uid }).then((exist) => {
-		if (!exist) return Promise.reject(Errors.UserNotFound)
-		else return Promise.resolve(uid)
-	})
 }
 
 UserSchema.statics.activate = async function (token, checkPassword = true) {

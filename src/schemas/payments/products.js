@@ -23,8 +23,19 @@ const product = {
 	additionalProperties: false,
 }
 
-const createUpdateProduct = {
+const createProduct = {
 	...product,
+	required: ["code", "name", "description", "price"],
+}
+
+const updateProduct = {
+	type: "object",
+	properties: {
+		name: locale,
+		description: locale,
+		price: { type: "number" },
+	},
+	additionalProperties: false,
 }
 
 module.exports = {
@@ -32,6 +43,7 @@ module.exports = {
 		product,
 	},
 	validation: {
-		createUpdateProduct,
+		createProduct,
+		updateProduct,
 	},
 }

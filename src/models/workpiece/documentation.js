@@ -363,7 +363,7 @@ DocumentationSchema.methods.updateCreation = async function (data) {
 	let promises = []
 	for (field of ["authors", "composers", "publishers"]) {
 		if (!Array.isArray(data[field])) continue
-		for (const uid of data[field]) promises.push(User.ensureExist(uid))
+		for (const uid of data[field]) promises.push(User.ensureExists(uid))
 	}
 	return Promise.all(promises)
 }
@@ -375,11 +375,11 @@ DocumentationSchema.methods.updatePerformance = function (data) {
 	let promises = []
 	if (Array.isArray(data.performers)) {
 		for (const performer of data.performers) {
-			promises.push(User.ensureExist(performer.user))
+			promises.push(User.ensureExists(performer.user))
 			for (field of ["instruments", "vocals"]) {
 				if (!Array.isArray(performer[field])) continue
 				for (const obj of performer[field])
-					promises.push(Instrument.ensureExist(obj.instrument))
+					promises.push(Instrument.ensureExists(obj.instrument))
 			}
 		}
 	}
@@ -402,13 +402,13 @@ DocumentationSchema.methods.updateRecording = function (data) {
 	let promises = []
 	for (const field of ["directors", "producers"]) {
 		if (!Array.isArray(data[field])) continue
-		for (const uid of data[field]) promises.push(User.ensureExist(uid))
+		for (const uid of data[field]) promises.push(User.ensureExists(uid))
 	}
 	for (const field of ["recording", "mixing", "mastering"]) {
 		if (!Array.isArray(data[field])) continue
 		for (const obj of data[field]) {
 			if (!Array.isArray(obj.engineers)) continue
-			for (const uid of obj.engineers) promises.push(User.ensureExist(uid))
+			for (const uid of obj.engineers) promises.push(User.ensureExists(uid))
 		}
 	}
 
@@ -439,10 +439,10 @@ DocumentationSchema.methods.updateInfo = function (data) {
 
 	let promises = []
 	if (data.mainGenre !== undefined)
-		promises.push(MusicalGenre.ensureExist(data.mainGenre))
+		promises.push(MusicalGenre.ensureExists(data.mainGenre))
 	if (Array.isArray(data.secondaryGenres)) {
 		for (const genre of data.secondaryGenres)
-			promises.push(MusicalGenre.ensureExist(genre))
+			promises.push(MusicalGenre.ensureExists(genre))
 	}
 
 	return Promise.all(promises)

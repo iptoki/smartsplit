@@ -25,13 +25,6 @@ ContentLanguageSchema.methods.setFields = function (body) {
 	}
 }
 
-ContentLanguageSchema.statics.ensureExist = function (id) {
-	return this.exists({ _id: id }).then((exist) => {
-		if (!exist) return Promise.reject(Errors.EntityNotFound)
-		else return Promise.resolve()
-	})
-}
-
 module.exports = Entity.discriminator(
 	EntityTypes.CONTENT_LANGUAGE,
 	ContentLanguageSchema

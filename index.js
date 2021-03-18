@@ -1,11 +1,21 @@
 // Load configuration
 const Config = require("./src/config")
-const JWTAuth = require("./src/service/JWTAuth")
-
 const fastify = require("fastify")({ logger: Config.logger })
+const Errors = require("./src/routes/errors")
 
 // Connect database
 const mongoose = require("mongoose")
+mongoose.set('useFindAndModify', false) // remove deprecation warmnings when using Model.findOneAndX()
+mongoose.plugin(function (schema, options) {
+	schema.statics.ensureExists = function (filter, paths=[]) {
+		if (typeof filter === "string") filter = { _id: filter }
+		const errName = `${this.modelName}NotFound`
+		return this.findOne(this.translateAliases(filter)).populate(paths).then((result) => {
+			if (!result) return Promise.reject(Errors[errName] || Errors.NotFound)
+			else return Promise.resolve(result)
+		})
+	}
+})
 mongoose
 	.connect(process.env["MONGODB_PATH"] || Config.mongodb.uri, {
 		useNewUrlParser: true,
@@ -21,6 +31,8 @@ mongoose
 		})
 	})
 
+// Register routes
+fastify.register(require("./src/routes/index"), { prefix: "/v1" })
 // Register plugins
 fastify.register(require("fastify-formbody"), {
 	bodyLimit: Config.http.entityMaxSize,
@@ -51,20 +63,17 @@ fastify.register(require("./src/plugins/decorators"))
 
 // Add Global Auth hook
 fastify.addHook("preValidation", function (req, res, next) {
-	JWTAuth.bearerTokenMiddleware(req, res)
+	require("./src/service/JWTAuth").bearerTokenMiddleware(req, res)
 	next()
 })
 
-const TransactionHook = require("./src/service/dbTransactionHook")
+const TransactionHooks = require("./src/service/dbTransactionHook")
 
 // Add Global transaction recorder hook
-fastify.addHook("onRequest", TransactionHook.onRequest)
-fastify.addHook("preHandler", TransactionHook.preHandler)
-fastify.addHook("onResponse", TransactionHook.onResponse)
-fastify.addHook("onError", TransactionHook.onError)
-
-// Register routes
-fastify.register(require("./src/routes/index"), { prefix: "/v1" })
+fastify.addHook("onRequest", TransactionHooks.onRequest)
+fastify.addHook("preHandler", TransactionHooks.preHandler)
+fastify.addHook("onResponse", TransactionHooks.onResponse)
+fastify.addHook("onError", TransactionHooks.onError)
 
 // Start up server
 fastify.listen(Config.listen.port, Config.listen.host, function (err, address) {

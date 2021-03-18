@@ -52,13 +52,6 @@ EntitySchema.methods.setFields = function (body) {
 	}
 }
 
-EntitySchema.statics.ensureExist = function (id) {
-	return this.exists({ _id: id }).then((exist) => {
-		if (!exist) return Promise.reject(Errors.EntityNotFound)
-		else return Promise.resolve()
-	})
-}
-
 module.exports = mongoose.model("Entity", EntitySchema)
 
 require("./contentLanguage")

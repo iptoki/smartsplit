@@ -41,7 +41,7 @@ async function routes(fastify, options) {
 			tags: ["products"],
 			description: "Create new Product",
 			body: {
-				allOf: [ProductSchema.validation.createUpdateProduct],
+				allOf: [ProductSchema.validation.createProduct],
 				required: ["code", "name", "description", "price"],
 			},
 			response: {
@@ -62,7 +62,7 @@ async function routes(fastify, options) {
 			params: {
 				product_code: { type: "string" },
 			},
-			body: ProductSchema.validation.createUpdateProduct,
+			body: ProductSchema.validation.updateProduct,
 			response: {
 				200: ProductSchema.serialization.product,
 			},
@@ -96,27 +96,32 @@ const getProducts = async function (req, res) {
 }
 
 const getProduct = async function (req, res) {
-	const product = await Product.findById(req.params.product_code)
+	return await Product.ensureExists(req.params.product_code)
+}
+
+const createProduct = async function (req, res) {
+	if (await Product.exists({ _id: req.body.code }))
+		throw Errors.ConflictingProductCode
+	const product = new Product(req.body)
+	res.code(201)
+	return await product.save()
+}
+
+const updateProduct = async function (req, res) {
+	const product = await Product.findOneAndUpdate(
+		{ _id: req.params.product_code },
+		req.body,
+		{ new: true }
+	)
 	if (!product) throw Errors.ProductNotFound
 	return product
 }
 
-const createProduct = async function (req, res) {
-	if (!(await Product.exists({ code: req.body.code })))
-		throw Errors.ConflictingProductCode
-	const product = new Product(req.body)
-	await product.save()
-	return product
-}
-
-const updateProduct = async function (req, res) {
-	const product = await getProduct(req, res)
-	await product.update(req.body)
-	return product
-}
-
 const deleteProduct = async function (req, res) {
-	await Product.deleteOne({ _id: req.params.product_code })
+	const { deletedCount } = await Product.deleteOne({
+		_id: req.params.product_code,
+	})
+	if (deletedCount !== 1) throw Errors.ProductNotFound
 	res.code(204).send()
 }
 
