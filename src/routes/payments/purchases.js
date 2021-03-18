@@ -1,10 +1,10 @@
 const Purchase = require("../../models/payments/purchase")
-const PurchaseSchema = require("../../schemas/payments/purchase")
+const PurchaseSchema = require("../../schemas/payments/purchases")
 const Errors = require("../errors")
 const JWTAuth = require("../../service/JWTAuth")
 const Stripe = require("../../service/stripe")
 const TaxRates = require("../../constants/taxRates")
-const { PaymentTemplates } = require("../models/notificationTemplates")
+const { PaymentTemplates } = require("../../models/notificationTemplates")
 const { getUserWithAuthorization } = require("../users/users")
 
 async function routes(fastify, options) {
@@ -18,7 +18,7 @@ async function routes(fastify, options) {
 				user_id: { type: "string" },
 			},
 			response: {
-				200: { type: "array", items: PurchaseSchema.serialization.Purchase },
+				200: { type: "array", items: PurchaseSchema.serialization.purchase },
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -37,7 +37,7 @@ async function routes(fastify, options) {
 				purchase_id: { type: "string" },
 			},
 			response: {
-				200: PurchaseSchema.serialization.Purchase,
+				200: PurchaseSchema.serialization.purchase,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -59,7 +59,7 @@ async function routes(fastify, options) {
 				required: ["workpiece_id", "productCode", "billingAddress_id"],
 			},
 			response: {
-				201: PurchaseSchema.serialization.PurchaseIntent,
+				201: PurchaseSchema.serialization.purchaseIntent,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -79,7 +79,7 @@ async function routes(fastify, options) {
 			},
 			body: PurchaseSchema.validation.createUpdatePurchase,
 			response: {
-				200: PurchaseSchema.serialization.Purchase,
+				200: PurchaseSchema.serialization.purchase,
 			},
 			security: [{ bearerAuth: [] }],
 		},

@@ -1,27 +1,35 @@
-const localeSchema = require("../entities").serialization.locale
+const locale = {
+	type: "object",
+	properties: {
+		fr: { type: "string" },
+		en: { type: "string" },
+	},
+	additionalProperties: false,
+}
 
 const promoCode = {
 	type: "object",
 	properties: {
+		promoCode_id: { type: "string" },
 		code: { type: "string" },
-		promo_id: { type: "string" },
-		organisation: localeSchema,
-		description: localeSchema,
+		organisation: locale,
+		description: locale,
 		value: { type: "number" },
 		expires: { type: "string" },
 	},
+	additionalProperties: false,
 }
 
 const createUpdatePromoCode = {
 	type: "object",
-	required: ["code", "organisation", "description", "value", "expires"],
 	properties: {
 		code: { type: "string" },
-		organisation: localeSchema,
-		description: localeSchema,
+		organisation: locale,
+		description: locale,
 		value: { type: "number" },
-		expires: { type: "string" },
+		expires: { type: "string", format: "date" },
 	},
+	additionalProperties: false,
 }
 
 module.exports = {

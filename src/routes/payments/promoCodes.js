@@ -1,6 +1,5 @@
-const PromoCode = require("../../models/payments/promoCode").PromoCode
-const Purchase = require("../../models/payments/purchase")
-const PromoCodeSchema = require("../../schemas/payments/promoCode")
+const PromoCode = require("../../models/payments/promoCode")
+const PromoCodeSchema = require("../../schemas/payments/promoCodes")
 const Errors = require("../errors")
 const JWTAuth = require("../../service/JWTAuth")
 
@@ -12,7 +11,7 @@ async function routes(fastify, options) {
 			tags: ["promoCodes"],
 			description: "Get PromoCodes",
 			response: {
-				200: { type: "array", items: PromoCodeSchema.serialization.PromoCode },
+				200: { type: "array", items: PromoCodeSchema.serialization.promoCode },
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -30,7 +29,7 @@ async function routes(fastify, options) {
 				promoCode_id: { type: "string" },
 			},
 			response: {
-				200: PromoCodeSchema.serialization.PromoCode,
+				200: PromoCodeSchema.serialization.promoCode,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -48,7 +47,7 @@ async function routes(fastify, options) {
 				code: { type: "string" },
 			},
 			response: {
-				200: PromoCodeSchema.serialization.PromoCode,
+				200: PromoCodeSchema.serialization.promoCode,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -64,7 +63,7 @@ async function routes(fastify, options) {
 			description: "Create new PromoCode",
 			body: PromoCodeSchema.validation.createUpdatePromoCode,
 			response: {
-				201: PromoCodeSchema.serialization.PromoCode,
+				201: PromoCodeSchema.serialization.promoCode,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -83,7 +82,7 @@ async function routes(fastify, options) {
 			},
 			body: PromoCodeSchema.validation.createUpdatePromoCode,
 			response: {
-				201: PromoCodeSchema.serialization.PromoCode,
+				201: PromoCodeSchema.serialization.promoCode,
 			},
 			security: [{ bearerAuth: [] }],
 		},

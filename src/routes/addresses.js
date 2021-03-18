@@ -1,9 +1,8 @@
 const Address = require("../models/address")
-const Purchase = require("../models/payments/purchase")
 const AddressSchema = require("../schemas/addresses")
-const Errors = require("../errors")
-const JWTAuth = require("../../service/JWTAuth")
-const { getUserWithAuthorization } = require("../users/users")
+const Errors = require("./errors")
+const JWTAuth = require("../service/JWTAuth")
+const { getUserWithAuthorization } = require("./users/users")
 
 async function routes(fastify, options) {
 	fastify.route({

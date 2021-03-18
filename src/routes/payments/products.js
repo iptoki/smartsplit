@@ -1,6 +1,6 @@
 const Product = require("../../models/payments/product")
 const Purchase = require("../../models/payments/purchase")
-const ProductSchema = require("../../schemas/payments/product")
+const ProductSchema = require("../../schemas/payments/products")
 const Errors = require("../errors")
 const JWTAuth = require("../../service/JWTAuth")
 
@@ -12,7 +12,7 @@ async function routes(fastify, options) {
 			tags: ["products"],
 			description: "Get Products",
 			response: {
-				200: { type: "array", items: ProductSchema.serialization.Product },
+				200: { type: "array", items: ProductSchema.serialization.product },
 			},
 		},
 		handler: getProducts,
@@ -28,7 +28,7 @@ async function routes(fastify, options) {
 				product_code: { type: "string" },
 			},
 			response: {
-				200: ProductSchema.serialization.Product,
+				200: ProductSchema.serialization.product,
 			},
 		},
 		handler: getProduct,
@@ -40,9 +40,12 @@ async function routes(fastify, options) {
 		schema: {
 			tags: ["products"],
 			description: "Create new Product",
-			body: ProductSchema.validation.createProduct,
+			body: {
+				allOf: [ProductSchema.validation.createUpdateProduct],
+				required: ["code", "name", "description", "price"],
+			},
 			response: {
-				201: ProductSchema.serialization.Product,
+				201: ProductSchema.serialization.product,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -59,9 +62,9 @@ async function routes(fastify, options) {
 			params: {
 				product_code: { type: "string" },
 			},
-			body: ProductSchema.validation.updateProduct,
+			body: ProductSchema.validation.createUpdateProduct,
 			response: {
-				200: ProductSchema.serialization.Product,
+				200: ProductSchema.serialization.product,
 			},
 			security: [{ bearerAuth: [] }],
 		},

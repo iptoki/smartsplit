@@ -1,8 +1,9 @@
 const mongoose = require("mongoose")
 const uuid = require("uuid").v4
-const Errors = require("../errors")
+const Errors = require("../../routes/errors")
+const TaxRates = require("../../constants/taxRates")
+const Address = require("../../models/address")
 const Product = require("../../models/payments/product")
-const Address = require("../../models/payments/address")
 const PromoCode = require("../../models/payments/promoCode")
 const Workpiece = require("../../models/workpiece/workpiece")
 
