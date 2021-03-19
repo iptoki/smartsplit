@@ -23,8 +23,4 @@ const AddressSchema = new mongoose.Schema(
 	{ toJSON: { virtuals: true } }
 )
 
-AddressSchema.query.byOwner = function (user_id) {
-	return this.where({ user_id })
-}
-
 module.exports = mongoose.model("Address", AddressSchema)

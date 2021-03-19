@@ -5,7 +5,7 @@ const Errors = require("./src/routes/errors")
 
 // Connect database
 const mongoose = require("mongoose")
-mongoose.set('useFindAndModify', false) // remove deprecation warmnings when using Model.findOneAndX()
+mongoose.set('useFindAndModify', false) // remove deprecation warnings when using Model.findOneAndX()
 mongoose.plugin(function (schema, options) {
 	schema.statics.ensureExists = function (filter, paths=[]) {
 		if (typeof filter === "string") filter = { _id: filter }
@@ -31,8 +31,6 @@ mongoose
 		})
 	})
 
-// Register routes
-fastify.register(require("./src/routes/index"), { prefix: "/v1" })
 // Register plugins
 fastify.register(require("fastify-formbody"), {
 	bodyLimit: Config.http.entityMaxSize,
@@ -74,6 +72,9 @@ fastify.addHook("onRequest", TransactionHooks.onRequest)
 fastify.addHook("preHandler", TransactionHooks.preHandler)
 fastify.addHook("onResponse", TransactionHooks.onResponse)
 fastify.addHook("onError", TransactionHooks.onError)
+
+// Register routes
+fastify.register(require("./src/routes/index"), { prefix: "/v1" })
 
 // Start up server
 fastify.listen(Config.listen.port, Config.listen.host, function (err, address) {
