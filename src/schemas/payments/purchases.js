@@ -1,5 +1,5 @@
 const ProductSchema = require("./products").serialization.product
-const PromoCodeSchema = require("./promoCodes").serialization.promoCode
+const PromoSchema = require("./promos").serialization.promo
 const AddressSchema = require("../addresses").serialization.address
 
 const purchase = {
@@ -9,7 +9,7 @@ const purchase = {
 		workpiece_id: { type: "string" },
 		user_id: { type: "string" },
 		product: ProductSchema,
-		promoCode: PromoCodeSchema,
+		promo: PromoSchema,
 		creditsUsed: { type: "number" },
 		billingAddress: AddressSchema,
 		subtotal: { type: "number" },
@@ -40,7 +40,7 @@ const createUpdatePurchase = {
 	properties: {
 		workpiece_id: { type: "string" },
 		productCode: { type: "string" },
-		promoCode_id: { type: "string" },
+		promo_id: { type: "string" },
 		billingAddress_id: { type: "string" },
 	},
 	additionalProperties: false,

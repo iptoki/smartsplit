@@ -7,10 +7,10 @@ const locale = {
 	additionalProperties: false,
 }
 
-const promoCode = {
+const promo = {
 	type: "object",
 	properties: {
-		promoCode_id: { type: "string" },
+		promo_id: { type: "string" },
 		code: { type: "string" },
 		organisation: locale,
 		description: locale,
@@ -20,7 +20,7 @@ const promoCode = {
 	additionalProperties: false,
 }
 
-const createUpdatePromoCode = {
+const createUpdatePromo = {
 	type: "object",
 	properties: {
 		code: { type: "string" },
@@ -34,9 +34,9 @@ const createUpdatePromoCode = {
 
 module.exports = {
 	serialization: {
-		promoCode,
+		promo,
 	},
 	validation: {
-		createUpdatePromoCode,
+		createUpdatePromo,
 	},
 }

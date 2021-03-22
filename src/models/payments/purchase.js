@@ -4,7 +4,7 @@ const Errors = require("../../routes/errors")
 const TaxRates = require("../../constants/taxRates")
 const Address = require("../../models/address")
 const Product = require("../../models/payments/product")
-const PromoCode = require("../../models/payments/promoCode")
+const Promo = require("../../models/payments/promo")
 const Workpiece = require("../../models/workpiece/workpiece")
 
 const PurchaseSchema = new mongoose.Schema(
@@ -17,7 +17,7 @@ const PurchaseSchema = new mongoose.Schema(
 		workpiece: { type: String, alias: "workpiece_id", ref: "Workpiece" },
 		user: { type: String, alias: "user_id", ref: "User" },
 		//product: ProductSchema,
-		//promoCode: PromoCodeSchema,
+		//promo: PromoSchema,
 		//billingAddress: AddressSchema,
 		creditsUsed: { type: Number, default: 0 },
 		subtotal: { type: Number, default: 0 },
@@ -43,7 +43,7 @@ PurchaseSchema.methods.calculateSubtotal = async function () {
 		0,
 		this.product.price -
 			this.creditsUsed -
-			(this.promoCode ? this.promoCode.value : 0)
+			(this.promo ? this.promo.value : 0)
 	)
 }
 
@@ -51,7 +51,7 @@ PurchaseSchema.statics.create = async function (data) {
 	const [
 		isProductAlreadyPurchased,
 		product,
-		promoCode,
+		promo,
 		billingAddress,
 	] = await Promise.all([
 		Purchase.exists({
@@ -59,7 +59,7 @@ PurchaseSchema.statics.create = async function (data) {
 			"product.code": data.productCode,
 		}),
 		Product.findById(data.productCode),
-		PromoCode.findById(data.promoCode_id),
+		Promo.findById(data.promo_id),
 		Address.findOne({ _id: data.billingAddress_id, user_id: user._id }),
 		User.ensureExists({ _id: data.user_id }),
 		Workpiece.ensureExists({ _id: data.workpiece_id, owner: data.user_id }),
@@ -69,9 +69,9 @@ PurchaseSchema.statics.create = async function (data) {
 		throw Errors.ProductAlreadyPurchasedForWorkpiece
 	if (!billingAddress) throw Errors.AddressNotFound
 	if (!product) throw Errors.ProductNotFound
-	if (data.promoCode && !promoCode) throw Errors.PromoCodeNotFound
+	if (data.promo && !promo) throw Errors.PromoNotFound
 
-	const purchase = new Purchase({ ...data, promoCode, product, billingAddress })
+	const purchase = new Purchase({ ...data, promo, product, billingAddress })
 	purchase.pst = TaxRates.PST(billingAddress.province)
 	purchase.calculateSubtotal()
 

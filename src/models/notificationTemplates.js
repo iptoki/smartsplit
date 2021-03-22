@@ -2,7 +2,7 @@ const Config = require("../config")
 const Notification = require("../constants/notificationTypes")
 const AddressSchema = require("../schemas/addresses").serialization.address
 const ProductSchema = require("../schemas/addresses").serialization.product
-const PromoCodeSchema = require("../schemas/addresses").serialization.promoCode
+const PromoSchema = require("../schemas/addresses").serialization.promo
 
 const SplitTemplates = {
 	CREATED: "split:created",
@@ -222,7 +222,7 @@ const TemplateMap = {
 			generate: function (user, options) {
 				const fastJson = require("fast-json-stringify")
 				const product = fastJson(ProductSchema)(purchase.product)
-				const promoCode = fastJson(PromoCodeSchema)(purchase.promoCode)
+				const promo = fastJson(PromoSchema)(purchase.promo)
 				const billingAddress = fastJson(AddressSchema)(purchase.billingAddress)
 				return {
 					id: this.template_id[user.locale],
@@ -235,7 +235,7 @@ const TemplateMap = {
 							pst: purchase.pst,
 							creditsUsed: purchase.creditsUsed,
 							product,
-							promoCode,
+							promo,
 							billingAddress,
 							workpiece: {
 								title: workpiece.title,

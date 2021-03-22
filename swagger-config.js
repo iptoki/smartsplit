@@ -37,7 +37,7 @@ module.exports = {
 			},
 			{ name: "entities", description: "Manage lists of the system" },
 			{ name: "addresses", description: "Manage user's adresses" },
-			{ name: "promoCodes", description: "Manage promo codes" },
+			{ name: "promos", description: "Manage promo codes" },
 			{ name: "purchases", description: "Manage user's purchases" },
 		],
 		servers: [

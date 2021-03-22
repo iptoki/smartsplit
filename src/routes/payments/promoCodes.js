@@ -1,53 +1,53 @@
-const PromoCode = require("../../models/payments/promoCode")
-const PromoCodeSchema = require("../../schemas/payments/promoCodes")
-const { PromoCodeNotFound } = require("../errors")
+const Promo = require("../../models/payments/promo")
+const PromoSchema = require("../../schemas/payments/promos")
+const { PromoNotFound } = require("../errors")
 const JWTAuth = require("../../service/JWTAuth")
 
 async function routes(fastify, options) {
 	fastify.route({
 		method: "GET",
-		url: "/promoCodes/",
+		url: "/promos/",
 		schema: {
-			tags: ["promoCodes"],
-			description: "Get all PromoCodes",
+			tags: ["promos"],
+			description: "Get all Promos",
 			response: {
-				200: { type: "array", items: PromoCodeSchema.serialization.promoCode },
+				200: { type: "array", items: PromoSchema.serialization.promo },
 			},
 			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthAdmin,
-		handler: getPromoCodes,
+		handler: getPromos,
 	})
 
 	fastify.route({
 		method: "GET",
-		url: "/promoCodes/:promoCode_id",
+		url: "/promos/:promo_id",
 		schema: {
-			tags: ["promoCodes"],
-			description: "Get PromoCode by ID",
+			tags: ["promos"],
+			description: "Get Promo by ID",
 			params: {
-				promoCode_id: { type: "string" },
+				promo_id: { type: "string" },
 			},
 			response: {
-				200: PromoCodeSchema.serialization.promoCode,
+				200: PromoSchema.serialization.promo,
 			},
 			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthAdmin,
-		handler: getPromoCode,
+		handler: getPromo,
 	})
 
 	fastify.route({
 		method: "GET",
-		url: "/promoCodes/code/:code",
+		url: "/promos/code/:code",
 		schema: {
-			tags: ["promoCodes"],
-			description: "Get PromoCode by code",
+			tags: ["promos"],
+			description: "Get Promo by code",
 			params: {
 				code: { type: "string" },
 			},
 			response: {
-				200: PromoCodeSchema.serialization.promoCode,
+				200: PromoSchema.serialization.promo,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -57,47 +57,47 @@ async function routes(fastify, options) {
 
 	fastify.route({
 		method: "POST",
-		url: "/promoCodes/",
+		url: "/promos/",
 		schema: {
-			tags: ["promoCodes"],
-			description: "Create new PromoCode",
-			body: PromoCodeSchema.validation.createUpdatePromoCode,
+			tags: ["promos"],
+			description: "Create new Promo",
+			body: PromoSchema.validation.createUpdatePromo,
 			response: {
-				201: PromoCodeSchema.serialization.promoCode,
+				201: PromoSchema.serialization.promo,
 			},
 			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthAdmin,
-		handler: createPromoCode,
+		handler: createPromo,
 	})
 
 	fastify.route({
 		method: "PATCH",
-		url: "/promoCodes/:promoCode_id",
+		url: "/promos/:promo_id",
 		schema: {
-			tags: ["promoCodes"],
-			description: "Update a PromoCode by ID",
+			tags: ["promos"],
+			description: "Update a Promo by ID",
 			params: {
-				promoCode_id: { type: "string" },
+				promo_id: { type: "string" },
 			},
-			body: PromoCodeSchema.validation.createUpdatePromoCode,
+			body: PromoSchema.validation.createUpdatePromo,
 			response: {
-				200: PromoCodeSchema.serialization.promoCode,
+				200: PromoSchema.serialization.promo,
 			},
 			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthAdmin,
-		handler: updatePromoCode,
+		handler: updatePromo,
 	})
 
 	fastify.route({
 		method: "DELETE",
-		url: "/promoCodes/:promoCode_id",
+		url: "/promos/:promo_id",
 		schema: {
-			tags: ["promoCodes"],
-			description: "delete a PromoCode by ID",
+			tags: ["promos"],
+			description: "delete a Promo by ID",
 			params: {
-				promoCode_id: { type: "string" },
+				promo_id: { type: "string" },
 			},
 			response: {
 				204: {},
@@ -105,44 +105,44 @@ async function routes(fastify, options) {
 			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthAdmin,
-		handler: deletePromoCode,
+		handler: deletePromo,
 	})
 }
 
-const getPromoCodes = async function (req, res) {
-	return await PromoCode.find()
+const getPromos = async function (req, res) {
+	return await Promo.find()
 }
 
-const getPromoCode = async function (req, res) {
-	return await PromoCode.ensureExists(req.params.promoCode_id)
+const getPromo = async function (req, res) {
+	return await Promo.ensureExists(req.params.promo_id)
 }
 
 const getPromoByCode = async function (req, res) {
-	return await PromoCode.ensureExists({ code: req.params.code })
+	return await Promo.ensureExists({ code: req.params.code })
 }
 
-const createPromoCode = async function (req, res) {
-	const promoCode = new PromoCode(req.body)
-	await promoCode.save()
+const createPromo = async function (req, res) {
+	const promo = new Promo(req.body)
+	await promo.save()
 	res.code(201)
-	return promoCode
+	return promo
 }
 
-const updatePromoCode = async function (req, res) {
-	const promoCode = await findOneAndUpdate(
-		{ _id: req.params.promoCode_id },
+const updatePromo = async function (req, res) {
+	const promo = await findOneAndUpdate(
+		{ _id: req.params.promo_id },
 		req.body,
 		{ new: true }
 	)
-	if (!promoCode) throw PromoCodeNotFound
-	return promoCode
+	if (!promo) throw PromoNotFound
+	return promo
 }
 
-const deletePromoCode = async function (req, res) {
-	const { deletedCount } = await PromoCode.deleteOne({
-		_id: req.params.promoCode_id,
+const deletePromo = async function (req, res) {
+	const { deletedCount } = await Promo.deleteOne({
+		_id: req.params.promo_id,
 	})
-	if (deletedCount !== 1) throw PromoCodeNotFound
+	if (deletedCount !== 1) throw PromoNotFound
 	res.code(204).send()
 }
 

@@ -104,9 +104,9 @@ module.exports.FileTooLarge = new HTTPErrors.PayloadTooLarge(
 /* Address related errors */
 module.exports.AddressNotFound = new HTTPErrors.NotFound("Address not found")
 
-/* PromoCode errors */
-module.exports.PromoCodeNotFound = new HTTPErrors.NotFound(
-	"PromoCode not found"
+/* Promo errors */
+module.exports.PromoNotFound = new HTTPErrors.NotFound(
+	"Promo not found"
 )
 
 /* Product errors */
