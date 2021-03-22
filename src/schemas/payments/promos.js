@@ -10,7 +10,6 @@ const locale = {
 const promo = {
 	type: "object",
 	properties: {
-		promo_id: { type: "string" },
 		code: { type: "string" },
 		organisation: locale,
 		description: locale,

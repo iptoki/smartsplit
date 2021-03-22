@@ -222,7 +222,7 @@ const getUser = async function (req) {
 	if (req.authUser && req.authUser._id === req.params.user_id)
 		return req.authUser
 
-	return await User.ensureExists(req.params.user_id)
+	return await User.ensureExistsAndRetrieve(req.params.user_id)
 }
 
 const getUserById = async function (req, res) {

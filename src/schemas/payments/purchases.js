@@ -40,7 +40,7 @@ const createUpdatePurchase = {
 	properties: {
 		workpiece_id: { type: "string" },
 		productCode: { type: "string" },
-		promo_id: { type: "string" },
+		promoCode: { type: "string" },
 		billingAddress_id: { type: "string" },
 	},
 	additionalProperties: false,

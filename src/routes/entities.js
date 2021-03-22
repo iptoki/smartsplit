@@ -161,7 +161,7 @@ async function createEntity(req, res) {
 }
 
 async function getEntity(req) {
-	const entity = await Entity.ensureExists(req.params.entity_id)
+	const entity = await Entity.ensureExistsAndRetrieve(req.params.entity_id)
 
 	if (
 		!req.authUser ||

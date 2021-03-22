@@ -127,7 +127,7 @@ const getPurchases = async function (req, res) {
 
 const getPurchase = async function (req, res) {
 	const user = await getUserWithAuthorization(req)
-	return await Purchase.ensureExists({
+	return await Purchase.ensureExistsAndRetrieve({
 		_id: req.params.purchase_id,
 		user_id: user._id,
 	})
@@ -180,7 +180,7 @@ const stripeEventHandler = async function (req, res) {
 
 	const event = req.body
 	const paymentIntent = event.data.object
-	const purchase = await Purchase.ensureExists(
+	const purchase = await Purchase.ensureExistsAndRetrieve(
 		{ payment_id: paymentIntent.id },
 		["user", "workpiece"]
 	)

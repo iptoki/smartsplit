@@ -21,12 +21,12 @@ async function routes(fastify, options) {
 
 	fastify.route({
 		method: "GET",
-		url: "/promos/:promo_id",
+		url: "/promos/:code",
 		schema: {
 			tags: ["promos"],
 			description: "Get Promo by ID",
 			params: {
-				promo_id: { type: "string" },
+				code: { type: "string" },
 			},
 			response: {
 				200: PromoSchema.serialization.promo,
@@ -73,12 +73,12 @@ async function routes(fastify, options) {
 
 	fastify.route({
 		method: "PATCH",
-		url: "/promos/:promo_id",
+		url: "/promos/:code",
 		schema: {
 			tags: ["promos"],
 			description: "Update a Promo by ID",
 			params: {
-				promo_id: { type: "string" },
+				code: { type: "string" },
 			},
 			body: PromoSchema.validation.createUpdatePromo,
 			response: {
@@ -92,12 +92,12 @@ async function routes(fastify, options) {
 
 	fastify.route({
 		method: "DELETE",
-		url: "/promos/:promo_id",
+		url: "/promos/:code",
 		schema: {
 			tags: ["promos"],
 			description: "delete a Promo by ID",
 			params: {
-				promo_id: { type: "string" },
+				code: { type: "string" },
 			},
 			response: {
 				204: {},
@@ -114,11 +114,11 @@ const getPromos = async function (req, res) {
 }
 
 const getPromo = async function (req, res) {
-	return await Promo.ensureExists(req.params.promo_id)
+	return await Promo.ensureExistsAndRetrieve(req.params.code)
 }
 
 const getPromoByCode = async function (req, res) {
-	return await Promo.ensureExists({ code: req.params.code })
+	return await Promo.ensureExistsAndRetrieve({ code: req.params.code })
 }
 
 const createPromo = async function (req, res) {
@@ -130,7 +130,7 @@ const createPromo = async function (req, res) {
 
 const updatePromo = async function (req, res) {
 	const promo = await findOneAndUpdate(
-		{ _id: req.params.promo_id },
+		{ _id: req.params.code },
 		req.body,
 		{ new: true }
 	)
@@ -140,7 +140,7 @@ const updatePromo = async function (req, res) {
 
 const deletePromo = async function (req, res) {
 	const { deletedCount } = await Promo.deleteOne({
-		_id: req.params.promo_id,
+		_id: req.params.code,
 	})
 	if (deletedCount !== 1) throw PromoNotFound
 	res.code(204).send()

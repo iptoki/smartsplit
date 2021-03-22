@@ -149,7 +149,7 @@ const getUserAddresses = async function (req, res) {
 
 const getAddress = async function (req, res) {
 	const user = await getUserWithAuthorization(req)
-	return await Address.ensureExists({
+	return await Address.ensureExistsAndRetrieve({
 		_id: req.params.address_id,
 		user_id: user._id,
 	})
@@ -168,7 +168,7 @@ const createAddress = async function (req, res) {
 
 const setBillingAddress = async function (req, res) {
 	const user = await getUserWithAuthorization(req)
-	await Address.ensureExists({ _id: req.params.address_id, user_id: user._id })
+	await Address.ensureExistsAndRetrieve({ _id: req.params.address_id, user_id: user._id })
 	user.paymentInfo.billingAddress = req.params.address_id
 	await user.save()
 	res.code(204).send()

@@ -317,7 +317,7 @@ WorkpieceSchema.methods.addCollaboratorById = async function (
 	collaborator_id,
 	permission
 ) {
-	await User.ensureExists(collaborator_id)
+	await User.ensureExistsAndRetrieve(collaborator_id)
 	for (const item of this.collaborators) {
 		if (item.user === collaborator_id) {
 			item.permission = permission

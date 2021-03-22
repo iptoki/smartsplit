@@ -7,7 +7,7 @@ const Errors = require("./src/routes/errors")
 const mongoose = require("mongoose")
 mongoose.set('useFindAndModify', false) // remove deprecation warnings when using Model.findOneAndX()
 mongoose.plugin(function (schema, options) {
-	schema.statics.ensureExists = function (filter, paths=[]) {
+	schema.statics.ensureExistsAndRetrieve = function (filter, paths=[]) {
 		if (typeof filter === "string") filter = { _id: filter }
 		const errName = `${this.modelName}NotFound`
 		return this.findOne(this.translateAliases(filter)).populate(paths).then((result) => {

@@ -96,7 +96,7 @@ const getProducts = async function (req, res) {
 }
 
 const getProduct = async function (req, res) {
-	return await Product.ensureExists(req.params.product_code)
+	return await Product.ensureExistsAndRetrieve(req.params.product_code)
 }
 
 const createProduct = async function (req, res) {

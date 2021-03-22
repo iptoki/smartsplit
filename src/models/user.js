@@ -480,7 +480,7 @@ UserSchema.methods.addCollaborators = async function (collaboratorIds) {
 	let promises = []
 	for (const uid of collaboratorIds) {
 		if (!this.collaborators.includes(uid) && uid !== this._id) {
-			promises.push(User.ensureExists(uid))
+			promises.push(User.ensureExistsAndRetrieve(uid))
 			this.collaborators.push(uid)
 		}
 	}

@@ -6,10 +6,8 @@ const PromoSchema = new mongoose.Schema(
 	{
 		_id: {
 			type: String,
-			alias: "promo_id",
-			default: uuid,
+			alias: "code",
 		},
-		code: String,
 		organisation: localeSchema,
 		description: localeSchema,
 		value: Number,

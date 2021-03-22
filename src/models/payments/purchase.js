@@ -16,9 +16,9 @@ const PurchaseSchema = new mongoose.Schema(
 		},
 		workpiece: { type: String, alias: "workpiece_id", ref: "Workpiece" },
 		user: { type: String, alias: "user_id", ref: "User" },
-		//product: ProductSchema,
-		//promo: PromoSchema,
-		//billingAddress: AddressSchema,
+		product: Product.schema,
+		promo: Promo.schema,
+		billingAddress: Address.schema,
 		creditsUsed: { type: Number, default: 0 },
 		subtotal: { type: Number, default: 0 },
 		gst: { type: Number, default: TaxRates.GST },
@@ -59,10 +59,10 @@ PurchaseSchema.statics.create = async function (data) {
 			"product.code": data.productCode,
 		}),
 		Product.findById(data.productCode),
-		Promo.findById(data.promo_id),
+		Promo.findById(data.promoCode),
 		Address.findOne({ _id: data.billingAddress_id, user_id: user._id }),
-		User.ensureExists({ _id: data.user_id }),
-		Workpiece.ensureExists({ _id: data.workpiece_id, owner: data.user_id }),
+		User.ensureExistsAndRetrieve({ _id: data.user_id }),
+		Workpiece.ensureExistsAndRetrieve({ _id: data.workpiece_id, owner: data.user_id }),
 	])
 
 	if (isProductAlreadyPurchased)

@@ -194,7 +194,7 @@ async function routes(fastify, options) {
 /************************ Handlers ************************/
 
 const getWorkpiece = async function (req, res) {
-	return await Workpiece.ensureExists(req.params.workpiece_id)
+	return await Workpiece.ensureExistsAndRetrieve(req.params.workpiece_id)
 }
 
 const getWorkpieceAsOwner = async function (req, res) {
