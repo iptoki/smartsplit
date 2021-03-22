@@ -1,4 +1,5 @@
 const Notifications = require("../constants/notificationTypes")
+const UserTypes = require("../constants/userTypes")
 const AccountStatus = require("../constants/accountStatus")
 const { Address } = require("./payments/address").serialization
 
@@ -14,7 +15,6 @@ const mobilePhone = {
 const permissions = {
 	type: "object",
 	properties: {
-		isAdmin: { type: "boolean" },
 		users: {
 			type: "array",
 			items: { type: "string" },
@@ -147,6 +147,13 @@ const user = {
 	type: "object",
 	properties: {
 		...collaborator.properties,
+		types: {
+			type: "array",
+			items: {
+				type: "string",
+				enum: UserTypes.list,
+			},
+		},
 		accountStatus: {
 			type: "string",
 			enum: AccountStatus.list,

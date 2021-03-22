@@ -1,5 +1,6 @@
 const DocumentationSchema = require("./documentation")
 const RightSplitSchema = require("./rightSplits")
+const Tasks = require("../../constants/tasks")
 const UserSchema = require("../users")
 
 const workpiece = {
@@ -33,6 +34,27 @@ const workpiece = {
 		purchases: {
 			type: "object",
 			additionalProperties: true,
+		},
+		tasks: {
+			type: "object",
+			properties: {
+				[Tasks.Types.SOCAN]: { type: "string", enum: Tasks.Status.list },
+				[Tasks.Types.SOCAN_DR]: { type: "string", enum: Tasks.Status.list },
+				[Tasks.Types.SOPROQ]: { type: "string", enum: Tasks.Status.list },
+				[Tasks.Types.ARTISTI]: { type: "string", enum: Tasks.Status.list },
+				[Tasks.Types.BANQ]: { type: "string", enum: Tasks.Status.list },
+				history: {
+					type: "object",
+					properties: {
+						task: { type: "string", enum: Tasks.Types.list },
+						from: { type: "string", enum: Tasks.Status.list },
+						to: { type: "string", enum: Tasks.Status.list },
+						updatedAt: { type: "string" },
+					},
+					additionalProperties: false,
+				},
+			},
+			additionalProperties: false,
 		},
 	},
 	additionalProperties: false,

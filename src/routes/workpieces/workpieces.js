@@ -1,4 +1,5 @@
 const Workpiece = require("../../models/workpiece/workpiece")
+const Tasks = require("../../constants/tasks")
 const WorkpieceSchema = require("../../schemas/workpieces/workpieces")
 const Errors = require("../errors")
 const JWTAuth = require("../../service/JWTAuth")
@@ -100,6 +101,30 @@ async function routes(fastify, options) {
 		},
 		preValidation: JWTAuth.requireAuthUser,
 		handler: updateWorkpiece,
+	})
+
+	fastify.route({
+		method: "PUT",
+		url: "/workpieces/:workpiece_id/tasks/:task",
+		schema: {
+			tags: ["workpieces_general"],
+			description: "Update a workpiece's task status",
+			params: {
+				workpiece_id: { type: "string" },
+				task: { type: "string", enum: Tasks.Types.list },
+			},
+			body: {
+				type: "object",
+				properties: { status: { type: "string", enum: Tasks.Status.list } },
+				additionalProperties: false,
+			},
+			response: {
+				200: WorkpieceSchema.serialization.workpiece,
+			},
+			security: [{ bearerAuth: [] }],
+		},
+		preValidation: JWTAuth.requireAuthUser,
+		handler: updateTaskStatus,
 	})
 
 	fastify.route({
@@ -298,6 +323,23 @@ const updateCollaboratorById = async function (req, res) {
 	)
 	await workpeice.save()
 	return
+}
+
+const updateTaskStatus = async function (req, res) {
+	const workpiece = await getWorkpieceAsOwner(req)
+
+	if (
+		(!req.authUser.isAdmin || !req.authUser.isLogistic) &&
+		(![Tasks.Status.UNREQUESTED, Tasks.Status.CANCELED].includes(
+			workpiece.tasks[req.params.task]
+		) ||
+			req.body.status !== Tasks.Status.REQUESTED)
+	)
+		throw Errors.UserForbidden
+
+	workpiece.tasks[req.params.task] = req.params.status
+	await workpiece.save()
+	return workpiece
 }
 
 const deleteCollaboratorById = async function (req, res) {

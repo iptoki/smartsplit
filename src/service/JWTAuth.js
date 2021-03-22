@@ -60,20 +60,6 @@ const bearerTokenMiddleware = function (req, res) {
 			else return User.findById(req.auth.data.user_id)
 		},
 	})
-
-	/**
-	 * Returns the User model instance of an admin, if applicable)
-	 */
-	Object.defineProperty(req.auth, "admin", {
-		get: function () {
-			if (!req.auth.data || !req.auth.data.user_id) return Promise.resolve(null)
-			else
-				return User.findOne({
-					_id: req.auth.data.user_id,
-					"permissions.isAdmin": true,
-				})
-		},
-	})
 }
 
 /**
@@ -97,15 +83,19 @@ const requireAuthUser = async function (req, res) {
  * @throws AuthError if there is no authenticated admin
  */
 const requireAuthAdmin = async function (req, res) {
-	const admin = await req.auth.admin
+	const user = await requireAuthUser(req, res)
+	if (!user.isAdmin) throw Errors.UserForbidden
+	return user
+}
 
-	if (!admin || admin.password !== req.auth.data.user_password)
-		throw Errors.InvalidAuthToken
-
-	req.authUser = admin
-	if (req.params.user_id === "session") req.params.user_id = user._id
-
-	return admin
+/**
+ * Requires the request to contain a user with at least logistic priviledges, and returns the User model
+ * @throws AuthError if there is no authenticated admin
+ */
+const requireAuthLogistic = async function (req, res) {
+	const user = await requireAuthUser(req, res)
+	if (!user.isAdmin || !user.isLogistic) throw Errors.UserForbidden
+	return user
 }
 
 const authorizeUserAccess = async function (req, res) {
@@ -128,6 +118,7 @@ const getAuthUser = async function (req, res) {
 		return
 	}
 }
+
 module.exports = {
 	createToken,
 	decodeToken,
