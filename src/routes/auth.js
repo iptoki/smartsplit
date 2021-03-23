@@ -1,7 +1,7 @@
 const JWTAuth = require("../service/JWTAuth")
 const User = require("../models/user")
 const AuthSchema = require("../schemas/auth")
-const Errors = require("./errors")
+const Errors = require("../errors")
 
 async function routes(fastify, options) {
 	fastify.route({

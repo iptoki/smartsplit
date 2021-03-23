@@ -1,11 +1,11 @@
 const mongoose = require("mongoose")
-const User = require("../user")
-const RightTypes = require("../../constants/rightTypes")
+const User = require("./user")
+const RightTypes = require("../constants/rightTypes")
 const {
 	UserNotFound,
 	ConflictingRightSplitState,
 	RightSplitVoteNotFound,
-} = require("../../routes/errors")
+} = require("../errors")
 
 const CopyrightSplitSchema = new mongoose.Schema(
 	{

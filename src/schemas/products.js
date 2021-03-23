@@ -1,4 +1,4 @@
-const ProductCodes = require("../../constants/productCodes")
+const ProductCodes = require("../constants/productCodes")
 
 const locale = {
 	type: "object",

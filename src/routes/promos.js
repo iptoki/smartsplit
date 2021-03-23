@@ -1,7 +1,7 @@
-const Promo = require("../../models/payments/promo")
-const PromoSchema = require("../../schemas/payments/promos")
+const Promo = require("../models/promo")
+const PromoSchema = require("../schemas/promos")
 const { PromoNotFound } = require("../errors")
-const JWTAuth = require("../../service/JWTAuth")
+const JWTAuth = require("../service/JWTAuth")
 
 async function routes(fastify, options) {
 	fastify.route({
@@ -129,11 +129,9 @@ const createPromo = async function (req, res) {
 }
 
 const updatePromo = async function (req, res) {
-	const promo = await findOneAndUpdate(
-		{ _id: req.params.code },
-		req.body,
-		{ new: true }
-	)
+	const promo = await findOneAndUpdate({ _id: req.params.code }, req.body, {
+		new: true,
+	})
 	if (!promo) throw PromoNotFound
 	return promo
 }

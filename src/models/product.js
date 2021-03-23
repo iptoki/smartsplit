@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
-const localeSchema = require("./../locale")
-const ProductCodes = require("../../constants/productCodes")
+const localeSchema = require("./locale")
+const ProductCodes = require("../constants/productCodes")
 
 const ProductSchema = new mongoose.Schema(
 	{
@@ -13,7 +13,7 @@ const ProductSchema = new mongoose.Schema(
 		description: localeSchema,
 		price: Number,
 	},
-	{ toJSON: { virtuals: true } }
+	{ toJSON: { virtuals: true }, toObject: { virtuals: true } }
 )
 
 module.exports = mongoose.model("Product", ProductSchema)

@@ -1,7 +1,7 @@
-const Workpiece = require("../../models/workpiece/workpiece")
+const Workpiece = require("../../models/workpiece")
 const Tasks = require("../../constants/tasks")
-const WorkpieceSchema = require("../../schemas/workpieces/workpieces")
-const Errors = require("../errors")
+const WorkpieceSchema = require("../../schemas/workpieces")
+const Errors = require("../../errors")
 const JWTAuth = require("../../service/JWTAuth")
 
 /************************ Routes ************************/
@@ -280,7 +280,7 @@ const addCollaboratorById = async function (req, res) {
 	const workpiece = await getWorkpieceWithWritePermission(req, res)
 	req.setTransactionResource(workpiece)
 
-	workpiece.addCollaboratorById(req.body.collaborator_id, req.body.permission)
+	workpiece.addCollaboratorById(req.params.collaborator_id, req.body.permission)
 	await workpeice.save()
 	return
 }
@@ -290,7 +290,7 @@ const updateCollaboratorById = async function (req, res) {
 	req.setTransactionResource(workpiece)
 
 	workpiece.updateCollaboratorById(
-		req.body.collaborator_id,
+		req.params.collaborator_id,
 		req.body.permission
 	)
 	await workpeice.save()

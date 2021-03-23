@@ -220,10 +220,6 @@ const TemplateMap = {
 				fr: "d-e69abd3436c2420aa3270f27150a3b8f",
 			},
 			generate: function (user, options) {
-				const fastJson = require("fast-json-stringify")
-				const product = fastJson(ProductSchema)(purchase.product)
-				const promo = fastJson(PromoSchema)(purchase.promo)
-				const billingAddress = fastJson(AddressSchema)(purchase.billingAddress)
 				return {
 					id: this.template_id[user.locale],
 					data: {
@@ -234,9 +230,9 @@ const TemplateMap = {
 							gst: purchase.gst,
 							pst: purchase.pst,
 							creditsUsed: purchase.creditsUsed,
-							product,
-							promo,
-							billingAddress,
+							product: purchase.product.toObject(),
+							promo: purchase.promo.toObject(),
+							billingAddress: purchase.billingAddress.toObject(),
 							workpiece: {
 								title: workpiece.title,
 							},

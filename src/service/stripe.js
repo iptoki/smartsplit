@@ -1,5 +1,5 @@
 const Config = require("../config")
-const { WebhookSignatureVerificationFailed } = require("../routes/errors")
+const { WebhookSignatureVerificationFailed } = require("../errors")
 
 const stripe = require("stripe")(Config.stripe.apikey)
 

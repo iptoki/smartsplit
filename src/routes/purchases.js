@@ -1,11 +1,11 @@
-const Purchase = require("../../models/payments/purchase")
-const PurchaseSchema = require("../../schemas/payments/purchases")
 const Errors = require("../errors")
-const JWTAuth = require("../../service/JWTAuth")
-const Stripe = require("../../service/stripe")
-const TaxRates = require("../../constants/taxRates")
-const { PaymentTemplates } = require("../../models/notificationTemplates")
-const { getUserWithAuthorization } = require("../users/users")
+const TaxRates = require("../constants/taxRates")
+const Purchase = require("../models/purchase")
+const { PaymentTemplates } = require("../models/notificationTemplates")
+const PurchaseSchema = require("../schemas/purchases")
+const JWTAuth = require("../service/JWTAuth")
+const Stripe = require("../service/stripe")
+const { getUserWithAuthorization } = require("./users/users")
 
 async function routes(fastify, options) {
 	fastify.route({
@@ -108,7 +108,7 @@ async function routes(fastify, options) {
 
 	fastify.route({
 		method: "POST",
-		url: "/purchases/stripe/event",
+		url: "/purchases/stripe/webhook/",
 		schema: {
 			tags: ["purchases"],
 			description: "Stripe's webhook to receive event such as payment success",
@@ -172,7 +172,7 @@ const deletePurchase = async function (req, res) {
 }
 
 const stripeEventHandler = async function (req, res) {
-	Stripe.verifyEventSignature(
+	await Stripe.verifyEventSignature(
 		req.body,
 		req.headers["stripe-signature"],
 		"whsec_txRlWnytXeWKViCRZnFLTJH7I5wMxtN1"

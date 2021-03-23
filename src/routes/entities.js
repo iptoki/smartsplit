@@ -2,7 +2,7 @@ const JWTAuth = require("../service/JWTAuth")
 const Entity = require("../models/entities/entity")
 const EntitySchema = require("../schemas/entities")
 const EntityTypes = require("../constants/entityTypes")
-const Errors = require("./errors")
+const Errors = require("../errors")
 
 /************************ Routes ************************/
 

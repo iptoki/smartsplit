@@ -1,19 +1,21 @@
 // Load configuration
 const Config = require("./src/config")
 const fastify = require("fastify")({ logger: Config.logger })
-const Errors = require("./src/routes/errors")
+const Errors = require("./src/errors")
 
 // Connect database
 const mongoose = require("mongoose")
-mongoose.set('useFindAndModify', false) // remove deprecation warnings when using Model.findOneAndX()
+mongoose.set("useFindAndModify", false) // remove deprecation warnings when using Model.findOneAndX()
 mongoose.plugin(function (schema, options) {
-	schema.statics.ensureExistsAndRetrieve = function (filter, paths=[]) {
+	schema.statics.ensureExistsAndRetrieve = function (filter, paths = []) {
 		if (typeof filter === "string") filter = { _id: filter }
 		const errName = `${this.modelName}NotFound`
-		return this.findOne(this.translateAliases(filter)).populate(paths).then((result) => {
-			if (!result) return Promise.reject(Errors[errName] || Errors.NotFound)
-			else return Promise.resolve(result)
-		})
+		return this.findOne(this.translateAliases(filter))
+			.populate(paths)
+			.then((result) => {
+				if (!result) return Promise.reject(Errors[errName] || Errors.NotFound)
+				else return Promise.resolve(result)
+			})
 	}
 })
 mongoose

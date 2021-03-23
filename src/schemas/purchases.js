@@ -1,6 +1,6 @@
 const ProductSchema = require("./products").serialization.product
 const PromoSchema = require("./promos").serialization.promo
-const AddressSchema = require("../addresses").serialization.address
+const AddressSchema = require("./addresses").serialization.address
 
 const purchase = {
 	type: "object",

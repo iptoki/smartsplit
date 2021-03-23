@@ -1,8 +1,8 @@
-const Address = require("../models/address")
-const AddressSchema = require("../schemas/addresses")
-const { AddressNotFound } = require("./errors")
-const JWTAuth = require("../service/JWTAuth")
-const { getUserWithAuthorization } = require("./users/users")
+const Address = require("../../models/address")
+const AddressSchema = require("../../schemas/addresses")
+const { AddressNotFound } = require("../../errors")
+const JWTAuth = require("../../service/JWTAuth")
+const { getUserWithAuthorization } = require("./users")
 
 async function routes(fastify, options) {
 	fastify.route({
@@ -168,7 +168,10 @@ const createAddress = async function (req, res) {
 
 const setBillingAddress = async function (req, res) {
 	const user = await getUserWithAuthorization(req)
-	await Address.ensureExistsAndRetrieve({ _id: req.params.address_id, user_id: user._id })
+	await Address.ensureExistsAndRetrieve({
+		_id: req.params.address_id,
+		user_id: user._id,
+	})
 	user.paymentInfo.billingAddress = req.params.address_id
 	await user.save()
 	res.code(204).send()

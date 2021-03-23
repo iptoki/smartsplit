@@ -1,6 +1,6 @@
-const UserSchema = require("../users")
-const EntitySchema = require("../entities")
-const EntityTypes = require("../../constants/entityTypes")
+const UserSchema = require("./users")
+const EntitySchema = require("./entities")
+const EntityTypes = require("../constants/entityTypes")
 
 const file = {
 	type: "object",

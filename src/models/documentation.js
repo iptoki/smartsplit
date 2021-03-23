@@ -1,11 +1,11 @@
 const mongoose = require("mongoose")
 const uuid = require("uuid").v4
-const User = require("../user")
-const Instrument = require("../entities/instrument")
-const MusicalGenre = require("../entities/musicalGenre")
-const EntityTypes = require("../../constants/entityTypes")
-const Config = require("../../config")
-const Errors = require("../../routes/errors")
+const User = require("./user")
+const Instrument = require("./entities/instrument")
+const MusicalGenre = require("./entities/musicalGenre")
+const EntityTypes = require("../constants/entityTypes")
+const Config = require("../config")
+const Errors = require("../errors")
 
 // const ExternalFileSchema = new mongoose.Schema(
 // 	{
@@ -363,7 +363,8 @@ DocumentationSchema.methods.updateCreation = async function (data) {
 	let promises = []
 	for (field of ["authors", "composers", "publishers"]) {
 		if (!Array.isArray(data[field])) continue
-		for (const uid of data[field]) promises.push(User.ensureExistsAndRetrieve(uid))
+		for (const uid of data[field])
+			promises.push(User.ensureExistsAndRetrieve(uid))
 	}
 	return Promise.all(promises)
 }
@@ -402,13 +403,15 @@ DocumentationSchema.methods.updateRecording = function (data) {
 	let promises = []
 	for (const field of ["directors", "producers"]) {
 		if (!Array.isArray(data[field])) continue
-		for (const uid of data[field]) promises.push(User.ensureExistsAndRetrieve(uid))
+		for (const uid of data[field])
+			promises.push(User.ensureExistsAndRetrieve(uid))
 	}
 	for (const field of ["recording", "mixing", "mastering"]) {
 		if (!Array.isArray(data[field])) continue
 		for (const obj of data[field]) {
 			if (!Array.isArray(obj.engineers)) continue
-			for (const uid of obj.engineers) promises.push(User.ensureExistsAndRetrieve(uid))
+			for (const uid of obj.engineers)
+				promises.push(User.ensureExistsAndRetrieve(uid))
 		}
 	}
 

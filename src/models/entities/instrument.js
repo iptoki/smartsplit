@@ -2,7 +2,7 @@ const mongoose = require("mongoose")
 const Entity = require("./entity")
 const LocaleSchema = require("../locale")
 const EntityTypes = require("../../constants/entityTypes")
-const { EntityNotFound } = require("../../routes/errors")
+const { EntityNotFound } = require("../../errors")
 
 /**
  * Represents an instrument's entity in the system

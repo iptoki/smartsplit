@@ -1,7 +1,7 @@
 const DocumentationSchema = require("./documentation")
 const RightSplitSchema = require("./rightSplits")
-const Tasks = require("../../constants/tasks")
-const UserSchema = require("../users")
+const Tasks = require("../constants/tasks")
+const UserSchema = require("./users")
 
 const workpiece = {
 	type: "object",

@@ -20,7 +20,7 @@ const AddressSchema = new mongoose.Schema(
 		postalCode: String,
 		country: String,
 	},
-	{ toJSON: { virtuals: true } }
+	{ toJSON: { virtuals: true }, toObject: { virtuals: true } }
 )
 
 module.exports = mongoose.model("Address", AddressSchema)

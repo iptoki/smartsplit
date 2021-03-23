@@ -1,8 +1,8 @@
-const Product = require("../../models/payments/product")
-const Purchase = require("../../models/payments/purchase")
-const ProductSchema = require("../../schemas/payments/products")
 const Errors = require("../errors")
-const JWTAuth = require("../../service/JWTAuth")
+const Product = require("../models/product")
+const Purchase = require("../models/purchase")
+const ProductSchema = require("../schemas/products")
+const JWTAuth = require("../service/JWTAuth")
 
 async function routes(fastify, options) {
 	fastify.route({

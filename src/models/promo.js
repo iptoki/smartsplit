@@ -1,6 +1,6 @@
 const uuid = require("uuid").v4
 const mongoose = require("mongoose")
-const localeSchema = require("../locale")
+const localeSchema = require("./locale")
 
 const PromoSchema = new mongoose.Schema(
 	{
@@ -13,7 +13,7 @@ const PromoSchema = new mongoose.Schema(
 		value: Number,
 		expires: Date,
 	},
-	{ toJSON: { virtuals: true } }
+	{ toJSON: { virtuals: true }, toObject: { virtuals: true } }
 )
 
 module.exports = mongoose.model("Promo", PromoSchema)

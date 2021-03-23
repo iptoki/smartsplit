@@ -1,17 +1,17 @@
 const mongoose = require("mongoose")
 const uuid = require("uuid").v4
-const User = require("../user")
-const { SplitTemplates } = require("../notificationTemplates")
-const JWT = require("../../utils/jwt")
+const User = require("./user")
+const { SplitTemplates } = require("./notificationTemplates")
+const JWT = require("../utils/jwt")
 const RightSplitSchema = require("./rightSplit")
 const DocumentationSchema = require("./documentation")
-const RightTypes = require("../../constants/rightTypes")
-const Tasks = require("../../constants/tasks")
+const RightTypes = require("../constants/rightTypes")
+const Tasks = require("../constants/tasks")
 const {
 	UserNotFound,
 	RightSplitNotFound,
 	ConflictingRightSplitState,
-} = require("../../routes/errors")
+} = require("../errors")
 
 const JWT_SPLIT_TYPE = "workpiece:split-invite"
 
@@ -102,7 +102,7 @@ const WorkpieceSchema = new mongoose.Schema(
 			default: {},
 		},
 	},
-	{ timestamps: true, toJSON: { virtuals: true } }
+	{ timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 )
 
 WorkpieceSchema.virtual("rightHolders").get(function () {

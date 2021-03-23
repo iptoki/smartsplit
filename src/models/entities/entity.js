@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 const uuid = require("uuid").v4
-const { EntityNotFound } = require("../../routes/errors")
+const { EntityNotFound } = require("../../errors")
 
 /**
  * Represents a generic modifiable entity in the system

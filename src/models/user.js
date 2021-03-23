@@ -1,21 +1,18 @@
 const mongoose = require("mongoose")
 const uuid = require("uuid").v4
 const Config = require("../config")
-const PasswordUtil = require("../utils/password")
-const JWT = require("../utils/jwt")
-const EmailVerification = require("../models/emailVerification")
+const Address = require("./address")
+const EmailVerification = require("./emailVerification")
 const NotificationTypes = require("../constants/notificationTypes")
 const UserTypes = require("../constants/userTypes")
 const AccountStatus = require("../constants/accountStatus")
-const Address = require("./address")
+const JWT = require("../utils/jwt")
+const PasswordUtil = require("../utils/password")
 const { sendTemplateTo, normalizeEmailAddress } = require("../utils/email")
 const { generateRandomCode } = require("../utils/random")
-const Errors = require("../routes/errors")
+const Errors = require("../errors")
 const { sendSMSTo } = require("../service/twilio")
-const {
-	UserTemplates,
-	generateTemplate,
-} = require("../models/notificationTemplates")
+const { UserTemplates, generateTemplate } = require("./notificationTemplates")
 
 const JWT_RESET_TYPE = "user:password-reset"
 const JWT_ACTIVATE_TYPE = "user:activate"
@@ -155,7 +152,7 @@ const UserSchema = new mongoose.Schema(
 			ref: "User",
 		},
 	},
-	{ toJSON: { virtuals: true } }
+	{ toJSON: { virtuals: true }, toObject: { virtuals: true } }
 )
 
 /**
