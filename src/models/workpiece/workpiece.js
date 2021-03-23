@@ -6,6 +6,7 @@ const JWT = require("../../utils/jwt")
 const RightSplitSchema = require("./rightSplit")
 const DocumentationSchema = require("./documentation")
 const RightTypes = require("../../constants/rightTypes")
+const Tasks = require("../../constants/tasks")
 const {
 	UserNotFound,
 	RightSplitNotFound,
@@ -13,6 +14,36 @@ const {
 } = require("../../routes/errors")
 
 const JWT_SPLIT_TYPE = "workpiece:split-invite"
+
+const StatusSchema = {
+	type: String,
+	enum: Tasks.Status.list,
+	default: Tasks.Status.UNREQUESTED,
+}
+
+const TaskSchema = new mongoose.Schema(
+	{
+		[Tasks.Types.SOCAN]: StatusSchema,
+		[Tasks.Types.SOCAN_DR]: StatusSchema,
+		[Tasks.Types.SOPROQ]: StatusSchema,
+		[Tasks.Types.ARTISTI]: StatusSchema,
+		[Tasks.Types.BANQ]: StatusSchema,
+		history: [
+			new mongoose.Schema(
+				{
+					task: {
+						type: String,
+						enum: Tasks.Types.list,
+					},
+					from: StatusSchema,
+					to: StatusSchema,
+				},
+				{ _id: false, timestamps: true }
+			),
+		],
+	},
+	{ _id: false }
+)
 
 const WorkpieceSchema = new mongoose.Schema(
 	{
@@ -64,6 +95,10 @@ const WorkpieceSchema = new mongoose.Schema(
 		},
 		documentation: {
 			type: DocumentationSchema,
+			default: {},
+		},
+		tasks: {
+			type: TaskSchema,
 			default: {},
 		},
 	},
@@ -328,6 +363,12 @@ WorkpieceSchema.methods.addCollaboratorById = async function (
 		user: collaborator_id,
 		permission,
 	})
+}
+
+WorkpieceSchema.methods.updateTaskStatus = function (task, to) {
+	const from = this.tasks[task]
+	this.tasks[task] = to
+	this.tasks.history.push({ task, from, to })
 }
 
 WorkpieceSchema.methods.updateCollaboratorById = async function (

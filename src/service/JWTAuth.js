@@ -84,7 +84,17 @@ const requireAuthUser = async function (req, res) {
  */
 const requireAuthAdmin = async function (req, res) {
 	const user = await requireAuthUser(req, res)
-	if (!user.permissions.isAdmin) throw Errors.UserForbidden
+	if (!user.isAdmin) throw Errors.UserForbidden
+	return user
+}
+
+/**
+ * Requires the request to contain a user with at least logistic priviledges, and returns the User model
+ * @throws AuthError if there is no authenticated admin
+ */
+const requireAuthLogistic = async function (req, res) {
+	const user = await requireAuthUser(req, res)
+	if (!user.isAdmin || !user.isLogistic) throw Errors.UserForbidden
 	return user
 }
 
@@ -108,6 +118,7 @@ const getAuthUser = async function (req, res) {
 		return
 	}
 }
+
 module.exports = {
 	createToken,
 	decodeToken,

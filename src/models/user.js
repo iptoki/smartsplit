@@ -5,6 +5,7 @@ const PasswordUtil = require("../utils/password")
 const JWT = require("../utils/jwt")
 const EmailVerification = require("../models/emailVerification")
 const NotificationTypes = require("../constants/notificationTypes")
+const UserTypes = require("../constants/userTypes")
 const AccountStatus = require("../constants/accountStatus")
 const Address = require("./address")
 const { sendTemplateTo, normalizeEmailAddress } = require("../utils/email")
@@ -57,7 +58,6 @@ const MobilePhoneSchema = new mongoose.Schema(
  */
 const PermissionSchema = new mongoose.Schema(
 	{
-		isAdmin: Boolean,
 		users: [String],
 	},
 	{ _id: false }
@@ -104,6 +104,7 @@ const UserSchema = new mongoose.Schema(
 			alias: "user_id",
 			default: uuid,
 		},
+		types: [{ type: String, enum: UserTypes.list }],
 		password: String, //bcrypt
 		firstName: String,
 		lastName: String,
@@ -222,8 +223,14 @@ UserSchema.virtual("avatarUrl").get(function () {
  * Returns whether the current user is an administrator
  */
 UserSchema.virtual("isAdmin").get(function () {
-	if (!this.permissions) return false
-	return this.permissions.isAdmin
+	return this.types.includes(UserTypes.ADMIN)
+})
+
+/**
+ * Returns whether the current user is of type logistic
+ */
+UserSchema.virtual("isLogistic").get(function () {
+	return this.types.includes(UserTypes.LOGISTIC)
 })
 
 /**

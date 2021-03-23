@@ -1,4 +1,5 @@
 const Workpiece = require("../../models/workpiece/workpiece")
+const Tasks = require("../../constants/tasks")
 const WorkpieceSchema = require("../../schemas/workpieces/workpieces")
 const Errors = require("../errors")
 const JWTAuth = require("../../service/JWTAuth")
