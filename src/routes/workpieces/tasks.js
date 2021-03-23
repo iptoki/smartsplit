@@ -1,8 +1,8 @@
-const Errors = require("../errors")
+const Errors = require("../../errors")
 const JWTAuth = require("../../service/JWTAuth")
-const Workpiece = require("../../models/workpiece/workpiece")
-const WorkpieceSchema = require("../../schemas/workpieces/workpieces")
-	.serialization.workpiece
+const Workpiece = require("../../models/workpiece")
+const WorkpieceSchema = require("../../schemas/workpieces").serialization
+	.workpiece
 const Tasks = require("../../constants/tasks")
 const { getWorkpieceAsOwner } = require("./workpieces")
 

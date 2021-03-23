@@ -1,21 +1,18 @@
 const mongoose = require("mongoose")
 const uuid = require("uuid").v4
 const Config = require("../config")
-const PasswordUtil = require("../utils/password")
-const JWT = require("../utils/jwt")
-const EmailVerification = require("../models/emailVerification")
+const Address = require("./address")
+const EmailVerification = require("./emailVerification")
 const NotificationTypes = require("../constants/notificationTypes")
 const UserTypes = require("../constants/userTypes")
 const AccountStatus = require("../constants/accountStatus")
-const AddressSchema = require("./payments/address").Schema
+const JWT = require("../utils/jwt")
+const PasswordUtil = require("../utils/password")
 const { sendTemplateTo, normalizeEmailAddress } = require("../utils/email")
 const { generateRandomCode } = require("../utils/random")
-const Errors = require("../routes/errors")
+const Errors = require("../errors")
 const { sendSMSTo } = require("../service/twilio")
-const {
-	UserTemplates,
-	generateTemplate,
-} = require("../models/notificationTemplates")
+const { UserTemplates, generateTemplate } = require("./notificationTemplates")
 
 const JWT_RESET_TYPE = "user:password-reset"
 const JWT_ACTIVATE_TYPE = "user:activate"
@@ -112,7 +109,6 @@ const UserSchema = new mongoose.Schema(
 		avatar: Buffer,
 		isni: String,
 		birthDate: String,
-		address: String,
 		organisations: [String],
 		projects: [String],
 		uri: String,
@@ -156,7 +152,7 @@ const UserSchema = new mongoose.Schema(
 			ref: "User",
 		},
 	},
-	{ toJSON: { virtuals: true } }
+	{ toJSON: { virtuals: true }, toObject: { virtuals: true } }
 )
 
 /**
@@ -171,7 +167,7 @@ UserSchema.virtual("_pendingEmails", {
 UserSchema.virtual("addresses", {
 	ref: "Address",
 	localField: "_id",
-	foreignField: "user_id",
+	foreignField: "user",
 })
 
 UserSchema.virtual("pendingEmails").get(function () {
@@ -488,7 +484,7 @@ UserSchema.methods.addCollaborators = async function (collaboratorIds) {
 	let promises = []
 	for (const uid of collaboratorIds) {
 		if (!this.collaborators.includes(uid) && uid !== this._id) {
-			promises.push(User.ensureExist(uid))
+			promises.push(User.ensureExistsAndRetrieve(uid))
 			this.collaborators.push(uid)
 		}
 	}
@@ -594,12 +590,12 @@ UserSchema.methods.update = async function (data) {
 UserSchema.methods.deletePendingEmail = async function (email) {
 	email = normalizeEmailAddress(email)
 
-	const result = await EmailVerification.deleteOne().byEmailUserId(
+	const { deletedCount } = await EmailVerification.deleteOne().byEmailUserId(
 		email,
 		this._id
 	)
 
-	if (result.deletedCount < 1) return false
+	if (deletedCount !== 1) return false
 
 	if (Array.isArray(this._pendingEmails))
 		this._pendingEmails.filter((e) => e.email === email)
@@ -622,6 +618,16 @@ UserSchema.methods.deleteEmail = async function (email) {
 	return true
 }
 
+UserSchema.methods.deleteAddress = function (address_id) {
+	const index = this.addresses.indexOf(req.params.address_id)
+
+	if (index < 0) return undefined
+
+	if (address_id === this.paymentInfo.billingAddress)
+		this.paymentInfo.billingAddress = undefined
+
+	return this.addresses.splice(index, 1)[0]
+}
 /**
  * Delete a collaborator by ID
  */
@@ -827,13 +833,6 @@ UserSchema.methods.sendEmail = async function (templateName, options = {}) {
  */
 UserSchema.methods.sendPush = function (templateName) {
 	return "push not implemented"
-}
-
-UserSchema.statics.ensureExist = function (uid) {
-	return this.exists({ _id: uid }).then((exist) => {
-		if (!exist) return Promise.reject(Errors.UserNotFound)
-		else return Promise.resolve(uid)
-	})
 }
 
 UserSchema.statics.activate = async function (token, checkPassword = true) {

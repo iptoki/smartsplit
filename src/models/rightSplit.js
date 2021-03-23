@@ -1,11 +1,11 @@
 const mongoose = require("mongoose")
-const User = require("../user")
-const RightTypes = require("../../constants/rightTypes")
+const User = require("./user")
+const RightTypes = require("../constants/rightTypes")
 const {
 	UserNotFound,
 	ConflictingRightSplitState,
 	RightSplitVoteNotFound,
-} = require("../../routes/errors")
+} = require("../errors")
 
 const CopyrightSplitSchema = new mongoose.Schema(
 	{
@@ -187,14 +187,14 @@ RightSplitSchema.methods.update = async function (data) {
 	if (data.label !== undefined && Object.keys(data.label).length > 0) {
 		this.label.vote =
 			owner_id === data.label.rightHolder ? "accepted" : "undecided"
-		promises.push(User.ensureExist(data.label.rightHolder))
+		promises.push(User.ensureExistsAndRetrieve(data.label.rightHolder))
 	}
 
 	for (let rightType of RightTypes.list) {
 		if (!Array.isArray(data[rightType])) continue
 		this[rightType] = []
 		for (let item of data[rightType]) {
-			promises.push(User.ensureExist(item.rightHolder))
+			promises.push(User.ensureExistsAndRetrieve(item.rightHolder))
 			this[rightType].push({
 				rightHolder: item.rightHolder,
 				roles: item.roles,

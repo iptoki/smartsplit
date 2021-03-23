@@ -20,6 +20,10 @@ const DefaultConfig = {
 		phoneNumber: null,
 	},
 
+	stripe: {
+		apikey: null,
+	},
+
 	email: {
 		from_name: "Smartsplit",
 		from_email: "noreply@smartsplit.org",

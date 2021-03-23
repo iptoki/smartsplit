@@ -1,7 +1,7 @@
 const DocumentationSchema = require("./documentation")
 const RightSplitSchema = require("./rightSplits")
-const Tasks = require("../../constants/tasks")
-const UserSchema = require("../users")
+const Tasks = require("../constants/tasks")
+const UserSchema = require("./users")
 
 const workpiece = {
 	type: "object",
@@ -32,8 +32,8 @@ const workpiece = {
 		},
 		documentation: DocumentationSchema.serialization.documentation,
 		purchases: {
-			type: "object",
-			additionalProperties: true,
+			type: "array",
+			items: { type: "string" },
 		},
 		tasks: {
 			type: "object",

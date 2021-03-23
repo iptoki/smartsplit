@@ -1,8 +1,8 @@
 const mongoose = require("mongoose")
 const Entity = require("./entity")
-const LocaleSchema = require("./locale")
+const LocaleSchema = require("../locale")
 const EntityTypes = require("../../constants/entityTypes")
-const { EntityNotFound } = require("../../routes/errors")
+const { EntityNotFound } = require("../../errors")
 
 /**
  * Represents an entity of distribution service provider in the system
@@ -63,13 +63,6 @@ DigitalDistributorEntity.methods.setFields = function (body) {
 	for (let field in fields.concat(Entity.getFields())) {
 		if (body[field]) this[field] = body[field]
 	}
-}
-
-DigitalDistributorEntity.statics.ensureExist = function (id) {
-	return this.exists({ _id: id }).then((exist) => {
-		if (!exist) return Promise.reject(Errors.EntityNotFound)
-		else return Promise.resolve()
-	})
 }
 
 module.exports = Entity.discriminator(

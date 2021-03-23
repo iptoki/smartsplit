@@ -1,7 +1,7 @@
 const JWT = require("../utils/jwt")
 const Config = require("../config")
 const User = require("../models/user")
-const Errors = require("../routes/errors")
+const Errors = require("../errors")
 
 /**
  * Creates an access token for a user

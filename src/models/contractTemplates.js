@@ -1,5 +1,5 @@
-const { ConflictingRightSplitState } = require("../../routes/errors")
-const RightTypes = require("../../constants/rightTypes")
+const { ConflictingRightSplitState } = require("../errors")
+const RightTypes = require("../constants/rightTypes")
 
 const Templates = {
 	rightHolder: {

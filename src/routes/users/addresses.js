@@ -1,10 +1,8 @@
-const Address = require("../../models/payments/address").Address
-const Purchase = require("../../models/payments/purchase")
-const AddressSchema = require("../../schemas/payments/address")
-const Errors = require("../errors")
+const Address = require("../../models/address")
+const AddressSchema = require("../../schemas/addresses")
+const { AddressNotFound } = require("../../errors")
 const JWTAuth = require("../../service/JWTAuth")
-const { getUserWithAuthorization } = require("../users/users")
-/**** routes ***/
+const { getUserWithAuthorization } = require("./users")
 
 async function routes(fastify, options) {
 	fastify.route({
@@ -19,7 +17,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: { type: "array", items: AddressSchema.serialization.Address },
+				200: { type: "array", items: AddressSchema.serialization.address },
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -42,7 +40,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				200: AddressSchema.serialization.Address,
+				200: AddressSchema.serialization.address,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -61,9 +59,12 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: AddressSchema.validation.createAddress,
+			body: {
+				allOf: [AddressSchema.validation.createUpdateAddress],
+				required: ["street1", "city", "province", "postalCode", "country"],
+			},
 			response: {
-				201: AddressSchema.serialization.Address,
+				201: AddressSchema.serialization.address,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -72,8 +73,8 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "PATCH",
-		url: "/users/:user_id/addresses/set-billing/:address_id",
+		method: "PUT",
+		url: "/users/:user_id/addresses/billing/:address_id",
 		schema: {
 			tags: ["addresses"],
 			description: "Set the user's billing address",
@@ -85,9 +86,7 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			response: {
-				200: AddressSchema.serialization.Address,
-			},
+			response: { 204: {} },
 			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthUser,
@@ -99,7 +98,7 @@ async function routes(fastify, options) {
 		url: "/users/:user_id/addresses/:address_id",
 		schema: {
 			tags: ["addresses"],
-			description: "Edit Address",
+			description: "Edit an Address by ID",
 			params: {
 				user_id: {
 					type: "string",
@@ -108,9 +107,9 @@ async function routes(fastify, options) {
 					type: "string",
 				},
 			},
-			body: AddressSchema.validation.updateAddress,
+			body: AddressSchema.validation.createUpdateAddress,
 			response: {
-				200: AddressSchema.serialization.Address,
+				200: AddressSchema.serialization.address,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -133,7 +132,7 @@ async function routes(fastify, options) {
 				},
 			},
 			response: {
-				204: {},
+				200: AddressSchema.serialization.address,
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -143,67 +142,68 @@ async function routes(fastify, options) {
 }
 
 const getUserAddresses = async function (req, res) {
-	// if user is admin -- return ALL addresses in the collection (with paging)
-	// else just return user's addresses
-	const user = await getUserWithAuthorization(req, res)
+	const user = await getUserWithAuthorization(req)
 	await user.populate("addresses").execPopulate()
-	return user.addresses // addresses
+	return user.addresses
 }
 
 const getAddress = async function (req, res) {
-	const user = await getUserWithAuthorization(req, res)
-	await user.populate("addresses").execPopulate()
-	const address = user.addresses.find((x) => x._id === req.params.address_id)
-	if (!address) throw Errors.AddressNotFound
-	return address
+	const user = await getUserWithAuthorization(req)
+	return await Address.ensureExistsAndRetrieve({
+		_id: req.params.address_id,
+		user_id: user._id,
+	})
 }
 
 const createAddress = async function (req, res) {
-	const user = await getUserWithAuthorization(req, res)
-	req.body.user_id = user._id
+	const user = await getUserWithAuthorization(req)
 	const address = new Address(req.body)
-	await address.save()
+	address.user_id = user._id
+	if (!user.paymentInfo.billingAddress)
+		user.paymentInfo.billingAddress = address._id
+	await Promise.all([address.save(), user.save()])
 	res.code(201)
-	user.paymentInfo.billingAddress = address._id
-	await user.save()
 	return address
 }
+
 const setBillingAddress = async function (req, res) {
-	const user = await getUserWithAuthorization(req, res)
-	await user.populate("addresses").execPopulate()
-	const address = user.addresses.find((a) => a._id === req.params.address_id)
-	if (!address) throw Errors.AddressNotFound
-	user.paymentInfo.billingAddress = address._id
+	const user = await getUserWithAuthorization(req)
+	await Address.ensureExistsAndRetrieve({
+		_id: req.params.address_id,
+		user_id: user._id,
+	})
+	user.paymentInfo.billingAddress = req.params.address_id
 	await user.save()
-	return address
+	res.code(204).send()
 }
+
 const updateAddress = async function (req, res) {
-	let addressToModify = await getAddress(req, res)
-	// check and see if address occurs in any purchase
-	// if purchase with address exists
-	// throw Errors.AddressNotModifiable
-	// else modify address
-	for (let field of [
-		"street1",
-		"street2",
-		"city",
-		"province",
-		"postalCode",
-		"country",
-		"active",
-	])
-		if (req.body[field] !== undefined) addressToModify[field] = req.body[field]
-	await addressToModify.save()
-	// if address marked as active:false remove address from user.paymentInfo.billingAddress
-	return addressToModify
+	const address = await Address.findOneAndUpdate(
+		{ _id: req.params.address_id, user: req.params.user_id },
+		req.body,
+		{ new: true }
+	)
+	if (!address) throw AddressNotFound
+	return address
 }
 
 const deleteAddress = async function (req, res) {
-	let addressToModify = await getAddress(req, res)
-	addressToModify["active"] = false
-	await addressToModify.save()
-	return addressToModify
-	// if address is currently set in user.paymentInfo.billingAddress, set billing address to empty
+	const user = await getUserWithAuthorization(req)
+
+	let saveUser
+	if (user.paymentInfo.billingAddress === req.params.address_id) {
+		user.paymentInfo.billingAddress = undefined
+		saveUser = user.save()
+	}
+
+	const result = await Promise.all([
+		saveUser,
+		Address.deleteOne({ _id: req.params.address_id, user: user._id }),
+	])
+
+	if (result[1].deletedCount !== 1) throw AddressNotFound
+
+	res.code(204).send()
 }
 
 module.exports = routes
