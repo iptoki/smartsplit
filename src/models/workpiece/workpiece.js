@@ -360,6 +360,12 @@ WorkpieceSchema.methods.addCollaboratorById = async function (
 	})
 }
 
+WorkpieceSchema.methods.updateTaskStatus = function (task, to) {
+	const from = this.tasks[task]
+	this.tasks[task] = to
+	this.tasks.history.push({ task, from, to })
+}
+
 WorkpieceSchema.methods.updateCollaboratorById = async function (
 	collaborator_id,
 	permission
