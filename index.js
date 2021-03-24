@@ -3,35 +3,8 @@ const Config = require("./src/config")
 const fastify = require("fastify")({ logger: Config.logger })
 const Errors = require("./src/errors")
 
-// Connect database
-const mongoose = require("mongoose")
-mongoose.set("useFindAndModify", false) // remove deprecation warnings when using Model.findOneAndX()
-mongoose.plugin(function (schema, options) {
-	schema.statics.ensureExistsAndRetrieve = function (filter, paths = []) {
-		if (typeof filter === "string") filter = { _id: filter }
-		const errName = `${this.modelName}NotFound`
-		return this.findOne(this.translateAliases(filter))
-			.populate(paths)
-			.then((result) => {
-				if (!result) return Promise.reject(Errors[errName] || Errors.NotFound)
-				else return Promise.resolve(result)
-			})
-	}
-})
-mongoose
-	.connect(process.env["MONGODB_PATH"] || Config.mongodb.uri, {
-		useNewUrlParser: true,
-		useUnifiedTopology: true,
-	})
-	.then(() => {
-		Object.defineProperty(mongoose, "bucket", {
-			value: {
-				protectedWork: new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
-					bucketName: "protectedWork",
-				}),
-			},
-		})
-	})
+// Load mongoose ODM
+const mongoose = require("./src/service/mongoose")
 
 // Register plugins
 fastify.register(require("fastify-formbody"), {
