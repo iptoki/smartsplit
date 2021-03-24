@@ -38,7 +38,7 @@ const createUpdateRecordingSplit = {
 			type: "string",
 			enum: [
 				"producer",
-				"autoProducer",
+				"selfProducer",
 				"directorProducer",
 				"techProducer",
 				"studio",
