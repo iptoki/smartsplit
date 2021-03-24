@@ -35,7 +35,7 @@ const PurchaseSchema = new mongoose.Schema(
 )
 
 PurchaseSchema.virtual("total").get(function () {
-	return subtotal + subtotal * (this.gst + this.pst)
+	return this.subtotal + this.subtotal * (this.gst + this.pst)
 })
 
 PurchaseSchema.methods.calculateSubtotal = async function () {
