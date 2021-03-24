@@ -56,6 +56,8 @@ const workpiece = {
 			},
 			additionalProperties: false,
 		},
+		createdAt: { type: "string" },
+		updatedAt: { type: "string" },
 	},
 	additionalProperties: false,
 }
