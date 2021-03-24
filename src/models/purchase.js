@@ -38,6 +38,18 @@ PurchaseSchema.virtual("total").get(function () {
 	return this.subtotal + this.subtotal * (this.gst + this.pst)
 })
 
+PurchaseSchema.virtual("totalGST").get(function () {
+	return this.subtotal * this.gst
+})
+
+PurchaseSchema.virtual("totalPST").get(function () {
+	return this.subtotal * this.pst
+})
+
+PurchaseSchema.virtual("totalTaxes").get(function () {
+	return this.subtotal * (this.gst + this.pst)
+})
+
 PurchaseSchema.methods.calculateSubtotal = async function () {
 	this.subtotal = Math.max(
 		0,
