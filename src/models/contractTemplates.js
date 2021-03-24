@@ -22,12 +22,21 @@ const Templates = {
 						"<p><i>Tous ci-dessus collectivement nommés les «contributeurs» ou les «parties»</i></p>",
 					],
 				},
-				rightSplits: {
+				rightSplit: {
 					title:
 						"Les contributeurs s’entendent sur ces partages de droits en lien avec la «pièce» :",
-					copyright: [],
-					performance: [],
-					recording: [],
+					copyright: {
+						title: "<h3>DROITS D'AUTEUR</h3>",
+						rightHolders: [],
+					},
+					performance: {
+						title: "<h3>INTERPRÉTATION</h3>",
+						rightHolders: [],
+					},
+					recording: {
+						title: "<h3>ENREGISTREMENT SONORE</h3>",
+						rightHolders: [],
+					},
 					label: {},
 				},
 				agreementConditions: {
@@ -76,12 +85,21 @@ const Templates = {
 						"<p><i>All of the above collectively referred to as the «Contributors» or the «Parties».</i></p>",
 					],
 				},
-				rightSplits: {
+				rightSplit: {
 					title:
 						"The contributors agree on these shares of rights in connection with the «piece» :",
-					copyright: [],
-					performance: [],
-					recording: [],
+					copyright: {
+						title: "<h3>COPYRIGHTS</h3>",
+						rightHolders: [],
+					},
+					performance: {
+						title: "<h3>PERFORMANCE</h3>",
+						rightHolders: [],
+					},
+					recording: {
+						title: "<h3>RECORDING</h3>",
+						rightHolders: [],
+					},
 					label: {},
 				},
 				agreementConditions: {
@@ -137,8 +155,7 @@ const generateTemplate = async function (lang, workpiece) {
 	if (!workpiece.rightSplit || workpiece.rightSplit._state !== "accepted")
 		throw ConflictingRightSplitState
 	await workpiece.populateAll()
-	let contract = Templates.contract[lang]
-	contract = deepReplace(contract, workpiece)
+	const contract = deepReplace(Templates.contract[lang], workpiece)
 	let rank = 1
 	const rightHolders = workpiece.rightHolders.map((rh) => {
 		return Templates.rightHolder[lang]
@@ -150,36 +167,54 @@ const generateTemplate = async function (lang, workpiece) {
 			.replace(/{{contributor_phoneNumber}}/g, rh.phoneNumber)
 			.replace(/{{contributor_email}}/g, rh.email)
 	})
-	contract.sections.rightHolders.list.unshift(...rightHolders)
-	contract.sections.signatures.signatories = workpiece.rightHolders.map(
-		(rh) => rh.fullName
-	)
 	for (const type of RightTypes.list) {
 		if (type === "privacy") continue
 		if (Array.isArray(workpiece.rightSplit[type])) {
-			const obj = workpiece.rightSplit[type].map((x) => {
+			const rightHolders = workpiece.rightSplit[type].map((x) => {
 				return {
+					rightHolder_id: x.rightHolder._id,
 					avatar: x.rightHolder.avatarUrl,
-					name: x.rightHolder.fullName,
+					firstName: x.rightHolder.firstName,
+					lastName: x.rightHolder.lastName,
+					artistName: x.rightHolder.artistName,
 					roles: x.roles,
 					function: x.function,
 					status: x.status,
 					shares: x.shares,
+					vote: x.vote,
 				}
 			})
-			Object.keys(obj).forEach(
-				(key) => obj[key] === undefined && delete obj[key]
-			)
-			contract.sections.rightSplits[type] = obj
+			for (rh of rightHolders) {
+				Object.keys(rh).forEach(
+					(key) => rh[key] === undefined && delete rh[key]
+				)
+			}
+			contract.sections.rightSplit[type].rightHolders = rightHolders
 		} else {
-			contract.sections.rightSplits[type] = {
+			contract.sections.rightSplit[type] = {
+				rightHolder_id: workpiece.rightSplit[type].rightHolder._id,
 				avatar: workpiece.rightSplit[type].rightHolder.avatarUrl,
-				name: workpiece.rightSplit[type].rightHolder.fullName,
+				firstName: workpiece.rightSplit[type].rightHolder.firstName,
+				lastName: workpiece.rightSplit[type].rightHolder.lastName,
+				artistName: workpiece.rightSplit[type].rightHolder.artistName,
 				agreementDuration: workpiece.rightSplit[type].agreementDuration,
 				shares: workpiece.rightSplit[type].shares,
+				vote: workpiece.rightSplit[type].vote,
 			}
 		}
 	}
+
+	contract.locale = lang
+	contract.sections.rightHolders.list.unshift(...rightHolders)
+	contract.sections.rightSplit._state = workpiece.rightSplit._state
+	contract.sections.rightSplit.version = workpiece.rightSplit.version
+	contract.sections.rightSplit.isPublic = workpiece.rightSplit.isPublic
+	contract.sections.rightSplit.copyrightDividingMethod =
+		workpiece.rightSplit.copyrightDividingMethod
+	contract.sections.signatures.signatories = workpiece.rightHolders.map(
+		(rh) => rh.fullName
+	)
+
 	return contract
 }
 
