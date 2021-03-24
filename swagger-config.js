@@ -21,7 +21,6 @@ module.exports = {
 			{ name: "users_general", description: "Manage users accounts" },
 			{ name: "users_emails", description: "Manage users emails" },
 			{ name: "collaborators", description: "Manage user's collaborators" },
-			{ name: "contributors", description: "Manage user's contributors" },
 			{ name: "right_holders", description: "Manage right holders" },
 			{ name: "workpieces_general", description: "Manage workpieces" },
 			{
@@ -38,6 +37,8 @@ module.exports = {
 			},
 			{ name: "entities", description: "Manage lists of the system" },
 			{ name: "addresses", description: "Manage user's adresses" },
+			{ name: "promos", description: "Manage promo codes" },
+			{ name: "purchases", description: "Manage user's purchases" },
 		],
 		servers: [
 			{

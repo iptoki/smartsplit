@@ -1,9 +1,9 @@
-const Errors = require("../errors")
+const Errors = require("../../errors")
 const User = require("../../models/user")
 const { UserTemplates } = require("../../models/notificationTemplates")
 const JWTAuth = require("../../service/JWTAuth")
-const RightSplitSchema = require("../../schemas/workpieces/rightSplits")
-const Contract = require("../../models/workpiece/contractTemplates")
+const RightSplitSchema = require("../../schemas/rightSplits")
+const Contract = require("../../models/contractTemplates")
 
 /************************ Routes ************************/
 

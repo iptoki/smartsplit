@@ -1,11 +1,12 @@
 const Constant = require("./constant")
+
 const SOCAN_SUBMIT = "SOCAN_SUBMIT"
 const RIGHT_SPLIT_DOWNLOAD = "RIGHT_SPLIT_DOWNLOAD"
 const RIGHT_SPLIT_CONTRACT = "RIGHT_SPLIT_CONTRACT"
 const PROTECT_WORKPIECE = "PROTECT_WORKPIECE"
 
-class ProductCode extends Constant {
-	static get SOCAN_SPLIT() {
+class ProductCodes extends Constant {
+	static get SOCAN_SUBMIT() {
 		return SOCAN_SUBMIT
 	}
 	static get RIGHT_SPLIT_DOWNLOAD() {
@@ -26,8 +27,8 @@ class ProductCode extends Constant {
 		]
 	}
 	static get constantName() {
-		return "ProductCode"
+		return "ProductCodes"
 	}
 }
 
-module.exports = ProductCode
+module.exports = ProductCodes

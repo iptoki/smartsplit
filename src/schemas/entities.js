@@ -157,7 +157,6 @@ const createUpdateEntity = {
 
 module.exports = {
 	serialization: {
-		locale,
 		[EntityTypes.INSTRUMENT]: instrument,
 		[EntityTypes.MUSICAL_GENRE]: musicalGenre,
 		[EntityTypes.CONTENT_LANGUAGE]: contentLanguage,

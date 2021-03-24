@@ -1,17 +1,17 @@
 const mongoose = require("mongoose")
 const uuid = require("uuid").v4
-const User = require("../user")
-const { SplitTemplates } = require("../notificationTemplates")
-const JWT = require("../../utils/jwt")
+const User = require("./user")
+const { SplitTemplates } = require("./notificationTemplates")
+const JWT = require("../utils/jwt")
 const RightSplitSchema = require("./rightSplit")
 const DocumentationSchema = require("./documentation")
-const RightTypes = require("../../constants/rightTypes")
-const Tasks = require("../../constants/tasks")
+const RightTypes = require("../constants/rightTypes")
+const Tasks = require("../constants/tasks")
 const {
 	UserNotFound,
 	RightSplitNotFound,
 	ConflictingRightSplitState,
-} = require("../../routes/errors")
+} = require("../errors")
 
 const JWT_SPLIT_TYPE = "workpiece:split-invite"
 
@@ -102,17 +102,22 @@ const WorkpieceSchema = new mongoose.Schema(
 			default: {},
 		},
 	},
-	{ timestamps: true, toJSON: { virtuals: true } }
+	{ timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 )
 
 WorkpieceSchema.virtual("rightHolders").get(function () {
 	return this.collaborators.filter((c) => c.isRightHolder).map((c) => c.user)
 })
 
-WorkpieceSchema.virtual("purchases", {
+WorkpieceSchema.virtual("_purchases", {
 	ref: "Purchase",
 	localField: "_id",
 	foreignField: "workpiece_id",
+})
+
+WorkpieceSchema.virtual("purchases").get(function () {
+	if (!Array.isArray(this._purchases)) return []
+	return this._purchases.map((x) => x.product)
 })
 
 WorkpieceSchema.query.byOwner = function (user_id) {
@@ -291,7 +296,7 @@ WorkpieceSchema.methods.deleteRightSplit = function () {
 WorkpieceSchema.methods.getPathsToPopulate = function () {
 	return [
 		{ path: "owner", populate: { path: "_pendingEmails" } },
-		"purchases",
+		"_purchases",
 		...this.getCollaboratorsPathsToPopulate(),
 		...this.documentation.getPathsToPopulate(),
 		...(this.rightSplit ? this.rightSplit.getPathsToPopulate() : []),
@@ -347,7 +352,7 @@ WorkpieceSchema.methods.addCollaboratorById = async function (
 	collaborator_id,
 	permission
 ) {
-	await User.ensureExist(collaborator_id)
+	await User.ensureExistsAndRetrieve(collaborator_id)
 	for (const item of this.collaborators) {
 		if (item.user === collaborator_id) {
 			item.permission = permission

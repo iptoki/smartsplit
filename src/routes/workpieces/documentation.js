@@ -1,6 +1,6 @@
-const Errors = require("../errors")
+const Errors = require("../../errors")
 const JWTAuth = require("../../service/JWTAuth")
-const DocumentationSchema = require("../../schemas/workpieces/documentation")
+const DocumentationSchema = require("../../schemas/documentation")
 
 /************************ Routes ************************/
 

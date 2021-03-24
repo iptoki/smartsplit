@@ -1,4 +1,4 @@
-const UserSchema = require("../users")
+const UserSchema = require("./users")
 
 const createUpdateCopyrightSplit = {
 	type: "object",

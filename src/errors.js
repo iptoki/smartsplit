@@ -103,29 +103,26 @@ module.exports.FileTooLarge = new HTTPErrors.PayloadTooLarge(
 
 /* Address related errors */
 module.exports.AddressNotFound = new HTTPErrors.NotFound("Address not found")
-module.exports.AddressImmutable = new HTTPErrors.Conflict(
-	"Address used in purchase -- cannot be modified or deleted"
-)
-/* PromoCode errors */
-module.exports.PromoCodeNotFound = new HTTPErrors.NotFound(
-	"PromoCode not found"
-)
-module.exports.PromoCodeImmutable = new HTTPErrors.Conflict(
-	"PromoCode used in purchase -- cannot be modified or deleted"
-)
+
+/* Promo errors */
+module.exports.PromoNotFound = new HTTPErrors.NotFound("Promo not found")
 
 /* Product errors */
 module.exports.ProductNotFound = new HTTPErrors.NotFound("Product not found")
-module.exports.ProductImmutable = new HTTPErrors.Conflict(
-	"Product used in purchase -- cannot be modified or deleted"
+module.exports.ConflictingProductCode = new HTTPErrors.Conflict(
+	"A product already exists with this code"
 )
+
 /* Purchase errors */
+module.exports.WebhookSignatureVerificationFailed = new HTTPErrors.BadRequest(
+	"Webhook signature verification failed"
+)
 module.exports.PurchaseNotFound = new HTTPErrors.NotFound("Purchase not found")
 module.exports.PurchaseImmutable = new HTTPErrors.Conflict(
 	"Completed Purchases cannot be modified or deleted"
 )
-module.exports.BillingAddressRequired = new HTTPErrors.PreconditionFailed(
-	"User must have a current billing Address"
+module.exports.BillingAddressNotFound = new HTTPErrors.NotFound(
+	"Billing address not found"
 )
 module.exports.ProductAlreadyPurchasedForWorkpiece = new HTTPErrors.PreconditionFailed(
 	"The productCode of the product you provided has already been purchased for this workpiece"
@@ -136,3 +133,45 @@ module.exports.StripeCustomerCreateError = new HTTPErrors.PreconditionFailed(
 module.exports.StripePaymentIntentFailed = new HTTPErrors.PreconditionFailed(
 	"Error creating a payment Intent"
 )
+
+/* Generic errors */
+module.exports.BadRequest = new HTTPErrors.BadRequest()
+module.exports.Unauthorized = new HTTPErrors.Unauthorized()
+module.exports.Forbidden = new HTTPErrors.Forbidden()
+module.exports.NotFound = new HTTPErrors.NotFound()
+module.exports.MethodNotAllowed = new HTTPErrors.MethodNotAllowed()
+module.exports.NotAcceptable = new HTTPErrors.NotAcceptable()
+module.exports.ProxyAuthenticationRequired = new HTTPErrors.ProxyAuthenticationRequired()
+module.exports.RequestTimeout = new HTTPErrors.RequestTimeout()
+module.exports.Conflict = new HTTPErrors.Conflict()
+module.exports.Gone = new HTTPErrors.Gone()
+module.exports.LengthRequired = new HTTPErrors.LengthRequired()
+module.exports.PreconditionFailed = new HTTPErrors.PreconditionFailed()
+module.exports.PayloadTooLarge = new HTTPErrors.PayloadTooLarge()
+module.exports.URITooLong = new HTTPErrors.URITooLong()
+module.exports.UnsupportedMediaType = new HTTPErrors.UnsupportedMediaType()
+module.exports.RangeNotSatisfiable = new HTTPErrors.RangeNotSatisfiable()
+module.exports.ExpectationFailed = new HTTPErrors.ExpectationFailed()
+module.exports.ImATeapot = new HTTPErrors.ImATeapot()
+module.exports.MisdirectedRequest = new HTTPErrors.MisdirectedRequest()
+module.exports.UnprocessableEntity = new HTTPErrors.UnprocessableEntity()
+module.exports.Locked = new HTTPErrors.Locked()
+module.exports.FailedDependency = new HTTPErrors.FailedDependency()
+module.exports.UnorderedCollection = new HTTPErrors.UnorderedCollection()
+module.exports.UpgradeRequired = new HTTPErrors.UpgradeRequired()
+module.exports.PreconditionRequired = new HTTPErrors.PreconditionRequired()
+module.exports.TooManyRequests = new HTTPErrors.TooManyRequests()
+module.exports.RequestHeaderFieldsTooLarge = new HTTPErrors.RequestHeaderFieldsTooLarge()
+module.exports.UnavailableForLegalReasons = new HTTPErrors.UnavailableForLegalReasons()
+module.exports.InternalServerError = new HTTPErrors.InternalServerError()
+module.exports.NotImplemented = new HTTPErrors.NotImplemented()
+module.exports.BadGateway = new HTTPErrors.BadGateway()
+module.exports.ServiceUnavailable = new HTTPErrors.ServiceUnavailable()
+module.exports.GatewayTimeout = new HTTPErrors.GatewayTimeout()
+module.exports.HTTPVersionNotSupported = new HTTPErrors.HTTPVersionNotSupported()
+module.exports.VariantAlsoNegotiates = new HTTPErrors.VariantAlsoNegotiates()
+module.exports.InsufficientStorage = new HTTPErrors.InsufficientStorage()
+module.exports.LoopDetected = new HTTPErrors.LoopDetected()
+module.exports.BandwidthLimitExceeded = new HTTPErrors.BandwidthLimitExceeded()
+module.exports.NotExtended = new HTTPErrors.NotExtended()
+module.exports.NetworkAuthenticationRequired = new HTTPErrors.NetworkAuthenticationRequired()
