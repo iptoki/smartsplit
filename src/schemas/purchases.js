@@ -15,9 +15,9 @@ const purchase = {
 		subtotal: { type: "number" },
 		gst: { type: "number" },
 		pst: { type: "number" },
-		totalGST: { type: "number" }
-		totalPST: { type: "number" }
-		totalTaxes: { type: "number" }
+		totalGST: { type: "number" },
+		totalPST: { type: "number" },
+		totalTaxes: { type: "number" },
 		total: { type: "number" },
 		payment_id: { type: "string" },
 		status: {
