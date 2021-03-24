@@ -21,8 +21,8 @@ const PurchaseSchema = new mongoose.Schema(
 		billingAddress: Address.schema,
 		creditsUsed: { type: Number, default: 0 },
 		subtotal: { type: Number, default: 0 },
-		gst: { type: Number, default: TaxRates.GST },
-		pst: { type: Number, default: TaxRates.PST("QC") },
+		gst: { type: Number, default: 0 },
+		pst: { type: Number, default: 0 },
 		payment_id: String,
 		status: {
 			type: String,
@@ -46,7 +46,7 @@ PurchaseSchema.methods.calculateSubtotal = async function () {
 }
 
 PurchaseSchema.statics.create = async function (data) {
-	let [
+	const [
 		isProductAlreadyPurchased,
 		product,
 		promo,
@@ -72,12 +72,16 @@ PurchaseSchema.statics.create = async function (data) {
 	if (isProductAlreadyPurchased)
 		throw Errors.ProductAlreadyPurchasedForWorkpiece
 
-	promo = promo.toObject()
-	product = product.toObject()
-	billingAddress = billingAddress.toObject()
+	const purchase = new Purchase(data)
 
-	const purchase = new Purchase({ ...data, promo, product, billingAddress })
-	purchase.pst = TaxRates.PST(billingAddress.province)
+	purchase.promo = promo ? promo.toObject() : undefined
+	purchase.product = product.toObject()
+	purchase.billingAddress = billingAddress.toObject()
+
+	if (billingAddress.country === "CA") {
+		purchase.gst = TaxRates.GST
+		purchase.pst = TaxRates.PST(billingAddress.province)
+	}
 	purchase.calculateSubtotal()
 
 	return purchase
