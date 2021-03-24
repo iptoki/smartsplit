@@ -46,7 +46,7 @@ PurchaseSchema.methods.calculateSubtotal = async function () {
 }
 
 PurchaseSchema.statics.create = async function (data) {
-	const [
+	let [
 		isProductAlreadyPurchased,
 		product,
 		promo,
