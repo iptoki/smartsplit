@@ -55,7 +55,7 @@ const RecordingSplitSchema = new mongoose.Schema(
 			type: String,
 			enum: [
 				"producer",
-				"seftProducer",
+				"selfProducer",
 				"directorProducer",
 				"techProducer",
 				"studio",
