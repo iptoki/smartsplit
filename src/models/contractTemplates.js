@@ -2,11 +2,23 @@ const { ConflictingRightSplitState } = require("../errors")
 const RightTypes = require("../constants/rightTypes")
 
 const Templates = {
+	ipi: {
+		fr: "<strong>- IPI #{{ipi}}</strong>",
+		en: "<strong>- IPI #{{ipi}}</strong>",
+	},
+	address: {
+		fr: "Domicilié au {{address}}",
+		en: "Resident at {{address}}",
+	},
+	phoneNumber: {
+		fr: " et par téléphone au {{phoneNumber}}",
+		en: " and by phone at {{phoneNumber}}",
+	},
 	rightHolder: {
 		fr:
-			"<column><rank>{{rank}}</rank></column><column><p><b>{{contributor_fullName}}</b> portant le nom d’artiste <i>«{{contributor_artistName}}»</i><strong>- IPI #{{contriputor_ipi}}</strong></p><p>Domicilié au {{contributor_address}} \nEt joignable par téléphone au {{contributor_phoneNumber}} et par courriel au <a href='mailto:{{contributor_email}}'>{{contributor_email}}</a>.</p></column>",
+			"<column><rank>{{rank}}</rank></column><column><p><b>{{fullName}}</b> portant le nom d’artiste <i>«{{artistName}}»</i>{{ipi}}</p><p>{{address}} \nJoignable par courriel au <a href='mailto:{{email}}'>{{email}}</a>{{phoneNumber}}</p></column>",
 		en:
-			"<column><rank>{{rank}}</rank></column><column><p><b>{{contributor_fullName}}</b> with the artist’s name <i>«{{contributor_artistName}}»</i><strong>- IPI #{{contriputor_ipi}}</strong></p><p>Resident at {{contributor_address}} \nAnd reachable by phone at {{contributor_phoneNumber}} and by email at <a href='mailto:{{contributor_email}}'>{{contributor_email}}</a>.</p></column>",
+			"<column><rank>{{rank}}</rank></column><column><p><b>{{fullName}}</b> with the artist’s name <i>«{{artistName}}»</i>{{ipi}}</p><p>{{address}} \nReachable by email at <a href='mailto:{{email}}'>{{email}}</a>{{phoneNumber}}.</p></column>",
 	},
 	contract: {
 		fr: {
@@ -151,22 +163,30 @@ const deepReplace = function (object, workpiece) {
 	return object
 }
 
+const getText = function (field, value) {
+	if (!value) return ""
+	return Templates[field][lang].replace(new RegExp(`{{${field}}}`, "g"), value)
+}
+
 const generateTemplate = async function (lang, workpiece) {
 	if (!workpiece.rightSplit || workpiece.rightSplit._state !== "accepted")
 		throw ConflictingRightSplitState
 	await workpiece.populateAll()
-	const contract = deepReplace(Templates.contract[lang], workpiece)
+	console.log(require('util').inspect(Templates.contract[lang], false, null, true /* enable colors */))
+	const contract = deepReplace(JSON.parse(JSON.stringify(Templates.contract[lang])), workpiece)
 	let rank = 1
-	const rightHolders = workpiece.rightHolders.map((rh) => {
-		return Templates.rightHolder[lang]
-			.replace(/{{rank}}/g, rank++)
-			.replace(/{{contributor_fullName}}/g, rh.fullName)
-			.replace(/{{contributor_artistName}}/g, rh.artistName)
-			.replace(/{{contriputor_ipi}}/g, rh.ipi)
-			.replace(/{{contributor_address}}/g, rh.address)
-			.replace(/{{contributor_phoneNumber}}/g, rh.phoneNumber)
-			.replace(/{{contributor_email}}/g, rh.email)
-	})
+	contract.sections.rightHolders.list.unshift(
+		...workpiece.rightHolders.map((rh) => {
+			return Templates.rightHolder[lang]
+				.replace(/{{rank}}/g, rank++)
+				.replace(/{{fullName}}/g, rh.fullName)
+				.replace(/{{artistName}}/g, rh.artistName)
+				.replace(/{{ipi}}/g, getText("ipi", rh.ipi))
+				.replace(/{{address}}/g, getText("address", rh.address))
+				.replace(/{{phoneNumber}}/g, getText("phoneNumber", rh.phoneNumber))
+				.replace(/{{email}}/g, rh.email)
+		})
+	)
 	for (const type of RightTypes.list) {
 		if (type === "privacy") continue
 		if (Array.isArray(workpiece.rightSplit[type])) {
@@ -205,7 +225,6 @@ const generateTemplate = async function (lang, workpiece) {
 	}
 
 	contract.locale = lang
-	contract.sections.rightHolders.list.unshift(...rightHolders)
 	contract.sections.rightSplit._state = workpiece.rightSplit._state
 	contract.sections.rightSplit.version = workpiece.rightSplit.version
 	contract.sections.rightSplit.isPublic = workpiece.rightSplit.isPublic
