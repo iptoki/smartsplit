@@ -82,7 +82,7 @@ const Templates = {
 					signatories: [],
 				},
 			},
-			footer: "Entente de partage de droits - Page",
+			footer: "<b>Entente de partage de droits</b>",
 		},
 
 		en: {
@@ -145,7 +145,7 @@ const Templates = {
 					signatories: [],
 				},
 			},
-			footer: "Rights sharing agreement - Page",
+			footer: "<b>Rights sharing agreement</b>",
 		},
 	},
 }
