@@ -180,14 +180,17 @@ RightSplitSchema.methods.update = async function (data) {
 	const owner_id = this.getOwnerId()
 	let promises = []
 
-	for (const field of ["isPublic", "copyrightDividingMethod", "label"]) {
+	for (const field of ["isPublic", "copyrightDividingMethod"]) {
 		if (data[field] !== undefined) this[field] = data[field]
 	}
 
-	if (data.label !== undefined && Object.keys(data.label).length > 0) {
-		this.label.vote =
-			owner_id === data.label.rightHolder ? "accepted" : "undecided"
-		promises.push(User.ensureExistsAndRetrieve(data.label.rightHolder))
+	if (data.label !== undefined) {
+		if (Object.keys(data.label).length > 0) {
+			this.label = data.label
+			this.label.vote =
+				owner_id === data.label.rightHolder ? "accepted" : "undecided"
+			promises.push(User.ensureExistsAndRetrieve(data.label.rightHolder))
+		} else this.label = undefined
 	}
 
 	for (let rightType of RightTypes.list) {
