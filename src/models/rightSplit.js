@@ -130,7 +130,7 @@ const RightSplitSchema = new mongoose.Schema(
 		recording: [RecordingSplitSchema],
 		privacy: [PrivacySchema],
 	},
-	{ _id: false }
+	{ _id: false, timestamps: true }
 )
 
 RightSplitSchema.methods.getOwnerId = function () {

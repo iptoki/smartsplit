@@ -187,6 +187,8 @@ const rightSplit = {
 			type: "array",
 			items: privacy,
 		},
+		createdAt: { type: "string" },
+		updatedAt: { type: "string" },
 	},
 	additionalProperties: false,
 }
