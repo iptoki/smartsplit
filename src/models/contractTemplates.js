@@ -172,8 +172,10 @@ const generateTemplate = async function (lang, workpiece) {
 	if (!workpiece.rightSplit || workpiece.rightSplit._state !== "accepted")
 		throw ConflictingRightSplitState
 	await workpiece.populateAll()
-	console.log(require('util').inspect(Templates.contract[lang], false, null, true /* enable colors */))
-	const contract = deepReplace(JSON.parse(JSON.stringify(Templates.contract[lang])), workpiece)
+	const contract = deepReplace(
+		JSON.parse(JSON.stringify(Templates.contract[lang])),
+		workpiece
+	)
 	let rank = 1
 	contract.sections.rightHolders.list.unshift(
 		...workpiece.rightHolders.map((rh) => {
