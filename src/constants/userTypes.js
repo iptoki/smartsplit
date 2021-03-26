@@ -1,7 +1,7 @@
-const Constant = require("./constant")
+const Constant = require('./constant')
 
-const LOGISTIC = "logistic"
-const ADMIN = "admin"
+const LOGISTIC = 'logistic'
+const ADMIN = 'admin'
 
 class UserTypes extends Constant {
 	static get LOGISTIC() {
@@ -14,7 +14,7 @@ class UserTypes extends Constant {
 		return [LOGISTIC, ADMIN]
 	}
 	static get constantName() {
-		return "UserTypes"
+		return 'UserTypes'
 	}
 }
 

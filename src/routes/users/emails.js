@@ -1,21 +1,21 @@
-const JWTAuth = require("../../service/JWTAuth")
-const EmailVerification = require("../../models/emailVerification")
-const { UserTemplates } = require("../../models/notificationTemplates")
-const UserSchema = require("../../schemas/users")
-const Errors = require("../../errors")
-const { getUserWithAuthorization } = require("./users")
+const JWTAuth = require('../../service/JWTAuth')
+const EmailVerification = require('../../models/emailVerification')
+const { UserTemplates } = require('../../models/notificationTemplates')
+const UserSchema = require('../../schemas/users')
+const Errors = require('../../errors')
+const { getUserWithAuthorization } = require('./users')
 
 /************************ Routes ************************/
 
 async function routes(fastify, options) {
 	fastify.route({
-		method: "GET",
-		url: "/users/:user_id/emails/",
+		method: 'GET',
+		url: '/users/:user_id/emails/',
 		schema: {
-			tags: ["users_emails"],
+			tags: ['users_emails'],
 			description: "Get a user's email list",
 			params: {
-				user_id: { type: "string" },
+				user_id: { type: 'string' },
 			},
 			response: {
 				200: UserSchema.serialization.emailStatusList,
@@ -27,19 +27,19 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "POST",
-		url: "/users/:user_id/emails/",
+		method: 'POST',
+		url: '/users/:user_id/emails/',
 		schema: {
-			tags: ["users_emails"],
+			tags: ['users_emails'],
 			description: "Create a new email in a user's account",
 			params: {
-				user_id: { type: "string" },
+				user_id: { type: 'string' },
 			},
 			body: {
-				type: "object",
-				required: ["email"],
+				type: 'object',
+				required: ['email'],
 				properties: {
-					email: { type: "string" },
+					email: { type: 'string' },
 				},
 				additionalProperties: false,
 			},
@@ -53,41 +53,41 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "POST",
-		url: "/users/activate-email",
+		method: 'POST',
+		url: '/users/activate-email',
 		schema: {
-			tags: ["users_emails"],
+			tags: ['users_emails'],
 			description: "Activate a user's email",
 			body: {
-				type: "object",
-				required: ["token"],
+				type: 'object',
+				required: ['token'],
 				properties: {
-					token: { type: "string" },
+					token: { type: 'string' },
 				},
 				additionalProperties: false,
 			},
 			response: {
 				200: UserSchema.serialization.emailStatusList,
 			},
-			dbOperation: "update",
+			dbOperation: 'update',
 		},
 		handler: activateUserEmail,
 	})
 
 	fastify.route({
-		method: "POST",
-		url: "/users/:user_id/emails/primary",
+		method: 'POST',
+		url: '/users/:user_id/emails/primary',
 		schema: {
-			tags: ["users_emails"],
-			description: "Set a user email to the primary one",
+			tags: ['users_emails'],
+			description: 'Set a user email to the primary one',
 			params: {
-				user_id: { type: "string" },
+				user_id: { type: 'string' },
 			},
 			body: {
-				type: "object",
-				required: ["email"],
+				type: 'object',
+				required: ['email'],
 				properties: {
-					email: { type: "string" },
+					email: { type: 'string' },
 				},
 				additionalProperties: false,
 			},
@@ -95,23 +95,23 @@ async function routes(fastify, options) {
 				200: UserSchema.serialization.emailStatusList,
 			},
 			security: [{ bearerAuth: [] }],
-			dbOperation: "update",
+			dbOperation: 'update',
 		},
 		preValidation: JWTAuth.authorizeUserAccess,
 		handler: setUserPrimaryEmail,
 	})
 
 	fastify.route({
-		method: "GET",
-		url: "/users/:user_id/emails/primary",
+		method: 'GET',
+		url: '/users/:user_id/emails/primary',
 		schema: {
-			tags: ["users_emails"],
-			description: "Get the user primary email",
+			tags: ['users_emails'],
+			description: 'Get the user primary email',
 			params: {
-				user_id: { type: "string" },
+				user_id: { type: 'string' },
 			},
 			response: {
-				200: { type: "string" },
+				200: { type: 'string' },
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -120,14 +120,14 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "DELETE",
-		url: "/users/:user_id/emails/:email",
+		method: 'DELETE',
+		url: '/users/:user_id/emails/:email',
 		schema: {
-			tags: ["users_emails"],
+			tags: ['users_emails'],
 			description: "Delete a user's email",
 			params: {
-				user_id: { type: "string" },
-				email: { type: "string" },
+				user_id: { type: 'string' },
+				email: { type: 'string' },
 			},
 			response: {
 				204: {},
@@ -143,7 +143,7 @@ async function routes(fastify, options) {
 
 async function getUserWithPendingEmails(req, res) {
 	const user = await getUserWithAuthorization(req)
-	await user.populate("_pendingEmails").execPopulate()
+	await user.populate('_pendingEmails').execPopulate()
 	return user
 }
 
@@ -195,10 +195,10 @@ async function setUserPrimaryEmail(req, res) {
 
 function formatEmailList(user) {
 	let list = []
-	if (user.email) list.push({ email: user.emails[0], status: "primary" })
+	if (user.email) list.push({ email: user.emails[0], status: 'primary' })
 	list.push(
-		...user.emails.slice(1).map((e) => ({ email: e, status: "active" })),
-		...user.pendingEmails.map((e) => ({ email: e, status: "pending" }))
+		...user.emails.slice(1).map((e) => ({ email: e, status: 'active' })),
+		...user.pendingEmails.map((e) => ({ email: e, status: 'pending' }))
 	)
 	return list
 }

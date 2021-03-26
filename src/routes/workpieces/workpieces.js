@@ -1,23 +1,23 @@
-const Workpiece = require("../../models/workpiece")
-const Tasks = require("../../constants/tasks")
-const WorkpieceSchema = require("../../schemas/workpieces")
-const Errors = require("../../errors")
-const JWTAuth = require("../../service/JWTAuth")
+const Workpiece = require('../../models/workpiece')
+const Tasks = require('../../constants/tasks')
+const WorkpieceSchema = require('../../schemas/workpieces')
+const Errors = require('../../errors')
+const JWTAuth = require('../../service/JWTAuth')
 
 /************************ Routes ************************/
 
 async function routes(fastify, options) {
 	fastify.route({
-		method: "GET",
-		url: "/workpieces/by-owner/:user_id",
+		method: 'GET',
+		url: '/workpieces/by-owner/:user_id',
 		schema: {
-			tags: ["workpieces_general"],
-			description: "Get workpieces by owner",
+			tags: ['workpieces_general'],
+			description: 'Get workpieces by owner',
 			params: {
-				user_id: { type: "string" },
+				user_id: { type: 'string' },
 			},
 			response: {
-				200: { type: "array", items: WorkpieceSchema.serialization.workpiece },
+				200: { type: 'array', items: WorkpieceSchema.serialization.workpiece },
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -26,16 +26,16 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "GET",
-		url: "/workpieces/by-right-holder/:user_id",
+		method: 'GET',
+		url: '/workpieces/by-right-holder/:user_id',
 		schema: {
-			tags: ["workpieces_general"],
-			description: "Get workpieces by collaborator",
+			tags: ['workpieces_general'],
+			description: 'Get workpieces by collaborator',
 			params: {
-				user_id: { type: "string" },
+				user_id: { type: 'string' },
 			},
 			response: {
-				200: { type: "array", items: WorkpieceSchema.serialization.workpiece },
+				200: { type: 'array', items: WorkpieceSchema.serialization.workpiece },
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -44,13 +44,13 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "GET",
-		url: "/workpieces/:workpiece_id",
+		method: 'GET',
+		url: '/workpieces/:workpiece_id',
 		schema: {
-			tags: ["workpieces_general"],
-			description: "Get workpiece by ID",
+			tags: ['workpieces_general'],
+			description: 'Get workpiece by ID',
 			params: {
-				workpiece_id: { type: "string" },
+				workpiece_id: { type: 'string' },
 			},
 			response: {
 				200: WorkpieceSchema.serialization.workpiece,
@@ -66,14 +66,14 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "POST",
-		url: "/workpieces/",
+		method: 'POST',
+		url: '/workpieces/',
 		schema: {
-			tags: ["workpieces_general"],
-			description: "Create a new workpiece in the system",
+			tags: ['workpieces_general'],
+			description: 'Create a new workpiece in the system',
 			body: {
 				allOf: [WorkpieceSchema.validation.createUpdateWorkpiece],
-				required: ["title"],
+				required: ['title'],
 			},
 			response: {
 				201: WorkpieceSchema.serialization.workpiece,
@@ -85,13 +85,13 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "PATCH",
-		url: "/workpieces/:workpiece_id",
+		method: 'PATCH',
+		url: '/workpieces/:workpiece_id',
 		schema: {
-			tags: ["workpieces_general"],
-			description: "Update a workpiece by ID",
+			tags: ['workpieces_general'],
+			description: 'Update a workpiece by ID',
 			params: {
-				workpiece_id: { type: "string" },
+				workpiece_id: { type: 'string' },
 			},
 			body: WorkpieceSchema.validation.createUpdateWorkpiece,
 			response: {
@@ -104,13 +104,13 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "DELETE",
-		url: "/workpieces/:workpiece_id",
+		method: 'DELETE',
+		url: '/workpieces/:workpiece_id',
 		schema: {
-			tags: ["workpieces_general"],
-			description: "Delete a workpiece by ID",
+			tags: ['workpieces_general'],
+			description: 'Delete a workpiece by ID',
 			params: {
-				workpiece_id: { type: "string" },
+				workpiece_id: { type: 'string' },
 			},
 			response: {
 				204: {},
@@ -122,41 +122,41 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "POST",
-		url: "/workpieces/:workpiece_id/collaborators/:collaborator_id",
+		method: 'POST',
+		url: '/workpieces/:workpiece_id/collaborators/:collaborator_id',
 		schema: {
-			tags: ["workpieces_general"],
-			description: "Add a collaborator by ID",
+			tags: ['workpieces_general'],
+			description: 'Add a collaborator by ID',
 			params: {
 				workpiece_id: {
-					type: "string",
+					type: 'string',
 				},
 				collaborator_id: {
-					type: "string",
+					type: 'string',
 				},
 			},
 			response: {
 				204: {},
 			},
 			security: [{ bearerAuth: [] }],
-			dbOperation: "update",
+			dbOperation: 'update',
 		},
 		preValidation: JWTAuth.requireAuthUser,
 		handler: addCollaboratorById,
 	})
 
 	fastify.route({
-		method: "PATCH",
-		url: "/workpieces/:workpiece_id/collaborators/:collaborator_id",
+		method: 'PATCH',
+		url: '/workpieces/:workpiece_id/collaborators/:collaborator_id',
 		schema: {
-			tags: ["workpieces_general"],
+			tags: ['workpieces_general'],
 			description: "Update a collaborator's permission by ID",
 			params: {
 				workpiece_id: {
-					type: "string",
+					type: 'string',
 				},
 				collaborator_id: {
-					type: "string",
+					type: 'string',
 				},
 			},
 			response: {
@@ -169,17 +169,17 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "DELETE",
-		url: "/workpieces/:workpiece_id/collaborators/:collaborator_id",
+		method: 'DELETE',
+		url: '/workpieces/:workpiece_id/collaborators/:collaborator_id',
 		schema: {
-			tags: ["workpieces_general"],
-			description: "Delete a collaborator by ID",
+			tags: ['workpieces_general'],
+			description: 'Delete a collaborator by ID',
 			params: {
 				workpiece_id: {
-					type: "string",
+					type: 'string',
 				},
 				collaborator_id: {
-					type: "string",
+					type: 'string',
 				},
 			},
 			response: {
@@ -218,7 +218,7 @@ const getWorkpieceAsRightHolder = async function (req, res) {
 const getWorkpieceWithWritePermission = async function (req, res) {
 	const workpiece = await getWorkpiece(req, res)
 	if (
-		!["write", "admin"].includes(
+		!['write', 'admin'].includes(
 			workpiece.getCollaboratorPermission(req.authUser._id)
 		)
 	)
@@ -240,7 +240,7 @@ const updateWorkpiece = async function (req, res) {
 	const workpiece = await getWorkpieceAsOwner(req, res)
 	req.setTransactionResource(workpiece)
 
-	for (let field of ["title"])
+	for (let field of ['title'])
 		if (req.body[field]) workpiece[field] = req.body[field]
 
 	if (req.body.documentation !== undefined)

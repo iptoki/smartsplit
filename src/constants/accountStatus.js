@@ -1,9 +1,9 @@
-const Constant = require("./constant")
+const Constant = require('./constant')
 
-const INVALID = "invalid"
-const EMAIL_VERIFICATION_PENDING = "email-verification-pending"
-const ACTIVE = "active"
-const DELETED = "deleted"
+const INVALID = 'invalid'
+const EMAIL_VERIFICATION_PENDING = 'email-verification-pending'
+const ACTIVE = 'active'
+const DELETED = 'deleted'
 
 class AccountStatus extends Constant {
 	static get INVALID() {
@@ -27,7 +27,7 @@ class AccountStatus extends Constant {
 		return [EMAIL_VERIFICATION_PENDING]
 	}
 	static get constantName() {
-		return "AccountStatus"
+		return 'AccountStatus'
 	}
 }
 

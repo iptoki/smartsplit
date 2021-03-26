@@ -1,79 +1,79 @@
-const Notifications = require("../constants/notificationTypes")
-const UserTypes = require("../constants/userTypes")
-const AccountStatus = require("../constants/accountStatus")
-const { address } = require("./addresses").serialization
+const Notifications = require('../constants/notificationTypes')
+const UserTypes = require('../constants/userTypes')
+const AccountStatus = require('../constants/accountStatus')
+const { address } = require('./addresses').serialization
 
 const mobilePhone = {
-	type: "object",
+	type: 'object',
 	properties: {
-		number: { type: "string" },
-		isVerified: { type: "boolean" },
+		number: { type: 'string' },
+		isVerified: { type: 'boolean' },
 	},
 	additionalProperties: false,
 }
 
 const permissions = {
-	type: "object",
+	type: 'object',
 	properties: {
 		users: {
-			type: "array",
-			items: { type: "string" },
+			type: 'array',
+			items: { type: 'string' },
 		},
 	},
 	additionalProperties: false,
 }
 
 const paymentInfo = {
-	type: "object",
+	type: 'object',
 	properties: {
-		stripe_id: { type: "string" },
+		stripe_id: { type: 'string' },
 		billingAddress: address,
 	},
 }
 
 const notifications = {
-	type: "object",
+	type: 'object',
 	properties: {
 		[Notifications.GENERAL_INTERACTIONS]: {
-			type: "array",
+			type: 'array',
 			items: {
-				type: "string",
-				enum: ["email", "push", "sms"],
+				type: 'string',
+				enum: ['email', 'push', 'sms'],
 			},
 		},
 		[Notifications.ADMINISTRATIVE_MESSAGES]: {
-			type: "array",
+			type: 'array',
 			items: {
-				type: "string",
-				enum: ["email", "push", "sms"],
+				type: 'string',
+				enum: ['email', 'push', 'sms'],
 			},
 		},
 		[Notifications.ACCOUNT_LOGIN]: {
-			type: "array",
+			type: 'array',
 			items: {
-				type: "string",
-				enum: ["email", "push", "sms"],
+				type: 'string',
+				enum: ['email', 'push', 'sms'],
 			},
 		},
 		[Notifications.SMARTSPLIT_BLOG]: {
-			type: "array",
+			type: 'array',
 			items: {
-				type: "string",
-				enum: ["email", "push", "sms"],
+				type: 'string',
+				enum: ['email', 'push', 'sms'],
 			},
 		},
 		[Notifications.SMARTSPLIT_PROMOTIONS]: {
-			type: "array",
+			type: 'array',
 			items: {
-				type: "string",
-				enum: ["email", "push", "sms"],
+				type: 'string',
+				enum: ['email', 'push', 'sms'],
 			},
 		},
 		[Notifications.PARTNER_PROMOTIONS]: {
-			type: "array",
+			type: 'array',
 			items: {
-				type: "string",
-				enum: ["email", "push", "sms"],
+				type: 'string',
+				enum: ['email', 'push', 'sms'],
 			},
 		},
 	},
@@ -81,20 +81,20 @@ const notifications = {
 }
 
 const professionalIdentity = {
-	type: "object",
+	type: 'object',
 	properties: {
 		ids: {
-			type: "array",
+			type: 'array',
 			items: {
-				type: "object",
+				type: 'object',
 				properties: {
-					name: { type: "string" },
-					value: { type: "string" },
+					name: { type: 'string' },
+					value: { type: 'string' },
 				},
 			},
 		},
 		public: {
-			type: "boolean",
+			type: 'boolean',
 			default: false,
 		},
 	},
@@ -102,60 +102,60 @@ const professionalIdentity = {
 }
 
 const publicUser = {
-	type: "object",
+	type: 'object',
 	properties: {
-		user_id: { type: "string" },
-		artistName: { type: "string" },
-		firstName: { type: "string" },
-		lastName: { type: "string" },
-		avatarUrl: { type: "string" },
+		user_id: { type: 'string' },
+		artistName: { type: 'string' },
+		firstName: { type: 'string' },
+		lastName: { type: 'string' },
+		avatarUrl: { type: 'string' },
 		locale: {
-			type: "string",
-			enum: ["en", "fr"],
+			type: 'string',
+			enum: ['en', 'fr'],
 		},
-		isni: { type: "string" },
+		isni: { type: 'string' },
 		organisations: {
-			type: "array",
-			items: { type: "string" },
+			type: 'array',
+			items: { type: 'string' },
 		},
 		projects: {
-			type: "array",
-			items: { type: "string" },
+			type: 'array',
+			items: { type: 'string' },
 		},
-		uri: { type: "string" },
+		uri: { type: 'string' },
 	},
 	additionalProperties: false,
 }
 
 const collaborator = {
-	type: "object",
+	type: 'object',
 	properties: {
 		...publicUser.properties,
 		emails: {
-			type: "array",
-			items: { type: "string" },
+			type: 'array',
+			items: { type: 'string' },
 		},
 		pendingEmails: {
-			type: "array",
-			items: { type: "string" },
+			type: 'array',
+			items: { type: 'string' },
 		},
 	},
 	additionalProperties: false,
 }
 
 const user = {
-	type: "object",
+	type: 'object',
 	properties: {
 		...collaborator.properties,
 		types: {
-			type: "array",
+			type: 'array',
 			items: {
-				type: "string",
+				type: 'string',
 				enum: UserTypes.list,
 			},
 		},
 		accountStatus: {
-			type: "string",
+			type: 'string',
 			enum: AccountStatus.list,
 		},
 		mobilePhone,
@@ -164,80 +164,80 @@ const user = {
 		professionalIdentity,
 		paymentInfo,
 		collaborators: {
-			type: "array",
-			items: { type: "string" },
+			type: 'array',
+			items: { type: 'string' },
 		},
-		birthDate: { type: "string" },
-		addresses: { type: "array", items: address },
+		birthDate: { type: 'string' },
+		addresses: { type: 'array', items: address },
 	},
 	additionalProperties: false,
 }
 
 const emailStatusList = {
-	type: "array",
+	type: 'array',
 	items: {
-		type: "object",
+		type: 'object',
 		properties: {
-			email: { type: "string" },
+			email: { type: 'string' },
 			status: {
-				type: "string",
-				enum: ["primary", "active", "pending"],
+				type: 'string',
+				enum: ['primary', 'active', 'pending'],
 			},
 		},
 	},
 }
 
 const createCollaborator = {
-	type: "object",
-	required: ["email"],
+	type: 'object',
+	required: ['email'],
 	properties: {
-		firstName: { type: "string" },
-		lastName: { type: "string" },
-		artistName: { type: "string" },
-		email: { type: "string" },
+		firstName: { type: 'string' },
+		lastName: { type: 'string' },
+		artistName: { type: 'string' },
+		email: { type: 'string' },
 	},
 	additionalProperties: false,
 }
 
 const updateUser = {
-	type: "object",
+	type: 'object',
 	properties: {
 		...createCollaborator.properties,
-		phoneNumber: { type: "string" },
-		avatar: { type: "string" },
+		phoneNumber: { type: 'string' },
+		avatar: { type: 'string' },
 		locale: {
-			type: "string",
-			enum: ["en", "fr"],
+			type: 'string',
+			enum: ['en', 'fr'],
 		},
 		notifications,
 		professionalIdentity,
-		isni: { type: "string" },
+		isni: { type: 'string' },
 		birthDate: {
 			oneOf: [
 				// yes it sucks...
-				{ type: "string", format: "date" },
-				{ type: "string", enum: [""] },
+				{ type: 'string', format: 'date' },
+				{ type: 'string', enum: [''] },
 			],
 		},
 		organisations: {
-			type: "array",
-			items: { type: "string" },
+			type: 'array',
+			items: { type: 'string' },
 		},
 		projects: {
-			type: "array",
-			items: { type: "string" },
+			type: 'array',
+			items: { type: 'string' },
 		},
-		uri: { type: "string" },
+		uri: { type: 'string' },
 	},
 	additionalProperties: false,
 }
 
 const createUser = {
-	type: "object",
-	required: ["email", "password"],
+	type: 'object',
+	required: ['email', 'password'],
 	properties: {
 		...updateUser.properties,
-		password: { type: "string" },
+		password: { type: 'string' },
 	},
 	additionalProperties: false,
 }

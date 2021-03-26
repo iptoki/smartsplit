@@ -1,11 +1,11 @@
-const Constant = require("./constant")
+const Constant = require('./constant')
 
-const GENERAL_INTERACTIONS = "generalInteractions"
-const ADMINISTRATIVE_MESSAGES = "administrativeMessages"
-const ACCOUNT_LOGIN = "accountLogin"
-const SMARTSPLIT_BLOG = "smartsplitBlog"
-const SMARTSPLIT_PROMOTIONS = "smartsplitPromotions"
-const PARTNER_PROMOTIONS = "partnerPromotions"
+const GENERAL_INTERACTIONS = 'generalInteractions'
+const ADMINISTRATIVE_MESSAGES = 'administrativeMessages'
+const ACCOUNT_LOGIN = 'accountLogin'
+const SMARTSPLIT_BLOG = 'smartsplitBlog'
+const SMARTSPLIT_PROMOTIONS = 'smartsplitPromotions'
+const PARTNER_PROMOTIONS = 'partnerPromotions'
 
 class NotificationTypes extends Constant {
 	static get GENERAL_INTERACTIONS() {
@@ -40,7 +40,7 @@ class NotificationTypes extends Constant {
 		return [GENERAL_INTERACTIONS, ADMINISTRATIVE_MESSAGES]
 	}
 	static get constantName() {
-		return "NotificationTypes"
+		return 'NotificationTypes'
 	}
 }
 

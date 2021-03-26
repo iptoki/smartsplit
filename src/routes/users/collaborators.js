@@ -1,47 +1,47 @@
-const JWTAuth = require("../../service/JWTAuth")
-const User = require("../../models/user")
-const EmailVerification = require("../../models/emailVerification")
-const AccountStatus = require("../../constants/accountStatus")
-const UserSchema = require("../../schemas/users")
-const Errors = require("../../errors")
-const { UserTemplates } = require("../../models/notificationTemplates")
-const { getUserWithAuthorization } = require("./users")
+const JWTAuth = require('../../service/JWTAuth')
+const User = require('../../models/user')
+const EmailVerification = require('../../models/emailVerification')
+const AccountStatus = require('../../constants/accountStatus')
+const UserSchema = require('../../schemas/users')
+const Errors = require('../../errors')
+const { UserTemplates } = require('../../models/notificationTemplates')
+const { getUserWithAuthorization } = require('./users')
 
 /************************ Routes ************************/
 
 async function routes(fastify, options) {
 	fastify.route({
-		method: "GET",
-		url: "/users/:user_id/collaborators/",
+		method: 'GET',
+		url: '/users/:user_id/collaborators/',
 		schema: {
-			tags: ["collaborators"],
+			tags: ['collaborators'],
 			description: "Get a user's collaborators",
 			params: {
-				user_id: { type: "string" },
+				user_id: { type: 'string' },
 			},
 			querystring: {
-				search_terms: { type: "string" },
+				search_terms: { type: 'string' },
 				degree: {
-					type: "integer",
+					type: 'integer',
 					minimum: 1,
 					maximum: 4,
 					default: 1,
 				},
 				limit: {
-					type: "integer",
+					type: 'integer',
 					minimum: 1,
 					maximum: 250,
 					default: 50,
 				},
 				skip: {
-					type: "integer",
+					type: 'integer',
 					minimum: 0,
 					default: 0,
 				},
 			},
 			response: {
 				200: {
-					type: "array",
+					type: 'array',
 					items: UserSchema.serialization.collaborator,
 				},
 			},
@@ -52,14 +52,14 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "GET",
-		url: "/users/:user_id/collaborators/:collaborator_id",
+		method: 'GET',
+		url: '/users/:user_id/collaborators/:collaborator_id',
 		schema: {
-			tags: ["collaborators"],
+			tags: ['collaborators'],
 			description: "Get a user's collaborator by ID",
 			params: {
-				user_id: { type: "string" },
-				collaborator_id: { type: "string" },
+				user_id: { type: 'string' },
+				collaborator_id: { type: 'string' },
 			},
 			response: {
 				200: UserSchema.serialization.collaborator,
@@ -71,14 +71,14 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "POST",
-		url: "/users/:user_id/collaborators/",
+		method: 'POST',
+		url: '/users/:user_id/collaborators/',
 		schema: {
-			tags: ["collaborators"],
+			tags: ['collaborators'],
 			description:
 				"Create a new collaborator and add it to the authenticated user's collaborators",
 			params: {
-				user_id: { type: "string" },
+				user_id: { type: 'string' },
 			},
 			body: UserSchema.validation.createCollaborator,
 			response: {
@@ -91,35 +91,35 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "POST",
-		url: "/users/:user_id/collaborators/:collaborator_id",
+		method: 'POST',
+		url: '/users/:user_id/collaborators/:collaborator_id',
 		schema: {
-			tags: ["collaborators"],
+			tags: ['collaborators'],
 			description:
 				"Add an existing user to the authenticated user's collaborators",
 			params: {
-				user_id: { type: "string" },
-				collaborator_id: { type: "string" },
+				user_id: { type: 'string' },
+				collaborator_id: { type: 'string' },
 			},
 			response: {
 				200: UserSchema.serialization.user,
 			},
 			security: [{ bearerAuth: [] }],
-			dbOperation: "update",
+			dbOperation: 'update',
 		},
 		preValidation: JWTAuth.authorizeUserAccess,
 		handler: addCollaboratorById,
 	})
 
 	fastify.route({
-		method: "DELETE",
-		url: "/users/:user_id/collaborators/:collaborator_id",
+		method: 'DELETE',
+		url: '/users/:user_id/collaborators/:collaborator_id',
 		schema: {
-			tags: ["collaborators"],
+			tags: ['collaborators'],
 			description: "Delete a user's collaborator by ID",
 			params: {
-				user_id: { type: "string" },
-				collaborator_id: { type: "string" },
+				user_id: { type: 'string' },
+				collaborator_id: { type: 'string' },
 			},
 			response: {
 				204: {},
@@ -149,14 +149,14 @@ async function getCollaboratorById(req, res) {
 		throw Errors.CollaboratorNotFound
 
 	return await User.findById(req.params.collaborator_id).populate(
-		"_pendingEmails"
+		'_pendingEmails'
 	)
 }
 
 async function createCollaborator(req, res) {
 	const user = await getUserWithAuthorization(req)
 	const collaborator = await user.createCollaborator(req.body)
-	await collaborator.populate("_pendingEmails").execPopulate()
+	await collaborator.populate('_pendingEmails').execPopulate()
 	res.code(201)
 	req.setTransactionResource(collaborator)
 	return collaborator

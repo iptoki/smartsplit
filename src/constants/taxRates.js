@@ -1,4 +1,4 @@
-const Constant = require("./constant")
+const Constant = require('./constant')
 
 const GST = 0.05
 const QST = 0.09775
@@ -11,13 +11,13 @@ class TaxRates extends Constant {
 		return QST
 	}
 	static PST(stateCode) {
-		return stateCode.toUpperCase() === "QC" ? QST : 0
+		return stateCode.toUpperCase() === 'QC' ? QST : 0
 	}
 	static get list() {
 		return [GST, QST]
 	}
 	static get constantName() {
-		return "TaxRates"
+		return 'TaxRates'
 	}
 }
 

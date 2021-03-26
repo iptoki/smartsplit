@@ -1,13 +1,13 @@
-const mongoose = require("mongoose")
-const Config = require("../config")
+const mongoose = require('mongoose')
+const Config = require('../config')
 
 // remove deprecation warnings when using Model.findOneAndX()
-mongoose.set("useFindAndModify", false)
+mongoose.set('useFindAndModify', false)
 
 // Global model function
 mongoose.plugin(function (schema, options) {
 	schema.statics.ensureExistsAndRetrieve = function (filter, paths = []) {
-		if (typeof filter === "string") filter = { _id: filter }
+		if (typeof filter === 'string') filter = { _id: filter }
 		const errName = `${this.modelName}NotFound`
 		return this.findOne(this.translateAliases(filter))
 			.populate(paths)
@@ -20,16 +20,16 @@ mongoose.plugin(function (schema, options) {
 
 // Connect database
 mongoose
-	.connect(process.env["MONGODB_PATH"] || Config.mongodb.uri, {
+	.connect(process.env['MONGODB_PATH'] || Config.mongodb.uri, {
 		useNewUrlParser: true,
 		useUnifiedTopology: true,
 	})
 	.then(() => {
 		// Buckets for file hosting
-		Object.defineProperty(mongoose, "bucket", {
+		Object.defineProperty(mongoose, 'bucket', {
 			value: {
 				protectedWork: new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
-					bucketName: "protectedWork",
+					bucketName: 'protectedWork',
 				}),
 			},
 		})

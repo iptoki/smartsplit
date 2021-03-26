@@ -1,12 +1,12 @@
-const uuid = require("uuid").v4
-const mongoose = require("mongoose")
-const localeSchema = require("./locale")
+const uuid = require('uuid').v4
+const mongoose = require('mongoose')
+const localeSchema = require('./locale')
 
 const PromoSchema = new mongoose.Schema(
 	{
 		_id: {
 			type: String,
-			alias: "code",
+			alias: 'code',
 		},
 		organisation: localeSchema,
 		description: localeSchema,
@@ -16,4 +16,4 @@ const PromoSchema = new mongoose.Schema(
 	{ toJSON: { virtuals: true }, toObject: { virtuals: true } }
 )
 
-module.exports = mongoose.model("Promo", PromoSchema)
+module.exports = mongoose.model('Promo', PromoSchema)

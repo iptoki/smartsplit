@@ -1,31 +1,31 @@
-const Errors = require("../errors")
-const Product = require("../models/product")
-const Purchase = require("../models/purchase")
-const ProductSchema = require("../schemas/products")
-const JWTAuth = require("../service/JWTAuth")
+const Errors = require('../errors')
+const Product = require('../models/product')
+const Purchase = require('../models/purchase')
+const ProductSchema = require('../schemas/products')
+const JWTAuth = require('../service/JWTAuth')
 
 async function routes(fastify, options) {
 	fastify.route({
-		method: "GET",
-		url: "/products/",
+		method: 'GET',
+		url: '/products/',
 		schema: {
-			tags: ["products"],
-			description: "Get Products",
+			tags: ['products'],
+			description: 'Get Products',
 			response: {
-				200: { type: "array", items: ProductSchema.serialization.product },
+				200: { type: 'array', items: ProductSchema.serialization.product },
 			},
 		},
 		handler: getProducts,
 	})
 
 	fastify.route({
-		method: "GET",
-		url: "/products/:product_code",
+		method: 'GET',
+		url: '/products/:product_code',
 		schema: {
-			tags: ["products"],
-			description: "Get Product by code",
+			tags: ['products'],
+			description: 'Get Product by code',
 			params: {
-				product_code: { type: "string" },
+				product_code: { type: 'string' },
 			},
 			response: {
 				200: ProductSchema.serialization.product,
@@ -35,14 +35,14 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "POST",
-		url: "/products/",
+		method: 'POST',
+		url: '/products/',
 		schema: {
-			tags: ["products"],
-			description: "Create new Product",
+			tags: ['products'],
+			description: 'Create new Product',
 			body: {
 				allOf: [ProductSchema.validation.createProduct],
-				required: ["code", "name", "description", "price"],
+				required: ['code', 'name', 'description', 'price'],
 			},
 			response: {
 				201: ProductSchema.serialization.product,
@@ -54,13 +54,13 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "PATCH",
-		url: "/products/:product_code",
+		method: 'PATCH',
+		url: '/products/:product_code',
 		schema: {
-			tags: ["products"],
-			description: "Edit Product",
+			tags: ['products'],
+			description: 'Edit Product',
 			params: {
-				product_code: { type: "string" },
+				product_code: { type: 'string' },
 			},
 			body: ProductSchema.validation.updateProduct,
 			response: {
@@ -73,13 +73,13 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "DELETE",
-		url: "/products/:product_code",
+		method: 'DELETE',
+		url: '/products/:product_code',
 		schema: {
-			tags: ["products"],
-			description: "delete a Product",
+			tags: ['products'],
+			description: 'delete a Product',
 			params: {
-				product_code: { type: "string" },
+				product_code: { type: 'string' },
 			},
 			response: {
 				204: {},

@@ -1,32 +1,32 @@
-const mongoose = require("mongoose")
-const uuid = require("uuid").v4
-const Config = require("../config")
-const Address = require("./address")
-const EmailVerification = require("./emailVerification")
-const NotificationTypes = require("../constants/notificationTypes")
-const UserTypes = require("../constants/userTypes")
-const AccountStatus = require("../constants/accountStatus")
-const JWT = require("../utils/jwt")
-const PasswordUtil = require("../utils/password")
-const { sendTemplateTo, normalizeEmailAddress } = require("../utils/email")
-const { generateRandomCode } = require("../utils/random")
-const Errors = require("../errors")
-const { sendSMSTo } = require("../service/twilio")
-const { UserTemplates, generateTemplate } = require("./notificationTemplates")
+const mongoose = require('mongoose')
+const uuid = require('uuid').v4
+const Config = require('../config')
+const Address = require('./address')
+const EmailVerification = require('./emailVerification')
+const NotificationTypes = require('../constants/notificationTypes')
+const UserTypes = require('../constants/userTypes')
+const AccountStatus = require('../constants/accountStatus')
+const JWT = require('../utils/jwt')
+const PasswordUtil = require('../utils/password')
+const { sendTemplateTo, normalizeEmailAddress } = require('../utils/email')
+const { generateRandomCode } = require('../utils/random')
+const Errors = require('../errors')
+const { sendSMSTo } = require('../service/twilio')
+const { UserTemplates, generateTemplate } = require('./notificationTemplates')
 
-const JWT_RESET_TYPE = "user:password-reset"
-const JWT_ACTIVATE_TYPE = "user:activate"
-const JWT_SPLIT_TYPE = "right-split"
+const JWT_RESET_TYPE = 'user:password-reset'
+const JWT_ACTIVATE_TYPE = 'user:activate'
+const JWT_SPLIT_TYPE = 'right-split'
 
 const NotificationSchema = new mongoose.Schema(
 	{
 		[NotificationTypes.GENERAL_INTERACTIONS]: {
 			type: Array,
-			default: ["email", "push"],
+			default: ['email', 'push'],
 		},
 		[NotificationTypes.ADMINISTRATIVE_MESSAGES]: {
 			type: Array,
-			default: ["email", "push"],
+			default: ['email', 'push'],
 		},
 		[NotificationTypes.ACCOUNT_LOGIN]: Array,
 		[NotificationTypes.SMARTSPLIT_BLOG]: Array,
@@ -86,7 +86,7 @@ const ProfessionalIdentitySchema = new mongoose.Schema(
 const PaymentSchema = new mongoose.Schema(
 	{
 		stripe_id: { type: String },
-		billingAddress: { type: String, ref: "Address" },
+		billingAddress: { type: String, ref: 'Address' },
 	},
 	{ _id: false }
 )
@@ -98,7 +98,7 @@ const UserSchema = new mongoose.Schema(
 	{
 		_id: {
 			type: String,
-			alias: "user_id",
+			alias: 'user_id',
 			default: uuid,
 		},
 		types: [{ type: String, enum: UserTypes.list }],
@@ -124,8 +124,8 @@ const UserSchema = new mongoose.Schema(
 		},
 		locale: {
 			type: String,
-			default: "fr",
-			enum: ["fr", "en"],
+			default: 'fr',
+			enum: ['fr', 'en'],
 		},
 		mobilePhone: {
 			type: MobilePhoneSchema,
@@ -149,7 +149,7 @@ const UserSchema = new mongoose.Schema(
 		},
 		collaborators: {
 			type: [String],
-			ref: "User",
+			ref: 'User',
 		},
 	},
 	{ toJSON: { virtuals: true }, toObject: { virtuals: true } }
@@ -158,19 +158,19 @@ const UserSchema = new mongoose.Schema(
 /**
  * Define a virtual property that makes a reference to EmailVerification documents
  */
-UserSchema.virtual("_pendingEmails", {
-	ref: "EmailVerification",
-	localField: "_id",
-	foreignField: "user",
+UserSchema.virtual('_pendingEmails', {
+	ref: 'EmailVerification',
+	localField: '_id',
+	foreignField: 'user',
 })
 
-UserSchema.virtual("addresses", {
-	ref: "Address",
-	localField: "_id",
-	foreignField: "user",
+UserSchema.virtual('addresses', {
+	ref: 'Address',
+	localField: '_id',
+	foreignField: 'user',
 })
 
-UserSchema.virtual("pendingEmails").get(function () {
+UserSchema.virtual('pendingEmails').get(function () {
 	if (!Array.isArray(this._pendingEmails)) return []
 	return this._pendingEmails.map((x) => x._id)
 })
@@ -178,21 +178,21 @@ UserSchema.virtual("pendingEmails").get(function () {
 /**
  * Returns the full name of the user (Firstname + Lastname)
  */
-UserSchema.virtual("fullName").get(function () {
+UserSchema.virtual('fullName').get(function () {
 	if (this.firstName && this.lastName)
-		return this.firstName + " " + this.lastName
+		return `${this.firstName} ${this.lastName}`
 
 	if (this.firstName) return this.firstName
 
 	if (this.lastName) return this.lastName
 
-	return "Guest"
+	return 'Guest'
 })
 
 /**
  * Returns the primary email of this user
  */
-UserSchema.virtual("email").get(function () {
+UserSchema.virtual('email').get(function () {
 	if (this.emails.length > 0) return this.emails[0]
 	if (this.pendingEmails.length > 0) return this.pendingEmails[0]
 	return null
@@ -201,7 +201,7 @@ UserSchema.virtual("email").get(function () {
 /**
  * Returns an email object of {name, email} to send email to/from this user
  */
-UserSchema.virtual("$email").get(function () {
+UserSchema.virtual('$email').get(function () {
 	return {
 		name: this.fullName || this.email,
 		email: this.email,
@@ -211,43 +211,43 @@ UserSchema.virtual("$email").get(function () {
 /**
  * Returns the user's avatarUrl
  */
-UserSchema.virtual("avatarUrl").get(function () {
+UserSchema.virtual('avatarUrl').get(function () {
 	if (!this.avatar) return undefined
-	return Config.apiUrl + "/users/" + this._id + "/avatar"
+	return `${Config.apiUrl}/users/${this._id}/avatar`
 })
 
 /**
  * Returns whether the current user is an administrator
  */
-UserSchema.virtual("isAdmin").get(function () {
+UserSchema.virtual('isAdmin').get(function () {
 	return this.types.includes(UserTypes.ADMIN)
 })
 
 /**
  * Returns whether the current user is of type logistic
  */
-UserSchema.virtual("isLogistic").get(function () {
+UserSchema.virtual('isLogistic').get(function () {
 	return this.types.includes(UserTypes.LOGISTIC)
 })
 
 /**
  * Returns whether the current account status is active
  */
-UserSchema.virtual("isActive").get(function () {
+UserSchema.virtual('isActive').get(function () {
 	return this.accountStatus === AccountStatus.ACTIVE
 })
 
 /**
  * Returns whether the current account status is deleted
  */
-UserSchema.virtual("isDeleted").get(function () {
+UserSchema.virtual('isDeleted').get(function () {
 	return this.accountStatus === AccountStatus.DELETED
 })
 
 /**
  * Returns whether this account can be activated with an account activation token
  */
-UserSchema.virtual("canActivate").get(function () {
+UserSchema.virtual('canActivate').get(function () {
 	return AccountStatus.activableStatus.includes(this.accountStatus)
 })
 
@@ -271,9 +271,9 @@ UserSchema.query.byEmail = function (email) {
  * Looks up the database for a user by mobile phone
  */
 UserSchema.query.byMobilePhone = function (number, isVerified) {
-	const query = this.where({ "mobilePhone.number": number })
-	if (typeof isVerified === "boolean")
-		return query.where({ "mobilePhone.isVerified": isVerified })
+	const query = this.where({ 'mobilePhone.number': number })
+	if (typeof isVerified === 'boolean')
+		return query.where({ 'mobilePhone.isVerified': isVerified })
 	return query
 }
 
@@ -308,10 +308,10 @@ UserSchema.query.byActivationToken = function (token) {
 }
 
 UserSchema.methods.getCollaboratorsByDegrees = async function (degree = 1) {
-	let path = { path: "collaborators" }
+	let path = { path: 'collaborators' }
 	let curPath = path
 	for (let d = 2; d <= degree + 1; d++) {
-		curPath.populate = [{ path: "collaborators" }, { path: "_pendingEmails" }]
+		curPath.populate = [{ path: 'collaborators' }, { path: '_pendingEmails' }]
 		curPath = curPath.populate[0]
 	}
 	await this.populate(path).execPopulate()
@@ -327,15 +327,15 @@ UserSchema.methods.getCollaboratorsByDegrees = async function (degree = 1) {
 
 UserSchema.methods.getCollaborators = async function (
 	degree = 1,
-	search_terms = "",
+	search_terms = '',
 	limit = 1,
 	skip = 0
 ) {
 	let regex = new RegExp()
 	if (search_terms) {
 		let s_t = [search_terms]
-		if (search_terms.includes(" ")) s_t = s_t.concat(search_terms.split(" "))
-		regex = new RegExp(s_t.join("|"), "i")
+		if (search_terms.includes(' ')) s_t = s_t.concat(search_terms.split(' '))
+		regex = new RegExp(s_t.join('|'), 'i')
 	}
 	let result = []
 	let _limit = limit + skip
@@ -369,7 +369,7 @@ UserSchema.methods.getCollaborators = async function (
 				},
 			],
 		})
-			.populate("_pendingEmails")
+			.populate('_pendingEmails')
 			.limit(_limit)
 		result = result.concat(matches)
 	}
@@ -403,7 +403,7 @@ UserSchema.methods.setPassword = async function (password, force = false) {
  * Sets the user's mobile phone
  */
 UserSchema.methods.setMobilePhone = async function (number) {
-	if (number === "") {
+	if (number === '') {
 		this.mobilePhone = undefined
 		return
 	}
@@ -441,7 +441,7 @@ UserSchema.methods.setProfessionalIdentity = function (professionalIdentity) {
 			this.professionalIdentity.ids.push({ name, value })
 	}
 
-	if (typeof professionalIdentity.public === "boolean")
+	if (typeof professionalIdentity.public === 'boolean')
 		this.professionalIdentity.public = professionalIdentity.public
 }
 
@@ -450,7 +450,7 @@ UserSchema.methods.setNotifications = function (notifications) {
 		if (!Array.isArray(notifications[type])) continue
 		if (NotificationTypes.mandatoryTypes.includes(type))
 			this.notifications[type] = Array.from(
-				new Set([...notifications[type], "email", "push"])
+				new Set([...notifications[type], 'email', 'push'])
 			)
 		else this.notifications[type] = notifications[type]
 	}
@@ -461,7 +461,7 @@ UserSchema.methods.setNotifications = function (notifications) {
  */
 UserSchema.methods.setAvatar = function (avatar) {
 	if (avatar.length > 1024 * 1024 * 4 /* 4 MB */)
-		throw new Error("Maximum file size is 4 MB")
+		throw new Error('Maximum file size is 4 MB')
 
 	this.avatar = avatar
 }
@@ -501,7 +501,7 @@ UserSchema.methods.addPendingEmail = async function (
 ) {
 	let [duplicate, emailVerif] = await Promise.all([
 		User.findOne().byEmail(email),
-		EmailVerification.findOne().byEmail(email).populate("user"),
+		EmailVerification.findOne().byEmail(email).populate('user'),
 	])
 
 	if (duplicate) throw Errors.ConflictingEmail
@@ -543,23 +543,23 @@ UserSchema.methods.addPendingEmail = async function (
 
 UserSchema.methods.update = async function (data) {
 	for (let field of [
-		"firstName",
-		"lastName",
-		"artistName",
-		"locale",
-		"isni",
-		"birthDate",
-		"address",
-		"organisations",
-		"projects",
-		"uri",
+		'firstName',
+		'lastName',
+		'artistName',
+		'locale',
+		'isni',
+		'birthDate',
+		'address',
+		'organisations',
+		'projects',
+		'uri',
 	])
 		if (data[field] !== undefined) this[field] = data[field]
 
 	if (data.professionalIdentity !== undefined)
 		this.setProfessionalIdentity(data.professionalIdentity)
 	if (data.avatar !== undefined)
-		this.setAvatar(Buffer.from(data.avatar, "base64"))
+		this.setAvatar(Buffer.from(data.avatar, 'base64'))
 	if (data.notifications !== undefined)
 		this.setNotifications(data.notifications)
 
@@ -634,7 +634,7 @@ UserSchema.methods.deleteAddress = function (address_id) {
 UserSchema.methods.deleteCollaboratorById = function (id) {
 	const n = this.collaborators.length
 	this.collaborators = this.collaborators.filter(function (item) {
-		if (typeof item === "string") return item !== id
+		if (typeof item === 'string') return item !== id
 		return item._id !== id
 	})
 	return n > this.collaborators.length
@@ -646,7 +646,7 @@ UserSchema.methods.deleteCollaboratorById = function (id) {
 UserSchema.methods.deleteAccount = async function () {
 	await EmailVerification.deleteMany({ user: this._id })
 	this.accountStatus = AccountStatus.DELETED
-	this.locale = "en"
+	this.locale = 'en'
 	this.password = undefined
 	this.emails = undefined
 	this.firstName = undefined
@@ -707,7 +707,7 @@ UserSchema.methods.verifyPasswordResetToken = function (token) {
  */
 UserSchema.methods.createPasswordResetToken = function (
 	email,
-	expires = "2 hours"
+	expires = '2 hours'
 ) {
 	return JWT.create(
 		JWT_RESET_TYPE,
@@ -725,7 +725,7 @@ UserSchema.methods.createPasswordResetToken = function (
  */
 UserSchema.methods.createActivationToken = function (
 	email,
-	expires = "2 weeks"
+	expires = '2 weeks'
 ) {
 	const token = JWT.create(
 		JWT_ACTIVATE_TYPE,
@@ -745,12 +745,12 @@ UserSchema.methods.createCollaborator = async function (data) {
 	if (!collaborator) {
 		let emailVerif = await EmailVerification.findOne()
 			.byEmail(data.email)
-			.populate("user")
+			.populate('user')
 
 		if (emailVerif && emailVerif.user) collaborator = emailVerif.user
 		else {
 			collaborator = new User({
-				firstName: data.email.split("@")[0],
+				firstName: data.email.split('@')[0],
 				...data,
 			})
 			await collaborator.addPendingEmail(data.email, UserTemplates.INVITED, {
@@ -794,18 +794,18 @@ UserSchema.methods.sendSMS = async function (
 	checkNotif = true
 ) {
 	try {
-		const template = generateTemplate(templateName, "sms", this)
+		const template = generateTemplate(templateName, 'sms', this)
 
 		if (
 			!template ||
 			(checkNotif &&
-				!this.notifications[template.notificationType].includes("sms"))
+				!this.notifications[template.notificationType].includes('sms'))
 		)
 			return null
 
 		await sendSMSTo(this, template.message, verifiedOnly)
 	} catch (err) {
-		console.log("Error while sending SMS notification: " + err)
+		console.warn(`Error while sending SMS notification: ${err}`)
 	}
 }
 
@@ -814,17 +814,17 @@ UserSchema.methods.sendSMS = async function (
  */
 UserSchema.methods.sendEmail = async function (templateName, options = {}) {
 	try {
-		const template = generateTemplate(templateName, "email", this, options)
+		const template = generateTemplate(templateName, 'email', this, options)
 
 		if (
 			!template ||
-			!this.notifications[template.notificationType].includes("email")
+			!this.notifications[template.notificationType].includes('email')
 		)
 			return null
 
 		await sendTemplateTo(template.id, this, options, template.data)
 	} catch (err) {
-		console.log("Error while sending email notification: " + err + err.stack)
+		console.warn(`Error while sending email notification: ${err} ${err.stack}`)
 	}
 }
 
@@ -832,7 +832,7 @@ UserSchema.methods.sendEmail = async function (templateName, options = {}) {
  * Sends a Push notification to the user
  */
 UserSchema.methods.sendPush = function (templateName) {
-	return "push not implemented"
+	return 'push not implemented'
 }
 
 UserSchema.statics.activate = async function (token, checkPassword = true) {
@@ -856,14 +856,14 @@ UserSchema.statics.activate = async function (token, checkPassword = true) {
 
 UserSchema.statics.create = async function (data) {
 	data = {
-		firstName: data.email.split("@")[0],
+		firstName: data.email.split('@')[0],
 		...data,
 	}
 
 	let user
 	let emailVerif = await EmailVerification.findOne()
 		.byEmail(data.email)
-		.populate("user")
+		.populate('user')
 
 	if (emailVerif) {
 		if (!emailVerif.user) await emailVerif.remove()
@@ -883,6 +883,6 @@ UserSchema.statics.create = async function (data) {
 	return user
 }
 
-const User = mongoose.model("User", UserSchema)
+const User = mongoose.model('User', UserSchema)
 
 module.exports = User

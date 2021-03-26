@@ -1,37 +1,37 @@
-const JWTAuth = require("../service/JWTAuth")
-const Entity = require("../models/entities/entity")
-const EntitySchema = require("../schemas/entities")
-const EntityTypes = require("../constants/entityTypes")
-const Errors = require("../errors")
+const JWTAuth = require('../service/JWTAuth')
+const Entity = require('../models/entities/entity')
+const EntitySchema = require('../schemas/entities')
+const EntityTypes = require('../constants/entityTypes')
+const Errors = require('../errors')
 
 /************************ Routes ************************/
 
 async function routes(fastify, options) {
 	fastify.route({
-		method: "GET",
-		url: "/entities/:entity_type/",
+		method: 'GET',
+		url: '/entities/:entity_type/',
 		schema: {
-			tags: ["entities"],
-			description: "Get a list of entities by type and optional search terms",
+			tags: ['entities'],
+			description: 'Get a list of entities by type and optional search terms',
 			params: {
-				entity_type: { type: "string", enum: EntityTypes.list },
+				entity_type: { type: 'string', enum: EntityTypes.list },
 			},
 			querystring: {
-				search_terms: { type: "string" },
+				search_terms: { type: 'string' },
 				limit: {
-					type: "integer",
+					type: 'integer',
 					default: 50,
 					minimum: 1,
 					maximum: 250,
 				},
 				skip: {
-					type: "integer",
+					type: 'integer',
 					default: 0,
 					minimum: 0,
 				},
 			},
 			response: {
-				200: { type: "array", items: { type: "object" } },
+				200: { type: 'array', items: { type: 'object' } },
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -40,16 +40,16 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "GET",
-		url: "/entities/:entity_id",
+		method: 'GET',
+		url: '/entities/:entity_id',
 		schema: {
-			tags: ["entities"],
-			description: "Get an entity by ID",
+			tags: ['entities'],
+			description: 'Get an entity by ID',
 			params: {
-				entity_id: { type: "string" },
+				entity_id: { type: 'string' },
 			},
 			response: {
-				200: { type: "object" },
+				200: { type: 'object' },
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -58,17 +58,17 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "POST",
-		url: "/entities/:entity_type/",
+		method: 'POST',
+		url: '/entities/:entity_type/',
 		schema: {
-			tags: ["entities"],
-			description: "Create a new entity",
+			tags: ['entities'],
+			description: 'Create a new entity',
 			params: {
-				entity_type: { type: "string", enum: EntityTypes.list },
+				entity_type: { type: 'string', enum: EntityTypes.list },
 			},
 			body: EntitySchema.validation.createUpdateEntity,
 			response: {
-				201: { type: "object" },
+				201: { type: 'object' },
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -77,17 +77,17 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "PATCH",
-		url: "/entities/:entity_id",
+		method: 'PATCH',
+		url: '/entities/:entity_id',
 		schema: {
-			tags: ["entities"],
-			description: "Update an entity by ID",
+			tags: ['entities'],
+			description: 'Update an entity by ID',
 			params: {
-				entity_id: { type: "string" },
+				entity_id: { type: 'string' },
 			},
 			body: EntitySchema.validation.createUpdateEntity,
 			response: {
-				200: { type: "object" },
+				200: { type: 'object' },
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -96,13 +96,13 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "DELETE",
-		url: "/entities/:entity_id",
+		method: 'DELETE',
+		url: '/entities/:entity_id',
 		schema: {
-			tags: ["entities"],
-			description: "Delete an entity by ID",
+			tags: ['entities'],
+			description: 'Delete an entity by ID',
 			params: {
-				entity_id: { type: "string" },
+				entity_id: { type: 'string' },
 			},
 			response: {
 				204: {},
@@ -117,12 +117,12 @@ async function routes(fastify, options) {
 	// Seed a list of entities in the database.
 	// Data set that will be seeded are located in /smartsplit/data/
 	fastify.route({
-		method: "POST",
-		url: "/entities/:entity_type/seed",
+		method: 'POST',
+		url: '/entities/:entity_type/seed',
 		schema: {
 			hide: true,
 			params: {
-				entity_type: { type: "string", enum: EntityTypes.list },
+				entity_type: { type: 'string', enum: EntityTypes.list },
 			},
 		},
 		preValidation: JWTAuth.requireAuthAdmin,
@@ -181,20 +181,20 @@ async function getEntityById(req, res) {
 }
 
 async function getEntities(req, res) {
-	let regex = ""
+	let regex = ''
 	if (req.query.search_terms) {
 		let search_terms = [req.query.search_terms]
-		if (req.query.search_terms.includes(" "))
-			search_terms = search_terms.concat(req.query.search_terms.split(" "))
-		regex = new RegExp(search_terms.join("|"))
+		if (req.query.search_terms.includes(' '))
+			search_terms = search_terms.concat(req.query.search_terms.split(' '))
+		regex = new RegExp(search_terms.join('|'))
 	}
 
 	let query = Entity.find({
 		type: req.params.entity_type,
 		$or: [
-			{ name: { $regex: regex, $options: "i" } },
-			{ "langs.en": { $regex: regex, $options: "i" } },
-			{ "langs.fr": { $regex: regex, $options: "i" } },
+			{ name: { $regex: regex, $options: 'i' } },
+			{ 'langs.en': { $regex: regex, $options: 'i' } },
+			{ 'langs.fr': { $regex: regex, $options: 'i' } },
 		],
 	})
 		.skip(parseInt(req.query.skip))
@@ -205,7 +205,7 @@ async function getEntities(req, res) {
 
 	const entities = await query.exec()
 	res.schema({
-		type: "array",
+		type: 'array',
 		items: EntitySchema.serialization[req.params.entity_type],
 	})
 	return entities
@@ -248,9 +248,9 @@ async function deleteEntity(req, res) {
 }
 
 async function seedEntities(req, res) {
-	const fs = require("fs")
-	const uuid = require("uuid").v4
-	const data = fs.readFileSync(`./data/${req.params.entity_type}s.json`, "utf8")
+	const fs = require('fs')
+	const uuid = require('uuid').v4
+	const data = fs.readFileSync(`./data/${req.params.entity_type}s.json`, 'utf8')
 	const entities = JSON.parse(data)
 	const entityModel = Entity.getEntityModel(req.params.entity_type)
 	let promises = []
@@ -260,7 +260,7 @@ async function seedEntities(req, res) {
 		promises.push(entity.save())
 	}
 	await Promise.all(promises)
-	return "success"
+	return 'success'
 }
 
 module.exports = routes

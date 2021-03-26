@@ -1,41 +1,41 @@
-const Errors = require("../../errors")
-const User = require("../../models/user")
-const { UserTemplates } = require("../../models/notificationTemplates")
-const JWTAuth = require("../../service/JWTAuth")
-const RightSplitSchema = require("../../schemas/rightSplits")
-const Contract = require("../../models/contractTemplates")
+const Errors = require('../../errors')
+const User = require('../../models/user')
+const { UserTemplates } = require('../../models/notificationTemplates')
+const JWTAuth = require('../../service/JWTAuth')
+const RightSplitSchema = require('../../schemas/rightSplits')
+const Contract = require('../../models/contractTemplates')
 
 /************************ Routes ************************/
 
 async function routes(fastify, options) {
 	fastify.route({
-		method: "POST",
-		url: "/workpieces/:workpiece_id/rightSplit",
+		method: 'POST',
+		url: '/workpieces/:workpiece_id/rightSplit',
 		schema: {
-			tags: ["right_splits"],
-			description: "Create a new right splits in a workpiece",
+			tags: ['right_splits'],
+			description: 'Create a new right splits in a workpiece',
 			params: {
-				workpiece_id: { type: "string" },
+				workpiece_id: { type: 'string' },
 			},
 			body: RightSplitSchema.validation.createUpdateRightSplit,
 			response: {
 				201: RightSplitSchema.serialization.rightSplit,
 			},
 			security: [{ bearerAuth: [] }],
-			dbOperation: "update",
+			dbOperation: 'update',
 		},
 		preValidation: JWTAuth.requireAuthUser,
 		handler: create,
 	})
 
 	fastify.route({
-		method: "PATCH",
-		url: "/workpieces/:workpiece_id/rightSplit",
+		method: 'PATCH',
+		url: '/workpieces/:workpiece_id/rightSplit',
 		schema: {
-			tags: ["right_splits"],
+			tags: ['right_splits'],
 			description: "Update a workpiece's right splits",
 			params: {
-				workpiece_id: { type: "string" },
+				workpiece_id: { type: 'string' },
 			},
 			body: RightSplitSchema.validation.createUpdateRightSplit,
 			response: {
@@ -48,13 +48,13 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "DELETE",
-		url: "/workpieces/:workpiece_id/rightSplit",
+		method: 'DELETE',
+		url: '/workpieces/:workpiece_id/rightSplit',
 		schema: {
-			tags: ["right_splits"],
+			tags: ['right_splits'],
 			description: "Delete a workpiece's right splits",
 			params: {
-				workpiece_id: { type: "string" },
+				workpiece_id: { type: 'string' },
 			},
 			response: {
 				204: {},
@@ -66,60 +66,60 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "POST",
-		url: "/workpieces/:workpiece_id/rightSplit/submit",
+		method: 'POST',
+		url: '/workpieces/:workpiece_id/rightSplit/submit',
 		schema: {
-			tags: ["right_splits"],
+			tags: ['right_splits'],
 			description: "Submit a workpiece's right splits to the right holders",
 			params: {
-				workpiece_id: { type: "string" },
+				workpiece_id: { type: 'string' },
 			},
 			body: RightSplitSchema.validation.submitRightSplit,
 			response: {
 				204: {},
 			},
 			security: [{ bearerAuth: [] }],
-			dbOperation: "update",
+			dbOperation: 'update',
 		},
 		preValidation: JWTAuth.requireAuthUser,
 		handler: submit,
 	})
 
 	fastify.route({
-		method: "POST",
-		url: "/workpieces/:workpiece_id/rightSplit/vote",
+		method: 'POST',
+		url: '/workpieces/:workpiece_id/rightSplit/vote',
 		schema: {
-			tags: ["right_splits"],
-			description: "Vote for accepting or refusing a right split",
+			tags: ['right_splits'],
+			description: 'Vote for accepting or refusing a right split',
 			params: {
-				workpiece_id: { type: "string" },
+				workpiece_id: { type: 'string' },
 			},
 			body: RightSplitSchema.validation.voteRightSplit,
 			response: {
 				204: {},
 			},
 			security: [{ bearerAuth: [] }],
-			dbOperation: "update",
+			dbOperation: 'update',
 		},
 		preValidation: JWTAuth.requireAuthUser,
 		handler: vote,
 	})
 
 	fastify.route({
-		method: "POST",
-		url: "/workpieces/:workpiece_id/rightSplit/swap-user",
+		method: 'POST',
+		url: '/workpieces/:workpiece_id/rightSplit/swap-user',
 		schema: {
-			tags: ["right_splits"],
+			tags: ['right_splits'],
 			description:
-				"Substitute a right holders in a split by replacing it by an other one",
+				'Substitute a right holders in a split by replacing it by an other one',
 			params: {
-				workpiece_id: { type: "string" },
+				workpiece_id: { type: 'string' },
 			},
 			body: {
-				type: "object",
-				required: ["token"],
+				type: 'object',
+				required: ['token'],
 				properties: {
-					token: { type: "string" },
+					token: { type: 'string' },
 				},
 				additionalProperties: false,
 			},
@@ -127,23 +127,23 @@ async function routes(fastify, options) {
 				204: {},
 			},
 			security: [{ bearerAuth: [] }],
-			dbOperation: "update",
+			dbOperation: 'update',
 		},
 		preValidation: JWTAuth.requireAuthUser,
 		handler: swapUser,
 	})
 
 	fastify.route({
-		method: "GET",
-		url: "/workpieces/:workpiece_id/rightSplit/contract",
+		method: 'GET',
+		url: '/workpieces/:workpiece_id/rightSplit/contract',
 		schema: {
-			tags: ["right_splits"],
+			tags: ['right_splits'],
 			description: "Get the rightsplit's contract",
 			params: {
-				workpiece_id: { type: "string" },
+				workpiece_id: { type: 'string' },
 			},
 			response: {
-				200: { type: "object", additionalProperties: true },
+				200: { type: 'object', additionalProperties: true },
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -158,7 +158,7 @@ const {
 	getWorkpiece,
 	getWorkpieceAsOwner,
 	getWorkpieceAsRightHolder,
-} = require("./workpieces")
+} = require('./workpieces')
 
 const getWorkpieceAsAuthorizedUser = async function (req, res) {
 	let workpiece

@@ -1,5 +1,5 @@
-const uuid = require("uuid").v4
-const mongoose = require("mongoose")
+const uuid = require('uuid').v4
+const mongoose = require('mongoose')
 
 const TransactionSchema = new mongoose.Schema({
 	_id: {
@@ -31,7 +31,7 @@ const TransactionSchema = new mongoose.Schema({
 	authUserId: String,
 	dbOperation: {
 		type: String,
-		enum: ["delete", "insert", "update", "noop"],
+		enum: ['delete', 'insert', 'update', 'noop'],
 	},
 	resource: mongoose.Mixed,
 	resourceCollection: String,
@@ -47,9 +47,9 @@ const TransactionSchema = new mongoose.Schema({
 	},
 	createdAt: {
 		type: Date,
-		expires: "30d", // 30 days
+		expires: '30d', // 30 days
 		default: Date.now,
 	},
 })
 
-module.exports = mongoose.model("Transaction", TransactionSchema)
+module.exports = mongoose.model('Transaction', TransactionSchema)

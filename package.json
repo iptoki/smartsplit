@@ -27,5 +27,8 @@
 	"scripts": {
 		"start": "nodemon .",
 		"format": "prettier --write src/ *.js *.json"
+	},
+	"devDependencies": {
+		"eslint": "^7.22.0"
 	}
 }

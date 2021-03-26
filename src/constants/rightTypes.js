@@ -1,10 +1,10 @@
-const Constant = require("./constant")
+const Constant = require('./constant')
 
-const COPYRIGHT = "copyright"
-const PERFORMANCE = "performance"
-const RECORDING = "recording"
-const LABEL = "label"
-const PRIVACY = "privacy"
+const COPYRIGHT = 'copyright'
+const PERFORMANCE = 'performance'
+const RECORDING = 'recording'
+const LABEL = 'label'
+const PRIVACY = 'privacy'
 
 class RightTypes extends Constant {
 	static get COPYRIGHT() {
@@ -26,7 +26,7 @@ class RightTypes extends Constant {
 		return [COPYRIGHT, PERFORMANCE, RECORDING, LABEL, PRIVACY]
 	}
 	static get constantName() {
-		return "RightType"
+		return 'RightType'
 	}
 }
 

@@ -1,23 +1,23 @@
-const User = require("../../models/user")
-const { UserTemplates } = require("../../models/notificationTemplates")
-const EmailVerification = require("../../models/emailVerification")
-const UserSchema = require("../../schemas/users")
-const AuthSchema = require("../../schemas/auth")
-const AccountStatus = require("../../constants/accountStatus")
-const Errors = require("../../errors")
-const JWTAuth = require("../../service/JWTAuth")
+const User = require('../../models/user')
+const { UserTemplates } = require('../../models/notificationTemplates')
+const EmailVerification = require('../../models/emailVerification')
+const UserSchema = require('../../schemas/users')
+const AuthSchema = require('../../schemas/auth')
+const AccountStatus = require('../../constants/accountStatus')
+const Errors = require('../../errors')
+const JWTAuth = require('../../service/JWTAuth')
 
 /************************ Routes ************************/
 
 async function routes(fastify, options) {
 	fastify.route({
-		method: "GET",
-		url: "/users/:user_id",
+		method: 'GET',
+		url: '/users/:user_id',
 		schema: {
-			tags: ["users_general"],
-			description: "Get a user by ID",
+			tags: ['users_general'],
+			description: 'Get a user by ID',
 			params: {
-				user_id: { type: "string" },
+				user_id: { type: 'string' },
 			},
 			response: {
 				200: UserSchema.serialization.user,
@@ -29,13 +29,13 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "GET",
-		url: "/users/:user_id/avatar",
+		method: 'GET',
+		url: '/users/:user_id/avatar',
 		schema: {
-			tags: ["users_general"],
+			tags: ['users_general'],
 			description: "Get a user's avatar by ID",
 			params: {
-				user_id: { type: "string" },
+				user_id: { type: 'string' },
 			},
 		},
 		reponse: {
@@ -45,11 +45,11 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "POST",
-		url: "/users/",
+		method: 'POST',
+		url: '/users/',
 		schema: {
-			tags: ["users_general"],
-			description: "Create a new user in the system",
+			tags: ['users_general'],
+			description: 'Create a new user in the system',
 			body: UserSchema.validation.createUser,
 			response: {
 				201: UserSchema.serialization.user,
@@ -59,62 +59,62 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "POST",
-		url: "/users/activate",
+		method: 'POST',
+		url: '/users/activate',
 		schema: {
-			tags: ["users_general"],
+			tags: ['users_general'],
 			description: "Activate a user's account",
 			body: {
-				type: "object",
-				required: ["token"],
+				type: 'object',
+				required: ['token'],
 				properties: {
-					token: { type: "string" },
+					token: { type: 'string' },
 				},
 				additionalProperties: false,
 			},
 			response: {
 				200: AuthSchema.sessionInfo,
 			},
-			dbOperation: "update",
+			dbOperation: 'update',
 		},
 		handler: activateUserAccount,
 	})
 
 	fastify.route({
-		method: "POST",
-		url: "/users/activate-invited",
+		method: 'POST',
+		url: '/users/activate-invited',
 		schema: {
-			tags: ["users_general"],
+			tags: ['users_general'],
 			description:
-				"Finish the registration of the user that have been invited to create an account",
+				'Finish the registration of the user that have been invited to create an account',
 			body: {
-				type: "object",
-				required: ["token", "password"],
+				type: 'object',
+				required: ['token', 'password'],
 				properties: {
-					token: { type: "string" },
-					password: { type: "string" },
-					firstName: { type: "string" },
-					lastName: { type: "string" },
-					artistName: { type: "string" },
+					token: { type: 'string' },
+					password: { type: 'string' },
+					firstName: { type: 'string' },
+					lastName: { type: 'string' },
+					artistName: { type: 'string' },
 				},
 				additionalProperties: false,
 			},
 			response: {
 				200: AuthSchema.sessionInfo,
 			},
-			dbOperation: "update",
+			dbOperation: 'update',
 		},
 		handler: activateInvitedUserAccount,
 	})
 
 	fastify.route({
-		method: "PATCH",
-		url: "/users/:user_id",
+		method: 'PATCH',
+		url: '/users/:user_id',
 		schema: {
-			tags: ["users_general"],
-			description: "Update a user by ID",
+			tags: ['users_general'],
+			description: 'Update a user by ID',
 			params: {
-				user_id: { type: "string" },
+				user_id: { type: 'string' },
 			},
 			body: UserSchema.validation.updateUser,
 			response: {
@@ -127,40 +127,40 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "POST",
-		url: "/users/request-password-reset",
+		method: 'POST',
+		url: '/users/request-password-reset',
 		schema: {
-			tags: ["users_general"],
-			description: "Send a password reset email",
+			tags: ['users_general'],
+			description: 'Send a password reset email',
 			body: {
-				type: "object",
-				required: ["email"],
+				type: 'object',
+				required: ['email'],
 				properties: {
-					email: { type: "string" },
+					email: { type: 'string' },
 				},
 				additionalProperties: false,
 			},
 			response: {
 				204: {},
 			},
-			dbOperation: "noop",
+			dbOperation: 'noop',
 		},
 		handler: requestPasswordReset,
 	})
 
 	fastify.route({
-		method: "POST",
-		url: "/users/change-password",
+		method: 'POST',
+		url: '/users/change-password',
 		schema: {
-			tags: ["users_general"],
-			description: "Update the user password",
+			tags: ['users_general'],
+			description: 'Update the user password',
 			body: {
-				type: "object",
-				required: ["password"],
+				type: 'object',
+				required: ['password'],
 				properties: {
-					token: { type: "string" },
-					currentPassword: { type: "string" },
-					password: { type: "string" },
+					token: { type: 'string' },
+					currentPassword: { type: 'string' },
+					password: { type: 'string' },
 				},
 				additionalProperties: false,
 			},
@@ -168,22 +168,22 @@ async function routes(fastify, options) {
 				200: AuthSchema.sessionInfo,
 			},
 			security: [{ bearerAuth: [] }],
-			dbOperation: "update",
+			dbOperation: 'update',
 		},
 		handler: changeUserPassword,
 	})
 
 	fastify.route({
-		method: "POST",
-		url: "/users/verify-mobile-phone",
+		method: 'POST',
+		url: '/users/verify-mobile-phone',
 		schema: {
-			tags: ["users_general"],
+			tags: ['users_general'],
 			description: "Verify the user's phone number",
 			body: {
-				type: "object",
-				required: ["verificationCode"],
+				type: 'object',
+				required: ['verificationCode'],
 				properties: {
-					verificationCode: { type: "number" },
+					verificationCode: { type: 'number' },
 				},
 				additionalProperties: false,
 			},
@@ -191,20 +191,20 @@ async function routes(fastify, options) {
 				204: {},
 			},
 			security: [{ bearerAuth: [] }],
-			dbOperation: "update",
+			dbOperation: 'update',
 		},
 		preValidation: JWTAuth.requireAuthUser,
 		handler: verifyUserMobilePhone,
 	})
 
 	fastify.route({
-		method: "DELETE",
-		url: "/users/:user_id",
+		method: 'DELETE',
+		url: '/users/:user_id',
 		schema: {
-			tags: ["users_general"],
+			tags: ['users_general'],
 			description: "Delete a user's account by ID",
 			params: {
-				user_id: { type: "string" },
+				user_id: { type: 'string' },
 			},
 			response: {
 				204: {},
@@ -235,7 +235,7 @@ const getUserById = async function (req, res) {
 		res.schema(UserSchema.serialization.publicUser)
 	else
 		await user
-			.populate(["paymentInfo.billingAddress", "_pendingEmails", "addresses"])
+			.populate(['paymentInfo.billingAddress', '_pendingEmails', 'addresses'])
 			.execPopulate()
 
 	return user
@@ -258,7 +258,7 @@ const getUserWithAuthorization = async function (req) {
 
 async function getUserAvatar(req, res) {
 	const user = await getUser(req)
-	res.header("Content-Type", "image/jpeg") // hardcoded for the moment
+	res.header('Content-Type', 'image/jpeg') // hardcoded for the moment
 	return user.avatar
 }
 
@@ -305,7 +305,7 @@ async function requestPasswordReset(req, res) {
 	if (!user) {
 		const email = await EmailVerification.findOne()
 			.byEmail(req.body.email)
-			.populate("user")
+			.populate('user')
 
 		if (!email) throw Errors.EmailNotFound
 

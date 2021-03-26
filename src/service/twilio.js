@@ -1,13 +1,12 @@
-const Config = require("../config")
-const User = require("../models/user")
+const Config = require('../config')
+const User = require('../models/user')
 
 let client
 try {
-	client = require("twilio")(Config.twilio.accountSid, Config.twilio.authToken)
+	client = require('twilio')(Config.twilio.accountSid, Config.twilio.authToken)
 } catch (err) {
 	console.error(
-		"Invalid credentials for Twilio account, sending SMS won't work, check your config.js file: " +
-			err
+		`Invalid credentials for Twilio account, sending SMS won't work, check your config.js file: ${err}`
 	)
 }
 
@@ -28,7 +27,7 @@ module.exports.sendSMS = async function (number, message) {
 module.exports.sendSMSTo = async function (user, message, verifiedOnly = true) {
 	if (!user.mobilePhone.number)
 		throw new Error("User doesn't have a registered phone number")
-	if (verifiedOnly && user.mobilePhone.status !== "verified")
+	if (verifiedOnly && user.mobilePhone.status !== 'verified')
 		throw new Error("User's mobile phone must be verified")
 
 	return await client.messages.create({

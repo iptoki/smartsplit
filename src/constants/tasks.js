@@ -1,10 +1,10 @@
-const Constant = require("./constant")
+const Constant = require('./constant')
 
-const SOCAN = "socan"
-const SOCAN_DR = "socanDr"
-const SOPROQ = "soproq"
-const ARTISTI = "artisti"
-const BANQ = "banq"
+const SOCAN = 'socan'
+const SOCAN_DR = 'socanDr'
+const SOPROQ = 'soproq'
+const ARTISTI = 'artisti'
+const BANQ = 'banq'
 
 class TaskTypes extends Constant {
 	static get SOCAN() {
@@ -26,17 +26,17 @@ class TaskTypes extends Constant {
 		return [SOCAN, SOCAN_DR, SOPROQ, ARTISTI, BANQ]
 	}
 	static get constantName() {
-		return "TaskTypes"
+		return 'TaskTypes'
 	}
 }
 
-const UNREQUESTED = "nonRequested"
-const REQUESTED = "requested"
-const SMARTSPLIT = "smartSplit"
-const MANAGING_SOCIETY = "managingSociety"
-const COMPLETED = "completed"
-const PROBLEMATIC = "problematic"
-const CANCELED = "canceled"
+const UNREQUESTED = 'nonRequested'
+const REQUESTED = 'requested'
+const SMARTSPLIT = 'smartSplit'
+const MANAGING_SOCIETY = 'managingSociety'
+const COMPLETED = 'completed'
+const PROBLEMATIC = 'problematic'
+const CANCELED = 'canceled'
 
 class TaskStatus extends Constant {
 	static get UNREQUESTED() {
@@ -72,7 +72,7 @@ class TaskStatus extends Constant {
 		]
 	}
 	static get constantName() {
-		return "TaskStatus"
+		return 'TaskStatus'
 	}
 }
 

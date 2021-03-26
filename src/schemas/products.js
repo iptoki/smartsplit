@@ -1,39 +1,39 @@
-const ProductCodes = require("../constants/productCodes")
+const ProductCodes = require('../constants/productCodes')
 
 const locale = {
-	type: "object",
+	type: 'object',
 	properties: {
-		fr: { type: "string" },
-		en: { type: "string" },
+		fr: { type: 'string' },
+		en: { type: 'string' },
 	},
 	additionalProperties: false,
 }
 
 const product = {
-	type: "object",
+	type: 'object',
 	properties: {
 		code: {
-			type: "string",
+			type: 'string',
 			enum: ProductCodes.list,
 		},
 		name: locale,
 		description: locale,
-		price: { type: "number" },
+		price: { type: 'number' },
 	},
 	additionalProperties: false,
 }
 
 const createProduct = {
 	...product,
-	required: ["code", "name", "description", "price"],
+	required: ['code', 'name', 'description', 'price'],
 }
 
 const updateProduct = {
-	type: "object",
+	type: 'object',
 	properties: {
 		name: locale,
 		description: locale,
-		price: { type: "number" },
+		price: { type: 'number' },
 	},
 	additionalProperties: false,
 }

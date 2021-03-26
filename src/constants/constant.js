@@ -13,7 +13,7 @@ class Constant {
 	}
 
 	static get constantName() {
-		return "Constant"
+		return 'Constant'
 	}
 }
 

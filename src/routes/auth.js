@@ -1,17 +1,17 @@
-const JWTAuth = require("../service/JWTAuth")
-const User = require("../models/user")
-const AuthSchema = require("../schemas/auth")
-const Errors = require("../errors")
+const JWTAuth = require('../service/JWTAuth')
+const User = require('../models/user')
+const AuthSchema = require('../schemas/auth')
+const Errors = require('../errors')
 
 async function routes(fastify, options) {
 	fastify.route({
-		method: "GET",
-		url: "/auth/check",
+		method: 'GET',
+		url: '/auth/check',
 		schema: {
-			tags: ["auth"],
-			description: "Check if an access token is valid or not",
+			tags: ['auth'],
+			description: 'Check if an access token is valid or not',
 			response: {
-				200: { type: "boolean" },
+				200: { type: 'boolean' },
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -20,11 +20,11 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "GET",
-		url: "/auth/refresh",
+		method: 'GET',
+		url: '/auth/refresh',
 		schema: {
-			tags: ["auth"],
-			description: "Refresh an access token",
+			tags: ['auth'],
+			description: 'Refresh an access token',
 			response: {
 				200: AuthSchema.sessionInfo,
 			},
@@ -35,16 +35,16 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "POST",
-		url: "/auth/login",
+		method: 'POST',
+		url: '/auth/login',
 		schema: {
-			tags: ["auth"],
-			description: "Login a user",
+			tags: ['auth'],
+			description: 'Login a user',
 			body: AuthSchema.login,
 			response: {
 				200: AuthSchema.sessionInfo,
 			},
-			dbOperation: "noop",
+			dbOperation: 'noop',
 		},
 		handler: login,
 	})

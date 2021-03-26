@@ -1,5 +1,5 @@
-const Config = require("../config")
-const sendgrid = require("@sendgrid/mail")
+const Config = require('../config')
+const sendgrid = require('@sendgrid/mail')
 
 try {
 	sendgrid.setApiKey(Config.sendgrid.apikey)

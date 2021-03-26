@@ -1,8 +1,8 @@
-const mongoose = require("mongoose")
-const Entity = require("./entity")
-const LocaleSchema = require("../locale")
-const EntityTypes = require("../../constants/entityTypes")
-const { EntityNotFound } = require("../../errors")
+const mongoose = require('mongoose')
+const Entity = require('./entity')
+const LocaleSchema = require('../locale')
+const EntityTypes = require('../../constants/entityTypes')
+const { EntityNotFound } = require('../../errors')
 
 /**
  * Represents an instrument's entity in the system
@@ -22,11 +22,11 @@ const InstrumentEntity = new mongoose.Schema(
 		],
 		langs: LocaleSchema,
 	},
-	{ discriminatorKey: "type" }
+	{ discriminatorKey: 'type' }
 )
 
 InstrumentEntity.methods.setFields = function (body) {
-	for (let field in ["name", "uris", "parents", ...Entity.getFields()]) {
+	for (let field in ['name', 'uris', 'parents', ...Entity.getFields()]) {
 		if (body[field]) this[field] = body[field]
 	}
 }

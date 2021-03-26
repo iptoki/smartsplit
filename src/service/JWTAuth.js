@@ -1,14 +1,14 @@
-const JWT = require("../utils/jwt")
-const Config = require("../config")
-const User = require("../models/user")
-const Errors = require("../errors")
+const JWT = require('../utils/jwt')
+const Config = require('../config')
+const User = require('../models/user')
+const Errors = require('../errors')
 
 /**
  * Creates an access token for a user
  */
-const createToken = function (user, expires = "3 hours") {
+const createToken = function (user, expires = '3 hours') {
 	return JWT.create(
-		"session",
+		'session',
 		{
 			user_id: user.user_id,
 			user_password: user.password,
@@ -22,7 +22,7 @@ const createToken = function (user, expires = "3 hours") {
  * Decodes an access token and returns its contents
  */
 const decodeToken = function (token) {
-	return JWT.decode("session", token)
+	return JWT.decode('session', token)
 }
 
 /**
@@ -38,12 +38,12 @@ const bearerTokenMiddleware = function (req, res) {
 	/**
 	 * Returns the data in the authorization access token
 	 */
-	Object.defineProperty(req.auth, "data", {
+	Object.defineProperty(req.auth, 'data', {
 		get: function () {
 			if (tokenData === undefined) {
-				let authHeader = (req.headers.authorization || "").split(" ")
+				let authHeader = (req.headers.authorization || '').split(' ')
 
-				if (authHeader[0] === "Bearer") tokenData = decodeToken(authHeader[1])
+				if (authHeader[0] === 'Bearer') tokenData = decodeToken(authHeader[1])
 				else tokenData = null
 			}
 
@@ -54,7 +54,7 @@ const bearerTokenMiddleware = function (req, res) {
 	/**
 	 * Returns the User model instance, if applicable)
 	 */
-	Object.defineProperty(req.auth, "user", {
+	Object.defineProperty(req.auth, 'user', {
 		get: function () {
 			if (!req.auth.data || !req.auth.data.user_id) return Promise.resolve(null)
 			else return User.findById(req.auth.data.user_id)
@@ -73,7 +73,7 @@ const requireAuthUser = async function (req, res) {
 		throw Errors.InvalidAuthToken
 
 	req.authUser = user
-	if (req.params.user_id === "session") req.params.user_id = user._id
+	if (req.params.user_id === 'session') req.params.user_id = user._id
 
 	return user
 }
@@ -114,7 +114,7 @@ const getAuthUser = async function (req, res) {
 	try {
 		return await requireAuthUser(req, res)
 	} catch (err) {
-		if (err.statusCode !== 401 || req.params.user_id === "session") throw err
+		if (err.statusCode !== 401 || req.params.user_id === 'session') throw err
 		return
 	}
 }

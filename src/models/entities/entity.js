@@ -1,6 +1,6 @@
-const mongoose = require("mongoose")
-const uuid = require("uuid").v4
-const { EntityNotFound } = require("../../errors")
+const mongoose = require('mongoose')
+const uuid = require('uuid').v4
+const { EntityNotFound } = require('../../errors')
 
 /**
  * Represents a generic modifiable entity in the system
@@ -9,7 +9,7 @@ const EntitySchema = new mongoose.Schema(
 	{
 		_id: {
 			type: String,
-			alias: "entity_id",
+			alias: 'entity_id',
 			default: uuid,
 		},
 		tags: [String],
@@ -21,7 +21,7 @@ const EntitySchema = new mongoose.Schema(
 			default: null,
 		},
 	},
-	{ discriminatorKey: "type", toJSON: { virtuals: true } }
+	{ discriminatorKey: 'type', toJSON: { virtuals: true } }
 )
 
 EntitySchema.query.publicOnly = function () {
@@ -43,18 +43,18 @@ EntitySchema.statics.getEntityModel = function (type) {
 }
 
 EntitySchema.statics.getFields = function () {
-	return ["users", "adminReview"]
+	return ['users', 'adminReview']
 }
 
 EntitySchema.methods.setFields = function (body) {
-	for (let field in ["users", "adminReview"]) {
+	for (let field in ['users', 'adminReview']) {
 		if (body[field]) this[field] = body[field]
 	}
 }
 
-module.exports = mongoose.model("Entity", EntitySchema)
+module.exports = mongoose.model('Entity', EntitySchema)
 
-require("./contentLanguage")
-require("./digitalDistributor")
-require("./musicalGenre")
-require("./instrument")
+require('./contentLanguage')
+require('./digitalDistributor')
+require('./musicalGenre')
+require('./instrument')

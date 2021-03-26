@@ -1,49 +1,49 @@
-const EntityTypes = require("../constants/entityTypes")
+const EntityTypes = require('../constants/entityTypes')
 
 const adminFields = {
 	users: {
 		oneOf: [
 			{
-				type: "boolean",
+				type: 'boolean',
 				enum: [false],
 			},
 			{
-				type: "array",
-				items: { type: "string" },
+				type: 'array',
+				items: { type: 'string' },
 			},
 		],
 	},
-	adminReview: { type: "string" },
+	adminReview: { type: 'string' },
 }
 
 const locale = {
-	type: "object",
+	type: 'object',
 	properties: {
-		fr: { type: "string" },
-		en: { type: "string" },
+		fr: { type: 'string' },
+		en: { type: 'string' },
 	},
 	additionalProperties: false,
 }
 
 const link = {
-	type: "object",
+	type: 'object',
 	properties: {
-		name: { type: "string" },
-		id: { type: "string" },
-		uri: { type: "string" },
+		name: { type: 'string' },
+		id: { type: 'string' },
+		uri: { type: 'string' },
 	},
 	additionalProperties: false,
 }
 
 const contentLanguage = {
-	type: "object",
+	type: 'object',
 	properties: {
-		entity_id: { type: "string" },
+		entity_id: { type: 'string' },
 		name: locale,
 		altNames: {
-			type: "array",
+			type: 'array',
 			items: {
-				type: "string",
+				type: 'string',
 			},
 		},
 	},
@@ -51,35 +51,35 @@ const contentLanguage = {
 }
 
 const digitalDistributor = {
-	type: "object",
+	type: 'object',
 	properties: {
-		entity_id: { type: "string" },
-		name: { type: "string" },
-		icon: { type: "string" },
+		entity_id: { type: 'string' },
+		name: { type: 'string' },
+		icon: { type: 'string' },
 		localizedName: locale,
 		domains: {
-			type: "array",
-			items: { type: "string" },
+			type: 'array',
+			items: { type: 'string' },
 		},
 		markets: {
-			type: "array",
-			items: { type: "string" },
+			type: 'array',
+			items: { type: 'string' },
 		},
-		streaming: { type: "boolean" },
-		download: { type: "boolean" },
-		other: { type: "boolean" },
-		blockchain: { type: "boolean" },
+		streaming: { type: 'boolean' },
+		download: { type: 'boolean' },
+		other: { type: 'boolean' },
+		blockchain: { type: 'boolean' },
 	},
 	additionalProperties: false,
 }
 
 const instrument = {
-	type: "object",
+	type: 'object',
 	properties: {
-		entity_id: { type: "string" },
-		name: { type: "string" },
+		entity_id: { type: 'string' },
+		name: { type: 'string' },
 		links: {
-			type: "array",
+			type: 'array',
 			items: link,
 		},
 		langs: locale,
@@ -88,25 +88,25 @@ const instrument = {
 }
 
 const musicalGenre = {
-	type: "object",
+	type: 'object',
 	properties: {
-		entity_id: { type: "string" },
-		name: { type: "string" },
+		entity_id: { type: 'string' },
+		name: { type: 'string' },
 		links: {
-			type: "array",
+			type: 'array',
 			items: link,
 		},
 		langs: locale,
 		parents: {
-			type: "array",
-			items: { type: "string" },
+			type: 'array',
+			items: { type: 'string' },
 		},
 	},
 	additionalProperties: false,
 }
 
 const createUpdateContentLanguage = {
-	type: "object",
+	type: 'object',
 	properties: {
 		...contentLanguage.properties,
 		...adminFields,
@@ -115,7 +115,7 @@ const createUpdateContentLanguage = {
 }
 
 const createUpdateDigitalDistributor = {
-	type: "object",
+	type: 'object',
 	properties: {
 		...digitalDistributor.properties,
 		...adminFields,
@@ -124,7 +124,7 @@ const createUpdateDigitalDistributor = {
 }
 
 const createUpdateInstrument = {
-	type: "object",
+	type: 'object',
 	properties: {
 		...instrument.properties,
 		...adminFields,
@@ -133,7 +133,7 @@ const createUpdateInstrument = {
 }
 
 const createUpdateMusicalGenre = {
-	type: "object",
+	type: 'object',
 	properties: {
 		...musicalGenre.properties,
 		...adminFields,

@@ -1,9 +1,9 @@
-const Constant = require("./constant")
+const Constant = require('./constant')
 
-const SOCAN_SUBMIT = "SOCAN_SUBMIT"
-const RIGHT_SPLIT_DOWNLOAD = "RIGHT_SPLIT_DOWNLOAD"
-const RIGHT_SPLIT_CONTRACT = "RIGHT_SPLIT_CONTRACT"
-const PROTECT_WORKPIECE = "PROTECT_WORKPIECE"
+const SOCAN_SUBMIT = 'SOCAN_SUBMIT'
+const RIGHT_SPLIT_DOWNLOAD = 'RIGHT_SPLIT_DOWNLOAD'
+const RIGHT_SPLIT_CONTRACT = 'RIGHT_SPLIT_CONTRACT'
+const PROTECT_WORKPIECE = 'PROTECT_WORKPIECE'
 
 class ProductCodes extends Constant {
 	static get SOCAN_SUBMIT() {
@@ -27,7 +27,7 @@ class ProductCodes extends Constant {
 		]
 	}
 	static get constantName() {
-		return "ProductCodes"
+		return 'ProductCodes'
 	}
 }
 

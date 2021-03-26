@@ -1,32 +1,32 @@
-const Errors = require("../../errors")
-const JWTAuth = require("../../service/JWTAuth")
-const Workpiece = require("../../models/workpiece")
-const WorkpieceSchema = require("../../schemas/workpieces").serialization
+const Errors = require('../../errors')
+const JWTAuth = require('../../service/JWTAuth')
+const Workpiece = require('../../models/workpiece')
+const WorkpieceSchema = require('../../schemas/workpieces').serialization
 	.workpiece
-const Tasks = require("../../constants/tasks")
-const { getWorkpieceAsOwner } = require("./workpieces")
+const Tasks = require('../../constants/tasks')
+const { getWorkpieceAsOwner } = require('./workpieces')
 
 /************************ Routes ************************/
 
 async function routes(fastify, options) {
 	fastify.route({
-		method: "GET",
-		url: "/workpieces/tasks/",
+		method: 'GET',
+		url: '/workpieces/tasks/',
 		schema: {
-			tags: ["tasks"],
-			description: "Get tasks",
+			tags: ['tasks'],
+			description: 'Get tasks',
 			querystring: {
-				rightHolders: { type: "array" },
+				rightHolders: { type: 'array' },
 				status: {
-					type: "string",
+					type: 'string',
 					enum: Tasks.Status.list,
 				},
 				query: {
-					type: "string",
+					type: 'string',
 				},
 			},
 			response: {
-				200: { type: "array", items: WorkpieceSchema },
+				200: { type: 'array', items: WorkpieceSchema },
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -35,18 +35,18 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "PUT",
-		url: "/workpieces/:workpiece_id/tasks/:task",
+		method: 'PUT',
+		url: '/workpieces/:workpiece_id/tasks/:task',
 		schema: {
-			tags: ["workpieces_general"],
+			tags: ['workpieces_general'],
 			description: "Update a workpiece's task status",
 			params: {
-				workpiece_id: { type: "string" },
-				task: { type: "string", enum: Tasks.Types.list },
+				workpiece_id: { type: 'string' },
+				task: { type: 'string', enum: Tasks.Types.list },
 			},
 			body: {
-				type: "object",
-				properties: { status: { type: "string", enum: Tasks.Status.list } },
+				type: 'object',
+				properties: { status: { type: 'string', enum: Tasks.Status.list } },
 				additionalProperties: false,
 			},
 			response: {
@@ -66,14 +66,14 @@ const getTasks = async function (req, res) {
 		$or: [
 			{
 				$and: [
-					{ "collaborators.user": { $in: req.query.rightHolders } },
-					{ "collaborators.isRightHolder": true },
+					{ 'collaborators.user': { $in: req.query.rightHolders } },
+					{ 'collaborators.isRightHolder': true },
 				],
 			},
 			{
-				title: { $regex: new RegExp(req.query.query), $options: "i" },
+				title: { $regex: new RegExp(req.query.query), $options: 'i' },
 			},
-			...Tasks.Types.list.map((x) => ({ ["tasks." + x]: req.query.status })), // #wizard
+			...Tasks.Types.list.map((x) => ({ [`tasks.${x}`]: req.query.status })), // #wizard
 		],
 	})
 }

@@ -1,18 +1,18 @@
-const Errors = require("../../errors")
-const JWTAuth = require("../../service/JWTAuth")
-const DocumentationSchema = require("../../schemas/documentation")
+const Errors = require('../../errors')
+const JWTAuth = require('../../service/JWTAuth')
+const DocumentationSchema = require('../../schemas/documentation')
 
 /************************ Routes ************************/
 
 async function routes(fastify, options) {
 	fastify.route({
-		method: "GET",
-		url: "/workpieces/:workpiece_id/documentation",
+		method: 'GET',
+		url: '/workpieces/:workpiece_id/documentation',
 		schema: {
-			tags: ["workpiece_documentation"],
+			tags: ['workpiece_documentation'],
 			description: "Get a workpiece's documentation",
 			params: {
-				workpiece_id: { type: "string" },
+				workpiece_id: { type: 'string' },
 			},
 			response: {
 				200: DocumentationSchema.serialization.documentation,
@@ -24,13 +24,13 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "PATCH",
-		url: "/workpieces/:workpiece_id/documentation",
+		method: 'PATCH',
+		url: '/workpieces/:workpiece_id/documentation',
 		schema: {
-			tags: ["workpiece_documentation"],
+			tags: ['workpiece_documentation'],
 			description: "Update a workpiece's documentation",
 			params: {
-				workpiece_id: { type: "string" },
+				workpiece_id: { type: 'string' },
 			},
 			body: DocumentationSchema.validation.updateDocumentation,
 			response: {
@@ -43,14 +43,14 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "GET",
-		url: "/workpieces/:workpiece_id/documentation/files/:file_id",
+		method: 'GET',
+		url: '/workpieces/:workpiece_id/documentation/files/:file_id',
 		schema: {
-			tags: ["workpieces_documentation_files"],
+			tags: ['workpieces_documentation_files'],
 			description: "Get a workpiece's file by ID",
 			params: {
-				workpiece_id: { type: "string" },
-				file_id: { type: "string" },
+				workpiece_id: { type: 'string' },
+				file_id: { type: 'string' },
 			},
 			response: {
 				200: {},
@@ -60,18 +60,18 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "POST",
-		url: "/workpieces/:workpiece_id/documentation/files/:type/",
+		method: 'POST',
+		url: '/workpieces/:workpiece_id/documentation/files/:type/',
 		schema: {
-			tags: ["workpieces_documentation_files"],
+			tags: ['workpieces_documentation_files'],
 			description: "Create and add a new file to a workpiece's documentation",
 			params: {
-				type: "object",
+				type: 'object',
 				properties: {
-					workpiece_id: { type: "string" },
+					workpiece_id: { type: 'string' },
 					type: {
-						type: "string",
-						enum: ["art", "audio", "scores", "midi", "lyrics"],
+						type: 'string',
+						enum: ['art', 'audio', 'scores', 'midi', 'lyrics'],
 					},
 				},
 			},
@@ -85,16 +85,16 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "PATCH",
-		url: "/workpieces/:workpiece_id/documentation/files/:file_id",
+		method: 'PATCH',
+		url: '/workpieces/:workpiece_id/documentation/files/:file_id',
 		schema: {
-			tags: ["workpieces_documentation_files"],
+			tags: ['workpieces_documentation_files'],
 			description: "Update a workpiece's file by ID",
 			params: {
-				type: "object",
+				type: 'object',
 				properties: {
-					workpiece_id: { type: "string" },
-					file_id: { type: "string" },
+					workpiece_id: { type: 'string' },
+					file_id: { type: 'string' },
 				},
 			},
 			body: DocumentationSchema.validation.updateFile,
@@ -108,14 +108,14 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "DELETE",
-		url: "/workpieces/:workpiece_id/documentation/files/:file_id",
+		method: 'DELETE',
+		url: '/workpieces/:workpiece_id/documentation/files/:file_id',
 		schema: {
-			tags: ["workpieces_documentation_files"],
+			tags: ['workpieces_documentation_files'],
 			description: "Delete a workpiece's file by ID",
 			params: {
-				workpiece_id: { type: "string" },
-				file_id: { type: "string" },
+				workpiece_id: { type: 'string' },
+				file_id: { type: 'string' },
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -126,12 +126,12 @@ async function routes(fastify, options) {
 
 /************************ Handlers ************************/
 
-const { getWorkpiece, getWorkpieceAsOwner } = require("./workpieces")
+const { getWorkpiece, getWorkpieceAsOwner } = require('./workpieces')
 
 const getWorkpieceFileLocation = function (workpiece, file_id) {
 	let index = -1
 	let type
-	for (type of ["art", "audio", "scores", "midi", "lyrics"]) {
+	for (type of ['art', 'audio', 'scores', 'midi', 'lyrics']) {
 		index = workpiece.documentation.files[type].indexOf(file_id)
 		if (index >= 0) break
 	}
@@ -172,7 +172,7 @@ const getFile = async function (req, res) {
 	const workpiece = await getWorkpiece(req, res)
 	const file = await workpiece.documentation.getFile(req.params.file_id)
 	if (!file) throw Errors.WorkpieceFileNotFound
-	if (file.metadata.visibility !== "public") {
+	if (file.metadata.visibility !== 'public') {
 		await JWTAuth.requireAuthUser(req, res)
 		if (workpiece.owner !== req.authUser._id) throw Errors.UserForbidden
 	}

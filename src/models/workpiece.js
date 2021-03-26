@@ -1,19 +1,19 @@
-const mongoose = require("mongoose")
-const uuid = require("uuid").v4
-const User = require("./user")
-const { SplitTemplates } = require("./notificationTemplates")
-const JWT = require("../utils/jwt")
-const RightSplitSchema = require("./rightSplit")
-const DocumentationSchema = require("./documentation")
-const RightTypes = require("../constants/rightTypes")
-const Tasks = require("../constants/tasks")
+const mongoose = require('mongoose')
+const uuid = require('uuid').v4
+const User = require('./user')
+const { SplitTemplates } = require('./notificationTemplates')
+const JWT = require('../utils/jwt')
+const RightSplitSchema = require('./rightSplit')
+const DocumentationSchema = require('./documentation')
+const RightTypes = require('../constants/rightTypes')
+const Tasks = require('../constants/tasks')
 const {
 	UserNotFound,
 	RightSplitNotFound,
 	ConflictingRightSplitState,
-} = require("../errors")
+} = require('../errors')
 
-const JWT_SPLIT_TYPE = "workpiece:split-invite"
+const JWT_SPLIT_TYPE = 'workpiece:split-invite'
 
 const StatusSchema = {
 	type: String,
@@ -49,26 +49,26 @@ const WorkpieceSchema = new mongoose.Schema(
 	{
 		_id: {
 			type: String,
-			alias: "workpiece_id",
+			alias: 'workpiece_id',
 			default: uuid,
 		},
 		type: {
 			type: String,
-			enum: ["original-creation", "remix", "cover"],
+			enum: ['original-creation', 'remix', 'cover'],
 		},
 		title: {
 			type: String,
 		},
 		owner: {
 			type: String,
-			ref: "User",
+			ref: 'User',
 		},
 		collaborators: [
 			new mongoose.Schema(
 				{
 					user: {
 						type: String,
-						ref: "User",
+						ref: 'User',
 					},
 					isRightHolder: {
 						type: Boolean,
@@ -80,8 +80,8 @@ const WorkpieceSchema = new mongoose.Schema(
 					},
 					permission: {
 						type: String,
-						enum: ["read", "write", "admin"],
-						default: "read",
+						enum: ['read', 'write', 'admin'],
+						default: 'read',
 					},
 				},
 				{ _id: false }
@@ -105,17 +105,17 @@ const WorkpieceSchema = new mongoose.Schema(
 	{ timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 )
 
-WorkpieceSchema.virtual("rightHolders").get(function () {
+WorkpieceSchema.virtual('rightHolders').get(function () {
 	return this.collaborators.filter((c) => c.isRightHolder).map((c) => c.user)
 })
 
-WorkpieceSchema.virtual("_purchases", {
-	ref: "Purchase",
-	localField: "_id",
-	foreignField: "workpiece_id",
+WorkpieceSchema.virtual('_purchases', {
+	ref: 'Purchase',
+	localField: '_id',
+	foreignField: 'workpiece_id',
 })
 
-WorkpieceSchema.virtual("purchases").get(function () {
+WorkpieceSchema.virtual('purchases').get(function () {
 	if (!Array.isArray(this._purchases)) return []
 	return this._purchases.map((x) => x.product)
 })
@@ -126,13 +126,13 @@ WorkpieceSchema.query.byOwner = function (user_id) {
 
 WorkpieceSchema.query.byCollaborator = function (user_id) {
 	return this.where({
-		"collaborators.user": { $in: [user_id] },
+		'collaborators.user': { $in: [user_id] },
 		owner: { $ne: user_id },
 	})
 }
 
 WorkpieceSchema.methods.getOwnerId = function () {
-	return this.populated("owner") ? this.owner._id : this.owner
+	return this.populated('owner') ? this.owner._id : this.owner
 }
 
 WorkpieceSchema.methods.isOwnerPartOfRightHolders = function () {
@@ -141,7 +141,7 @@ WorkpieceSchema.methods.isOwnerPartOfRightHolders = function () {
 
 WorkpieceSchema.methods.createToken = function (
 	rightHolderId,
-	expires = "7 days"
+	expires = '7 days'
 ) {
 	return JWT.create(
 		JWT_SPLIT_TYPE,
@@ -160,7 +160,7 @@ WorkpieceSchema.methods.decodeToken = function (token) {
 WorkpieceSchema.methods.setRightSplit = async function (data) {
 	if (
 		this.rightSplit &&
-		!["draft", "rejected"].includes(this.rightSplit._state)
+		!['draft', 'rejected'].includes(this.rightSplit._state)
 	)
 		throw ConflictingRightSplitState
 
@@ -170,18 +170,18 @@ WorkpieceSchema.methods.setRightSplit = async function (data) {
 			nArchived > 0 ? this.archivedSplits[nArchived - 1].version + 1 : 1
 		this.rightSplit = {
 			owner: data.owner,
-			_state: "draft",
+			_state: 'draft',
 			version,
 			isPublic: false,
 		}
 	}
-	if (this.rightSplit && this.rightSplit._state === "rejected") {
+	if (this.rightSplit && this.rightSplit._state === 'rejected') {
 		if (!data.owner || !(await User.exists({ _id: data.owner })))
 			throw UserNotFound
 		this.archivedSplits.push(this.rightSplit)
 		this.rightSplit = {
 			owner: data.owner,
-			_state: "draft",
+			_state: 'draft',
 			isPublic: false,
 			version: this.rightSplit.version + 1,
 		}
@@ -210,7 +210,7 @@ WorkpieceSchema.methods.updateRightHolders = function () {
 		this.collaborators.push({
 			user: uid,
 			isRightHolder: true,
-			permission: uid === this.getOwnerId() ? "admin" : "read",
+			permission: uid === this.getOwnerId() ? 'admin' : 'read',
 		})
 }
 
@@ -225,12 +225,12 @@ WorkpieceSchema.methods.setSplitVote = function (rightHolderId, data) {
 
 WorkpieceSchema.methods.isRemovable = function () {
 	return (
-		!this.rightSplit || ["draft", "rejected"].includes(this.rightSplit._state)
+		!this.rightSplit || ['draft', 'rejected'].includes(this.rightSplit._state)
 	)
 }
 
 WorkpieceSchema.methods.canVoteRightSplit = function () {
-	return this.rightSplit && this.rightSplit._state === "voting"
+	return this.rightSplit && this.rightSplit._state === 'voting'
 }
 
 WorkpieceSchema.methods.emailRightHolders = async function (
@@ -255,16 +255,16 @@ WorkpieceSchema.methods.emailRightHolders = async function (
 }
 
 WorkpieceSchema.methods.emailOwner = async function (notificationType) {
-	if (!this.populated("owner")) await this.populate("owner").execPopulate()
+	if (!this.populated('owner')) await this.populate('owner').execPopulate()
 	this.owner.sendNotification(notificationType, {
 		workpiece: this,
 	})
 }
 
 WorkpieceSchema.methods.submitRightSplit = function (overwrites) {
-	if (!this.rightSplit || this.rightSplit._state !== "draft")
+	if (!this.rightSplit || this.rightSplit._state !== 'draft')
 		throw ConflictingRightSplitState
-	this.rightSplit._state = "voting"
+	this.rightSplit._state = 'voting'
 	this.emailRightHolders(SplitTemplates.CREATED, true, overwrites)
 	this.rightSplit.updateState()
 	this.emailSplitResult()
@@ -278,9 +278,9 @@ WorkpieceSchema.methods.swapRightHolder = function (originalId, swapId) {
 }
 
 WorkpieceSchema.methods.emailSplitResult = function () {
-	if (!["accepted", "rejected"].includes(this.rightSplit._state)) return
+	if (!['accepted', 'rejected'].includes(this.rightSplit._state)) return
 	const template =
-		this.rightSplit._state === "accepted"
+		this.rightSplit._state === 'accepted'
 			? SplitTemplates.ACCEPTED
 			: SplitTemplates.REJECTED
 	this.emailRightHolders(template, false)
@@ -288,15 +288,15 @@ WorkpieceSchema.methods.emailSplitResult = function () {
 }
 
 WorkpieceSchema.methods.deleteRightSplit = function () {
-	if (this.rightSplit && this.rightSplit._state !== "draft")
+	if (this.rightSplit && this.rightSplit._state !== 'draft')
 		throw ConflictingRightSplitState
 	this.rightSplit = undefined
 }
 
 WorkpieceSchema.methods.getPathsToPopulate = function () {
 	return [
-		{ path: "owner", populate: { path: "_pendingEmails" } },
-		"_purchases",
+		{ path: 'owner', populate: { path: '_pendingEmails' } },
+		'_purchases',
 		...this.getCollaboratorsPathsToPopulate(),
 		...this.documentation.getPathsToPopulate(),
 		...(this.rightSplit ? this.rightSplit.getPathsToPopulate() : []),
@@ -313,7 +313,7 @@ WorkpieceSchema.methods.getCollaboratorsPathsToPopulate = function () {
 	for (let i = 0; i < this.collaborators.length; i++)
 		paths.push({
 			path: `collaborators.${i}.user`,
-			populate: { path: "_pendingEmails" },
+			populate: { path: '_pendingEmails' },
 		})
 	return paths
 }
@@ -323,18 +323,18 @@ WorkpieceSchema.methods.getArchivedRightSplitsPathsToPopulate = function () {
 	for (let i = 0; i < this.archivedSplits.length; i++) {
 		paths.push({
 			path: `archivedSplits.${i}.owner`,
-			populate: "_pendingEmails",
+			populate: '_pendingEmails',
 		})
 		paths.push({
 			path: `archivedSplits.${i}.label.rightHolder`,
-			populate: "_pendingEmails",
+			populate: '_pendingEmails',
 		})
 		for (let rightType of RightTypes.list) {
 			if (!Array.isArray(this.archivedSplits[i][rightType])) continue
 			for (let j = 0; j < this.archivedSplits[i][rightType].length; j++)
 				paths.push({
 					path: `archivedSplits.${i}.${rightType}.${j}.rightHolder`,
-					populate: "_pendingEmails",
+					populate: '_pendingEmails',
 				})
 		}
 	}
@@ -403,4 +403,4 @@ WorkpieceSchema.methods.getRightHolderIds = function () {
 	return this.rightSplit.getRightHolderIds()
 }
 
-module.exports = mongoose.model("Workpiece", WorkpieceSchema)
+module.exports = mongoose.model('Workpiece', WorkpieceSchema)

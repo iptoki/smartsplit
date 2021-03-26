@@ -1,11 +1,11 @@
-const mongoose = require("mongoose")
-const uuid = require("uuid").v4
-const User = require("./user")
-const Instrument = require("./entities/instrument")
-const MusicalGenre = require("./entities/musicalGenre")
-const EntityTypes = require("../constants/entityTypes")
-const Config = require("../config")
-const Errors = require("../errors")
+const mongoose = require('mongoose')
+const uuid = require('uuid').v4
+const User = require('./user')
+const Instrument = require('./entities/instrument')
+const MusicalGenre = require('./entities/musicalGenre')
+const EntityTypes = require('../constants/entityTypes')
+const Config = require('../config')
+const Errors = require('../errors')
 
 // const ExternalFileSchema = new mongoose.Schema(
 // 	{
@@ -19,11 +19,11 @@ const FileSchema = new mongoose.Schema(
 	{
 		_id: {
 			type: String,
-			alias: "file_id",
+			alias: 'file_id',
 		},
 		length: {
 			type: Number,
-			alias: "size",
+			alias: 'size',
 		},
 		chunkSize: Number,
 		uploadDate: Date,
@@ -35,11 +35,11 @@ const FileSchema = new mongoose.Schema(
 				mimetype: String,
 				visibility: {
 					type: String,
-					enum: ["public", "hidden", "private"],
+					enum: ['public', 'hidden', 'private'],
 				},
 				version: {
 					type: String,
-					enum: ["idea", "demo", "rough-mix", "master"],
+					enum: ['idea', 'demo', 'rough-mix', 'master'],
 				},
 			},
 			{ _id: false }
@@ -48,7 +48,7 @@ const FileSchema = new mongoose.Schema(
 	{ strict: false, toJSON: { virtuals: true } }
 )
 
-const GFSFile = new mongoose.model("GFSFile", FileSchema, "protectedWork.files")
+const GFSFile = new mongoose.model('GFSFile', FileSchema, 'protectedWork.files')
 
 const RecordSchema = new mongoose.Schema(
 	{
@@ -56,7 +56,7 @@ const RecordSchema = new mongoose.Schema(
 		engineers: [
 			{
 				type: String,
-				ref: "User",
+				ref: 'User',
 			},
 		],
 		date: new mongoose.Schema(
@@ -87,11 +87,11 @@ const PerformerSchema = new mongoose.Schema(
 	{
 		user: {
 			type: String,
-			ref: "User",
+			ref: 'User',
 		},
 		type: {
 			type: String,
-			enum: ["mainArtist", "featured", "groupMember", "session"],
+			enum: ['mainArtist', 'featured', 'groupMember', 'session'],
 		},
 		isSinger: Boolean,
 		isMusician: Boolean,
@@ -107,19 +107,19 @@ const CreationSchema = new mongoose.Schema(
 		authors: [
 			{
 				type: String,
-				ref: "User",
+				ref: 'User',
 			},
 		],
 		composers: [
 			{
 				type: String,
-				ref: "User",
+				ref: 'User',
 			},
 		],
 		publishers: [
 			{
 				type: String,
-				ref: "User",
+				ref: 'User',
 			},
 		],
 		iswc: String,
@@ -131,7 +131,7 @@ const PerformanceSchema = new mongoose.Schema(
 	{
 		conductor: {
 			type: String,
-			ref: "User",
+			ref: 'User',
 		},
 		performers: [PerformerSchema],
 	},
@@ -143,13 +143,13 @@ const RecordingSchema = new mongoose.Schema(
 		directors: [
 			{
 				type: String,
-				ref: "User",
+				ref: 'User',
 			},
 		],
 		producers: [
 			{
 				type: String,
-				ref: "User",
+				ref: 'User',
 			},
 		],
 		isrc: String,
@@ -233,7 +233,7 @@ const LyricsSchema = new mongoose.Schema(
 		languages: [String],
 		access: {
 			type: String,
-			enum: ["public", "private", "limited"],
+			enum: ['public', 'private', 'limited'],
 		},
 	},
 	{ _id: false }
@@ -292,14 +292,10 @@ const DocumentationSchema = new mongoose.Schema(
 	{ _id: false }
 )
 
-FileSchema.virtual("url").get(function () {
-	return (
-		Config.apiUrl +
-		"/workpieces/" +
-		this.parent().id +
-		"/documentation/files/" +
-		this._id
-	)
+FileSchema.virtual('url').get(function () {
+	return `${
+		Config.apiUrl
+	}/workpieces/${this.parent().id}/documentation/files/${this._id}`
 })
 
 DocumentationSchema.methods.getFileStream = function (file_id) {
@@ -312,7 +308,7 @@ DocumentationSchema.methods.getFile = async function (file_id) {
 
 DocumentationSchema.methods.addFile = async function (type, data) {
 	const file_id = uuid()
-	let visibility = "private"
+	let visibility = 'private'
 	if (data.fields !== undefined && data.fields.visibility !== undefined)
 		visibility = data.fields.visibility.value
 	const options = {
@@ -339,7 +335,7 @@ DocumentationSchema.methods.addFile = async function (type, data) {
 }
 
 DocumentationSchema.methods.deleteFile = async function (file_id) {
-	for (const type of ["art", "audio", "scores", "midi", "lyrics"])
+	for (const type of ['art', 'audio', 'scores', 'midi', 'lyrics'])
 		this.files[type] = this.files[type].filter((id) => id !== file_id)
 	await mongoose.bucket.protectedWork.delete(file_id)
 }
@@ -357,11 +353,11 @@ DocumentationSchema.methods.update = async function (data) {
 }
 
 DocumentationSchema.methods.updateCreation = async function (data) {
-	for (const field of ["date", "iswc", "authors", "composers", "publishers"])
+	for (const field of ['date', 'iswc', 'authors', 'composers', 'publishers'])
 		if (data[field] !== undefined) this.creation[field] = data[field]
 
 	let promises = []
-	for (field of ["authors", "composers", "publishers"]) {
+	for (field of ['authors', 'composers', 'publishers']) {
 		if (!Array.isArray(data[field])) continue
 		for (const uid of data[field])
 			promises.push(User.ensureExistsAndRetrieve(uid))
@@ -370,14 +366,14 @@ DocumentationSchema.methods.updateCreation = async function (data) {
 }
 
 DocumentationSchema.methods.updatePerformance = function (data) {
-	for (const field of ["conductor", "performers"])
+	for (const field of ['conductor', 'performers'])
 		if (data[field] !== undefined) this.performance[field] = data[field]
 
 	let promises = []
 	if (Array.isArray(data.performers)) {
 		for (const performer of data.performers) {
 			promises.push(User.ensureExistsAndRetrieve(performer.user))
-			for (field of ["instruments", "vocals"]) {
+			for (field of ['instruments', 'vocals']) {
 				if (!Array.isArray(performer[field])) continue
 				for (const obj of performer[field])
 					promises.push(Instrument.ensureExistsAndRetrieve(obj.instrument))
@@ -390,23 +386,23 @@ DocumentationSchema.methods.updatePerformance = function (data) {
 
 DocumentationSchema.methods.updateRecording = function (data) {
 	for (const field of [
-		"directors",
-		"producers",
-		"recording",
-		"mixing",
-		"mastering",
-		"isrc",
+		'directors',
+		'producers',
+		'recording',
+		'mixing',
+		'mastering',
+		'isrc',
 	]) {
 		if (data[field] !== undefined) this.recording[field] = data[field]
 	}
 
 	let promises = []
-	for (const field of ["directors", "producers"]) {
+	for (const field of ['directors', 'producers']) {
 		if (!Array.isArray(data[field])) continue
 		for (const uid of data[field])
 			promises.push(User.ensureExistsAndRetrieve(uid))
 	}
-	for (const field of ["recording", "mixing", "mastering"]) {
+	for (const field of ['recording', 'mixing', 'mastering']) {
 		if (!Array.isArray(data[field])) continue
 		for (const obj of data[field]) {
 			if (!Array.isArray(obj.engineers)) continue
@@ -420,23 +416,23 @@ DocumentationSchema.methods.updateRecording = function (data) {
 
 DocumentationSchema.methods.updateRelease = function (data) {
 	for (const field of [
-		"date",
-		"label",
-		"format",
-		"support",
-		"distributor",
-		"upc",
+		'date',
+		'label',
+		'format',
+		'support',
+		'distributor',
+		'upc',
 	])
 		if (data[field] !== undefined) this.release[field] = data[field]
 }
 
 DocumentationSchema.methods.updateInfo = function (data) {
 	for (const field of [
-		"length",
-		"BPM",
-		"influences",
-		"mainGenre",
-		"secondaryGenres",
+		'length',
+		'BPM',
+		'influences',
+		'mainGenre',
+		'secondaryGenres',
 	])
 		if (data[field] !== undefined) this.info[field] = data[field]
 
@@ -452,7 +448,7 @@ DocumentationSchema.methods.updateInfo = function (data) {
 }
 
 DocumentationSchema.methods.updateLyrics = function (data) {
-	for (const field of ["text", "languages", "access"])
+	for (const field of ['text', 'languages', 'access'])
 		if (data[field] !== undefined) this.lyrics[field] = data[field]
 }
 
@@ -472,29 +468,29 @@ DocumentationSchema.methods.getPathsToPopulate = function () {
 
 DocumentationSchema.methods.getFilesPathsToPopulate = function () {
 	return [
-		"documentation.files.art",
-		"documentation.files.audio",
-		"documentation.files.scores",
-		"documentation.files.midi",
-		"documentation.files.lyrics",
+		'documentation.files.art',
+		'documentation.files.audio',
+		'documentation.files.scores',
+		'documentation.files.midi',
+		'documentation.files.lyrics',
 	]
 }
 
 DocumentationSchema.methods.getCreationPathsToPopulate = function () {
 	return [
-		"documentation.creation.authors",
-		"documentation.creation.composers",
-		"documentation.creation.publishers",
+		'documentation.creation.authors',
+		'documentation.creation.composers',
+		'documentation.creation.publishers',
 	]
 }
 
 DocumentationSchema.methods.getPerformancePathsToPopulate = function () {
-	let paths = ["documentation.performance.conductor"]
+	let paths = ['documentation.performance.conductor']
 	const doc = this.performance.performers
-	const path = "documentation.performance.performers"
+	const path = 'documentation.performance.performers'
 	for (let i = 0; i < doc.length; i++) {
 		this.populate(`${path}.${i}.user`).execPopulate()
-		for (let field of ["instruments", "vocals"]) {
+		for (let field of ['instruments', 'vocals']) {
 			for (let j = 0; j < doc[i][field].length; j++) {
 				paths.push(`${path}.${i}.${field}.${j}.instrument`)
 				// paths.push(`${path}.${i}.${field}.${j}.role`)
@@ -506,10 +502,10 @@ DocumentationSchema.methods.getPerformancePathsToPopulate = function () {
 
 DocumentationSchema.methods.getRecordingPathsToPopulate = function () {
 	let paths = [
-		"documentation.recording.directors",
-		"documentation.recording.producers",
+		'documentation.recording.directors',
+		'documentation.recording.producers',
 	]
-	for (let field of ["recording", "mixing", "mastering"]) {
+	for (let field of ['recording', 'mixing', 'mastering']) {
 		for (let i = 0; i < this.recording[field].length; i++)
 			paths.push(`documentation.recording.${field}.${i}.engineers`)
 	}
@@ -517,7 +513,7 @@ DocumentationSchema.methods.getRecordingPathsToPopulate = function () {
 }
 
 DocumentationSchema.methods.getInfoPathsToPopulate = function () {
-	return ["documentation.info.mainGenre", "documentation.info.secondaryGenres"]
+	return ['documentation.info.mainGenre', 'documentation.info.secondaryGenres']
 }
 
 module.exports = DocumentationSchema

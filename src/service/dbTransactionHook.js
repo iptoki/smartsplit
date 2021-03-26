@@ -1,4 +1,4 @@
-const Transaction = require("../models/transaction")
+const Transaction = require('../models/transaction')
 
 function onRequest(req, res, next) {
 	const transaction = new Transaction({
@@ -7,7 +7,7 @@ function onRequest(req, res, next) {
 			url: req.url,
 			method: req.method,
 			authorisation: req.headers.authorization,
-			userAgent: req.headers["user-agent"],
+			userAgent: req.headers['user-agent'],
 			params: req.params,
 			querystring: req.querystring,
 		},
@@ -41,10 +41,10 @@ function onResponse(req, res, next) {
 function getOp(req) {
 	if (!req.context.schema) return undefined
 	if (req.context.schema.dbOperation) return req.context.schema.dbOperation
-	if (req.method === "POST") return "insert"
-	if (req.method === "DELETE") return "delete"
-	if (["PATCH", "PUT"].includes(req.method)) return "update"
-	return "noop"
+	if (req.method === 'POST') return 'insert'
+	if (req.method === 'DELETE') return 'delete'
+	if (['PATCH', 'PUT'].includes(req.method)) return 'update'
+	return 'noop'
 }
 
 module.exports = {

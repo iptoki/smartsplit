@@ -1,23 +1,23 @@
-const Address = require("../../models/address")
-const AddressSchema = require("../../schemas/addresses")
-const { AddressNotFound } = require("../../errors")
-const JWTAuth = require("../../service/JWTAuth")
-const { getUserWithAuthorization } = require("./users")
+const Address = require('../../models/address')
+const AddressSchema = require('../../schemas/addresses')
+const { AddressNotFound } = require('../../errors')
+const JWTAuth = require('../../service/JWTAuth')
+const { getUserWithAuthorization } = require('./users')
 
 async function routes(fastify, options) {
 	fastify.route({
-		method: "GET",
-		url: "/users/:user_id/addresses/",
+		method: 'GET',
+		url: '/users/:user_id/addresses/',
 		schema: {
-			tags: ["addresses"],
-			description: "Get addresses by user",
+			tags: ['addresses'],
+			description: 'Get addresses by user',
 			params: {
 				user_id: {
-					type: "string",
+					type: 'string',
 				},
 			},
 			response: {
-				200: { type: "array", items: AddressSchema.serialization.address },
+				200: { type: 'array', items: AddressSchema.serialization.address },
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -26,17 +26,17 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "GET",
-		url: "/users/:user_id/addresses/:address_id",
+		method: 'GET',
+		url: '/users/:user_id/addresses/:address_id',
 		schema: {
-			tags: ["addresses"],
-			description: "Get address by id",
+			tags: ['addresses'],
+			description: 'Get address by id',
 			params: {
 				user_id: {
-					type: "string",
+					type: 'string',
 				},
 				address_id: {
-					type: "string",
+					type: 'string',
 				},
 			},
 			response: {
@@ -49,19 +49,19 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "POST",
-		url: "/users/:user_id/addresses/",
+		method: 'POST',
+		url: '/users/:user_id/addresses/',
 		schema: {
-			tags: ["addresses"],
-			description: "Create new Address",
+			tags: ['addresses'],
+			description: 'Create new Address',
 			params: {
 				user_id: {
-					type: "string",
+					type: 'string',
 				},
 			},
 			body: {
 				allOf: [AddressSchema.validation.createUpdateAddress],
-				required: ["street1", "city", "province", "postalCode", "country"],
+				required: ['street1', 'city', 'province', 'postalCode', 'country'],
 			},
 			response: {
 				201: AddressSchema.serialization.address,
@@ -73,17 +73,17 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "PUT",
-		url: "/users/:user_id/addresses/billing/:address_id",
+		method: 'PUT',
+		url: '/users/:user_id/addresses/billing/:address_id',
 		schema: {
-			tags: ["addresses"],
+			tags: ['addresses'],
 			description: "Set the user's billing address",
 			params: {
 				user_id: {
-					type: "string",
+					type: 'string',
 				},
 				address_id: {
-					type: "string",
+					type: 'string',
 				},
 			},
 			response: { 204: {} },
@@ -94,17 +94,17 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "PATCH",
-		url: "/users/:user_id/addresses/:address_id",
+		method: 'PATCH',
+		url: '/users/:user_id/addresses/:address_id',
 		schema: {
-			tags: ["addresses"],
-			description: "Edit an Address by ID",
+			tags: ['addresses'],
+			description: 'Edit an Address by ID',
 			params: {
 				user_id: {
-					type: "string",
+					type: 'string',
 				},
 				address_id: {
-					type: "string",
+					type: 'string',
 				},
 			},
 			body: AddressSchema.validation.createUpdateAddress,
@@ -118,17 +118,17 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "DELETE",
-		url: "/users/:user_id/addresses/:address_id",
+		method: 'DELETE',
+		url: '/users/:user_id/addresses/:address_id',
 		schema: {
-			tags: ["addresses"],
+			tags: ['addresses'],
 			description: "delete (inactivate) a user's address",
 			params: {
 				user_id: {
-					type: "string",
+					type: 'string',
 				},
 				address_id: {
-					type: "string",
+					type: 'string',
 				},
 			},
 			response: {
@@ -143,7 +143,7 @@ async function routes(fastify, options) {
 
 const getUserAddresses = async function (req, res) {
 	const user = await getUserWithAuthorization(req)
-	await user.populate("addresses").execPopulate()
+	await user.populate('addresses').execPopulate()
 	return user.addresses
 }
 

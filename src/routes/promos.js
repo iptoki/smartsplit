@@ -1,17 +1,17 @@
-const Promo = require("../models/promo")
-const PromoSchema = require("../schemas/promos")
-const { PromoNotFound } = require("../errors")
-const JWTAuth = require("../service/JWTAuth")
+const Promo = require('../models/promo')
+const PromoSchema = require('../schemas/promos')
+const { PromoNotFound } = require('../errors')
+const JWTAuth = require('../service/JWTAuth')
 
 async function routes(fastify, options) {
 	fastify.route({
-		method: "GET",
-		url: "/promos/",
+		method: 'GET',
+		url: '/promos/',
 		schema: {
-			tags: ["promos"],
-			description: "Get all Promos",
+			tags: ['promos'],
+			description: 'Get all Promos',
 			response: {
-				200: { type: "array", items: PromoSchema.serialization.promo },
+				200: { type: 'array', items: PromoSchema.serialization.promo },
 			},
 			security: [{ bearerAuth: [] }],
 		},
@@ -20,13 +20,13 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "GET",
-		url: "/promos/:code",
+		method: 'GET',
+		url: '/promos/:code',
 		schema: {
-			tags: ["promos"],
-			description: "Get Promo by ID",
+			tags: ['promos'],
+			description: 'Get Promo by ID',
 			params: {
-				code: { type: "string" },
+				code: { type: 'string' },
 			},
 			response: {
 				200: PromoSchema.serialization.promo,
@@ -38,13 +38,13 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "GET",
-		url: "/promos/code/:code",
+		method: 'GET',
+		url: '/promos/code/:code',
 		schema: {
-			tags: ["promos"],
-			description: "Get Promo by code",
+			tags: ['promos'],
+			description: 'Get Promo by code',
 			params: {
-				code: { type: "string" },
+				code: { type: 'string' },
 			},
 			response: {
 				200: PromoSchema.serialization.promo,
@@ -56,11 +56,11 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "POST",
-		url: "/promos/",
+		method: 'POST',
+		url: '/promos/',
 		schema: {
-			tags: ["promos"],
-			description: "Create new Promo",
+			tags: ['promos'],
+			description: 'Create new Promo',
 			body: PromoSchema.validation.createUpdatePromo,
 			response: {
 				201: PromoSchema.serialization.promo,
@@ -72,13 +72,13 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "PATCH",
-		url: "/promos/:code",
+		method: 'PATCH',
+		url: '/promos/:code',
 		schema: {
-			tags: ["promos"],
-			description: "Update a Promo by ID",
+			tags: ['promos'],
+			description: 'Update a Promo by ID',
 			params: {
-				code: { type: "string" },
+				code: { type: 'string' },
 			},
 			body: PromoSchema.validation.createUpdatePromo,
 			response: {
@@ -91,13 +91,13 @@ async function routes(fastify, options) {
 	})
 
 	fastify.route({
-		method: "DELETE",
-		url: "/promos/:code",
+		method: 'DELETE',
+		url: '/promos/:code',
 		schema: {
-			tags: ["promos"],
-			description: "delete a Promo by ID",
+			tags: ['promos'],
+			description: 'delete a Promo by ID',
 			params: {
-				code: { type: "string" },
+				code: { type: 'string' },
 			},
 			response: {
 				204: {},

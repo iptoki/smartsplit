@@ -1,7 +1,7 @@
-const Config = require("../config")
-const { WebhookSignatureVerificationFailed } = require("../errors")
+const Config = require('../config')
+const { WebhookSignatureVerificationFailed } = require('../errors')
 
-const stripe = require("stripe")(Config.stripe.apikey)
+const stripe = require('stripe')(Config.stripe.apikey)
 
 const createCustomer = async function (user_id) {
 	const customer = await stripe.customers.create({ metadata: { user_id } })
@@ -11,7 +11,7 @@ const createCustomer = async function (user_id) {
 const createPaymentIntent = async function (amount, customerId) {
 	return await stripe.paymentIntents.create({
 		amount: Math.round(amount * 100),
-		currency: "cad",
+		currency: 'cad',
 		customer: customerId,
 	})
 }

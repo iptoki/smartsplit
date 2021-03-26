@@ -1,5 +1,5 @@
-const Config = require("../config")
-const JWT = require("jsonwebtoken")
+const Config = require('../config')
+const JWT = require('jsonwebtoken')
 
 /**
  * Creates a new JWT token using a secret derived from the type and

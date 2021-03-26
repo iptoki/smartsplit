@@ -1,21 +1,21 @@
-const mongoose = require("mongoose")
-const uuid = require("uuid").v4
-const Errors = require("../errors")
-const TaxRates = require("../constants/taxRates")
-const Address = require("./address")
-const Product = require("./product")
-const Promo = require("./promo")
-const Workpiece = require("./workpiece")
+const mongoose = require('mongoose')
+const uuid = require('uuid').v4
+const Errors = require('../errors')
+const TaxRates = require('../constants/taxRates')
+const Address = require('./address')
+const Product = require('./product')
+const Promo = require('./promo')
+const Workpiece = require('./workpiece')
 
 const PurchaseSchema = new mongoose.Schema(
 	{
 		_id: {
 			type: String,
-			alias: "purchase_id",
+			alias: 'purchase_id',
 			default: uuid,
 		},
-		workpiece: { type: String, alias: "workpiece_id", ref: "Workpiece" },
-		user: { type: String, alias: "user_id", ref: "User" },
+		workpiece: { type: String, alias: 'workpiece_id', ref: 'Workpiece' },
+		user: { type: String, alias: 'user_id', ref: 'User' },
 		product: Product.schema,
 		promo: Promo.schema,
 		billingAddress: Address.schema,
@@ -26,27 +26,27 @@ const PurchaseSchema = new mongoose.Schema(
 		payment_id: String,
 		status: {
 			type: String,
-			enum: ["pending", "succeeded", "failed", "canceled"],
-			default: "pending",
+			enum: ['pending', 'succeeded', 'failed', 'canceled'],
+			default: 'pending',
 		},
 		purchaseDate: Date,
 	},
 	{ toJSON: { virtuals: true } }
 )
 
-PurchaseSchema.virtual("total").get(function () {
+PurchaseSchema.virtual('total').get(function () {
 	return this.subtotal + this.subtotal * (this.gst + this.pst)
 })
 
-PurchaseSchema.virtual("totalGST").get(function () {
+PurchaseSchema.virtual('totalGST').get(function () {
 	return this.subtotal * this.gst
 })
 
-PurchaseSchema.virtual("totalPST").get(function () {
+PurchaseSchema.virtual('totalPST').get(function () {
 	return this.subtotal * this.pst
 })
 
-PurchaseSchema.virtual("totalTaxes").get(function () {
+PurchaseSchema.virtual('totalTaxes').get(function () {
 	return this.subtotal * (this.gst + this.pst)
 })
 
@@ -66,7 +66,7 @@ PurchaseSchema.statics.create = async function (data) {
 	] = await Promise.all([
 		Purchase.exists({
 			workpiece_id: data.workpiece_id,
-			"product.code": data.productCode,
+			'product.code': data.productCode,
 		}),
 		Product.ensureExistsAndRetrieve(data.productCode),
 		data.promoCode ? Promo.ensureExistsAndRetrieve(data.promoCode) : undefined,
@@ -90,7 +90,7 @@ PurchaseSchema.statics.create = async function (data) {
 	purchase.product = product.toObject()
 	purchase.billingAddress = billingAddress.toObject()
 
-	if (billingAddress.country === "CA") {
+	if (billingAddress.country === 'CA') {
 		purchase.gst = TaxRates.GST
 		purchase.pst = TaxRates.PST(billingAddress.province)
 	}
@@ -99,5 +99,5 @@ PurchaseSchema.statics.create = async function (data) {
 	return purchase
 }
 
-const Purchase = mongoose.model("Purchase", PurchaseSchema)
+const Purchase = mongoose.model('Purchase', PurchaseSchema)
 module.exports = Purchase

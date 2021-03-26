@@ -1,27 +1,27 @@
-const UserSchema = require("./users")
+const UserSchema = require('./users')
 
 module.exports = {
 	login: {
-		type: "object",
-		required: ["email", "password"],
+		type: 'object',
+		required: ['email', 'password'],
 		properties: {
 			email: {
-				type: "string",
-				example: "qa@smartsplit.org",
+				type: 'string',
+				example: 'qa@smartsplit.org',
 			},
 			password: {
-				type: "string",
-				example: "Biquette#1!",
+				type: 'string',
+				example: 'Biquette#1!',
 			},
 		},
 		additionalProperties: false,
 	},
 
 	sessionInfo: {
-		type: "object",
+		type: 'object',
 		properties: {
 			accessToken: {
-				type: "string",
+				type: 'string',
 			},
 			user: UserSchema.serialization.user,
 		},

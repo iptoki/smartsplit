@@ -1,8 +1,8 @@
-const mongoose = require("mongoose")
-const Entity = require("./entity")
-const LocaleSchema = require("../locale")
-const EntityTypes = require("../../constants/entityTypes")
-const { EntityNotFound } = require("../../errors")
+const mongoose = require('mongoose')
+const Entity = require('./entity')
+const LocaleSchema = require('../locale')
+const EntityTypes = require('../../constants/entityTypes')
+const { EntityNotFound } = require('../../errors')
 
 /**
  * Represents a musical genre entity in the system
@@ -28,11 +28,11 @@ const MusicalGenreEntity = new mongoose.Schema(
 			},
 		],
 	},
-	{ discriminatorKey: "type" }
+	{ discriminatorKey: 'type' }
 )
 
 MusicalGenreEntity.methods.setFields = function (body) {
-	for (let field in ["name", "uris", "parents", ...Entity.getFields()]) {
+	for (let field in ['name', 'uris', 'parents', ...Entity.getFields()]) {
 		if (body[field]) this[field] = body[field]
 	}
 }

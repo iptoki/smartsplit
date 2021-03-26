@@ -1,86 +1,86 @@
-const UserSchema = require("./users")
+const UserSchema = require('./users')
 
 const createUpdateCopyrightSplit = {
-	type: "object",
+	type: 'object',
 	properties: {
-		rightHolder: { type: "string" },
+		rightHolder: { type: 'string' },
 		roles: {
-			type: "array",
-			items: { type: "string" },
+			type: 'array',
+			items: { type: 'string' },
 		},
-		shares: { type: "number" },
+		shares: { type: 'number' },
 	},
 	additionalProperties: false,
 }
 
 const createUpdatePerformanceSplit = {
-	type: "object",
+	type: 'object',
 	properties: {
-		rightHolder: { type: "string" },
+		rightHolder: { type: 'string' },
 		roles: {
-			type: "array",
-			items: { type: "string" },
+			type: 'array',
+			items: { type: 'string' },
 		},
 		status: {
-			type: "string",
-			enum: ["principal", "featured", "bandMember", "session"],
+			type: 'string',
+			enum: ['principal', 'featured', 'bandMember', 'session'],
 		},
-		shares: { type: "number" },
+		shares: { type: 'number' },
 	},
 	additionalProperties: false,
 }
 
 const createUpdateRecordingSplit = {
-	type: "object",
+	type: 'object',
 	properties: {
-		rightHolder: { type: "string" },
+		rightHolder: { type: 'string' },
 		function: {
-			type: "string",
+			type: 'string',
 			enum: [
-				"producer",
-				"selfProducer",
-				"directorProducer",
-				"techProducer",
-				"studio",
-				"illustratorDesigner",
+				'producer',
+				'selfProducer',
+				'directorProducer',
+				'techProducer',
+				'studio',
+				'illustratorDesigner',
 			],
 		},
-		shares: { type: "number" },
+		shares: { type: 'number' },
 	},
 	additionalProperties: false,
 }
 
 const createUpdateLabel = {
-	type: "object",
+	type: 'object',
 	properties: {
-		rightHolder: { type: "string" },
-		agreementDuration: { type: "string" },
-		notifViaEmail: { type: "boolean" },
-		notifViaText: { type: "boolean" },
-		shares: { type: "number" },
+		rightHolder: { type: 'string' },
+		agreementDuration: { type: 'string' },
+		notifViaEmail: { type: 'boolean' },
+		notifViaText: { type: 'boolean' },
+		shares: { type: 'number' },
 	},
 	additionalProperties: false,
 }
 
 const createUpdateRightSplit = {
-	type: "object",
+	type: 'object',
 	properties: {
-		isPublic: { type: "boolean" },
+		isPublic: { type: 'boolean' },
 		copyrightDividingMethod: {
-			type: "string",
-			enum: ["manual", "role", "equal"],
+			type: 'string',
+			enum: ['manual', 'role', 'equal'],
 		},
 		label: createUpdateLabel,
 		copyright: {
-			type: "array",
+			type: 'array',
 			items: createUpdateCopyrightSplit,
 		},
 		performance: {
-			type: "array",
+			type: 'array',
 			items: createUpdatePerformanceSplit,
 		},
 		recording: {
-			type: "array",
+			type: 'array',
 			items: createUpdateRecordingSplit,
 		},
 	},
@@ -88,125 +88,125 @@ const createUpdateRightSplit = {
 }
 
 const copyrightSplit = {
-	type: "object",
+	type: 'object',
 	properties: {
 		...createUpdateCopyrightSplit.properties,
 		rightHolder: UserSchema.serialization.collaborator,
 		vote: {
-			type: "string",
-			enum: ["undecided", "accepted", "rejected"],
+			type: 'string',
+			enum: ['undecided', 'accepted', 'rejected'],
 		},
-		comment: { type: "string" },
+		comment: { type: 'string' },
 	},
 	additionalProperties: false,
 }
 
 const performanceSplit = {
-	type: "object",
+	type: 'object',
 	properties: {
 		...createUpdatePerformanceSplit.properties,
 		rightHolder: UserSchema.serialization.collaborator,
 		vote: {
-			type: "string",
-			enum: ["undecided", "accepted", "rejected"],
+			type: 'string',
+			enum: ['undecided', 'accepted', 'rejected'],
 		},
-		comment: { type: "string" },
+		comment: { type: 'string' },
 	},
 	additionalProperties: false,
 }
 
 const recordingSplit = {
-	type: "object",
+	type: 'object',
 	properties: {
 		...createUpdateRecordingSplit.properties,
 		rightHolder: UserSchema.serialization.collaborator,
 		vote: {
-			type: "string",
-			enum: ["undecided", "accepted", "rejected"],
+			type: 'string',
+			enum: ['undecided', 'accepted', 'rejected'],
 		},
-		comment: { type: "string" },
+		comment: { type: 'string' },
 	},
 	additionalProperties: false,
 }
 
 const label = {
-	type: "object",
+	type: 'object',
 	properties: {
 		...createUpdateLabel.properties,
 		rightHolder: UserSchema.serialization.collaborator,
 		vote: {
-			type: "string",
-			enum: ["undecided", "accepted", "rejected"],
+			type: 'string',
+			enum: ['undecided', 'accepted', 'rejected'],
 		},
-		comment: { type: "string" },
+		comment: { type: 'string' },
 	},
 	additionalProperties: false,
 }
 
 const privacy = {
-	type: "object",
+	type: 'object',
 	properties: {
 		rightHolder: UserSchema.serialization.collaborator,
 		vote: {
-			type: "string",
-			enum: ["undecided", "accepted", "rejected"],
+			type: 'string',
+			enum: ['undecided', 'accepted', 'rejected'],
 		},
-		comment: { type: "string" },
+		comment: { type: 'string' },
 	},
 	additionalProperties: false,
 }
 
 const rightSplit = {
-	type: "object",
+	type: 'object',
 	properties: {
 		_state: {
-			type: "string",
-			enum: ["draft", "voting", "accepted", "rejected"],
+			type: 'string',
+			enum: ['draft', 'voting', 'accepted', 'rejected'],
 		},
-		version: { type: "number" },
+		version: { type: 'number' },
 		owner: UserSchema.serialization.collaborator,
-		isPublic: { type: "boolean" },
+		isPublic: { type: 'boolean' },
 		copyrightDividingMethod: {
-			type: "string",
-			enum: ["manual", "role", "equal"],
+			type: 'string',
+			enum: ['manual', 'role', 'equal'],
 		},
 		label,
 		copyright: {
-			type: "array",
+			type: 'array',
 			items: copyrightSplit,
 		},
 		performance: {
-			type: "array",
+			type: 'array',
 			items: performanceSplit,
 		},
 		recording: {
-			type: "array",
+			type: 'array',
 			items: recordingSplit,
 		},
 		privacy: {
-			type: "array",
+			type: 'array',
 			items: privacy,
 		},
-		createdAt: { type: "string" },
-		updatedAt: { type: "string" },
+		createdAt: { type: 'string' },
+		updatedAt: { type: 'string' },
 	},
 	additionalProperties: false,
 }
 
 const vote = {
-	type: "object",
+	type: 'object',
 	properties: {
 		vote: {
-			type: "string",
-			enum: ["accepted", "rejected"],
+			type: 'string',
+			enum: ['accepted', 'rejected'],
 		},
-		comment: { type: "string" },
+		comment: { type: 'string' },
 	},
 	additionalProperties: false,
 }
 
 const voteRightSplit = {
-	type: "object",
+	type: 'object',
 	properties: {
 		copyright: vote,
 		performance: vote,
@@ -218,12 +218,12 @@ const voteRightSplit = {
 }
 
 const submitRightSplit = {
-	type: "object",
+	type: 'object',
 	items: {
-		type: "object",
+		type: 'object',
 		patternProperties: {
-			"^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$": {
-				type: "string",
+			'^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$': {
+				type: 'string',
 			},
 		},
 	},

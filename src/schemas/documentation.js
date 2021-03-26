@@ -1,58 +1,58 @@
-const UserSchema = require("./users")
-const EntitySchema = require("./entities")
-const EntityTypes = require("../constants/entityTypes")
+const UserSchema = require('./users')
+const EntitySchema = require('./entities')
+const EntityTypes = require('../constants/entityTypes')
 
 const file = {
-	type: "object",
+	type: 'object',
 	properties: {
 		file_id: {
-			type: "string",
+			type: 'string',
 		},
-		filename: { type: "string" },
+		filename: { type: 'string' },
 		metadata: {
-			type: "object",
+			type: 'object',
 			properties: {
-				encoding: { type: "string" },
-				mimetype: { type: "string" },
+				encoding: { type: 'string' },
+				mimetype: { type: 'string' },
 				visibility: {
-					type: "string",
-					enum: ["public", "hidden", "private"],
+					type: 'string',
+					enum: ['public', 'hidden', 'private'],
 				},
 			},
 			additionalProperties: false,
 		},
 		uploadDate: {
-			type: "string",
-			format: "date-time",
+			type: 'string',
+			format: 'date-time',
 		},
-		size: { type: "number" },
-		url: { type: "string" },
+		size: { type: 'number' },
+		url: { type: 'string' },
 	},
 	additionalProperties: false,
 }
 
 const performerTool = {
-	type: "object",
+	type: 'object',
 	properties: {
 		instrument: EntitySchema.serialization.instrument,
-		role: { type: "string" },
-		notes: { type: "string" },
+		role: { type: 'string' },
+		notes: { type: 'string' },
 	},
 	additionalProperties: false,
 }
 
 const performer = {
-	type: "object",
+	type: 'object',
 	properties: {
 		user: UserSchema.serialization.collaborator,
 		type: {
-			type: "string",
-			enum: ["mainArtist", "featured", "groupMember", "session"],
+			type: 'string',
+			enum: ['mainArtist', 'featured', 'groupMember', 'session'],
 		},
-		isSinger: { type: "boolean" },
-		isMusician: { type: "boolean" },
+		isSinger: { type: 'boolean' },
+		isMusician: { type: 'boolean' },
 		instruments: {
-			type: "array",
+			type: 'array',
 			items: performerTool,
 		},
 	},
@@ -60,62 +60,62 @@ const performer = {
 }
 
 const record = {
-	type: "object",
+	type: 'object',
 	properties: {
-		studio: { type: "string" },
+		studio: { type: 'string' },
 		engineers: {
-			type: "array",
+			type: 'array',
 			items: UserSchema.serialization.collaborator,
 		},
 		date: {
-			type: "object",
+			type: 'object',
 			properties: {
 				from: {
-					type: "string",
-					format: "date",
+					type: 'string',
+					format: 'date',
 				},
 				to: {
-					type: "string",
-					format: "date",
+					type: 'string',
+					format: 'date',
 				},
 			},
 			additionalProperties: false,
 		},
 		notes: {
-			type: "array",
-			items: { type: "string" },
+			type: 'array',
+			items: { type: 'string' },
 		},
 	},
 	additionalProperties: false,
 }
 
 const creation = {
-	type: "object",
+	type: 'object',
 	properties: {
-		date: { type: "string" },
+		date: { type: 'string' },
 		authors: {
-			type: "array",
+			type: 'array',
 			items: UserSchema.serialization.collaborator,
 		},
 		composers: {
-			type: "array",
+			type: 'array',
 			items: UserSchema.serialization.collaborator,
 		},
 		publishers: {
-			type: "array",
+			type: 'array',
 			items: UserSchema.serialization.collaborator,
 		},
-		iswc: { type: "string" },
+		iswc: { type: 'string' },
 	},
 	additionalProperties: false,
 }
 
 const performance = {
-	type: "object",
+	type: 'object',
 	properties: {
 		conductor: UserSchema.serialization.collaborator,
 		performers: {
-			type: "array",
+			type: 'array',
 			items: performer,
 		},
 	},
@@ -123,27 +123,27 @@ const performance = {
 }
 
 const recording = {
-	type: "object",
+	type: 'object',
 	properties: {
 		directors: {
-			type: "array",
+			type: 'array',
 			items: UserSchema.serialization.collaborator,
 		},
 		producers: {
-			type: "array",
+			type: 'array',
 			items: UserSchema.serialization.collaborator,
 		},
-		isrc: { type: "string" },
+		isrc: { type: 'string' },
 		recording: {
-			type: "array",
+			type: 'array',
 			items: record,
 		},
 		mixing: {
-			type: "array",
+			type: 'array',
 			items: record,
 		},
 		mastering: {
-			type: "array",
+			type: 'array',
 			items: record,
 		},
 	},
@@ -151,39 +151,39 @@ const recording = {
 }
 
 const release = {
-	type: "object",
+	type: 'object',
 	properties: {
-		date: { type: "string" },
-		label: { type: "string" },
-		format: { type: "string" },
-		support: { type: "string" },
-		distributor: { type: "string" },
-		upc: { type: "string" },
+		date: { type: 'string' },
+		label: { type: 'string' },
+		format: { type: 'string' },
+		support: { type: 'string' },
+		distributor: { type: 'string' },
+		upc: { type: 'string' },
 	},
 	additionalProperties: false,
 }
 
 const files = {
-	type: "object",
+	type: 'object',
 	properties: {
 		art: {
-			type: "array",
+			type: 'array',
 			items: file,
 		},
 		audio: {
-			type: "array",
+			type: 'array',
 			items: file,
 		},
 		scores: {
-			type: "array",
+			type: 'array',
 			items: file,
 		},
 		midi: {
-			type: "array",
+			type: 'array',
 			items: file,
 		},
 		lyrics: {
-			type: "array",
+			type: 'array',
 			items: file,
 		},
 	},
@@ -191,50 +191,50 @@ const files = {
 }
 
 const info = {
-	type: "object",
+	type: 'object',
 	properties: {
-		length: { type: "string" },
-		BPM: { type: "number" },
+		length: { type: 'string' },
+		BPM: { type: 'number' },
 		mainGenre: EntitySchema.serialization[EntityTypes.MUSICAL_GENRE],
 		secondaryGenres: {
-			type: "array",
+			type: 'array',
 			items: EntitySchema.serialization[EntityTypes.MUSICAL_GENRE],
 		},
 		influences: {
-			type: "array",
-			items: { type: "string" },
+			type: 'array',
+			items: { type: 'string' },
 		},
 	},
 	additionalProperties: false,
 }
 
 const lyrics = {
-	type: "object",
+	type: 'object',
 	properties: {
-		text: { type: "string" },
+		text: { type: 'string' },
 		languages: {
-			type: "array",
-			items: { type: "string" },
+			type: 'array',
+			items: { type: 'string' },
 		},
 		access: {
-			type: "string",
-			enum: ["public", "private", "limited"],
-			default: "private",
+			type: 'string',
+			enum: ['public', 'private', 'limited'],
+			default: 'private',
 		},
 	},
 	additionalProperties: false,
 }
 
 const streaming = {
-	type: "object",
+	type: 'object',
 	properties: {
 		links: {
-			type: "array",
+			type: 'array',
 			items: {
-				type: "object",
+				type: 'object',
 				properties: {
-					platform: { type: "string" },
-					url: { type: "string" },
+					platform: { type: 'string' },
+					url: { type: 'string' },
 				},
 				additionalProperties: false,
 			},
@@ -244,7 +244,7 @@ const streaming = {
 }
 
 const documentation = {
-	type: "object",
+	type: 'object',
 	properties: {
 		creation,
 		performance,
@@ -259,44 +259,44 @@ const documentation = {
 }
 
 const updateDocumentation = {
-	type: "object",
+	type: 'object',
 	properties: {
 		creation: {
-			type: "object",
+			type: 'object',
 			properties: {
 				...creation.properties,
 				authors: {
-					type: "array",
-					items: { type: "string" },
+					type: 'array',
+					items: { type: 'string' },
 				},
 				composers: {
-					type: "array",
-					items: { type: "string" },
+					type: 'array',
+					items: { type: 'string' },
 				},
 				publishers: {
-					type: "array",
-					items: { type: "string" },
+					type: 'array',
+					items: { type: 'string' },
 				},
 			},
 			additionalProperties: false,
 		},
 		performance: {
-			type: "object",
+			type: 'object',
 			properties: {
 				...performance.properties,
-				conductor: { type: "string" },
+				conductor: { type: 'string' },
 				performers: {
-					type: "array",
+					type: 'array',
 					items: {
-						type: "object",
+						type: 'object',
 						properties: {
 							...performer.properties,
-							user: { type: "string" },
+							user: { type: 'string' },
 							instruments: {
-								type: "object",
+								type: 'object',
 								properties: {
 									...performerTool.properties,
-									instrument: { type: "string" },
+									instrument: { type: 'string' },
 								},
 								additionalProperties: false,
 							},
@@ -308,54 +308,54 @@ const updateDocumentation = {
 			additionalProperties: false,
 		},
 		recording: {
-			type: "object",
+			type: 'object',
 			properties: {
 				...recording.properties,
 				directors: {
-					type: "array",
-					items: { type: "string" },
+					type: 'array',
+					items: { type: 'string' },
 				},
 				producers: {
-					type: "array",
-					items: { type: "string" },
+					type: 'array',
+					items: { type: 'string' },
 				},
 				recording: {
-					type: "array",
+					type: 'array',
 					items: {
-						type: "object",
+						type: 'object',
 						properties: {
 							...record.properties,
 							engineers: {
-								type: "array",
-								items: { type: "string" },
+								type: 'array',
+								items: { type: 'string' },
 							},
 						},
 						additionalProperties: false,
 					},
 				},
 				mixing: {
-					type: "array",
+					type: 'array',
 					items: {
-						type: "object",
+						type: 'object',
 						properties: {
 							...record.properties,
 							engineers: {
-								type: "array",
-								items: { type: "string" },
+								type: 'array',
+								items: { type: 'string' },
 							},
 						},
 						additionalProperties: false,
 					},
 				},
 				mastering: {
-					type: "array",
+					type: 'array',
 					items: {
-						type: "object",
+						type: 'object',
 						properties: {
 							...record.properties,
 							engineers: {
-								type: "array",
-								items: { type: "string" },
+								type: 'array',
+								items: { type: 'string' },
 							},
 						},
 						additionalProperties: false,
@@ -365,13 +365,13 @@ const updateDocumentation = {
 			additionalProperties: false,
 		},
 		info: {
-			type: "object",
+			type: 'object',
 			properties: {
 				...info.properties,
-				mainGenre: { type: "string" },
+				mainGenre: { type: 'string' },
 				secondaryGenres: {
-					type: "array",
-					items: { type: "string" },
+					type: 'array',
+					items: { type: 'string' },
 				},
 			},
 			additionalProperties: false,
@@ -384,16 +384,16 @@ const updateDocumentation = {
 }
 
 const updateFile = {
-	type: "object",
+	type: 'object',
 	properties: {
-		filename: { type: "string" },
+		filename: { type: 'string' },
 		visibility: {
-			type: "string",
-			enum: ["public", "hidden", "private"],
+			type: 'string',
+			enum: ['public', 'hidden', 'private'],
 		},
 		type: {
-			type: "string",
-			enum: ["art", "audio", "scores", "midi", "lyrics"],
+			type: 'string',
+			enum: ['art', 'audio', 'scores', 'midi', 'lyrics'],
 		},
 	},
 	additionalProperties: false,
