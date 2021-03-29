@@ -49,7 +49,6 @@ const Templates = {
 						title: '<h3>ENREGISTREMENT SONORE</h3>',
 						rightHolders: [],
 					},
-					label: {},
 				},
 				agreementConditions: {
 					description:
@@ -212,17 +211,18 @@ const generateTemplate = async function (lang, workpiece) {
 				)
 			}
 			contract.sections.rightSplit[type].rightHolders = rightHolders
-		} else {
-			contract.sections.rightSplit[type] = {
-				rightHolder_id: workpiece.rightSplit[type].rightHolder._id,
-				avatar: workpiece.rightSplit[type].rightHolder.avatarUrl,
-				firstName: workpiece.rightSplit[type].rightHolder.firstName,
-				lastName: workpiece.rightSplit[type].rightHolder.lastName,
-				artistName: workpiece.rightSplit[type].rightHolder.artistName,
-				agreementDuration: workpiece.rightSplit[type].agreementDuration,
-				shares: workpiece.rightSplit[type].shares,
-				vote: workpiece.rightSplit[type].vote,
-			}
+		}
+	}
+	if (workpiece.rightSplit.label) {
+		contract.sections.rightSplit.recording.label = {
+			rightHolder_id: workpiece.rightSplit.label.rightHolder._id,
+			avatar: workpiece.rightSplit.label.rightHolder.avatarUrl,
+			firstName: workpiece.rightSplit.label.rightHolder.firstName,
+			lastName: workpiece.rightSplit.label.rightHolder.lastName,
+			artistName: workpiece.rightSplit.label.rightHolder.artistName,
+			agreementDuration: workpiece.rightSplit.label.agreementDuration,
+			shares: workpiece.rightSplit.label.shares,
+			vote: workpiece.rightSplit.label.vote,
 		}
 	}
 
