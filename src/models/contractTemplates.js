@@ -111,7 +111,6 @@ const Templates = {
 						title: '<h3>RECORDING</h3>',
 						rightHolders: [],
 					},
-					label: {},
 				},
 				agreementConditions: {
 					description:
