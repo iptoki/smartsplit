@@ -17,7 +17,7 @@ const createPaymentIntent = async function (amount, customerId) {
 
 const verifyEventSignature = async function (payload, signature, secret) {
 	try {
-		event = stripe.webhooks.constructEvent(req.body, signature, endpointSecret)
+		event = stripe.webhooks.constructEvent(payload, signature, secret)
 	} catch (err) {
 		console.log(`Webhook signature verification failed.`, err.message)
 		throw WebhookSignatureVerificationFailed
