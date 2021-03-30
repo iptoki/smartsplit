@@ -127,6 +127,9 @@ module.exports.BillingAddressNotFound = new HTTPErrors.NotFound(
 module.exports.ProductAlreadyPurchasedForWorkpiece = new HTTPErrors.PreconditionFailed(
 	'The productCode of the product you provided has already been purchased for this workpiece'
 )
+module.exports.ProductNotPurchased = new HTTPErrors.Forbidden(
+	'This action is forbidden because it requires the product to be purchased'
+)
 module.exports.StripeCustomerCreateError = new HTTPErrors.PreconditionFailed(
 	'Error creating a stripe customer id'
 )

@@ -1,5 +1,6 @@
-const { ConflictingRightSplitState } = require('../errors')
+const { ConflictingRightSplitState, ProductNotPurchased } = require('../errors')
 const RightTypes = require('../constants/rightTypes')
+const ProductCodes = require('../constants/productCodes')
 
 const Templates = {
 	ipi: {
@@ -170,6 +171,8 @@ const generateTemplate = async function (lang, workpiece) {
 	if (!workpiece.rightSplit || workpiece.rightSplit._state !== 'accepted')
 		throw ConflictingRightSplitState
 	await workpiece.populateAll()
+	if (!workpiece.purchases.includes(ProductCodes.RIGHT_SPLIT_CONTRACT))
+		throw ProductNotPurchased
 	const contract = deepReplace(
 		JSON.parse(JSON.stringify(Templates.contract[lang])),
 		workpiece
