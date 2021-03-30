@@ -135,11 +135,10 @@ const getPurchase = async function (req, res) {
 
 const createPurchase = async function (req, res) {
 	const user = await getUserWithAuthorization(req)
-	const purchase = await Purchase.create({ ...req.body, user_id: user._id })
-
+	const purchase = await Purchase.create({ ...req.body, user_id: user.id })
 	// does user have a stripe customer id ? if not create one
 	if (!user.paymentInfo.stripe_id)
-		user.paymentInfo.stripe_id = await Stripe.createCustomer(user._id)
+		user.paymentInfo.stripe_id = await Stripe.createCustomer(user.id)
 
 	// now we call stripe to get a payment intent object
 	const paymentIntent = await Stripe.createPaymentIntent(
@@ -164,7 +163,10 @@ const createPurchase = async function (req, res) {
 }
 
 const updatePurchase = async function (req, res) {
-	throw Errors.NotImplemented
+	await getUserWithAuthorization(req)
+	const purchase = await Purchase.ensureExistsAndRetrieve(req.body.purchase_id)
+	await purchase.save()
+	return purchase
 }
 
 const deletePurchase = async function (req, res) {

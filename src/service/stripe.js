@@ -1,7 +1,6 @@
 const Config = require('../config')
 const { WebhookSignatureVerificationFailed } = require('../errors')
-
-const stripe = require('stripe')(Config.stripe.apikey)
+const stripe = require('stripe')(Config.stripe.apiKey)
 
 const createCustomer = async function (user_id) {
 	const customer = await stripe.customers.create({ metadata: { user_id } })

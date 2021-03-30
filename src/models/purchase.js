@@ -4,6 +4,7 @@ const Errors = require('../errors')
 const TaxRates = require('../constants/taxRates')
 const Address = require('./address')
 const Product = require('./product')
+const User = require('./user')
 const Promo = require('./promo')
 const Workpiece = require('./workpiece')
 
@@ -68,13 +69,16 @@ PurchaseSchema.statics.create = async function (data) {
 			workpiece_id: data.workpiece_id,
 			'product.code': data.productCode,
 		}),
-		Product.ensureExistsAndRetrieve(data.productCode),
+		Product.ensureExistsAndRetrieve({
+			productCode: data.productCode,
+			active: true,
+		}),
 		data.promoCode ? Promo.ensureExistsAndRetrieve(data.promoCode) : undefined,
 		Address.ensureExistsAndRetrieve({
 			_id: data.billingAddress_id,
-			user_id: user._id,
+			user_id: data.user_id,
 		}),
-		User.ensureExistsAndRetrieve({ _id: data.user_id }),
+		User.ensureExistsAndRetrieve(data.user_id),
 		Workpiece.ensureExistsAndRetrieve({
 			_id: data.workpiece_id,
 			owner: data.user_id,

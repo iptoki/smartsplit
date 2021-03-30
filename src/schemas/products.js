@@ -12,9 +12,8 @@ const locale = {
 const product = {
 	type: 'object',
 	properties: {
-		code: {
+		product_id: {
 			type: 'string',
-			enum: ProductCodes.list,
 		},
 		name: locale,
 		description: locale,
