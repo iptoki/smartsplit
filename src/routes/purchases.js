@@ -163,10 +163,7 @@ const createPurchase = async function (req, res) {
 }
 
 const updatePurchase = async function (req, res) {
-	await getUserWithAuthorization(req)
-	const purchase = await Purchase.ensureExistsAndRetrieve(req.body.purchase_id)
-	await purchase.save()
-	return purchase
+	throw Errors.NotImplemented
 }
 
 const deletePurchase = async function (req, res) {

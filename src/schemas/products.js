@@ -12,7 +12,7 @@ const locale = {
 const product = {
 	type: 'object',
 	properties: {
-		product_id: {
+		code: {
 			type: 'string',
 		},
 		name: locale,

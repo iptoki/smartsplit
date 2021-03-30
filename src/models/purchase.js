@@ -69,10 +69,7 @@ PurchaseSchema.statics.create = async function (data) {
 			workpiece_id: data.workpiece_id,
 			'product.code': data.productCode,
 		}),
-		Product.ensureExistsAndRetrieve({
-			productCode: data.productCode,
-			active: true,
-		}),
+		Product.ensureExistsAndRetrieve(data.productCode),
 		data.promoCode ? Promo.ensureExistsAndRetrieve(data.promoCode) : undefined,
 		Address.ensureExistsAndRetrieve({
 			_id: data.billingAddress_id,

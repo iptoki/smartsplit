@@ -6,7 +6,7 @@ const ProductSchema = new mongoose.Schema(
 	{
 		_id: {
 			type: String,
-			alias: 'product_id',
+			alias: 'code',
 		},
 		name: localeSchema,
 		description: localeSchema,

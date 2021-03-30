@@ -97,8 +97,7 @@ const getProducts = async function (req, res) {
 
 const getProduct = async function (req, res) {
 	return await Product.ensureExistsAndRetrieve({
-		productCode: req.params.product_code,
-		active: true,
+		code: req.params.product_code,
 	})
 }
 
