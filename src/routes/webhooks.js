@@ -1,6 +1,7 @@
 const Purchase = require('../models/purchase')
 const { PaymentTemplates } = require('../models/notificationTemplates')
 const Stripe = require('../service/stripe')
+const { BadRequest } = require('../errors')
 
 async function routes(fastify, options) {
 	fastify.addContentTypeParser(
@@ -36,6 +37,11 @@ async function routes(fastify, options) {
 
 const stripeEventHandler = async function (req, res) {
 	const endpointSecret = 'whsec_txRlWnytXeWKViCRZnFLTJH7I5wMxtN1'
+	const allowedEvents = [
+		'payment_intent.succeeded',
+		'payment_intent.payment_failed',
+		'payment_intent.canceled',
+	]
 
 	await Stripe.verifyEventSignature(
 		req.body.raw,
@@ -45,6 +51,9 @@ const stripeEventHandler = async function (req, res) {
 
 	const event = req.body.parsed
 	const paymentIntent = event.data.object
+
+	if (!allowedEvents.includes(event.type)) throw BadRequest
+
 	const purchase = await Purchase.ensureExistsAndRetrieve(
 		{ payment_id: paymentIntent.id },
 		['user', 'workpiece']
