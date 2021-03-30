@@ -221,6 +221,7 @@ const TemplateMap = {
 				fr: 'd-e69abd3436c2420aa3270f27150a3b8f',
 			},
 			generate: function (user, options) {
+				const purchase = options.purchase
 				return {
 					id: this.template_id[user.locale],
 					data: {
@@ -235,7 +236,7 @@ const TemplateMap = {
 							promo: purchase.promo.toObject(),
 							billingAddress: purchase.billingAddress.toObject(),
 							workpiece: {
-								title: workpiece.title,
+								title: purchase.workpiece.title,
 							},
 						},
 					},

@@ -112,12 +112,13 @@ WorkpieceSchema.virtual('rightHolders').get(function () {
 WorkpieceSchema.virtual('_purchases', {
 	ref: 'Purchase',
 	localField: '_id',
-	foreignField: 'workpiece_id',
+	foreignField: 'workpiece',
+	match: { status: 'succeeded' },
 })
 
 WorkpieceSchema.virtual('purchases').get(function () {
 	if (!Array.isArray(this._purchases)) return []
-	return this._purchases.map((x) => x.product)
+	return this._purchases.map((x) => x.product._id)
 })
 
 WorkpieceSchema.query.byOwner = function (user_id) {

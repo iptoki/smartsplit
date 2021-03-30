@@ -66,8 +66,9 @@ PurchaseSchema.statics.create = async function (data) {
 		billingAddress,
 	] = await Promise.all([
 		Purchase.exists({
-			workpiece_id: data.workpiece_id,
-			'product.code': data.productCode,
+			workpiece: data.workpiece_id,
+			status: { $in: ['succeeded', 'pending'] },
+			'product._id': data.productCode,
 		}),
 		Product.ensureExistsAndRetrieve(data.productCode),
 		data.promoCode ? Promo.ensureExistsAndRetrieve(data.promoCode) : undefined,
