@@ -105,19 +105,6 @@ async function routes(fastify, options) {
 		preValidation: JWTAuth.requireAuthUser,
 		handler: deletePurchase,
 	})
-
-	fastify.route({
-		method: 'POST',
-		url: '/purchases/stripe/webhook/',
-		schema: {
-			tags: ['purchases'],
-			description: "Stripe's webhook to receive event such as payment success",
-			response: {
-				200: {},
-			},
-		},
-		handler: stripeEventHandler,
-	})
 }
 
 const getPurchases = async function (req, res) {
@@ -168,35 +155,6 @@ const updatePurchase = async function (req, res) {
 
 const deletePurchase = async function (req, res) {
 	throw Errors.NotImplemented
-}
-
-const stripeEventHandler = async function (req, res) {
-	await Stripe.verifyEventSignature(
-		req.body,
-		req.headers['stripe-signature'],
-		'whsec_txRlWnytXeWKViCRZnFLTJH7I5wMxtN1'
-	)
-
-	const event = req.body
-	const paymentIntent = event.data.object
-	const purchase = await Purchase.ensureExistsAndRetrieve(
-		{ payment_id: paymentIntent.id },
-		['user', 'workpiece']
-	)
-
-	if (event.type === 'payment_intent.succeeded') {
-		purchase.status = 'succeeded'
-		purchase.purchaseDate = Date.now()
-		purchase.user.sendNotification(PaymentTemplates.PRODUCT_PURCHASE_INVOICE, {
-			purchase,
-		})
-	} else if (event.type === 'payment_intent.payment_failed')
-		purchase.status = 'failed'
-	else if (event.type === 'payment_intent.canceled')
-		purchase.status = 'canceled'
-
-	await purchase.save()
-	res.code(200).send()
 }
 
 module.exports = routes

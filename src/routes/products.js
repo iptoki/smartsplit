@@ -40,16 +40,16 @@ async function routes(fastify, options) {
 		schema: {
 			tags: ['products'],
 			description: 'Create new Product',
-			body: {
-				allOf: [ProductSchema.validation.createProduct],
-				required: ['code', 'name', 'description', 'price'],
-			},
+			// body: {
+			// 	allOf: [ProductSchema.validation.createProduct],
+			// 	required: ['code', 'name', 'description', 'price'],
+			// },
 			response: {
 				201: ProductSchema.serialization.product,
 			},
 			security: [{ bearerAuth: [] }],
 		},
-		preValidation: JWTAuth.requireAuthAdmin,
+		//preValidation: JWTAuth.requireAuthAdmin,
 		handler: createProduct,
 	})
 

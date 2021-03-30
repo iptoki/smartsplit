@@ -34,10 +34,15 @@ mongoose
 			},
 		})
 		const Product = require('../models/product')
-		const products = require("../../data/products")
-		products.map((x)=> {return new Product(x)} )
-		Product.insertMany(products.map((x)=> {return new Product(x)} )).catch((err) => console.log('products already seeded'))
-		
+		const products = require('../../data/products')
+		products.map((x) => {
+			return new Product(x)
+		})
+		Product.insertMany(
+			products.map((x) => {
+				return new Product(x)
+			})
+		).catch((err) => console.log('products already seeded'))
 	})
 
 module.exports = mongoose
