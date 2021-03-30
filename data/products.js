@@ -1,3 +1,5 @@
+const Products = require('../src/constants/productCodes')
+
 const products = [
 	{
 		code: Products.SOCAN_SUBMIT,
@@ -48,3 +50,5 @@ const products = [
 		price: 12.99,
 	},
 ]
+
+module.exports = products

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const Config = require('../config')
+const Product = require('../models/product')
 
 // remove deprecation warnings when using Model.findOneAndX()
 mongoose.set('useFindAndModify', false)
@@ -33,6 +34,11 @@ mongoose
 				}),
 			},
 		})
+	
+		const products = require("../../data/products")
+		products.map((x)=> {return new Product(x)} )
+		Product.insertMany(products.map((x)=> {return new Product(x)} )).catch((err) => console.log('products already seeded'))
+		
 	})
 
 module.exports = mongoose
