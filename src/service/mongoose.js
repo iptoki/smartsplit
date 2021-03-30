@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const Config = require('../config')
+const Errors = require('../errors')
 
 // remove deprecation warnings when using Model.findOneAndX()
 mongoose.set('useFindAndModify', false)

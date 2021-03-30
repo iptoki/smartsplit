@@ -10,6 +10,7 @@ async function routes(fastify, options) {
 			try {
 				var newBody = {
 					raw: body,
+					parsed: JSON.parse(body),
 				}
 				done(null, newBody)
 			} catch (error) {
@@ -21,7 +22,7 @@ async function routes(fastify, options) {
 
 	fastify.route({
 		method: 'POST',
-		url: '/purchases/stripe/webhook/',
+		url: '/webhooks/stripe/',
 		schema: {
 			tags: ['purchases'],
 			description: "Stripe's webhook to receive event such as payment success",
@@ -34,13 +35,15 @@ async function routes(fastify, options) {
 }
 
 const stripeEventHandler = async function (req, res) {
+	const endpointSecret = 'whsec_txRlWnytXeWKViCRZnFLTJH7I5wMxtN1'
+
 	await Stripe.verifyEventSignature(
 		req.body.raw,
 		req.headers['stripe-signature'],
-		'whsec_txRlWnytXeWKViCRZnFLTJH7I5wMxtN1'
+		endpointSecret
 	)
 
-	const event = JSON.parse(req.body.raw.toString())
+	const event = req.body.parsed
 	const paymentIntent = event.data.object
 	const purchase = await Purchase.ensureExistsAndRetrieve(
 		{ payment_id: paymentIntent.id },
