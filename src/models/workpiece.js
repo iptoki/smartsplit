@@ -113,7 +113,7 @@ WorkpieceSchema.virtual('_purchases', {
 	ref: 'Purchase',
 	localField: '_id',
 	foreignField: 'workpiece',
-	match: { status: 'succeeded' },
+	match: { status: { $in: ['succeeded', 'pending'] } },
 })
 
 WorkpieceSchema.virtual('purchases').get(function () {
