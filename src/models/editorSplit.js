@@ -3,6 +3,11 @@ const uuid = require('uuid').v4
 
 const EditorSplitSchema = new mongoose.Schema(
 	{
+		workpiece: {
+			type: String,
+			alias: 'workpiece_id',
+			ref: 'Workpiece',
+		},
 		rightHolder: {
 			type: String,
 			alias: 'rightHolder_id',
@@ -13,15 +18,12 @@ const EditorSplitSchema = new mongoose.Schema(
 			ref: 'User',
 			autopopulate: true,
 		},
-		workpiece: {
-			type: String,
-			alias: 'workpiece_id',
-			ref: 'Workpiece',
-		},
+		hasEditor: Boolean,
 		shares: Number,
 		_state: {
 			type: String,
 			enum: ['draft', 'pending', 'accepted', 'rejected'],
+			default: 'draft',
 		}
 	},
 	{ _id: false, toJSON: { virtuals: true }, toObject: { virtuals: true } }
