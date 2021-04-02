@@ -24,15 +24,15 @@ const EditorSplitSchema = new mongoose.Schema(
 			type: String,
 			enum: ['draft', 'pending', 'accepted', 'rejected'],
 			default: 'draft',
-		}
+		},
 	},
 	{ _id: false, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 )
 
 EditorSplitSchema.virtual('editor_id').get(function () {
-	if(!this.hasEditor) return undefined
-	if(typeof this.editor === 'string') return this.editor
-	if(typeof this.editor === 'object') return this.editor.id
+	if (!this.hasEditor) return undefined
+	if (typeof this.editor === 'string') return this.editor
+	if (typeof this.editor === 'object') return this.editor.id
 	return undefined
 })
 
