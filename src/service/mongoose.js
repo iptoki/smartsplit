@@ -5,7 +5,8 @@ const Errors = require('../errors')
 // remove deprecation warnings when using Model.findOneAndX()
 mongoose.set('useFindAndModify', false)
 
-// Global model function
+// Global plugins
+mongoose.plugin(require('mongoose-autopopulate'))
 mongoose.plugin(function (schema, options) {
 	schema.statics.ensureExistsAndRetrieve = function (filter, paths = []) {
 		if (typeof filter === 'string') filter = { _id: filter }

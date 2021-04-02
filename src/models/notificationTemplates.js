@@ -1,13 +1,16 @@
 const Config = require('../config')
 const Notification = require('../constants/notificationTypes')
-const AddressSchema = require('../schemas/addresses').serialization.address
-const ProductSchema = require('../schemas/addresses').serialization.product
-const PromoSchema = require('../schemas/addresses').serialization.promo
 
 const SplitTemplates = {
 	CREATED: 'split:created',
 	ACCEPTED: 'split:accepted',
 	REJECTED: 'split:rejected',
+}
+
+const EditorSplitTemplates = {
+	CREATED: 'editor_split:created',
+	ACCEPTED: 'editor_split:accepted',
+	REJECTED: 'editor_split:rejected',
 }
 
 const UserTemplates = {
@@ -260,6 +263,7 @@ const generateTemplate = function (templateName, medium, user, options = {}) {
 
 module.exports = {
 	SplitTemplates,
+	EditorSplitTemplates,
 	UserTemplates,
 	PaymentTemplates,
 	TemplateMap,
