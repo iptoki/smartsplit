@@ -2,16 +2,7 @@ const CollaboratorSchema = require('./users').serialization.collaborator
 
 const validation = {
 	create: {
-		oneOf: [
-			{
-				type: 'object',
-				required: ['rightHolder_id', 'hasEditor'],
-				properties: {
-					rightHolder_id: { type: 'string' },
-					hasEditor: { type: 'boolean', enum: [false] },
-				},
-				additionalProperties: false,
-			},
+		anyOf: [
 			{
 				type: 'object',
 				required: ['rightHolder_id', 'hasEditor', 'editor_id', 'shares'],
@@ -19,7 +10,16 @@ const validation = {
 					rightHolder_id: { type: 'string' },
 					hasEditor: { type: 'boolean', enum: [true] },
 					editor_id: { type: 'string' },
-					shares: { type: 'integer', max: 50, min: 0 },
+					shares: { type: 'integer', maximum: 50, minimum: 0 },
+				},
+				additionalProperties: false,
+			},
+			{
+				type: 'object',
+				required: ['rightHolder_id', 'hasEditor'],
+				properties: {
+					rightHolder_id: { type: 'string' },
+					hasEditor: { type: 'boolean', enum: [false] },
 				},
 				additionalProperties: false,
 			},
@@ -30,7 +30,7 @@ const validation = {
 		properties: {
 			hasEditor: { type: 'boolean' },
 			editor_id: { type: 'string' },
-			shares: { type: 'integer', max: 50, min: 0 },
+			shares: { type: 'integer', maximum: 50, minimum: 0 },
 		},
 		additionalProperties: false,
 	},
@@ -44,7 +44,6 @@ const validation = {
 	},
 	submit: {
 		type: 'object',
-		required: ['email'],
 		properties: {
 			email: { type: 'string' },
 		},
@@ -59,7 +58,7 @@ const serialization = {
 			rightHolder_id: { type: 'string' },
 			hasEditor: { type: 'boolean' },
 			editor_id: { type: 'string' },
-			editor: CollaboratorSchema,
+			editor: { ...CollaboratorSchema, nullable: true },
 			shares: { type: 'integer' },
 			_state: {
 				type: 'string',

@@ -118,9 +118,6 @@ module.exports.WebhookSignatureVerificationFailed = new HTTPErrors.BadRequest(
 	'Webhook signature verification failed'
 )
 module.exports.PurchaseNotFound = new HTTPErrors.NotFound('Purchase not found')
-module.exports.PurchaseImmutable = new HTTPErrors.Conflict(
-	'Completed Purchases cannot be modified or deleted'
-)
 module.exports.BillingAddressNotFound = new HTTPErrors.NotFound(
 	'Billing address not found'
 )
@@ -135,6 +132,15 @@ module.exports.StripeCustomerCreateError = new HTTPErrors.PreconditionFailed(
 )
 module.exports.StripePaymentIntentFailed = new HTTPErrors.PreconditionFailed(
 	'Error creating a payment Intent'
+)
+module.exports.EditorSplitNotFound = new HTTPErrors.NotFound(
+	'EditorSplit not found'
+)
+module.exports.ConflictingEditorSplit = new HTTPErrors.Conflict(
+	'An editorSplit already exists for this workpiece and right holder'
+)
+module.exports.ConflictingEditorSplitState = new HTTPErrors.Conflict(
+	'The current state of the editorSplit does not allow this operation'
 )
 
 /* Generic errors */

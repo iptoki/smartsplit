@@ -1,19 +1,34 @@
-const { EditorSplitNotFound } = require('../../errors')
+const { EditorSplitNotFound, ConflictingEditorSplit } = require('../../errors')
 const JWTAuth = require('../../service/JWTAuth')
 const EditorSplit = require('../../models/editorSplit')
 const { EditorSplitTemplates } = require('../../models/notificationTemplates')
 const EditorSplitSchema = require('../../schemas/editorSplits')
 
+async function permissionHook(req, res) {
+	await JWTAuth.requireAuthUser(req, res)
+	// check authUser permission over the rightHolder's editorSplit in the future?
+	if (
+		req.authUser.id !== (req.params.rightHolder_id || req.body.rightHolder_id)
+	)
+		throw EditorSplitNotFound
+}
+
 async function routes(fastify, options) {
 	fastify.route({
 		method: 'POST',
 		url: '/workpieces/:workpiece_id/editorSplits/',
-		schema: EditorSplitSchema.create,
-		preValidation: JWTAuth.requireAuthUser,
+		schema: EditorSplitSchema.routes.create,
+		preValidation: permissionHook,
 		handler: async function createEditorSplit(req, res) {
-			// check authUser permission over the rightHolder's editorSplit in the future?
-			if (req.authUser.id !== req.body.rightHolder_id) throw EditorSplitNotFound
-			const editorSplit = new EditorSplit({ ...req.body, ...req.params })
+			res.code(201)
+			if (
+				await EditorSplit.exists({
+					workpiece_id: req.params.workpiece_id,
+					rightHolder_id: req.body.rightHolder_id,
+				})
+			)
+				throw ConflictingEditorSplit
+			const editorSplit = EditorSplit.create({ ...req.body, ...req.params })
 			return await editorSplit.save()
 		},
 	})
@@ -22,12 +37,8 @@ async function routes(fastify, options) {
 		method: 'GET',
 		url: '/workpieces/:workpiece_id/editorSplits/:rightHolder_id',
 		schema: EditorSplitSchema.routes.getResource,
-		preValidation: JWTAuth.requireAuthUser,
+		preValidation: permissionHook,
 		handler: async function getEditorSplitsByRightHolder(req, res) {
-			// check authUser permission over the rightHolder's editorSplit in the future?
-			if (req.authUser.id !== req.params.rightHolder_id)
-				throw EditorSplitNotFound
-			res.status(201)
 			return await EditorSplit.ensureExistsAndRetrieve(req.params)
 		},
 	})
@@ -36,13 +47,10 @@ async function routes(fastify, options) {
 		method: 'PATCH',
 		url: '/workpieces/:workpiece_id/editorSplits/:rightHolder_id',
 		schema: EditorSplitSchema.routes.patch,
-		preValidation: JWTAuth.requireAuthUser,
+		preValidation: permissionHook,
 		handler: async function patchEditorSplit(req, res) {
-			// check authUser permission over the rightHolder's editorSplit in the future?
-			if (req.authUser.id !== req.params.rightHolder_id)
-				throw EditorSplitNotFound
 			const editorSplit = await EditorSplit.ensureExistsAndRetrieve(req.params)
-			editorSplit.patch(req.body)
+			editorSplit.update(req.body)
 			return await editorSplit.save()
 		},
 	})
@@ -51,15 +59,10 @@ async function routes(fastify, options) {
 		method: 'DELETE',
 		url: '/workpieces/:workpiece_id/editorSplits/:rightHolder_id',
 		schema: EditorSplitSchema.routes.remove,
-		preValidation: JWTAuth.requireAuthUser,
+		preValidation: permissionHook,
 		handler: async function deleteEditorSplit(req, res) {
-			// check authUser permission over the rightHolder's editorSplit in the future?
-			if (req.authUser.id !== req.params.rightHolder_id)
-				throw EditorSplitNotFound
-			const { deletedCount } = await EditorSplit.deleteOne(
-				EditorSplit.translateAliases(req.params)
-			)
-			if (deletedCount !== 1) throw EditorSplitNotFound
+			const editorSplit = await EditorSplit.ensureExistsAndRetrieve(req.params)
+			await editorSplit.remove()
 			res.code(204).send()
 		},
 	})
@@ -68,17 +71,14 @@ async function routes(fastify, options) {
 		method: 'POST',
 		url: '/workpieces/:workpiece_id/editorSplits/:rightHolder_id/submit',
 		schema: EditorSplitSchema.routes.submit,
-		preValidation: JWTAuth.requireAuthUser,
+		preValidation: permissionHook,
 		handler: async function submit(req, res) {
-			// check authUser permission over the rightHolder's editorSplit in the future?
-			if (req.authUser.id !== req.params.rightHolder_id)
-				throw EditorSplitNotFound
 			const editorSplit = await EditorSplit.ensureExistsAndRetrieve(req.params)
-			editorSplit._state = 'pending'
+			editorSplit.update({ _state: 'pending' })
 			await editorSplit.save()
 			const email = req.body.email || editorSplit.editor.email
 			editorSplit.editor.sendNotification(EditorSplitTemplates.CREATED, {
-				to: { email, name: editor.fullName },
+				to: { email, name: editorSplit.editor.fullName },
 			})
 			return editorSplit
 		},
@@ -94,7 +94,7 @@ async function routes(fastify, options) {
 				...req.params,
 				editor_id: req.authUser.id,
 			})
-			editorSplit._state = req.body.vote
+			editorSplit.update({ _state: req.body.vote })
 			return await editorSplit.save()
 		},
 	})

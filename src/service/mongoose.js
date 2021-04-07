@@ -18,6 +18,17 @@ mongoose.plugin(function (schema, options) {
 				else return Promise.resolve(result)
 			})
 	}
+	schema.statics.ensureExists = function (filter) {
+		if (typeof filter === 'string') filter = { _id: filter }
+		const errName = `${this.modelName}NotFound`
+		return this.exists(this.translateAliases(filter)).then((result) => {
+			if (!result) return Promise.reject(Errors[errName] || Errors.NotFound)
+			else return Promise.resolve(true)
+		})
+	}
+	schema.methods.patch = function (data) {
+		Object.keys(data).forEach((x) => (this[x] = data[x]))
+	}
 })
 
 // Connect database
