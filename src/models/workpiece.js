@@ -109,6 +109,13 @@ WorkpieceSchema.virtual('rightHolders').get(function () {
 	return this.collaborators.filter((c) => c.isRightHolder).map((c) => c.user)
 })
 
+WorkpieceSchema.virtual('editorSplit', {
+	ref: 'EditorSplit',
+	localField: '_id',
+	foreignField: 'workpiece_id',
+	justOne: true,
+})
+
 WorkpieceSchema.virtual('_purchases', {
 	ref: 'Purchase',
 	localField: '_id',

@@ -1,5 +1,6 @@
 const DocumentationSchema = require('./documentation')
 const RightSplitSchema = require('./rightSplits')
+const EditorSplitSchema = require('./editorSplits').serialization.editorSplit
 const Tasks = require('../constants/tasks')
 const UserSchema = require('./users')
 
@@ -30,6 +31,7 @@ const workpiece = {
 			type: 'array',
 			items: RightSplitSchema.serialization.rightSplit,
 		},
+		editorSplit: EditorSplitSchema,
 		documentation: DocumentationSchema.serialization.documentation,
 		purchases: {
 			type: 'array',
