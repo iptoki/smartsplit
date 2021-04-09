@@ -31,7 +31,7 @@ const workpiece = {
 			type: 'array',
 			items: RightSplitSchema.serialization.rightSplit,
 		},
-		editorSplit: EditorSplitSchema,
+		editorSplit: {...EditorSplitSchema, nullable: true},
 		documentation: DocumentationSchema.serialization.documentation,
 		purchases: {
 			type: 'array',
