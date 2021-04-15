@@ -141,18 +141,12 @@ async function routes(fastify, options) {
 
 /************************ Handlers ************************/
 
-async function getUserWithPendingEmails(req, res) {
-	const user = await getUserWithAuthorization(req)
-	await user.populate('_pendingEmails').execPopulate()
-	return user
-}
-
 async function getUserEmails(req, res) {
-	return formatEmailList(await getUserWithPendingEmails(req, res))
+	return formatEmailList(await getUserWithAuthorization(req, res))
 }
 
 async function createUserEmail(req, res) {
-	const user = await getUserWithPendingEmails(req, res)
+	const user = await getUserWithAuthorization(req, res)
 	const emailVerif = await user.addPendingEmail(
 		req.body.email,
 		UserTemplates.ACTIVATE_EMAIL
@@ -169,7 +163,7 @@ async function activateUserEmail(req, res) {
 }
 
 async function deleteUserEmail(req, res) {
-	const user = await getUserWithPendingEmails(req, res)
+	const user = await getUserWithAuthorization(req, res)
 	req.setTransactionResource(user)
 	if (!(await user.deleteEmail(req.params.email))) throw Errors.EmailNotFound
 

@@ -195,8 +195,9 @@ async function routes(fastify, options) {
 /************************ Handlers ************************/
 
 const getWorkpiece = async function (req, res) {
-	return await Workpiece.ensureExistsAndRetrieve(req.params.workpiece_id,{
-		path: "editorSplit", match: { rightHolder_id: req.authUser.id },
+	return await Workpiece.ensureExistsAndRetrieve(req.params.workpiece_id, {
+		path: 'editorSplit',
+		match: { rightHolder_id: req.authUser.id },
 	})
 }
 

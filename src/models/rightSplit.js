@@ -273,20 +273,11 @@ RightSplitSchema.methods.updateState = function () {
 }
 
 RightSplitSchema.methods.getPathsToPopulate = function () {
-	let paths = [
-		{ path: 'rightSplit.owner', populate: { path: '_pendingEmails' } },
-		{
-			path: 'rightSplit.label.rightHolder',
-			populate: { path: '_pendingEmails' },
-		},
-	]
+	let paths = ['rightSplit.owner', 'rightSplit.label.rightHolder']
 	for (let rightType of RightTypes.list) {
 		if (!Array.isArray(this[rightType])) continue
 		for (let i = 0; i < this[rightType].length; i++) {
-			paths.push({
-				path: `rightSplit.${rightType}.${i}.rightHolder`,
-				populate: { path: '_pendingEmails' },
-			})
+			paths.push(`rightSplit.${rightType}.${i}.rightHolder`)
 		}
 	}
 	return paths

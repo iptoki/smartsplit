@@ -303,7 +303,7 @@ WorkpieceSchema.methods.deleteRightSplit = function () {
 
 WorkpieceSchema.methods.getPathsToPopulate = function () {
 	return [
-		{ path: 'owner', populate: { path: '_pendingEmails' } },
+		'owner',
 		'_purchases',
 		...this.getCollaboratorsPathsToPopulate(),
 		...this.documentation.getPathsToPopulate(),
@@ -319,31 +319,19 @@ WorkpieceSchema.methods.populateAll = function () {
 WorkpieceSchema.methods.getCollaboratorsPathsToPopulate = function () {
 	let paths = []
 	for (let i = 0; i < this.collaborators.length; i++)
-		paths.push({
-			path: `collaborators.${i}.user`,
-			populate: { path: '_pendingEmails' },
-		})
+		paths.push(`collaborators.${i}.user`)
 	return paths
 }
 
 WorkpieceSchema.methods.getArchivedRightSplitsPathsToPopulate = function () {
 	let paths = []
 	for (let i = 0; i < this.archivedSplits.length; i++) {
-		paths.push({
-			path: `archivedSplits.${i}.owner`,
-			populate: '_pendingEmails',
-		})
-		paths.push({
-			path: `archivedSplits.${i}.label.rightHolder`,
-			populate: '_pendingEmails',
-		})
+		paths.push(`archivedSplits.${i}.owner`)
+		paths.push(`archivedSplits.${i}.label.rightHolder`)
 		for (let rightType of RightTypes.list) {
 			if (!Array.isArray(this.archivedSplits[i][rightType])) continue
 			for (let j = 0; j < this.archivedSplits[i][rightType].length; j++)
-				paths.push({
-					path: `archivedSplits.${i}.${rightType}.${j}.rightHolder`,
-					populate: '_pendingEmails',
-				})
+				paths.push(`archivedSplits.${i}.${rightType}.${j}.rightHolder`)
 		}
 	}
 	return paths

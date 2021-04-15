@@ -235,7 +235,7 @@ const getUserById = async function (req, res) {
 		res.schema(UserSchema.serialization.publicUser)
 	else
 		await user
-			.populate(['paymentInfo.billingAddress', '_pendingEmails', 'addresses'])
+			.populate(['paymentInfo.billingAddress', 'addresses'])
 			.execPopulate()
 
 	return user

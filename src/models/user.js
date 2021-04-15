@@ -162,6 +162,7 @@ UserSchema.virtual('_pendingEmails', {
 	ref: 'EmailVerification',
 	localField: '_id',
 	foreignField: 'user',
+	autopopulate: true,
 })
 
 UserSchema.virtual('addresses', {
@@ -311,7 +312,7 @@ UserSchema.methods.getCollaboratorsByDegrees = async function (degree = 1) {
 	let path = { path: 'collaborators' }
 	let curPath = path
 	for (let d = 2; d <= degree + 1; d++) {
-		curPath.populate = [{ path: 'collaborators' }, { path: '_pendingEmails' }]
+		curPath.populate = [{ path: 'collaborators' }]
 		curPath = curPath.populate[0]
 	}
 	await this.populate(path).execPopulate()
@@ -368,9 +369,7 @@ UserSchema.methods.getCollaborators = async function (
 					],
 				},
 			],
-		})
-			.populate('_pendingEmails')
-			.limit(_limit)
+		}).limit(_limit)
 		result = result.concat(matches)
 	}
 
@@ -854,10 +853,10 @@ UserSchema.statics.activate = async function (token, checkPassword = true) {
 	return user
 }
 
-UserSchema.statics.create = async function (data) {
+UserSchema.statics.create = async function (_data) {
 	data = {
-		firstName: data.email.split('@')[0],
-		...data,
+		firstName: _data.email.split('@')[0],
+		..._data,
 	}
 
 	let user
@@ -867,8 +866,7 @@ UserSchema.statics.create = async function (data) {
 
 	if (emailVerif) {
 		if (!emailVerif.user) await emailVerif.remove()
-		else if (await emailVerif.user.verifyPassword(data.password))
-			user = emailVerif.user
+		if (emailVerif.user.isActive) user = emailVerif.user
 	}
 
 	if (!user) {
