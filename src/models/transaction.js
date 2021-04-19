@@ -8,7 +8,7 @@ const TransactionSchema = new mongoose.Schema({
 	},
 	request: new mongoose.Schema(
 		{
-			id: Number,
+			id: String,
 			url: String,
 			method: String,
 			authorisation: String,
