@@ -43,6 +43,13 @@ const DefaultConfig = {
 	},
 
 	logger: true,
+
+	zumrails: {
+		apiUsername: '',
+		apiPassword: '',
+		walletId: '',
+		fundingSourceId: '',
+	},
 }
 
 try {
