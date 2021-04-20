@@ -195,7 +195,7 @@ async function routes(fastify, options) {
 /************************ Handlers ************************/
 
 const getWorkpiece = async function (req, res) {
-	let populate = {}
+	let populate = []
 	if (req.authUser) {
 		populate = {
 			path: 'editorSplit',
