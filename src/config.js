@@ -49,6 +49,7 @@ const DefaultConfig = {
 		apiPassword: '',
 		walletId: '',
 		fundingSourceId: '',
+		env: 'https://api-sandbox.zumrails.com',
 	},
 }
 

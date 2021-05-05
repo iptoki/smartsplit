@@ -1,7 +1,8 @@
 const got = require('got')
 const Config = require('../config')
 
-const API_URL = 'https://api-sandbox.zumrails.com'
+const ENV = Config.zumrails.env || 'https://api-sandbox.zumrails.com'
+const API_URL = `${ENV}/api`
 
 function Zumrails(opts = {}) {
 	this.apiUsername = opts.apiUsername || Config.zumrails.apiUsername
@@ -48,15 +49,15 @@ Zumrails.prototype.apiRequest = async function apiRequest(
 }
 
 Zumrails.prototype.getFundingSources = function getFundingSources() {
-	return this.apiRequest('get', '/api/fundingsource/filter')
+	return this.apiRequest('post', '/fundingsource/filter')
 }
 
 Zumrails.prototype.getWallets = function getWallets() {
-	return this.apiRequest('get', '/api/wallet')
+	return this.apiRequest('get', '/wallet')
 }
 
 Zumrails.prototype.withdrawZumWallet = function withdrawZumWallet(amount) {
-	return this.apiRequest('post', '/api/transaction', {
+	return this.apiRequest('post', '/transaction', {
 		ZumRailsType: 'WithdrawZumWallet',
 		TransactionMethod: 'Eft',
 		Amount: amount,
@@ -66,7 +67,7 @@ Zumrails.prototype.withdrawZumWallet = function withdrawZumWallet(amount) {
 }
 
 Zumrails.prototype.fundZumWallet = function fundZumWallet(amount) {
-	return this.apiRequest('post', '/api/transaction', {
+	return this.apiRequest('post', '/transaction', {
 		ZumRailsType: 'FundZumWallet',
 		TransactionMethod: 'Eft',
 		Amount: amount,
@@ -76,7 +77,7 @@ Zumrails.prototype.fundZumWallet = function fundZumWallet(amount) {
 }
 
 Zumrails.prototype.fundUser = function fundUser(amount, userId) {
-	return this.apiRequest('post', '/api/transaction', {
+	return this.apiRequest('post', '/transaction', {
 		ZumRailsType: 'AccountsPayable',
 		TransactionMethod: 'Eft',
 		Amount: amount,
@@ -86,7 +87,7 @@ Zumrails.prototype.fundUser = function fundUser(amount, userId) {
 }
 
 Zumrails.prototype.withdrawUser = function withdrawUser(amount, userId) {
-	return this.apiRequest('post', '/api/transaction', {
+	return this.apiRequest('post', '/transaction', {
 		ZumRailsType: 'AccountsReceivable',
 		TransactionMethod: 'Eft',
 		Amount: amount,
@@ -100,7 +101,7 @@ Zumrails.prototype.userTransfer = function userTransfer(
 	userFrom,
 	userTo
 ) {
-	return this.apiRequest('post', '/api/transaction', {
+	return this.apiRequest('post', '/transaction', {
 		ZumRailsType: 'UserTransfer',
 		TransactionMethod: 'Eft',
 		Amount: amount,
@@ -110,7 +111,7 @@ Zumrails.prototype.userTransfer = function userTransfer(
 }
 
 Zumrails.prototype.authorize = function authorize() {
-	return this.apiRequest('post', '/api/authorize', {
+	return this.apiRequest('post', '/authorize', {
 		Username: this.apiUsername,
 		Password: this.apiPassword,
 	}, false)
@@ -119,8 +120,10 @@ Zumrails.prototype.authorize = function authorize() {
 Zumrails.prototype.getAccessToken = async function getAccessToken() {
 	if (this.accessToken && Date.now() < this.accessTokenExpireDate)
 		return this.accessToken
-	const res = await this.authorize()
-	if (!res) throw new Error('Invalid credentials, cannot obtain access token')
+	try{
+		await this.authorize()
+	}
+	catch(err){ throw new Error('Invalid credentials, cannot obtain access token')
 	this.accessToken = res.body.result.Token
 	this.accessTokenExpireDate = Date.now() + 3300
 	this.customerId = res.body.result.CustomerId
