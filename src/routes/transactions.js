@@ -5,7 +5,7 @@ const JWTAuth = require('../service/JWTAuth')
 async function routes(fastify, options) {
 	fastify.route({
 		method: 'POST',
-		url: '/zumrails/link-user',
+		url: '/transactions/link-user',
 		schema: {
 			tags: ['zumrails'],
 			description: 'Link a zumrails user to a smartsplit user',
@@ -34,7 +34,7 @@ async function routes(fastify, options) {
 
 	fastify.route({
 		method: 'POST',
-		url: '/zumrails/withdraw-zum-wallet',
+		url: '/transactions/withdraw-zum-wallet',
 		schema: {
 			description: 'Withdraw money from zum wallet to funding source',
 			body: {
@@ -52,12 +52,13 @@ async function routes(fastify, options) {
 		//preValidation: JWTAuth.requireAuthAdmin,
 		handler: async function withdrawZumWallet(req, res) {
 			const response = await zumrails.withdrawZumWallet(req.body.amount)
+			return response.body
 		},
 	})
 
 	fastify.route({
 		method: 'POST',
-		url: '/zumrails/fund-zum-wallet',
+		url: '/transactions/fund-zum-wallet',
 		schema: {
 			description: 'Fund money to zum wallet from funding source',
 			body: {
@@ -81,7 +82,7 @@ async function routes(fastify, options) {
 
 	fastify.route({
 		method: 'POST',
-		url: '/zumrails/withdraw-user',
+		url: '/transactions/withdraw-user',
 		schema: {
 			description: 'Withdraw money from user to zum wallet',
 			body: {
@@ -107,7 +108,7 @@ async function routes(fastify, options) {
 
 	fastify.route({
 		method: 'POST',
-		url: '/zumrails/fund-user',
+		url: '/transactions/fund-user',
 		schema: {
 			description: 'fund money to user from zum wallet',
 			body: {
@@ -133,7 +134,7 @@ async function routes(fastify, options) {
 
 	fastify.route({
 		method: 'POST',
-		url: '/zumrails/user-transfer',
+		url: '/transactions/user-transfer',
 		schema: {
 			description: 'Transfer money from user to an other user',
 			body: {
