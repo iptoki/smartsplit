@@ -20,8 +20,6 @@ function Zumrails(opts = {}) {
 	if (!this.apiPassword) {
 		throw new Error('apiPassword is required')
 	}
-
-	this.getAccessToken()
 }
 
 Zumrails.prototype.apiRequest = async function apiRequest(
@@ -34,7 +32,8 @@ Zumrails.prototype.apiRequest = async function apiRequest(
 	if (auth)
 		opts.headers = { Authorization: `Bearer ${await this.getAccessToken()}` }
 	try {
-		return await got[method](API_URL + path, opts)
+		const response = await got[method](API_URL + path, opts)
+		return response.body.result
 	} catch (err) {
 		throw new Error(
 			'Zumrails API Request failed with error: ' +
@@ -42,10 +41,14 @@ Zumrails.prototype.apiRequest = async function apiRequest(
 					url: `${err.method} ${err.url}`,
 					statusCode: err.statusCode,
 					statusMessage: err.statusMessage,
-					body: err.body
+					body: err.body,
 				})
 		)
 	}
+}
+
+Zumrails.prototype.getUserById = function getUserById(userId) {
+	return this.apiRequest('get', `/user/${userId}`)
 }
 
 Zumrails.prototype.getFundingSources = function getFundingSources() {
@@ -111,23 +114,29 @@ Zumrails.prototype.userTransfer = function userTransfer(
 }
 
 Zumrails.prototype.authorize = function authorize() {
-	return this.apiRequest('post', '/authorize', {
-		Username: this.apiUsername,
-		Password: this.apiPassword,
-	}, false)
+	return this.apiRequest(
+		'post',
+		'/authorize',
+		{
+			Username: this.apiUsername,
+			Password: this.apiPassword,
+		},
+		false
+	)
 }
 
 Zumrails.prototype.getAccessToken = async function getAccessToken() {
 	if (this.accessToken && Date.now() < this.accessTokenExpireDate)
 		return this.accessToken
-	try{
-		await this.authorize()
+	try {
+		const res = await this.authorize()
+		this.accessToken = res.Token
+		this.accessTokenExpireDate = Date.now() + 3300
+		this.customerId = res.CustomerId
+		return this.accessToken
+	} catch (err) {
+		throw new Error('Invalid credentials, cannot obtain access token')
 	}
-	catch(err){ throw new Error('Invalid credentials, cannot obtain access token')
-	this.accessToken = res.body.result.Token
-	this.accessTokenExpireDate = Date.now() + 3300
-	this.customerId = res.body.result.CustomerId
-	return this.accessToken
 }
 
 const zumrails = new Zumrails()
