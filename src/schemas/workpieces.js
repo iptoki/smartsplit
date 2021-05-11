@@ -18,6 +18,7 @@ const workpiece = {
 					user: UserSchema.serialization.collaborator,
 					isRightHolder: { type: 'boolean' },
 					isInsideDoc: { type: 'boolean' },
+					displayEditorNotif: { type: 'boolean' },
 					permission: {
 						type: 'string',
 						enum: ['admin', 'read', 'write'],
