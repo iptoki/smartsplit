@@ -324,7 +324,7 @@ const deleteCollaboratorById = async function (req, res) {
 const disableEditorNotif = async function (req, res) {
 	const workpiece = await getWorkpieceAsRightHolder(req, res)
 	workpiece.collaborators.forEach((x) => {
-		if (x.user === req.authUser.id) x.displayEditorNotif = false
+		if (x.user === req.authUser._id) x.displayEditorNotif = false
 	})
 	await workpiece.save()
 	res.code(204).send()
