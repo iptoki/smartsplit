@@ -194,7 +194,7 @@ async function routes(fastify, options) {
 			security: [{ bearerAuth: [] }],
 		},
 		preValidation: JWTAuth.requireAuthUser,
-		handler: updateEditorNotif,
+		handler: disableEditorNotif,
 	})
 }
 
