@@ -83,6 +83,10 @@ const WorkpieceSchema = new mongoose.Schema(
 						enum: ['read', 'write', 'admin'],
 						default: 'read',
 					},
+					displayEditorNotif: {
+						type: Boolean,
+						default: true,
+					},
 				},
 				{ _id: false }
 			),

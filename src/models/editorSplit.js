@@ -30,10 +30,6 @@ const EditorSplitSchema = new mongoose.Schema(
 				return User.ensureExists(val)
 			},
 		},
-		hasEditor: {
-			type: Boolean,
-			required: true,
-		},
 		shares: { type: Number, min: 0, max: 50 },
 		_state: {
 			type: String,
@@ -64,20 +60,12 @@ EditorSplitSchema.virtual('rightHolder', {
 })
 
 EditorSplitSchema.pre('save', function saveMiddleware(next) {
-	if (this.hasEditor === false) {
-		this.editor_id = undefined
-		this.shares = undefined
-		this._state = undefined
-	}
-	if (this.hasEditor === true && !this._state) this._state = 'draft'
-	if (this._state === 'pending') {
-		if (!this.editor_id || !this.shares)
-			return next(
-				new Error(
-					'Cannot save _state as pending without fields `shares` and `editor_id` being set.'
-				)
+	if (this._state !== 'draft' && (!this.editor_id || !this.shares))
+		return next(
+			new Error(
+				'Cannot save _state !== draft without fields `shares` and `editor_id` being set.'
 			)
-	}
+		)
 	next()
 })
 

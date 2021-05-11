@@ -128,12 +128,8 @@ async function routes(fastify, options) {
 			tags: ['workpieces_general'],
 			description: 'Add a collaborator by ID',
 			params: {
-				workpiece_id: {
-					type: 'string',
-				},
-				collaborator_id: {
-					type: 'string',
-				},
+				workpiece_id: { type: 'string' },
+				collaborator_id: { type: 'string' },
 			},
 			response: {
 				204: {},
@@ -152,12 +148,8 @@ async function routes(fastify, options) {
 			tags: ['workpieces_general'],
 			description: "Update a collaborator's permission by ID",
 			params: {
-				workpiece_id: {
-					type: 'string',
-				},
-				collaborator_id: {
-					type: 'string',
-				},
+				workpiece_id: { type: 'string' },
+				collaborator_id: { type: 'string' },
 			},
 			response: {
 				204: {},
@@ -175,12 +167,8 @@ async function routes(fastify, options) {
 			tags: ['workpieces_general'],
 			description: 'Delete a collaborator by ID',
 			params: {
-				workpiece_id: {
-					type: 'string',
-				},
-				collaborator_id: {
-					type: 'string',
-				},
+				workpiece_id: { type: 'string' },
+				collaborator_id: { type: 'string' },
 			},
 			response: {
 				204: {},
@@ -190,18 +178,35 @@ async function routes(fastify, options) {
 		preValidation: JWTAuth.requireAuthUser,
 		handler: deleteCollaboratorById,
 	})
+
+	fastify.route({
+		method: 'PUT',
+		url: '/workpieces/:workpiece_id/disableEditorNotif/',
+		schema: {
+			tags: ['workpieces_general'],
+			description: 'Disable editor notification for auth user',
+			params: {
+				workpiece_id: { type: 'string' },
+			},
+			response: {
+				204: {},
+			},
+			security: [{ bearerAuth: [] }],
+		},
+		preValidation: JWTAuth.requireAuthUser,
+		handler: updateEditorNotif,
+	})
 }
 
 /************************ Handlers ************************/
 
 const getWorkpiece = async function (req, res) {
-	let populate = []
-	if (req.authUser) {
-		populate = {
-			path: 'editorSplit',
-			match: { rightHolder_id: req.authUser.id },
-		}
-	}
+	const populate = req.authUser
+		? {
+				path: 'editorSplit',
+				match: { rightHolder_id: req.authUser.id },
+		  }
+		: []
 	return await Workpiece.ensureExistsAndRetrieve(
 		req.params.workpiece_id,
 		populate
@@ -314,6 +319,15 @@ const deleteCollaboratorById = async function (req, res) {
 	workpiece.deleteCollaboratorById(req.body.collaborator_id)
 	await workpiece.save()
 	return
+}
+
+const disableEditorNotif = async function (req, res) {
+	const workpiece = await getWorkpieceAsRightHolder(req, res)
+	workpiece.collaborators.forEach((x) => {
+		if (x.user === req.authUser.id) x.displayEditorNotif = false
+	})
+	await workpiece.save()
+	res.code(204).send()
 }
 
 module.exports = {
