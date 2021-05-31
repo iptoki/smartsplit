@@ -18,6 +18,25 @@ const file = {
 					type: 'string',
 					enum: ['public', 'hidden', 'private'],
 				},
+				hashes: {
+					type: 'object',
+					properties: {
+						md5: { type: 'string' },
+						sha256: { type: 'string' },
+					},
+				},
+				ethereum: {
+					type: 'object',
+					properties: {
+						status: {
+							type: 'string',
+							default: 'NONE',
+							enum: ['NONE', 'PROCESSING', 'PROCESSED', 'ERROR'],
+						},
+						transactionId: { type: 'string' },
+						error: { type: 'string' },
+					},
+				},
 			},
 			additionalProperties: false,
 		},

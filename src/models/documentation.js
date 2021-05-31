@@ -6,6 +6,7 @@ const MusicalGenre = require('./entities/musicalGenre')
 const EntityTypes = require('../constants/entityTypes')
 const Config = require('../config')
 const Errors = require('../errors')
+const crypto = require('crypto')
 
 // const ExternalFileSchema = new mongoose.Schema(
 // 	{
@@ -40,6 +41,19 @@ const FileSchema = new mongoose.Schema(
 				version: {
 					type: String,
 					enum: ['idea', 'demo', 'rough-mix', 'master'],
+				},
+				hashes: {
+					md5: String,
+					sha256: String,
+				},
+				ethereum: {
+					status: {
+						type: String,
+						default: 'NONE',
+						enum: ['NONE', 'PROCESSING', 'PROCESSED', 'ERROR'],
+					},
+					transactionId: String,
+					error: String,
 				},
 			},
 			{ _id: false }
@@ -330,6 +344,9 @@ DocumentationSchema.methods.addFile = async function (type, data) {
 		await new Promise((r) => setTimeout(r, 500))
 		file = await this.getFile(file_id)
 	}
+	file.metadata.md5 = crypto.createHash('md5').update().digest('hex')
+	file.metadata.sha256 = crypto.createHash('md5').update().digest('hex')
+	await file.save()
 	const length = this.files[type].push(file_id)
 	return this.files[type][length - 1]
 }
